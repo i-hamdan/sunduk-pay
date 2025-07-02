@@ -1,1 +1,1 @@
-# sunduq
+# sunduk
