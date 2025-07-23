@@ -1,10 +1,13 @@
 package com.bxb.sunduk_pay.config;
 
+import com.bxb.sunduk_pay.exception.InvalidUserException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
@@ -13,6 +16,8 @@ import java.util.Arrays;
 
 @Component
 public class AuthenticationFilter implements Filter {
+
+    private static final Logger logger= LoggerFactory.getLogger(AuthenticationFilter.class);
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
@@ -27,22 +32,30 @@ public class AuthenticationFilter implements Filter {
                         path.startsWith("/api/sunduk-service/custom-logout") ||
                         path.startsWith("/api/sunduk-service/custom-login")) {
             chain.doFilter(request, response);
-            return;
         }
 
         HttpSession session = httpServletRequest.getSession(false);
 
         if (session == null || session.getAttribute("SPRING_SECURITY_CONTEXT") == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Your session has been expired or is no longer valid!\n Please login again.");
-            return;
+            logger.error("Session is invalid");
+           throw new InvalidUserException("Session is invalid");
+
         }
 
+        setSessionId(httpServletRequest, httpServletResponse);
+
+        chain.doFilter(request, response);
+    }
+
+
+
+
+
+    private static void setSessionId(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null) {
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Cookies are missing!");
-            return;
+            logger.error("Cookies are invalid");
+            throw new InvalidUserException("Session is invalid");
         }
 
         String sessionId = Arrays.stream(cookies)
@@ -52,15 +65,12 @@ public class AuthenticationFilter implements Filter {
                 .orElse(null);
         if (sessionId == null || sessionId.isBlank()) {
 
-            httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Session Id is expired or invalid!");
-            return;
+            logger.error("Session are invalid");
+            throw new InvalidUserException("Session is invalid");
         }
 
         Cookie newCookie = new Cookie("JSESSIONID", sessionId);
         httpServletResponse.addCookie(newCookie);
-
-        chain.doFilter(request, response);
     }
 }
 

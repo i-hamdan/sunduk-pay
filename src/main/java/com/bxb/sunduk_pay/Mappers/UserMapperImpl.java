@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapperImpl implements UserMapper {
-    public UserLoginResponse toResponse(OidcUser user) {
+    public UserLoginResponse getUser(OidcUser user) {
 
         UserLoginResponse userLoginResponse = new UserLoginResponse();
 

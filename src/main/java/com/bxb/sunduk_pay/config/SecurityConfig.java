@@ -52,6 +52,7 @@ public class SecurityConfig {
 
 
     @Bean
+    /* we will be not needing this method once moved to domain**/
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of(
