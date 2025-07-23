@@ -6,7 +6,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 
 public interface UserMapper {
-    UserLoginResponse toResponse(OidcUser user);
+    UserLoginResponse getUser(OidcUser user);
 
 
 

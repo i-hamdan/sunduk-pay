@@ -1,10 +1,10 @@
 package com.bxb.sunduk_pay.response;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
-@Data
-@ToString
+@Getter
+@Setter
+@Builder
 public class UserLoginResponse {
     private String email;
     private String fullName;
