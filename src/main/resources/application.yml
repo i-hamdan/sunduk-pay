@@ -42,3 +42,8 @@
         - /api/sunduk-service/login/oauth2/code
         - /api/sunduk-service/custom-logout
         - /api/sunduk-service/custom-login
+      logging:
+          level:
+            com:
+              bxb:
+                sunduk_pay: DEBUG
