@@ -1,5 +1,4 @@
 package com.bxb.sunduk_pay.config;
-
 import com.bxb.sunduk_pay.exception.InvalidUserException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
@@ -8,16 +7,25 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class AuthenticationFilter implements Filter {
+    private final SundukSecurityProperties securityProperties;
+
 
     private static final Logger logger= LoggerFactory.getLogger(AuthenticationFilter.class);
+
+    public AuthenticationFilter(SundukSecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
@@ -26,13 +34,12 @@ public class AuthenticationFilter implements Filter {
 
         String path = httpServletRequest.getRequestURI();
 
-        if (
-                path.startsWith("/api/sunduk-service/oauth2/authorization") ||
-                        path.startsWith("/api/sunduk-service/login/oauth2/code") ||
-                        path.startsWith("/api/sunduk-service/custom-logout") ||
-                        path.startsWith("/api/sunduk-service/custom-login")) {
+        if (securityProperties.getExcludePaths() != null &&
+                securityProperties.getExcludePaths().stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
+            return;
         }
+
 
         HttpSession session = httpServletRequest.getSession(false);
 

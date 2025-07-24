@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
+import com.bxb.sunduk_pay.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +16,15 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 // this needs to remove once we moved to domain
 public class SundukController {
-    private final ApplicationEventPublisher publisher;
+    private final UserService service;
     private final UserMapper userMapper;
 
 
     private static final Logger logger= LoggerFactory.getLogger(SundukController.class);
 
-    public SundukController(ApplicationEventPublisher publisher, UserMapper userMapper) {
-        this.publisher = publisher;
+    public SundukController(UserService service, UserMapper userMapper) {
+        this.service = service;
+
         this.userMapper = userMapper;
     }
 
@@ -30,10 +32,10 @@ public class SundukController {
     public ResponseEntity<UserLoginResponse> login(HttpSession session, @AuthenticationPrincipal OidcUser user) {
         UserLoginResponse response = userMapper.getUser(user);
         logger.info ("Session Id : " + session.getId() + " By: " + user.getFullName());
+        service.login(response);
         return ResponseEntity.ok().body(response);
 
     }
-
 
 
     @GetMapping("/custom-logout")

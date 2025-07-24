@@ -1,15 +1,16 @@
-package com.bxb.sunduk_pay.response;
+package com.bxb.sunduk_pay.model;
+
 
 
 import com.bxb.sunduk_pay.util.UserType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Getter
-@Setter
-public class UserResponse {
+@Document
+@Data
+public class User {
+    @Id
     private String uuid;
     private String fullName;
 //    private String firstName;
@@ -17,5 +18,7 @@ public class UserResponse {
     private String gender;
     private String email;
     private String phoneNumber;
+    private String password;
     private UserType userType;
+    private Boolean isDeleted;
 }
