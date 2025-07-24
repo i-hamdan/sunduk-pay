@@ -2,9 +2,8 @@ package com.bxb.sunduk_pay.response;
 
 import lombok.*;
 
-@Getter
-@Setter
-@Builder
+@Data
+
 public class UserLoginResponse {
     private String email;
     private String fullName;
