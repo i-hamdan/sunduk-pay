@@ -14,10 +14,8 @@ public interface UserMapper {
     UserLoginResponse getUser(OidcUser user);
     User toUser(UserLoginResponse response);
     UserResponse toUserResponse(User user);
-    List<UserResponse> toUserResponseList(List<User> users);
-    User fromUserRequestToUser(UserRequest request);
-    void updateUserFromRequest(UserRequest request, User user);
-    ;
+
+
 
 
 
