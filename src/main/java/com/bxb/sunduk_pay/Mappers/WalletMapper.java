@@ -11,6 +11,5 @@ import java.util.List;
 
 public interface WalletMapper {
      WalletResponse toWalletResponse(Wallet wallet);
-     List<WalletsResponse> toWalletsResponse(List<Wallet> wallets);
-    List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions);
+
 }

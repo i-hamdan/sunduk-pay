@@ -16,8 +16,14 @@ public class Transaction {
     private TransactionType transactionType;
     private Double amount;
     private String description;
+    private String status;
+    private String stripePaymentIntentId;
+    private LocalDateTime timestamp;
     private LocalDateTime dateTime;
+    private Boolean isDeleted;
+
     @DBRef
     private Wallet wallet;
-    private Boolean isDeleted;
+    @DBRef
+    private User user;
 }
