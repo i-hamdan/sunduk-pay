@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -27,8 +28,7 @@ public class SundukController {
 
         this.userMapper = userMapper;
     }
-
-    @GetMapping("/custom-login")
+    @GetMapping(value = "/custom-login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserLoginResponse> login(HttpSession session, @AuthenticationPrincipal OidcUser user) {
         UserLoginResponse response = userMapper.getUser(user);
         logger.info ("Session Id : " + session.getId() + " By: " + user.getFullName());

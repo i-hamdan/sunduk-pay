@@ -22,79 +22,64 @@ public class StripeServiceImpl implements StripeService {
         log.info("Stripe API key initialized.");
     }
     @Override
-    public Session createCheckoutSession(String userId, Double amount) throws Exception {
-        log.info("Creating Stripe Checkout session for userId: {}, amount: {}", userId, amount);
-        try {
-            Session session = createSession(userId, amount, "Add Money to Wallet", "add-money",
-                    "http://localhost:5173/success", "http://localhost:5173/cancel");
-            log.info("Stripe Checkout session created successfully for userId: {}", userId);
-            return session;
-        } catch (Exception e) {
-            log.error("Failed to create Stripe Checkout session for userId: {}, error: {}", userId, e.getMessage(), e);
-            throw e;
+    public Session createCheckoutSession(String userId, Double amount, String type) throws Exception {
+        String productName;
+        String successUrl;
+        String cancelUrl;
+
+        switch (type.toUpperCase()) {
+            case "ADD":
+                productName = "Add Money to Wallet";
+                successUrl = "http://localhost:5173/add-success";
+                cancelUrl = "http://localhost:5173/add-cancel";
+                break;
+
+            case "PAY":
+                productName = "Pay From Wallet";
+                successUrl = "http://localhost:5173/pay-success";
+                cancelUrl = "http://localhost:5173/pay-cancel";
+                break;
+
+            default:
+                throw new IllegalArgumentException("Invalid session type: " + type + ". Allowed: ADD, PAY");
         }
+
+        return createSession(userId, amount, productName, type, successUrl, cancelUrl);
     }
 
-    @Override
-    public Session createPaymentSession(String userId, Double amount) throws Exception {
-        log.info("Creating Stripe Payment session for userId: {}, amount: {}", userId, amount);
-try {
-    Session session =  createSession(userId, amount, "Pay Money From Wallet", "wallet-pay",
-            "http://localhost:5173/payment-success", "http://localhost:5173/payment-cancel");
-    log.info("Stripe Payment session created successfully for userId: {}", userId);
-    return session;
-}
-catch (Exception e) {
-    log.error("Failed to create Stripe Payment session for userId: {}, error: {}", userId, e.getMessage(), e);
-    throw new ResourceNotFoundException("Failed to create Stripe Payment session");
-}
-
-    }
-
-    // Common reusable method
-    private Session createSession(String userId, Double amount, String productName, String purpose, String successUrl, String cancelUrl) throws Exception {
+    // Reusable method for creating a Stripe checkout session
+    private Session createSession(String userId, Double amount, String productName, String type,
+                                  String successUrl, String cancelUrl) throws Exception {
         long amountInCents = (long) (amount * 100);
-
-        log.info("Creating Stripe session | userId: {}, amount: {}, product: {}, purpose: {}", userId, amount, productName, purpose);
-        log.debug("Success URL: {}, Cancel URL: {}", successUrl, cancelUrl);
 
         Map<String, String> metadata = new HashMap<>();
         metadata.put("userId", userId);
-        metadata.put("purpose", purpose);
+        metadata.put("type", type);
 
-        try {
-            SessionCreateParams params = SessionCreateParams.builder()
-                    .setMode(SessionCreateParams.Mode.PAYMENT)
-                    .setSuccessUrl(successUrl)
-                    .setCancelUrl(cancelUrl)
-                    .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
-                    .addLineItem(
-                            SessionCreateParams.LineItem.builder()
-                                    .setQuantity(1L)
-                                    .setPriceData(
-                                            SessionCreateParams.LineItem.PriceData.builder()
-                                                    .setCurrency("usd")
-                                                    .setUnitAmount(amountInCents)
-                                                    .setProductData(
-                                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                                    .setName(productName)
-                                                                    .build()
-                                                    )
-                                                    .build()
-                                    )
-                                    .build()
-                    )
-                    .putAllMetadata(metadata)
-                    .build();
+        SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(successUrl)
+                .setCancelUrl(cancelUrl)
+                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .addLineItem(
+                        SessionCreateParams.LineItem.builder()
+                                .setQuantity(1L)
+                                .setPriceData(
+                                        SessionCreateParams.LineItem.PriceData.builder()
+                                                .setCurrency("usd")
+                                                .setUnitAmount(amountInCents)
+                                                .setProductData(
+                                                        SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                                .setName(productName)
+                                                                .build()
+                                                )
+                                                .build()
+                                )
+                                .build()
+                )
+                .putAllMetadata(metadata)
+                .build();
 
-            Session session = Session.create(params);
-            log.info("Stripe session successfully created for userId: {} with sessionId: {}", userId, session.getId());
-            return session;
-
-        } catch (Exception e) {
-            log.error("Failed to create Stripe session for userId: {}, reason: {}", userId, e.getMessage(), e);
-            throw new ResourceNotFoundException("Failed to create Stripe session");
-        }
+        return Session.create(params);
     }
-
 }

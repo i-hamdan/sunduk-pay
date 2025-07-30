@@ -15,14 +15,13 @@ import java.util.List;
 public interface WalletService {
     String createWallet(WalletRequest walletRequest);
 
-
     String showBalance(String walletId);
 
     void downloadTransactions(String walletId, HttpServletResponse response) throws IOException;
 
-    String addMoneyToWallet(String userId, double amount, String paymentIntentId);
+    void addMoneyToWallet(String userId, double amount, String paymentIntentId);
 
-    String payMoneyFromWallet(String userId, double amount, String description);
+    void payMoneyFromWallet(String userId, double amount, String description);
 
    List<TransactionResponse> getAllTransactions(String uuid, String walletId);
 }

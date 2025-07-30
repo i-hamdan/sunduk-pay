@@ -1,12 +1,8 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.request.WalletRequest;
-
 import com.bxb.sunduk_pay.response.TransactionResponse;
-import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.service.WalletService;
-import com.stripe.model.checkout.Session;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +13,9 @@ import java.util.List;
 
 @RestController
 public class WalletController {
-    private final StripeService stripeService;
     private final WalletService walletService;
 
-    public WalletController(StripeService stripeService, WalletService walletService) {
-        this.stripeService = stripeService;
+    public WalletController(WalletService walletService) {
         this.walletService = walletService;
     }
 
@@ -44,29 +38,6 @@ public class WalletController {
         walletService.downloadTransactions(walletId, response);
     }
 
-    @PostMapping("/wallet/add-money")
-    public ResponseEntity<String> addMoneyToWallet(@RequestParam String userId, @RequestParam Double amount) {
-        try {
-            Session session = stripeService.createCheckoutSession(userId, amount);
-            return ResponseEntity.ok(session.getUrl());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to initiate add-money checkout session");
-        }
-    }
-
-    @PostMapping("/wallet-pay")
-    public ResponseEntity<String> payFromWallet(@RequestParam String userId, @RequestParam Double amount) {
-        try {
-            Session session = stripeService.createPaymentSession(userId, amount);
-            return ResponseEntity.ok(session.getUrl());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to initiate wallet payment session");
-        }
-    }
 
     @GetMapping("/wallet-transactions")
     public ResponseEntity<List<TransactionResponse>> getAllTransactions(@RequestParam String uuid, @RequestParam String walletId) {
