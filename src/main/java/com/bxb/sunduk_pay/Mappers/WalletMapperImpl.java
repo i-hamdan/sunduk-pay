@@ -20,7 +20,6 @@ public class WalletMapperImpl implements WalletMapper{
        walletResponse.setWalletId(wallet.getWalletId());
        walletResponse.setBalance(wallet.getBalance());
        walletResponse.setUser(wallet.getUser());
-       walletResponse.setTransactionHistory(toTransactionsResponse(wallet.getTransactionHistory()));
        return walletResponse;
    }
 
@@ -61,7 +60,7 @@ public class WalletMapperImpl implements WalletMapper{
 
     private TransactionResponse toTransactionResponse(Transaction transaction){
        TransactionResponse transactionResponse = new TransactionResponse();
-       transactionResponse.setTransactionId(transaction.getTransactionId());
+       transactionResponse.setUuid(transaction.getUser().getUuid());
        transactionResponse.setTransactionType(transaction.getTransactionType());
        transactionResponse.setAmount(transaction.getAmount());
        transactionResponse.setDescription(transaction.getDescription());

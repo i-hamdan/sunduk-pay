@@ -5,16 +5,15 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-
+@Log4j2
 @Component
 public class AuthenticationFilter implements Filter {
     private final SundukSecurityProperties securityProperties;
@@ -33,9 +32,11 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse httpServletResponse=(HttpServletResponse) response;
 
         String path = httpServletRequest.getRequestURI();
+        log.info("Incoming request: {} {}", httpServletRequest.getMethod(), path);
 
         if (securityProperties.getExcludePaths() != null &&
                 securityProperties.getExcludePaths().stream().anyMatch(path::startsWith)) {
+            log.debug("Skipping filter for public endpoint: {}", path);
             chain.doFilter(request, response);
             return;
         }
@@ -44,7 +45,7 @@ public class AuthenticationFilter implements Filter {
         HttpSession session = httpServletRequest.getSession(false);
 
         if (session == null || session.getAttribute("SPRING_SECURITY_CONTEXT") == null) {
-            logger.error("Session is invalid");
+            log.error("Session is null or invalid for path: {}", path);
            throw new InvalidUserException("Session is invalid");
 
         }
@@ -61,7 +62,7 @@ public class AuthenticationFilter implements Filter {
     private static void setSessionId(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies == null) {
-            logger.error("Cookies are invalid");
+            log.error("Cookies are missing in the request.");
             throw new InvalidUserException("Session is invalid");
         }
 
@@ -72,7 +73,7 @@ public class AuthenticationFilter implements Filter {
                 .orElse(null);
         if (sessionId == null || sessionId.isBlank()) {
 
-            logger.error("Session are invalid");
+            log.error("JSESSIONID not found or is blank.");
             throw new InvalidUserException("Session is invalid");
         }
 

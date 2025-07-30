@@ -1,44 +1,116 @@
-  spring:
-    security:
-      oauth2:
-        client:
-          registration:
-            google:
-              client-id: ${GOOGLE_CLIENT_ID}
-              client-secret: ${GOOGLE_CLIENT_SECRET}
-              scope:
-                - openid
-                - profile
-                - email
-              redirect-uri: "{baseUrl}/login/oauth2/code/google"
-          provider:
-            google:
-              authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-              token-uri: https://oauth2.googleapis.com/token
-              user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-              user-name-attribute: sub
+twilio:
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  from-number: ${TWILIO_FROM_NUMBER}
 
-    data:
-      mongodb:
-        host: localhost
-        port: 27017
-        database: MyDB
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
-  server:
-    port: 8080
-    servlet:
-      context-path: /api/sunduk-service
-      session:
-        timeout: 60m
-        cookie:
-          same-site: none
-          secure: true
-    tomcat:
-      background-processor-delay: 60
-  sunduk:
-    security:
-      exclude-paths:
-        - /api/sunduk-service/oauth2/authorization
-        - /api/sunduk-service/login/oauth2/code
-        - /api/sunduk-service/custom-logout
-        - /api/sunduk-service/custom-login
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: email-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: '*'
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: MyDB
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/sunduk-service
+    session:
+      timeout: 60m
+      cookie:
+        same-site: none
+        secure: true
+  tomcat:
+    background-processor-delay: 60
+
+sunduk:
+  security:
+    exclude-paths:
+      - /api/sunduk-service/oauth2/authorization
+      - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/custom-logout
+      - /api/sunduk-service/custom-login
+      - /api/sunduk-service/webhook
+
+  logging:
+    level:
+      com:
+        bxb:
+          sunduk_pay: DEBUG
+
+exchange:
+  api:
+    url: https://v6.exchangerate-api.com/v6/${EXCHANGE_API_KEY}/latest
+
+stripe:
+  key:
+    secret: ${STRIPE_SECRET_KEY}
+  webhook:
+    secret: ${STRIPE_WEBHOOK_SECRET}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stripeGateway:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
