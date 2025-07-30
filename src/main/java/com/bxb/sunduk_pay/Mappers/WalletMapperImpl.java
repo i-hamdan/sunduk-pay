@@ -20,7 +20,6 @@ public class WalletMapperImpl implements WalletMapper{
        walletResponse.setWalletId(wallet.getWalletId());
        walletResponse.setBalance(wallet.getBalance());
        walletResponse.setUser(wallet.getUser());
-       walletResponse.setTransactionHistory(toTransactionsResponse(wallet.getTransactionHistory()));
        return walletResponse;
    }
 

@@ -1,7 +1,10 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
+import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapperImpl;
+import com.bxb.sunduk_pay.event.TransactionEvent;
+import com.bxb.sunduk_pay.exception.CannotCreateWalletException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.Transaction;
@@ -19,13 +22,16 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -39,17 +45,21 @@ public class WalletServiceImpl implements WalletService {
     private final UserRepository userRepository;
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
-    private final WalletMapperImpl walletMapper;
+    private final WalletMapper walletMapper;
     private final TransactionMapper transactionMapper;
+    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
 
-    public WalletServiceImpl(UserRepository userRepository, WalletRepository walletRepository, TransactionRepository transactionRepository, WalletMapperImpl walletMapper, TransactionMapper transactionMapper) {
+
+    public WalletServiceImpl(UserRepository userRepository, WalletRepository walletRepository, TransactionRepository transactionRepository, WalletMapperImpl walletMapper, TransactionMapper transactionMapper, KafkaTemplate<String, TransactionEvent> kafkaTemplate) {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
         this.walletMapper = walletMapper;
         this.transactionMapper = transactionMapper;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
+    @Transactional
     public String createWallet(WalletRequest walletRequest) throws RuntimeException {
         log.info("Creating wallet for userId: {}", walletRequest.getUserId());
 
@@ -62,6 +72,11 @@ public class WalletServiceImpl implements WalletService {
         if (user.getIsDeleted()) {
             log.error("User with ID {} is marked as deleted.", walletRequest.getUserId());
             throw new UserNotFoundException("This user is already deleted and does not exist.");
+        }
+
+        if (walletRepository.findByUser_Uuid(user.getUuid()).isPresent()){
+            log.error("Wallet already exists for user {} with uuid : {}",user.getFullName(),user.getUuid());
+            throw new CannotCreateWalletException("User with uuid : "+walletRequest.getUserId()+" already has a wallet.");
         }
 
         Wallet wallet = new Wallet();
@@ -79,16 +94,16 @@ public class WalletServiceImpl implements WalletService {
 
     /// taiyyab bhai integrated code
     @Override
-    public String addMoneyToWallet(String userId, double amount, String paymentIntentId) {
-        log.info("Adding amount ${} to wallet for userId: {}", amount, userId);
+    public String addMoneyToWallet(String uuid, double amount, String paymentIntentId) {
+        log.info("Adding amount ${} to wallet for uuid: {}", amount, uuid);
 
-        Wallet wallet = walletRepository.findByUser_Uuid(userId).orElseThrow(() -> {
-            log.error("User not found with ID: {}", userId);
-            return new UserNotFoundException("User not found with ID: " + userId);
+        Wallet wallet = walletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
+            log.error("User not found with ID: {}", uuid);
+            return new UserNotFoundException("User not found with ID: " + uuid);
         });
 
         if (wallet.getIsDeleted()) {
-            log.error("Wallet not found for userId: {}", userId);
+            log.error("Wallet not found for uuid: {}", uuid);
             throw new WalletNotFoundException("Cannot add money. Wallet is deleted.");
         }
 
@@ -98,7 +113,7 @@ public class WalletServiceImpl implements WalletService {
 
         // Fetch user
         User user = userRepository.findById(wallet.getUser().getUuid())
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + uuid));
 
         // Create transaction
         Transaction transaction = new Transaction();
@@ -109,10 +124,12 @@ public class WalletServiceImpl implements WalletService {
         transaction.setStatus("SUCCESS");
         transaction.setWallet(wallet);
         transaction.setStripePaymentIntentId(paymentIntentId);
-        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setDateTime(LocalDateTime.now());
         transaction.setDescription("Money added via Stripe");
-
         transactionRepository.save(transaction);
+
+        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
+        kafkaTemplate.send("transaction-topic",transactionEvent);
 
         String message = "An amount of $" + amount + " has been added to your wallet successfully.";
         log.info(message);
@@ -149,7 +166,6 @@ public class WalletServiceImpl implements WalletService {
 
         // Deduct balance
         wallet.setBalance(wallet.getBalance() - amount);
-        walletRepository.save(wallet);
         log.info("Wallet balance deducted. Remaining balance: {}", wallet.getBalance());
 
 
@@ -161,10 +177,15 @@ public class WalletServiceImpl implements WalletService {
         transaction.setTransactionType(TransactionType.DEBIT);
         transaction.setStatus("SUCCESS");
         transaction.setWallet(wallet);
-        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setDateTime(LocalDateTime.now());
         transaction.setDescription(description != null ? description : "Money debited from wallet");
 
+        walletRepository.save(wallet);
         transactionRepository.save(transaction);
+
+
+        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
+        kafkaTemplate.send("transaction-topic",transactionEvent);
 
         String message = "Payment of $" + amount + " from wallet successful.";
         log.info(message);
@@ -247,10 +268,7 @@ public class WalletServiceImpl implements WalletService {
         int rowNum = 1;
         int count = 1;
 
-        List<Transaction> list = wallet.getTransactionHistory().stream()
-                .filter(transaction -> !transaction.getIsDeleted())
-                .toList();
-
+        List<Transaction> list = transactionRepository.findByWallet_walletIdAndUser_Uuid(walletId,wallet.getUser().getUuid());
         log.info("Writing {} transactions into Excel for walletId: {}", list.size(), walletId);
 
         for (Transaction transaction : list) {

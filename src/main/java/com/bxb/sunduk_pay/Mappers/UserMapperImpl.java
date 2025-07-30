@@ -1,7 +1,9 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
+import com.bxb.sunduk_pay.event.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -20,11 +22,22 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
 
         return userLoginResponse;
     }
+
+    @Override
+    public UserLoginResponse getUser(UserRequest user) {
+        UserLoginResponse userLoginResponse = new UserLoginResponse();
+        userLoginResponse.setEmail(user.getEmail());
+        userLoginResponse.setFullName(user.getFullName());
+        userLoginResponse.setPhoneNumber(user.getPhoneNumber());
+        return userLoginResponse;
+    }
+
     @Override
     public User toUser(UserLoginResponse response) {
         User user = new User();
         user.setFullName(response.getFullName());
         user.setEmail(response.getEmail());
+        user.setPhoneNumber(response.getPhoneNumber());
         return user;
     }
 
@@ -45,6 +58,15 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
             responses.add(toUserResponse(user));
         }
         return responses;
+    }
+
+    public UserKafkaEvent toKafkaEvent(User user,String eventType){
+        UserKafkaEvent kafkaEvent=new UserKafkaEvent();
+        kafkaEvent.setEmail(user.getEmail());
+        kafkaEvent.setUuid(user.getUuid());
+        kafkaEvent.setFullName(user.getFullName());
+        kafkaEvent.setEventType(eventType);
+        return kafkaEvent;
     }
 
 

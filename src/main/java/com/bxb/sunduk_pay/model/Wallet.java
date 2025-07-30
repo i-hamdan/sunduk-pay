@@ -17,6 +17,6 @@ public class Wallet {
     private Boolean isDeleted;
     @DBRef
     private User user;
-    @DBRef
-    private List<Transaction> transactionHistory = new ArrayList<>();
+//    @DBRef
+//    private List<Transaction> transactionHistory = new ArrayList<>();
 }

@@ -19,7 +19,7 @@ Configuration:
           interval: 1
           modulate: true
         SizeBasedTriggeringPolicy:
-          size: 100KB
+          size: 10MB
       DefaultRolloverStrategy:
         max: 7
 
