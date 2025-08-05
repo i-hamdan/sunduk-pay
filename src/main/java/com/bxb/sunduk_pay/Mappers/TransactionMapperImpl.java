@@ -15,8 +15,11 @@ public class TransactionMapperImpl implements TransactionMapper {
         TransactionResponse transactionResponse = new TransactionResponse();
 transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionResponse.setTransactionType(transaction.getTransactionType());
+        transactionResponse.setTransactionLevel(transaction.getTransactionLevel());
         transactionResponse.setDescription(transaction.getDescription());
         transactionResponse.setAmount(transaction.getAmount());
+        transactionResponse.setDateTime(transaction.getDateTime());
+        transactionResponse.setSubWalletId(transaction.getSubWalletId());
         transactionResponse.setWalletId(transaction.getWallet().getWalletId());
         transactionResponse.setFullName(transaction.getWallet().getUser().getFullName());
         return transactionResponse;

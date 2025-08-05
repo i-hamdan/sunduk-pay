@@ -7,10 +7,8 @@ import lombok.*;
 public class UserResponse {
     private String uuid;
     private String fullName;
-//    private String firstName;
-//    private String lastName;
-    private String gender;
+//    private String gender;
     private String email;
-    private String phoneNumber;
+//    private String phoneNumber;
 
 }

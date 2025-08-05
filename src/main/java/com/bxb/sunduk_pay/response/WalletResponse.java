@@ -9,8 +9,10 @@ import java.util.List;
 @Setter
 @ToString
 public class WalletResponse {
+    private UserResponse user;
     private String walletId;
-    private Double balance;
-    private User user;
-    private List<TransactionResponse> transactionHistory;
+    private Double totalBalance;
+    private Double reservedBalance;
+    private Double availableBalance;
+    private List<SubWalletResponse> subWallets;
 }

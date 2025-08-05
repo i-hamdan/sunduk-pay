@@ -1,11 +1,12 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
+import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.Wallet;
+import com.bxb.sunduk_pay.response.SubWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.response.WalletResponse;
-import com.bxb.sunduk_pay.response.WalletsResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,36 +16,42 @@ import java.util.List;
 @Component
 public class WalletMapperImpl implements WalletMapper{
 
-   public WalletResponse toWalletResponse(Wallet wallet){
+    private final UserMapper userMapper;
+
+    public WalletMapperImpl(UserMapper userMapper) {
+        this.userMapper = userMapper;
+    }
+
+    public WalletResponse toWalletResponse(Wallet wallet,Double reservedBalance,Double availableBalance){
        WalletResponse walletResponse = new WalletResponse();
        walletResponse.setWalletId(wallet.getWalletId());
-       walletResponse.setBalance(wallet.getBalance());
-       walletResponse.setUser(wallet.getUser());
+       walletResponse.setTotalBalance(wallet.getBalance());
+       walletResponse.setReservedBalance(reservedBalance);
+       walletResponse.setAvailableBalance(availableBalance);
+       walletResponse.setUser(userMapper.toUserResponse(wallet.getUser()));
+       walletResponse.setSubWallets(toListOfSubWalletResponse(wallet.getSubWallets()));
        return walletResponse;
    }
 
-    public List<WalletsResponse> toWalletsResponse(List<Wallet> wallets){
-       List<WalletsResponse> walletList = new ArrayList<>(wallets.size());
-    for (Wallet wallet:wallets){
-        walletList.add(walletToWalletsResponse(wallet));
+   private List<SubWalletResponse> toListOfSubWalletResponse(List<SubWallet> subWallets){
+       List<SubWalletResponse> subWalletResponses = new ArrayList<>();
+       for (SubWallet subWallet : subWallets){
+           subWalletResponses.add(toSubWalletResponse(subWallet));
+       }
+       return subWalletResponses;
+   }
+
+
+    private SubWalletResponse toSubWalletResponse(SubWallet subWallet){
+       SubWalletResponse subWalletResponse = new SubWalletResponse();
+       subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
+       subWalletResponse.setAmount(subWallet.getBalance());
+       return subWalletResponse;
     }
-    return walletList;
-    }
 
 
-        private WalletsResponse walletToWalletsResponse(Wallet wallet) {
-        if ( wallet == null ) {
-            return null;
-        }
 
-        WalletsResponse walletsResponse = new WalletsResponse();
 
-        walletsResponse.setWalletId( wallet.getWalletId() );
-        walletsResponse.setBalance( wallet.getBalance() );
-        walletsResponse.setUser( wallet.getUser() );
-
-        return walletsResponse;
-    }
 
 
 

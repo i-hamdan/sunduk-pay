@@ -1,11 +1,8 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 
-import com.bxb.sunduk_pay.event.TransactionEvent;
 import com.bxb.sunduk_pay.event.UserKafkaEvent;
-import com.bxb.sunduk_pay.exception.TransactionLogException;
 import com.bxb.sunduk_pay.exception.UserActivityLogException;
-import com.bxb.sunduk_pay.logModel.TransactionLog;
 import com.bxb.sunduk_pay.logModel.UserActivityLog;
 import com.bxb.sunduk_pay.repository.TransactionLogRepository;
 import com.bxb.sunduk_pay.repository.UserActivityLogRepository;
@@ -57,30 +54,4 @@ public class ActivityLogService {
         }
     }
 
-    @KafkaListener(topics = "transaction-topic", groupId = "transaction-log-group")
-    public void consumeTransactionLog(TransactionEvent transactionEvent) {
-        try {
-            log.info("Received transaction event: {}", transactionEvent);
-
-            TransactionLog transactionLog = TransactionLog.builder()
-                    .logId(UUID.randomUUID().toString())
-                    .uuid(transactionEvent.getUuid())
-                    .walletId(transactionEvent.getWalletId())
-                    .transactionId(transactionEvent.getTransactionId())
-                    .dateTime(LocalDateTime.now())
-                    .email(transactionEvent.getEmail())
-                    .fullName(transactionEvent.getFullName())
-                    .phoneNumber(transactionEvent.getPhoneNumber())
-                    .amount(transactionEvent.getAmount())
-                    .remainingAmount(transactionEvent.getRemainingAmount())
-                    .transactionType(transactionEvent.getTransactionType())
-                    .build();
-
-            transactionLogRepository.save(transactionLog);
-            log.info("Saved transaction log: {}", transactionLog);
-        } catch (Exception e) {
-            log.error("Error saving transaction log for txn ID: {}", transactionEvent.getTransactionId());
-            throw new TransactionLogException("Failed to process transaction log for txn ID: " + transactionEvent.getTransactionId());
-        }
-    }
 }
