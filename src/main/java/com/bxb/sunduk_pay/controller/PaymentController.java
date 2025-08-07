@@ -18,7 +18,7 @@ public class PaymentController {
     }
 
     @PostMapping("/checkout")
-    public CompletableFuture<ResponseEntity<String>> addMoneyToWallet(@RequestParam String userId, @RequestParam Double amount, @RequestParam String type) {
-        return paymentService.createCheckoutSession(userId, amount, type);
+    public CompletableFuture<ResponseEntity<String>> addMoneyToWallet(@RequestParam String uuid, @RequestParam Double amount, @RequestParam String type) {
+        return paymentService.createCheckoutSession(uuid, amount, type);
     }
 }

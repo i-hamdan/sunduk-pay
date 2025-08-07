@@ -3,7 +3,6 @@ package com.bxb.sunduk_pay.Mappers;
 
 import com.bxb.sunduk_pay.event.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -13,7 +12,6 @@ import java.util.List;
 
 public interface UserMapper {
     UserLoginResponse getUser(OidcUser user);
-    UserLoginResponse getUser(UserRequest user);
     User toUser(UserLoginResponse response);
     UserResponse toUserResponse(User user);
     UserKafkaEvent toKafkaEvent(User user, String eventType);
