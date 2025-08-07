@@ -1,13 +1,13 @@
 package com.bxb.sunduk_pay.model;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
 import java.util.List;
-
+@Builder
 @Document
 @Data
 public class Wallet {
@@ -18,5 +18,7 @@ public class Wallet {
     @DBRef
     private User user;
     @DBRef
-    private List<Transaction> transactionHistory = new ArrayList<>();
+    private List<Transaction> transactionHistory;
+
+    private List<SubWallet> subWallets;
 }

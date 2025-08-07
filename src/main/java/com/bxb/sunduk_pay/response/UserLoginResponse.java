@@ -7,6 +7,7 @@ import lombok.*;
 public class UserLoginResponse {
     private String email;
     private String fullName;
+    private String phoneNumber;
 }
 
 

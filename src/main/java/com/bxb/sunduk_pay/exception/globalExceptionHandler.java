@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class globalExceptionHandler {
 
-    @ExceptionHandler(value = CannotDeleteWalletException.class)
+    @ExceptionHandler(value = CannotCreateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleCannotDeleteWalletException(CannotDeleteWalletException e, HttpServletRequest request) {
+    public ErrorResponse handleCannotCreateWalletException(CannotCreateWalletException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
@@ -52,4 +52,28 @@ public class globalExceptionHandler {
     public ErrorResponse handleInvalidSessionException(InvalidSessionException e,HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
+    @ExceptionHandler(CustomExchangeRateException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse CustomExchangeRateException(CustomExchangeRateException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+    @ExceptionHandler(NullAmountException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidAmount(NullAmountException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

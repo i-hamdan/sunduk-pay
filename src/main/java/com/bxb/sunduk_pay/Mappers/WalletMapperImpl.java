@@ -5,7 +5,6 @@ import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.Wallet;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.response.WalletResponse;
-import com.bxb.sunduk_pay.response.WalletsResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -19,33 +18,12 @@ public class WalletMapperImpl implements WalletMapper{
        WalletResponse walletResponse = new WalletResponse();
        walletResponse.setWalletId(wallet.getWalletId());
        walletResponse.setBalance(wallet.getBalance());
-       walletResponse.setUser(wallet.getUser());
-       walletResponse.setTransactionHistory(toTransactionsResponse(wallet.getTransactionHistory()));
+       walletResponse.setUuid(wallet.getUser().getUuid());
+       walletResponse.setSubWallets(wallet.getSubWallets());
        return walletResponse;
    }
 
-    public List<WalletsResponse> toWalletsResponse(List<Wallet> wallets){
-       List<WalletsResponse> walletList = new ArrayList<>(wallets.size());
-    for (Wallet wallet:wallets){
-        walletList.add(walletToWalletsResponse(wallet));
-    }
-    return walletList;
-    }
 
-
-        private WalletsResponse walletToWalletsResponse(Wallet wallet) {
-        if ( wallet == null ) {
-            return null;
-        }
-
-        WalletsResponse walletsResponse = new WalletsResponse();
-
-        walletsResponse.setWalletId( wallet.getWalletId() );
-        walletsResponse.setBalance( wallet.getBalance() );
-        walletsResponse.setUser( wallet.getUser() );
-
-        return walletsResponse;
-    }
 
 
 
@@ -61,7 +39,7 @@ public class WalletMapperImpl implements WalletMapper{
 
     private TransactionResponse toTransactionResponse(Transaction transaction){
        TransactionResponse transactionResponse = new TransactionResponse();
-       transactionResponse.setTransactionId(transaction.getTransactionId());
+       transactionResponse.setUuid(transaction.getUser().getUuid());
        transactionResponse.setTransactionType(transaction.getTransactionType());
        transactionResponse.setAmount(transaction.getAmount());
        transactionResponse.setDescription(transaction.getDescription());
