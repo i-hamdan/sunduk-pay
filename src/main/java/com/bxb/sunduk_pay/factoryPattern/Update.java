@@ -16,6 +16,7 @@ import com.bxb.sunduk_pay.response.WalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.validations.Validations;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -29,11 +30,13 @@ public class Update implements WalletOperation {
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
     private final WalletMapper walletMapper;
-    public Update(WalletRepository walletRepository, TransactionRepository transactionRepository, UserRepository userRepository, WalletMapper walletMapper) {
+    private final Validations validations;
+    public Update(WalletRepository walletRepository, TransactionRepository transactionRepository, UserRepository userRepository, WalletMapper walletMapper, Validations validations) {
         this.walletRepository = walletRepository;
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.walletMapper = walletMapper;
+        this.validations = validations;
     }
 
     @Override
@@ -60,10 +63,8 @@ public class Update implements WalletOperation {
 
 
         Double amount = walletRequest.getAmount();
+validations.validateBalance(sourceSubWallet.getBalance(),amount);
 
-if (sourceSubWallet.getAvailableBalance()<amount){
-    throw new InsufficientBalanceException("Insufficient Balance in source sub wallet");
-}
 // deduct amount from one wallet (jisse pay kr rhe hai)
 sourceSubWallet.setAvailableBalance(sourceSubWallet.getAvailableBalance() - amount);
 sourceSubWallet.setUpdatedAt(LocalDateTime.now());
@@ -77,7 +78,7 @@ targetSubWallet.setUpdatedAt(LocalDateTime.now());
                 .amount(amount)
                 .description("Transfer to SubWallet ID: " + targetSubWallet.getSubWalletId())
                 .status("COMPLETED")
-                .subWallet(sourceSubWallet)
+                .subWalletId(sourceSubWallet)
                 .wallet(wallet)
                 .user(wallet.getUser())
                 .dateTime(LocalDateTime.now())
@@ -90,7 +91,7 @@ targetSubWallet.setUpdatedAt(LocalDateTime.now());
                 .amount(amount)
                 .description("Received from SubWallet ID: " + sourceSubWallet.getSubWalletId())
                 .status("COMPLETED")
-                .subWallet(targetSubWallet)
+                .subWalletId(targetSubWallet)
                 .wallet(wallet)
                 .user(wallet.getUser())
                 .dateTime(LocalDateTime.now())

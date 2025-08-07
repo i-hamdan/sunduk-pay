@@ -31,5 +31,5 @@ public class Transaction {
     @DBRef
     private User user;
     @DBRef
-    private SubWallet subWallet;
+    private SubWallet subWalletId;
 }

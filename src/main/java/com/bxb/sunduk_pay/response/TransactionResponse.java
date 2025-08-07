@@ -16,4 +16,5 @@ public class TransactionResponse {
     private LocalDateTime dateTime;
     private String walletId;
     private String fullName;
+    private String subWalletId;
 }
