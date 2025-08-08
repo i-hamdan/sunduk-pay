@@ -1,29 +1,26 @@
 package com.bxb.sunduk_pay.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jdk.jfr.Timestamp;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Document
+import java.time.LocalDateTime;
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Wallet {
+@Document
+public class MasterWallet {
     @Id
-    private String walletId;
+    private String masterWalletId;
     private Double balance;
     private Boolean isDeleted;
+    @Timestamp
+    private LocalDateTime createdAt;
     @DBRef
     private User user;
     @DBRef
-    private List<Transaction> transactionHistory = new ArrayList<>();
-    private List<SubWallet> subWallets;
+    private MainWallet mainWallet;
 }

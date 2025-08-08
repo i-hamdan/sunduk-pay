@@ -37,13 +37,13 @@ public class StripeWebhookController {
 
             if (rawData instanceof Session session) {
                 String userId = session.getMetadata().get("userId");
-                String purpose = session.getMetadata().get("purpose"); // Important
+                String type = session.getMetadata().get("type");
                 double amount = session.getAmountTotal() / 100.0;
                 String paymentIntentId = session.getPaymentIntent();
 
-                if ("add-money".equals(purpose)) {
+                if ("add".equals(type)) {
                     walletService.addMoneyToWallet(userId, amount, paymentIntentId);
-                } else if ("wallet-pay".equals(purpose)) {
+                } else if ("pay".equals(type)) {
                     walletService.payMoneyFromWallet(userId, amount, "Paid via Stripe Checkout");
                 }
             }

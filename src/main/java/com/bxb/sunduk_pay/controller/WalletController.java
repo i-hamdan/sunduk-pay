@@ -1,44 +1,33 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.request.SubWalletRequest;
-import com.bxb.sunduk_pay.request.SubWalletTransferRequest;
+import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
 import com.bxb.sunduk_pay.request.WalletRequest;
-
 import com.bxb.sunduk_pay.response.TransactionResponse;
-import com.bxb.sunduk_pay.response.WalletResponse;
-import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.service.WalletService;
-import com.stripe.model.checkout.Session;
 import jakarta.servlet.http.HttpServletResponse;
-import org.apache.kafka.common.protocol.types.Field;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
-
+@Log4j2
 @RestController
 public class WalletController {
-    private final StripeService stripeService;
+    private final WalletOperationFactory walletFactory;
     private final WalletService walletService;
 
-    public WalletController(StripeService stripeService, WalletService walletService) {
-        this.stripeService = stripeService;
+    public WalletController(WalletOperationFactory walletFactory, WalletService walletService) {
+        this.walletFactory = walletFactory;
         this.walletService = walletService;
     }
 
     // create wallet
-    @PostMapping("/wallet-create")
-    public ResponseEntity<String> createWallet(@RequestBody WalletRequest walletRequest) {
-        String response = walletService.createWallet(walletRequest);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/wallet-createSubWallet")
-    public void createSubWallet(@RequestBody SubWalletRequest request){
-        walletService.createSubWallet(request);
-    }
+//    @PostMapping("/wallet-create")
+//    public ResponseEntity<String> createWallet(@RequestBody WalletRequest walletRequest) {
+//        return new ResponseEntity<>(walletService.createWallet(walletRequest), HttpStatus.CREATED);
+//    }
 
     //this api will return the current balance of a wallet by walletId
     @GetMapping("/wallet-showBalance/{walletId}")
@@ -53,44 +42,12 @@ public class WalletController {
         walletService.downloadTransactions(walletId, response);
     }
 
-    @PostMapping("/wallet/add-money")
-    public ResponseEntity<String> addMoneyToWallet(@RequestParam String userId, @RequestParam Double amount) {
-        try {
-            Session session = stripeService.createCheckoutSession(userId, amount);
-            return ResponseEntity.ok(session.getUrl());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to initiate add-money checkout session");
-        }
-    }
-
-    @PostMapping("/wallet-pay")
-    public ResponseEntity<String> payFromWallet(@RequestParam String userId, @RequestParam Double amount) {
-        try {
-            Session session = stripeService.createPaymentSession(userId, amount);
-            return ResponseEntity.ok(session.getUrl());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to initiate wallet payment session");
-        }
-    }
-
-    @PostMapping("/transferToSubWallet")
-    public ResponseEntity<String> addMoneyToSubWallet(@RequestBody SubWalletTransferRequest request){
-        return ResponseEntity.ok( walletService.addMoneyToSubWallet(request));
-    }
-
-
 
     @GetMapping("/wallet-transactions")
-    public ResponseEntity<List<TransactionResponse>> getAllTransactions(@RequestParam String uuid,@RequestParam String type) {
-        return ResponseEntity.ok(walletService.getAllTransactions(uuid.trim(),type.trim()));
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions(@RequestParam String uuid, @RequestParam String walletId) {
+        //Here trim is used to remove any whitespace and new line character from requestParams
+        return new ResponseEntity<>(walletService.getAllTransactions(uuid.trim(),walletId.trim()), HttpStatus.OK);
     }
 
- @GetMapping("/wallet-getAllInfo")
-    public ResponseEntity<WalletResponse> getInfoByUuid(@RequestParam String uuid){
-     return ResponseEntity.ok(walletService.getInfoByUuid(uuid));
- }
+
 }
