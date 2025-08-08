@@ -35,27 +35,27 @@ public class WalletMapperImpl implements WalletMapper{
          return walletResponse;
    }
 
-
-    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){
-       List<TransactionResponse> responses = new ArrayList<>(transactions.size());
-       for(Transaction transaction : transactions){
-           responses.add(toTransactionResponse(transaction));
-       }
-   return responses;
-   }
-
-
-
-    private TransactionResponse toTransactionResponse(Transaction transaction){
-       TransactionResponse transactionResponse = new TransactionResponse();
-       transactionResponse.setUuid(transaction.getUser().getUuid());
-       transactionResponse.setTransactionType(transaction.getTransactionType());
-       transactionResponse.setAmount(transaction.getAmount());
-       transactionResponse.setDescription(transaction.getDescription());
-       transactionResponse.setDateTime(transaction.getDateTime());
-       transactionResponse.setWalletId(transaction.getMasterWalletId().getMainWalletId());
-       transactionResponse.setFullName(transaction.getMasterWalletId().getUser().getFullName());
-       return transactionResponse;
-    }
+//
+//    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){
+//       List<TransactionResponse> responses = new ArrayList<>(transactions.size());
+//       for(Transaction transaction : transactions){
+//           responses.add(toTransactionResponse(transaction));
+//       }
+//   return responses;
+//   }
+//
+//
+//
+//    private TransactionResponse toTransactionResponse(Transaction transaction){
+//       TransactionResponse transactionResponse = new TransactionResponse();
+//       transactionResponse.setUuid(transaction.getUser().getUuid());
+//       transactionResponse.setTransactionType(transaction.getTransactionType());
+//       transactionResponse.setAmount(transaction.getAmount());
+//       transactionResponse.setDescription(transaction.getDescription());
+//       transactionResponse.setDateTime(transaction.getDateTime());
+//       transactionResponse.setMainWalletId(transaction.getMasterWalletId().getMainWalletId());
+//       transactionResponse.setFullName(transaction.getMasterWalletId().getUser().getFullName());
+//       return transactionResponse;
+//    }
 
 }

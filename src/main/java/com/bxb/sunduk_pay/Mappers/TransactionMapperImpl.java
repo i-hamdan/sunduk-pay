@@ -17,8 +17,8 @@ transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionResponse.setTransactionType(transaction.getTransactionType());
         transactionResponse.setDescription(transaction.getDescription());
         transactionResponse.setAmount(transaction.getAmount());
-        transactionResponse.setWalletId(transaction.getMasterWalletId().getMainWalletId());
-        transactionResponse.setFullName(transaction.getMasterWalletId().getUser().getFullName());
+        transactionResponse.setMainWalletId(transaction.getMainWallet().getMainWalletId());
+        transactionResponse.setFullName(transaction.getUser().getFullName());
         return transactionResponse;
     }
 
@@ -32,7 +32,7 @@ transactionResponse.setUuid(transaction.getUser().getUuid());
         }
     public TransactionEvent toTransactionEvent(Transaction transaction){
         TransactionEvent transactionEvent =new TransactionEvent();
-        transactionEvent.setWalletId(transaction.getMasterWalletId().getMainWalletId());
+        transactionEvent.setWalletId(transaction.getMainWallet().getMainWalletId());
         transactionEvent.setTransactionId(transaction.getTransactionId());
         transactionEvent.setTransactionType(transaction.getTransactionType());
         transactionEvent.setAmount(transaction.getAmount());
@@ -40,7 +40,7 @@ transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionEvent.setEmail(transaction.getUser().getEmail());
         transactionEvent.setUuid(transaction.getUser().getUuid());
         transactionEvent.setFullName(transaction.getUser().getFullName());
-        transactionEvent.setRemainingAmount(transaction.getMasterWalletId().getBalance());
+        transactionEvent.setRemainingAmount(transaction.getMainWallet().getBalance());
         transactionEvent.setPhoneNumber(transaction.getUser().getPhoneNumber());
         return transactionEvent;
     }

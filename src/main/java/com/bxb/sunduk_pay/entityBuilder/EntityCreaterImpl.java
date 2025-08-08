@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 public class EntityCreaterImpl implements EntityCreater {
 
     @Override
-    public Transaction createInternalDebitTransaction(SubWallet sourceSubWallet, MainWallet wallet, double amount, SubWallet targetSubWallet) {
+    public Transaction createInternalDebitTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
                 return Transaction.builder()
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INTERNAL)
                 .amount(amount)
                 .description("Transfer to SubWallet ID: " + targetSubWallet.getSubWalletId())
                 .status("COMPLETED")
-                .mainWalletId(sourceSubWallet)
-                .masterWalletId(wallet)
+                .mainWallet(wallet)
+               .subWalletId(subWalletId)
                 .user(wallet.getUser())
                 .dateTime(LocalDateTime.now())
                 .isDeleted(false)
@@ -29,15 +29,15 @@ public class EntityCreaterImpl implements EntityCreater {
     }
 
     @Override
-    public Transaction createInternalCreditTransaction(SubWallet sourceSubWallet, MainWallet wallet, double amount, SubWallet targetSubWallet) {
+    public Transaction createInternalCreditTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
         return Transaction.builder()
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INTERNAL)
                 .amount(amount)
                 .description("Transfer to SubWallet ID: " + targetSubWallet.getSubWalletId())
                 .status("COMPLETED")
-                .mainWalletId(sourceSubWallet)
-                .masterWalletId(wallet)
+                .mainWallet(wallet)
+                .subWalletId(subWalletId)
                 .user(wallet.getUser())
                 .dateTime(LocalDateTime.now())
                 .isDeleted(false)

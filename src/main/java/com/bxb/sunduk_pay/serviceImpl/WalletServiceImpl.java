@@ -139,7 +139,7 @@ private final WalletOperationFactory walletOperationFactory;
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .status("SUCCESS")
-                .masterWalletId(wallet)
+//                .masterWalletId(wallet)
                 .stripePaymentIntentId(paymentIntentId)
                 .dateTime(LocalDateTime.now())
                 .description("money Added Via Strupe")
@@ -208,7 +208,7 @@ MainWallet mainWallet = wallet.getMainWallet();
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .status("SUCCESS")
-                .masterWalletId(wallet)
+//                .masterWalletId(wallet)
                 .dateTime(LocalDateTime.now())
                 .description("money Debited from wallet")
                 .build();
@@ -254,7 +254,7 @@ MainWallet mainWallet = wallet.getMainWallet();
         log.info("Fetching all transactions for userId: {} and walletId: {}", uuid, walletId);
 
         List<Transaction> allTransactionsByWalletId = transactionRepository
-                .findByWallet_walletIdAndUser_Uuid(walletId, uuid);
+                .findByMainWallet_mainWalletIdAndUser_Uuid(walletId, uuid);
 
         log.info("Found {} transactions for walletId: {}", allTransactionsByWalletId.size(), walletId);
 
@@ -325,7 +325,7 @@ MainWallet mainWallet = wallet.getMainWallet();
         int rowNum = 1;
         int count = 1;
 
-        List<Transaction> list = transactionRepository.findByWallet_walletIdAndUser_Uuid(walletId,wallet.getUser().getUuid());
+        List<Transaction> list = transactionRepository.findByMainWallet_mainWalletIdAndUser_Uuid(walletId,wallet.getUser().getUuid());
         log.info("Writing {} transactions into Excel for walletId: {}", list.size(), walletId);
 
         for (Transaction transaction : list) {

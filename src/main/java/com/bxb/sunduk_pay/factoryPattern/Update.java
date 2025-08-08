@@ -64,8 +64,8 @@ sourceSubWallet.setUpdatedAt(LocalDateTime.now());
 targetSubWallet.setBalance(targetSubWallet.getBalance() + amount);
 targetSubWallet.setUpdatedAt(LocalDateTime.now());
 
-        Transaction debitTxn = entityCreater.createInternalDebitTransaction(sourceSubWallet, wallet, amount, targetSubWallet);
-        Transaction creditTxn = entityCreater.createInternalCreditTransaction(sourceSubWallet, wallet, amount, targetSubWallet);
+        Transaction debitTxn = entityCreater.createInternalDebitTransaction(sourceSubWallet.getSubWalletId(), wallet, amount, targetSubWallet);
+        Transaction creditTxn = entityCreater.createInternalCreditTransaction(sourceSubWallet.getSubWalletId(), wallet, amount, targetSubWallet);
 
         List<Transaction>transactions =new ArrayList<>();
         transactions.add(creditTxn);
