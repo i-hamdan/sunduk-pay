@@ -18,12 +18,12 @@ public class ValidationsImpl implements Validations{
     }
 
 
-    public User validateUserExists(String uuid) {
+    public User getUserInfo(String uuid) {
         return userRepository.findById(uuid)
                 .orElseThrow(() -> new UserNotFoundException("User not found with UUID: " + uuid));
     }
 
-    public MainWallet validateWalletExistsForUser(String uuid) {
+    public MainWallet getMainWalletInfo(String uuid) {
         return mainWalletRepository.findByUser_Uuid(uuid)
                 .orElseThrow(() -> new WalletNotFoundException("Wallet not found for user: " + uuid));
     }
@@ -37,20 +37,30 @@ public class ValidationsImpl implements Validations{
 
 
 
-    public void validateTransfer(SubWallet sourceWalletId, SubWallet targetWalletId, Double amount) {
-        if (sourceWalletId == null || targetWalletId == null) {
+    public void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount) {
+        if (mainWallet == null || subWallet == null) {
             throw new ResourceNotFoundException("Source or Target SubWallet cannot be null");
         }
         if (amount == null || amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero");
         }
 
-        if (sourceWalletId.getBalance() < amount) {
-            throw new InsufficientBalanceException("Insufficient funds in sourceWalletId SubWallet");
+        if (mainWallet.getBalance() < amount) {
+            throw new InsufficientBalanceException("Insufficient funds in mainWallet SubWallet");
         }
 
-        if (sourceWalletId.getSubWalletId().equals(targetWalletId.getSubWalletId())) {
-            throw new IllegalArgumentException("Source and Target SubWallets cannot be the same");
+         }
+
+    @Override
+    public void checkSubWalletAmount( SubWallet subWallet, Double amount) {
+
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
         }
+
+        if (subWallet.getBalance() < amount) {
+            throw new InsufficientBalanceException("Insufficient funds in mainWallet SubWallet");
+        }
+
     }
 }

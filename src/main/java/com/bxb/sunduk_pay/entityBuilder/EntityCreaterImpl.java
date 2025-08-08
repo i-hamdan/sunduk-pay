@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class EntityCreaterImpl implements EntityCreater {
 
     @Override
-    public Transaction createInternalDebitTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
+    public Transaction createDebitTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
                 return Transaction.builder()
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INTERNAL)
@@ -29,7 +29,7 @@ public class EntityCreaterImpl implements EntityCreater {
     }
 
     @Override
-    public Transaction createInternalCreditTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
+    public Transaction createCreditTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
         return Transaction.builder()
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INTERNAL)

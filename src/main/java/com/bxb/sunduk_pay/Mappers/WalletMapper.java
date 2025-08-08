@@ -9,6 +9,5 @@ import com.bxb.sunduk_pay.response.WalletResponse;
 
 public interface WalletMapper {
      WalletResponse toWalletResponse(MainWallet wallet);
-     WalletResponse toTransferResponse(SubWallet sourceWallet, SubWallet targetWallet, Double amount);
 
 }

@@ -24,16 +24,6 @@ public class WalletMapperImpl implements WalletMapper{
        return walletResponse;
    }
 
-    @Override
-    public WalletResponse toTransferResponse(SubWallet sourceWallet, SubWallet targetWallet, Double amount) {
-        WalletResponse walletResponse = new WalletResponse();
-        walletResponse.setSourceSubWalletId(sourceWallet.getSubWalletId());
-        walletResponse.setSourceAvailableBalance(sourceWallet.getBalance());
-        walletResponse.setTargetSubWalletId(targetWallet.getSubWalletId());
-        walletResponse.setTargetAvailableBalance(sourceWallet.getBalance());
-        walletResponse.setTransferredAmount(amount);
-         return walletResponse;
-   }
 
 //
 //    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){

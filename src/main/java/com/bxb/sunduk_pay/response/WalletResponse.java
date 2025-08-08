@@ -10,6 +10,9 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class WalletResponse {
@@ -19,11 +22,10 @@ public class WalletResponse {
     private Double balance;
     private Double TargetBalance;
     private List<TransactionResponse> transactionHistory;
-
-// this fields for sub wallets for update
     private String sourceSubWalletId;
     private Double sourceAvailableBalance;
     private String targetSubWalletId;
     private Double targetAvailableBalance;
     private Double transferredAmount;
+    private String message;
 }

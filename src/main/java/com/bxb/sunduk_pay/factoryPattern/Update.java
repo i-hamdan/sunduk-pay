@@ -12,6 +12,7 @@ import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.request.WalletRequest;
 import com.bxb.sunduk_pay.response.WalletResponse;
+import com.bxb.sunduk_pay.util.ActionType;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import org.springframework.stereotype.Service;
@@ -46,37 +47,35 @@ public class Update implements WalletOperation {
     @Override
     public WalletResponse perform(WalletRequest walletRequest) {
         // is user Exists
-        User user = validations.validateUserExists(walletRequest.getUuid());
+        User user = validations.getUserInfo(walletRequest.getUuid());
         //  Validate wallet
-        MainWallet wallet = validations.validateWalletExistsForUser(user.getUuid());
+        MainWallet wallet = validations.getMainWalletInfo(user.getUuid());
         //  3. Validate source and target subwallets
-        SubWallet sourceSubWallet = validations.validateSubWalletExists(wallet, walletRequest.getSubWalletId());
-        SubWallet targetSubWallet = validations.validateSubWalletExists(wallet, walletRequest.getTargetSubwalletId());
+        SubWallet targetSubWallet = validations.validateSubWalletExists(wallet, walletRequest.getSubWalletId());
 
+List<Transaction> transactions=new ArrayList<>();
 
         Double amount = walletRequest.getAmount();
-        validations.validateTransfer(sourceSubWallet, targetSubWallet, walletRequest.getAmount());
+        if (walletRequest.getActionType().equals(ActionType.ADD)) {
+            //deduct from main wallet
+            validations.checkMainWalletAmount(wallet, targetSubWallet, amount);
+            wallet.setBalance(wallet.getBalance() - amount);
+            wallet.setUpdatedAt(LocalDateTime.now());
+            //add amount
+            targetSubWallet.setBalance(targetSubWallet.getBalance() + amount);
+            targetSubWallet.setUpdatedAt(LocalDateTime.now());
+// debit for main Wallet
+            transactions.add(entityCreater.createDebitTransaction(null, wallet, amount, targetSubWallet));
+            // credit transaction for subWallet
+            transactions.add(entityCreater.createCreditTransaction(targetSubWallet.getSubWalletId(), wallet, amount, targetSubWallet));
+        }
 
-// deduct amount from one wallet (jisse pay kr rhe hai)
-sourceSubWallet.setBalance(sourceSubWallet.getBalance() - amount);
-sourceSubWallet.setUpdatedAt(LocalDateTime.now());
-//add amount
-targetSubWallet.setBalance(targetSubWallet.getBalance() + amount);
-targetSubWallet.setUpdatedAt(LocalDateTime.now());
-
-        Transaction debitTxn = entityCreater.createInternalDebitTransaction(sourceSubWallet.getSubWalletId(), wallet, amount, targetSubWallet);
-        Transaction creditTxn = entityCreater.createInternalCreditTransaction(sourceSubWallet.getSubWalletId(), wallet, amount, targetSubWallet);
-
-        List<Transaction>transactions =new ArrayList<>();
-        transactions.add(creditTxn);
-        transactions.add(debitTxn);
         transactionRepository.saveAll(transactions);
         wallet.getTransactionHistory().addAll(transactions);
         mainWalletRepository.save(wallet);
 
 
-        WalletResponse walletResponse = walletMapper.toTransferResponse(sourceSubWallet,targetSubWallet,amount);
-        return walletResponse;
+        return WalletResponse.builder().message("Amount added Successfully").build();
 
 
     }
