@@ -1,9 +1,7 @@
 package com.bxb.sunduk_pay.response;
 
 import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.core.util.Json;
 import lombok.*;
 
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.List;
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class WalletResponse {
+public class MainWalletResponse {
     private String uuid;
     private String walletId; // main walletId
     private List<SubWallet> subWallets;

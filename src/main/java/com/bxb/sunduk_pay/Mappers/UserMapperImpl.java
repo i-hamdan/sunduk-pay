@@ -38,9 +38,9 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         UserResponse response = new UserResponse();
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
-        response.setPhoneNumber(user.getPhoneNumber());
+//        response.setPhoneNumber(user.getPhoneNumber());
         response.setUuid(user.getUuid());
-        response.setGender(user.getGender());
+//        response.setGender(user.getGender());
         return response;
     }
 

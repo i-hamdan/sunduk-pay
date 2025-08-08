@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.service;
 
-import com.bxb.sunduk_pay.request.WalletRequest;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,4 +22,5 @@ public interface WalletService {
    List<TransactionResponse> getAllTransactions(String uuid, String walletId);
 
 
+    MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);
 }

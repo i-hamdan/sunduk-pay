@@ -4,20 +4,20 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapperImpl;
 import com.bxb.sunduk_pay.event.TransactionEvent;
-import com.bxb.sunduk_pay.exception.CannotCreateWalletException;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
+import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.request.WalletRequest;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
-import com.bxb.sunduk_pay.util.SubWalletType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,13 +31,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Log4j2
@@ -265,6 +262,13 @@ MainWallet mainWallet = wallet.getMainWallet();
         return responseList;
 
     }
+
+    @Override
+    public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
+            WalletOperation walletService = walletOperationFactory.getWalletService(mainWalletRequest.getRequestType());
+            return walletService.perform(mainWalletRequest);
+        }
+
 
 
     //This will simply return the current balance of a wallet.

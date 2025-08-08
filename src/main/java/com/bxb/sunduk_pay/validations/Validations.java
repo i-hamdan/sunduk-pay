@@ -16,4 +16,5 @@ public interface Validations {
 
     SubWallet validateSubWalletExists(MainWallet wallet, String subWalletId);
 
+    boolean validateNumberOfSubWallets(int size);
 }

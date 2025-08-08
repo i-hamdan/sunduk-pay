@@ -1,27 +1,21 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.response.TransactionResponse;
-import com.bxb.sunduk_pay.response.WalletResponse;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Component
 public class WalletMapperImpl implements WalletMapper{
 
-   public WalletResponse toWalletResponse(MainWallet wallet){
-       WalletResponse walletResponse = new WalletResponse();
-       walletResponse.setWalletId(wallet.getMainWalletId());
-       walletResponse.setBalance(wallet.getBalance());
-       walletResponse.setUuid(wallet.getUser().getUuid());
-       walletResponse.setSubWallets(wallet.getSubWallets());
-       return walletResponse;
+   public MainWalletResponse toWalletResponse(MainWallet wallet){
+       MainWalletResponse mainWalletResponse = new MainWalletResponse();
+       mainWalletResponse.setWalletId(wallet.getMainWalletId());
+       mainWalletResponse.setBalance(wallet.getBalance());
+       mainWalletResponse.setUuid(wallet.getUser().getUuid());
+       mainWalletResponse.setSubWallets(wallet.getSubWallets());
+       return mainWalletResponse;
    }
 
 

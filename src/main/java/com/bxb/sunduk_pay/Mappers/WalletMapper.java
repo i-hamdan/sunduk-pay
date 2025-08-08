@@ -1,13 +1,12 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.response.WalletResponse;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 
 ;
 
 public interface WalletMapper {
-     WalletResponse toWalletResponse(MainWallet wallet);
+     MainWalletResponse toWalletResponse(MainWallet wallet);
 
 }

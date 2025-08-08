@@ -1,7 +1,8 @@
 package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
-import com.bxb.sunduk_pay.request.WalletRequest;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,5 +50,9 @@ public class WalletController {
         return new ResponseEntity<>(walletService.getAllTransactions(uuid.trim(),walletId.trim()), HttpStatus.OK);
     }
 
+    @PostMapping("/wallet")
+    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest) {
+        return new ResponseEntity<>(walletService.walletCrud(mainWalletRequest), HttpStatus.CREATED);
+    }
 
 }

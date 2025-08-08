@@ -10,8 +10,8 @@ import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.request.WalletRequest;
-import com.bxb.sunduk_pay.response.WalletResponse;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.ActionType;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
@@ -45,18 +45,18 @@ public class Update implements WalletOperation {
     }
 
     @Override
-    public WalletResponse perform(WalletRequest walletRequest) {
+    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
         // is user Exists
-        User user = validations.getUserInfo(walletRequest.getUuid());
+        User user = validations.getUserInfo(mainWalletRequest.getUuid());
         //  Validate wallet
         MainWallet wallet = validations.getMainWalletInfo(user.getUuid());
         //  3. Validate source and target subwallets
-        SubWallet targetSubWallet = validations.validateSubWalletExists(wallet, walletRequest.getSubWalletId());
+        SubWallet targetSubWallet = validations.validateSubWalletExists(wallet, mainWalletRequest.getSubWalletId());
 
-List<Transaction> transactions=new ArrayList<>();
+List<Transaction> transactions = new ArrayList<>();
 
-        Double amount = walletRequest.getAmount();
-        if (walletRequest.getActionType().equals(ActionType.ADD)) {
+        Double amount = mainWalletRequest.getAmount();
+        if (mainWalletRequest.getActionType().equals(ActionType.ADD)) {
             //deduct from main wallet
             validations.checkMainWalletAmount(wallet, targetSubWallet, amount);
             wallet.setBalance(wallet.getBalance() - amount);
@@ -75,7 +75,7 @@ List<Transaction> transactions=new ArrayList<>();
         mainWalletRepository.save(wallet);
 
 
-        return WalletResponse.builder().message("Amount added Successfully").build();
+        return MainWalletResponse.builder().message("Amount added Successfully").build();
 
 
     }

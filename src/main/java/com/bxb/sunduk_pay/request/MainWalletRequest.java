@@ -7,12 +7,12 @@ import lombok.Data;
 import lombok.NonNull;
 
 @Data
-public class WalletRequest {
+public class MainWalletRequest {
     @NonNull
 
     private String uuid;
 
-    private String WalletId;
+    private String mainWalletId;
     private String subWalletName;
     private Double amount;
 

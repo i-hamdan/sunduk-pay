@@ -8,6 +8,8 @@ import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import org.springframework.stereotype.Component;
 
+import javax.naming.LimitExceededException;
+
 @Component
 public class ValidationsImpl implements Validations{
     private final UserRepository userRepository;
@@ -35,6 +37,13 @@ public class ValidationsImpl implements Validations{
                 .orElseThrow(() -> new WalletNotFoundException("SubWallet not found with ID: " + subWalletId));
     }
 
+    @Override
+    public boolean validateNumberOfSubWallets(int size) {
+        if (size<=19){
+            return true;
+        }
+        else throw new RuntimeException("Maximum 19 sub wallets are allowed.");
+    }
 
 
     public void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount) {
