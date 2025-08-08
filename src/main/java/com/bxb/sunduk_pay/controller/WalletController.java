@@ -24,10 +24,10 @@ public class WalletController {
     }
 
     // create wallet
-    @PostMapping("/wallet-create")
-    public ResponseEntity<String> createWallet(@RequestBody WalletRequest walletRequest) {
-        return new ResponseEntity<>(walletService.createWallet(walletRequest), HttpStatus.CREATED);
-    }
+//    @PostMapping("/wallet-create")
+//    public ResponseEntity<String> createWallet(@RequestBody WalletRequest walletRequest) {
+//        return new ResponseEntity<>(walletService.createWallet(walletRequest), HttpStatus.CREATED);
+//    }
 
     //this api will return the current balance of a wallet by walletId
     @GetMapping("/wallet-showBalance/{walletId}")
@@ -48,10 +48,6 @@ public class WalletController {
         //Here trim is used to remove any whitespace and new line character from requestParams
         return new ResponseEntity<>(walletService.getAllTransactions(uuid.trim(),walletId.trim()), HttpStatus.OK);
     }
-    @PostMapping("/check")
-    public String check(@RequestBody WalletRequest request){
-        log.info("factory Api was hit");
-        return walletService.check(request);
-    }
+
 
 }

@@ -1,7 +1,13 @@
 package com.bxb.sunduk_pay.validations;
 
-import org.apache.kafka.common.protocol.types.Field;
+
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.MainWallet;
 
 public interface Validations {
-public void validateBalance(Double balance,Double amount);
+    void validateTransfer(SubWallet sourceWalletId, SubWallet targetWalletId, Double amount);
+    User validateUserExists(String uuid);
+    MainWallet validateWalletExistsForUser(String uuid);
+    SubWallet validateSubWalletExists(MainWallet wallet, String subWalletId);
 }

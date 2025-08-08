@@ -2,8 +2,6 @@ package com.bxb.sunduk_pay.repository;
 
 
 import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.Wallet;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;

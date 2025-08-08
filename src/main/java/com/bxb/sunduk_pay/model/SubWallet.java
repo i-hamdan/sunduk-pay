@@ -15,12 +15,13 @@ public class SubWallet {
     private String subWalletId;
     private String subWalletName;
     private Double balance;
+    private Double targetBalance;
+    //private Double availableBalance;
     private SubWalletType subWalletType;
     @Timestamp
     private LocalDateTime createdAt;
     @Timestamp
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
-    private Double targetBalance;
-    private Double availableBalance;
+
 }

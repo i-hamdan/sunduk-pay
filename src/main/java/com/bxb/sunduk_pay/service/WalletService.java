@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface WalletService {
-    String createWallet(WalletRequest walletRequest);
+//    String createWallet(WalletRequest walletRequest);
 
     String showBalance(String walletId);
 
@@ -21,5 +21,4 @@ public interface WalletService {
    List<TransactionResponse> getAllTransactions(String uuid, String walletId);
 
 
-    String check(WalletRequest request);
 }

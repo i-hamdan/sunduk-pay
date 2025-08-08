@@ -1,5 +1,5 @@
 package com.bxb.sunduk_pay.util;
 
 public enum RequestType {
-    CREATE,UPDATE,DELETE,GET
+    CREATE,UPDATE,DELETE,FETCH
 }

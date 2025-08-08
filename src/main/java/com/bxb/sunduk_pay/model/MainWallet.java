@@ -10,15 +10,14 @@ import java.util.List;
 @Builder
 @Document
 @Data
-public class Wallet {
+public class MainWallet {
     @Id
-    private String walletId;
+    private String mainWalletId;
     private Double balance;
     private Boolean isDeleted;
     @DBRef
     private User user;
     @DBRef
     private List<Transaction> transactionHistory;
-
     private List<SubWallet> subWallets;
 }

@@ -27,9 +27,10 @@ public class Transaction {
     private LocalDateTime dateTime;
     private Boolean isDeleted;
     @DBRef
-    private Wallet wallet;
+    private MasterWallet masterWalletId;
     @DBRef
     private User user;
     @DBRef
-    private SubWallet subWalletId;
+    private MainWallet mainWalletId;
+    private String subWalletId;
 }

@@ -2,11 +2,9 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
-import com.bxb.sunduk_pay.Mappers.UserMapperImpl;
 import com.bxb.sunduk_pay.event.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.UserRepository;
-import com.bxb.sunduk_pay.repository.WalletRepository;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import lombok.extern.log4j.Log4j2;
@@ -44,6 +42,8 @@ public class UserServiceImpl implements UserService {
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
             userRepository.save(user);
+
+
             UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "SIGNUP");
             kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
