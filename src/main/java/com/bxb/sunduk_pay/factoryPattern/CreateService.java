@@ -17,10 +17,10 @@ import java.util.UUID;
 
 @Log4j2
 @Service
-public class Create implements WalletOperation {
+public class CreateService implements WalletOperation {
 private final Validations validations;
 private final MainWalletRepository mainWalletRepository;
-    public Create(Validations validations, MainWalletRepository mainWalletRepository) {
+    public CreateService(Validations validations, MainWalletRepository mainWalletRepository) {
         this.validations = validations;
         this.mainWalletRepository = mainWalletRepository;
     }
@@ -49,8 +49,8 @@ validations.validateNumberOfSubWallets(size);
                     .createdAt(LocalDateTime.now())
                     .build();
 
-            subWallets.add(subWallet);  // Add to the existing list
-            mainWallet.setSubWallets(subWallets);  // Not strictly necessary, but safe
+            subWallets.add(subWallet);
+            mainWallet.setSubWallets(subWallets);
 
             mainWalletRepository.save(mainWallet);
 

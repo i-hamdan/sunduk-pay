@@ -8,19 +8,22 @@ import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Component
-public class EntityCreaterImpl implements EntityCreater {
+public class TransactionBuilderImpl implements TransactionBuilder {
 
     @Override
-    public Transaction createDebitTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
-                return Transaction.builder()
+    public Transaction createDebitTransaction(String subWalletId, MainWallet wallet, double amount, String description) {
+        return Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INTERNAL)
                 .amount(amount)
-                .description("Transfer to SubWallet ID: " + targetSubWallet.getSubWalletId())
+                .description(description)
                 .status("COMPLETED")
                 .mainWallet(wallet)
-               .subWalletId(subWalletId)
+                .subWalletId(subWalletId)
                 .user(wallet.getUser())
                 .dateTime(LocalDateTime.now())
                 .isDeleted(false)
@@ -29,12 +32,13 @@ public class EntityCreaterImpl implements EntityCreater {
     }
 
     @Override
-    public Transaction createCreditTransaction(String subWalletId, MainWallet wallet, double amount, SubWallet targetSubWallet) {
+    public Transaction createCreditTransaction(String subWalletId, MainWallet wallet, double amount, String description) {
         return Transaction.builder()
-                .transactionType(TransactionType.DEBIT)
+                .transactionId(UUID.randomUUID().toString())
+                .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.INTERNAL)
                 .amount(amount)
-                .description("Transfer to SubWallet ID: " + targetSubWallet.getSubWalletId())
+                .description(description)
                 .status("COMPLETED")
                 .mainWallet(wallet)
                 .subWalletId(subWalletId)

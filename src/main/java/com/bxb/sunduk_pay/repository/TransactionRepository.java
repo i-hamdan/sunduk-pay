@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.repository;
 
 
 import com.bxb.sunduk_pay.model.Transaction;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -15,7 +16,9 @@ public interface TransactionRepository extends MongoRepository<Transaction,Strin
 List<Transaction>findByMainWallet_mainWalletIdAndUser_Uuid(String walletId,String uuid);
 
 
-    List<Transaction> findByUser_UuidAndTransactionLevel(String uuid, String type);
-//    List<Transaction> findByWalletId(String walletId);
+    Page<Transaction> findByUser_Uuid(String uuid, Pageable pageable);
+
+    Page<Transaction> findByUser_UuidAndSubWalletId(String uuid, String subWalletId, Pageable pageable);
+
 
 }

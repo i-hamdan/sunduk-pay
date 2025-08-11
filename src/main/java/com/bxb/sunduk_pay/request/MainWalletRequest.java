@@ -9,9 +9,7 @@ import lombok.NonNull;
 @Data
 public class MainWalletRequest {
     @NonNull
-
     private String uuid;
-
     private String mainWalletId;
     private String subWalletName;
     private Double amount;
@@ -20,6 +18,13 @@ public class MainWalletRequest {
     private RequestType requestType;
     private TransactionType transactionType;
     private Double targetBalance;
-    private String subWalletId; 
+    private String subWalletId;
+    private String sourceSubWalletId;
+    private String targetSubWalletId;
     private ActionType actionType;
+
+    private int page = 0;
+    private int size = 10;
+    private String sortBy = "dateTime";
+    private String sortDirection = "DESC";
 }

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class Delete implements WalletOperation {
+public class DeleteService implements WalletOperation {
     @Override
     public RequestType getRequestType() {
         return RequestType.DELETE;

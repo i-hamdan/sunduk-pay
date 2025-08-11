@@ -2,21 +2,28 @@ package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import javax.naming.LimitExceededException;
-
+@Log4j2
 @Component
 public class ValidationsImpl implements Validations{
     private final UserRepository userRepository;
     private final MainWalletRepository mainWalletRepository;
-    public ValidationsImpl(UserRepository userRepository, MainWalletRepository mainWalletRepository) {
+    private final TransactionRepository transactionRepository;
+    public ValidationsImpl(UserRepository userRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository) {
         this.userRepository = userRepository;
         this.mainWalletRepository = mainWalletRepository;
+        this.transactionRepository = transactionRepository;
     }
 
 
@@ -45,6 +52,26 @@ public class ValidationsImpl implements Validations{
         else throw new RuntimeException("Maximum 19 sub wallets are allowed.");
     }
 
+    @Override
+    public Page<Transaction> validateTransactionsBySubWalletId(String uuid, String subWalletId, Pageable pageable) {
+        if (subWalletId != null) {
+            Page<Transaction> transactions = transactionRepository.findByUser_UuidAndSubWalletId(uuid, subWalletId, pageable);
+
+            if (transactions.isEmpty()) {
+                log.error("No transactions found for SubWallet ID: {} , provided id might not be valid.", subWalletId);
+                throw new TransactionNotFoundException("Please provide a valid Id. Either Uuid or subWallet Id is invalid!");
+            }
+            return transactions;
+        }
+        Page<Transaction> transactions = transactionRepository.findByUser_Uuid(uuid, pageable);
+        if (transactions.isEmpty()) {
+            log.error("No transactions found for user with uuid: {} , provided id might not be valid.", uuid);
+            throw new TransactionNotFoundException("Please provide a valid user uuid!");
+        }
+        return transactions;
+
+    }
+
 
     public void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount) {
         if (mainWallet == null || subWallet == null) {
@@ -68,7 +95,7 @@ public class ValidationsImpl implements Validations{
         }
 
         if (subWallet.getBalance() < amount) {
-            throw new InsufficientBalanceException("Insufficient funds in mainWallet SubWallet");
+            throw new InsufficientBalanceException("Insufficient funds in "+subWallet.getSubWalletName()+" SubWallet");
         }
 
     }

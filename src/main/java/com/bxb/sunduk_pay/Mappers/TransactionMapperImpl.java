@@ -19,6 +19,9 @@ transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionResponse.setAmount(transaction.getAmount());
         transactionResponse.setMainWalletId(transaction.getMainWallet().getMainWalletId());
         transactionResponse.setFullName(transaction.getUser().getFullName());
+        transactionResponse.setSubWalletId(transaction.getSubWalletId());
+        transactionResponse.setDateTime(transaction.getDateTime());
+        transactionResponse.setTransactionLevel(transaction.getTransactionLevel());
         return transactionResponse;
     }
 

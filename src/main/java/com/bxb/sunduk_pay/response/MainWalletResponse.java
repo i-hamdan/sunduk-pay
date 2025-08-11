@@ -14,16 +14,23 @@ import java.util.List;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MainWalletResponse {
+    private String status;
     private String uuid;
     private String walletId; // main walletId
     private List<SubWallet> subWallets;
     private Double balance;
-    private Double TargetBalance;
+    private Double targetBalance;
     private List<TransactionResponse> transactionHistory;
     private String sourceSubWalletId;
+    private Double previousSourceWalletBalance;
+    private Double newSourceWalletBalance;
     private Double sourceAvailableBalance;
     private String targetSubWalletId;
+    private Double previousTargetWalletBalance;
+    private Double newTargetWalletBalance;
     private Double targetAvailableBalance;
     private Double transferredAmount;
+    private String sourceTransactionId;
+    private String targetTransactionId;
     private String message;
 }
