@@ -1,19 +1,23 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
 import com.bxb.sunduk_pay.entityBuilder.TransactionBuilder;
+import com.bxb.sunduk_pay.event.TransactionEvent;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.WalletNotFoundException;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
+import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,19 +26,24 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Log4j2
 public class TransferService implements WalletOperation {
     private final Validations validations;
     private final TransactionBuilder transactionBuilder;
     private final TransactionRepository transactionRepository;
     private final MainWalletRepository mainWalletRepository;
     private final PaymentService paymentService;
+    private final MasterWalletRepository masterWalletRepository;
+    private final UserRepository userRepository;
 
-    public TransferService(Validations validations, TransactionBuilder transactionBuilder, TransactionRepository transactionRepository, MainWalletRepository mainWalletRepository, PaymentService paymentService) {
+    public TransferService(Validations validations, TransactionBuilder transactionBuilder, TransactionRepository transactionRepository, MainWalletRepository mainWalletRepository, PaymentService paymentService, MasterWalletRepository masterWalletRepository, UserRepository userRepository) {
         this.validations = validations;
         this.transactionBuilder = transactionBuilder;
         this.transactionRepository = transactionRepository;
         this.mainWalletRepository = mainWalletRepository;
         this.paymentService = paymentService;
+        this.masterWalletRepository = masterWalletRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -63,14 +72,59 @@ public class TransferService implements WalletOperation {
         } else if (sourceExists && !targetExists) {
             return handleExternalOutGoingTransfer(sourceSubWallet, mainWalletRequest.getAmount(), sourceSubWalletBalance, mainWalletRequest, mainWallet );
         } else if (!sourceExists && targetExists) {
-            return handleExternalIncomingTransfer(mainWallet, targetSubWallet);
+            return handleExternalIncomingTransfer(mainWalletRequest, targetSubWallet, mainWalletRequest.getAmount());
         } else {
             throw new ResourceNotFoundException("both source and target is invalid for this user");
         }
     }
 
-    private MainWalletResponse handleExternalIncomingTransfer(MainWallet mainWallet, SubWallet targetSubWallet) {
-        return null;
+    private MainWalletResponse handleExternalIncomingTransfer(MainWalletRequest mainWalletRequest, SubWallet targetSubWallet,Double amount) {
+        log.info("Adding amount ${} to MasterWallet for uuid: {}", amount, mainWalletRequest.getUuid());
+
+        MasterWallet masterWallet = validations.getMasterWalletInfo(mainWalletRequest.getUuid());
+
+
+        MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+        // adding amount on master wallet
+            masterWallet.setBalance(masterWallet.getBalance() + amount);
+        // aading amount on subwallet when wallet Request have a targetSubWalletId;
+if (mainWalletRequest.getSubWalletId().equals(targetSubWallet)){
+    targetSubWallet.setBalance(targetSubWallet.getBalance()+amount);
+}
+// adding amount on main wallet
+else {
+    mainWallet.setBalance(mainWallet.getBalance()+amount);
+}
+
+// Fetch user
+        User user = validations.getUserInfo(mainWalletRequest.getUuid());
+        Transaction transaction = Transaction.builder()
+                .user(user)
+                .transactionId(UUID.randomUUID().toString())
+                .amount(amount)
+                .transactionType(TransactionType.CREDIT)
+                .transactionLevel(TransactionLevel.EXTERNAL)
+                .status("SUCCESS")
+               //.masterWalletId(MasterWallet)
+               // .stripePaymentIntentId(paymentIntentId)
+                .dateTime(LocalDateTime.now())
+                .description("money Added Via Stripe")
+                .build();
+        transactionRepository.save(transaction);
+
+        mainWallet.getTransactionHistory().add(transaction);
+
+//        MasterWallet.getTransactionHistory().add(transaction);
+        masterWalletRepository.save(masterWallet);
+
+        String message = "An amount of $" + amount + " has been added to your MasterWallet successfully.";
+        log.info(message);
+
+        return MainWalletResponse.builder()
+                .status("SUCCESS")
+                .sourceTransactionId(transaction.getTransactionId())
+                .message("Transfer Successful")
+                .build();
     }
 
 

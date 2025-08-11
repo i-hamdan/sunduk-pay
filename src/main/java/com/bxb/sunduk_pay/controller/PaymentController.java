@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.service.PaymentService;
+import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +19,7 @@ public class PaymentController {
     }
 
     @PostMapping("/checkout")
-    public CompletableFuture<ResponseEntity<String>> addMoneyToWallet(@RequestParam String uuid, @RequestParam Double amount, @RequestParam String type) {
-        return paymentService.createCheckoutSession(uuid, amount, type);
+    public CompletableFuture<ResponseEntity<String>> addMoneyToWallet(@RequestParam String uuid, @RequestParam Double amount, @RequestParam TransactionType transactionType) {
+        return paymentService.createCheckoutSession(uuid, amount, transactionType);
     }
 }

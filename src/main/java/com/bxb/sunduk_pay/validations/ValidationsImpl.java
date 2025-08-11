@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
@@ -20,10 +18,12 @@ public class ValidationsImpl implements Validations{
     private final UserRepository userRepository;
     private final MainWalletRepository mainWalletRepository;
     private final TransactionRepository transactionRepository;
-    public ValidationsImpl(UserRepository userRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository) {
+    private final MasterWalletRepository masterWalletRepository;
+    public ValidationsImpl(UserRepository userRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository, MasterWalletRepository masterWalletRepository) {
         this.userRepository = userRepository;
         this.mainWalletRepository = mainWalletRepository;
         this.transactionRepository = transactionRepository;
+        this.masterWalletRepository = masterWalletRepository;
     }
 
 
@@ -72,7 +72,6 @@ public class ValidationsImpl implements Validations{
 
     }
 
-
     public void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount) {
         if (mainWallet == null || subWallet == null) {
             throw new ResourceNotFoundException("Source or Target SubWallet cannot be null");
@@ -99,13 +98,19 @@ public class ValidationsImpl implements Validations{
         }
 
     }
-
-    @Override
     public SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId) {
         if (wallet == null || subWalletId == null) return null;
         return wallet.getSubWallets().stream()
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))
                 .findFirst()
                 .orElse(null);
+}
+public MasterWallet getMasterWalletInfo(String uuid) {
+    return masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
+        log.error("User not found with ID: {}", uuid);
+        return new UserNotFoundException("User not found with ID: " + uuid);
+    });
+
     }
 }
+

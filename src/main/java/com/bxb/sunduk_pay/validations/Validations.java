@@ -1,10 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -25,4 +22,5 @@ public interface Validations {
 
     SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
 
+     MasterWallet getMasterWalletInfo(String uuid);
 }
