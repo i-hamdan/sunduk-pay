@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 public interface Validations {
     void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount);
 
-    void checkSubWalletAmount (SubWallet subWallet, Double amount);
+    void checkSubWalletAmount(SubWallet subWallet, Double amount);
 
     User getUserInfo(String uuid);
 
@@ -22,5 +22,7 @@ public interface Validations {
     boolean validateNumberOfSubWallets(int size);
 
     Page<Transaction> validateTransactionsBySubWalletId(String uuid, String subWalletId, Pageable pageable);
+
+    SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
 
 }

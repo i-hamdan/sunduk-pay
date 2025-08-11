@@ -1,6 +1,9 @@
 package com.bxb.sunduk_pay.controller;
 
+import com.bxb.sunduk_pay.factoryPattern.TransferService;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.service.WalletService;
+import com.bxb.sunduk_pay.util.TransactionType;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
@@ -15,11 +18,11 @@ import java.io.IOException;
 @RestController
 public class StripeWebhookController {
 
-    private final WalletService walletService;
+    private final TransferService transferService;
 
     @Autowired
-    public StripeWebhookController(WalletService walletService) {
-        this.walletService = walletService;
+    public StripeWebhookController(TransferService transferService) {
+        this.transferService = transferService;
     }
 
     @Value("${stripe.webhook.secret}")
@@ -37,15 +40,19 @@ public class StripeWebhookController {
 
             if (rawData instanceof Session session) {
                 String userId = session.getMetadata().get("userId");
-                String type = session.getMetadata().get("type");
+                TransactionType transactionType = TransactionType.valueOf(
+                        session.getMetadata().get("type").toUpperCase()
+                );
                 double amount = session.getAmountTotal() / 100.0;
-                String paymentIntentId = session.getPaymentIntent();
+//                String paymentIntentId = session.getPaymentIntent();
 
-                if ("add".equals(type)) {
-                    walletService.addMoneyToWallet(userId, amount, paymentIntentId);
-                } else if ("pay".equals(type)) {
-                    walletService.payMoneyFromWallet(userId, amount, "Paid via Stripe Checkout");
-                }
+                MainWalletRequest requestObj = new MainWalletRequest();
+                requestObj.setUuid(userId);
+                requestObj.setAmount(amount);
+                requestObj.setTransactionType(transactionType);
+
+                // Use the same service for both CREDIT and DEBIT
+                transferService.perform(requestObj);
             }
         }
     }

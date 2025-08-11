@@ -99,4 +99,13 @@ public class ValidationsImpl implements Validations{
         }
 
     }
+
+    @Override
+    public SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId) {
+        if (wallet == null || subWalletId == null) return null;
+        return wallet.getSubWallets().stream()
+                .filter(sw -> sw.getSubWalletId().equals(subWalletId))
+                .findFirst()
+                .orElse(null);
+    }
 }

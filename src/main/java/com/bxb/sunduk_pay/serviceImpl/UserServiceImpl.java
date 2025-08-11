@@ -4,8 +4,10 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.event.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.service.UserService;
@@ -13,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,13 +26,15 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
     private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
 private final MainWalletRepository mainWalletRepository;
+    private final MasterWalletRepository masterWalletRepository;
 
-    public UserServiceImpl(UserRepository repository, UserMapper userMapper, KafkaTemplate<String, UserKafkaEvent> kafkaTemplate, MainWalletRepository mainWalletRepository) {
+    public UserServiceImpl(UserRepository repository, UserMapper userMapper, KafkaTemplate<String, UserKafkaEvent> kafkaTemplate, MainWalletRepository mainWalletRepository, MasterWalletRepository masterWalletRepository) {
         this.userRepository = repository;
         this.userMapper = userMapper;
 
         this.kafkaTemplate = kafkaTemplate;
         this.mainWalletRepository = mainWalletRepository;
+        this.masterWalletRepository = masterWalletRepository;
     }
 
 
@@ -46,6 +51,8 @@ private final MainWalletRepository mainWalletRepository;
             user.setIsDeleted(false);
             userRepository.save(user);
 
+
+
             MainWallet mainWallet= MainWallet.builder()
                     .mainWalletId(UUID.randomUUID().toString())
                     .balance(0d)
@@ -53,6 +60,16 @@ private final MainWalletRepository mainWalletRepository;
                     .isDeleted(false)
                     .build();
             mainWalletRepository.save(mainWallet);
+
+            MasterWallet masterWallet= MasterWallet.builder()
+                    .masterWalletId(UUID.randomUUID().toString())
+                    .balance(0d)
+                    .user(user)
+                    .mainWallet(mainWallet)
+                    .createdAt(LocalDateTime.now())
+                    .isDeleted(false)
+                    .build();
+            masterWalletRepository.save(masterWallet);
 
             UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "SIGNUP");
             kafkaTemplate.send("user-topic", userEvent);

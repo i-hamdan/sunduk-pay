@@ -1,11 +1,13 @@
 package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.ActionType;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
+@NoArgsConstructor
 @Data
 public class MainWalletRequest {
     @NonNull
@@ -22,6 +24,7 @@ public class MainWalletRequest {
     private String sourceSubWalletId;
     private String targetSubWalletId;
     private ActionType actionType;
+    private PaymentMethod paymentMethod;
 
     private int page = 0;
     private int size = 10;

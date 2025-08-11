@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.service.StripeService;
+import com.bxb.sunduk_pay.util.TransactionType;
 import com.stripe.model.checkout.Session;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.http.HttpStatus;
@@ -22,10 +23,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
-    public CompletableFuture<ResponseEntity<String>> createCheckoutSession(String userId, Double amount, String type) {
+    public CompletableFuture<ResponseEntity<String>> createCheckoutSession(String userId, Double amount, TransactionType transactionType) {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Session session = stripeService.createCheckoutSession(userId, amount, type);
+                Session session = stripeService.createCheckoutSession(userId, amount, transactionType);
                 return ResponseEntity.ok(session.getUrl());
 
             } catch (Exception e) {
