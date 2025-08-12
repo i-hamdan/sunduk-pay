@@ -33,4 +33,6 @@ public class MainWalletResponse {
     private String sourceTransactionId;
     private String targetTransactionId;
     private String message;
+
+    private String url;
 }

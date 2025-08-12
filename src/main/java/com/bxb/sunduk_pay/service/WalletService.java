@@ -15,11 +15,13 @@ public interface WalletService {
 
     void downloadTransactions(String walletId, HttpServletResponse response) throws IOException;
 
-    String addMoneyToWallet(String userId, double amount, String paymentIntentId);
+//    String addMoneyToWallet(String userId, double amount, String paymentIntentId);
 
-    String payMoneyFromWallet(String userId, double amount, String description);
+    MainWalletResponse payMoney(MainWalletRequest mainWalletRequest);
 
-   List<TransactionResponse> getAllTransactions(String uuid, String walletId);
+    MainWalletResponse addMoney(MainWalletRequest mainWalletRequest);
+
+    List<TransactionResponse> getAllTransactions(String uuid, String walletId);
 
 
     MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);

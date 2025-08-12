@@ -20,6 +20,7 @@ import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.validations.Validations;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,8 +50,9 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionMapper transactionMapper;
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
 private final WalletOperationFactory walletOperationFactory;
+    private final Validations validations;
 
-    public WalletServiceImpl(UserRepository userRepository, MasterWalletRepository masterWalletRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository, WalletMapperImpl walletMapper, TransactionMapper transactionMapper, KafkaTemplate<String, TransactionEvent> kafkaTemplate, WalletOperationFactory walletOperationFactory) {
+    public WalletServiceImpl(UserRepository userRepository, MasterWalletRepository masterWalletRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository, WalletMapperImpl walletMapper, TransactionMapper transactionMapper, KafkaTemplate<String, TransactionEvent> kafkaTemplate, WalletOperationFactory walletOperationFactory, Validations validations) {
         this.userRepository = userRepository;
         this.masterWalletRepository = masterWalletRepository;
         this.mainWalletRepository = mainWalletRepository;
@@ -58,6 +61,7 @@ private final WalletOperationFactory walletOperationFactory;
         this.transactionMapper = transactionMapper;
         this.kafkaTemplate = kafkaTemplate;
         this.walletOperationFactory = walletOperationFactory;
+        this.validations = validations;
     }
 
 
@@ -109,117 +113,193 @@ private final WalletOperationFactory walletOperationFactory;
 
 
 
+//    @Override
+//    public String addMoneyToWallet(String uuid, double amount, String paymentIntentId) {
+//        log.info("Adding amount ${} to wallet for uuid: {}", amount, uuid);
+//
+//        MasterWallet wallet = masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
+//            log.error("User not found with ID: {}", uuid);
+//            return new UserNotFoundException("User not found with ID: " + uuid);
+//        });
+//
+//        if (wallet.getIsDeleted()) {
+//            log.error("Wallet not found for uuid: {}", uuid);
+//            throw new WalletNotFoundException("Cannot add money. Wallet is deleted.");
+//        }
+//
+//
+//        wallet.setBalance(wallet.getBalance() == null ? amount : wallet.getBalance() + amount);
+//
+//        // Fetch user
+//        User user = userRepository.findById(wallet.getUser().getUuid()).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + uuid));
+//
+//        Transaction transaction = Transaction.builder()
+//                .user(user)
+//                .transactionId(UUID.randomUUID().toString())
+//                .amount(amount)
+//                .transactionType(TransactionType.CREDIT)
+//                .transactionLevel(TransactionLevel.EXTERNAL)
+//                .status("SUCCESS")
+////                .masterWalletId(wallet)
+//                .stripePaymentIntentId(paymentIntentId)
+//                .dateTime(LocalDateTime.now())
+//                .description("money Added Via Strupe")
+//                .build();
+//        transactionRepository.save(transaction);
+//
+//        wallet.getMainWallet().getTransactionHistory().add(transaction);
+//
+////        wallet.getTransactionHistory().add(transaction);
+//        masterWalletRepository.save(wallet);
+//
+//        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
+//        kafkaTemplate.send("transaction-topic", transactionEvent);
+//
+//        String message = "An amount of $" + amount + " has been added to your wallet successfully.";
+//        log.info(message);
+//        return message;
+//
+//    }
+
     @Override
-    public String addMoneyToWallet(String uuid, double amount, String paymentIntentId) {
-        log.info("Adding amount ${} to wallet for uuid: {}", amount, uuid);
+    public MainWalletResponse payMoney(MainWalletRequest request) {
 
-        MasterWallet wallet = masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
-            log.error("User not found with ID: {}", uuid);
-            return new UserNotFoundException("User not found with ID: " + uuid);
-        });
+        MasterWallet masterWallet=validations.getMasterWalletInfo(request.getUuid());
+        MainWallet mainWallet=validations.getMainWalletInfo(request.getUuid());
 
-        if (wallet.getIsDeleted()) {
-            log.error("Wallet not found for uuid: {}", uuid);
-            throw new WalletNotFoundException("Cannot add money. Wallet is deleted.");
+        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, request.getSourceWalletId());
+
+        Double previousSourceWalletBalance;
+        if (subWallet!=null){
+            previousSourceWalletBalance= subWallet.getBalance();
+        }else {
+            previousSourceWalletBalance=null;
         }
 
 
-        wallet.setBalance(wallet.getBalance() == null ? amount : wallet.getBalance() + amount);
-
-        // Fetch user
-        User user = userRepository.findById(wallet.getUser().getUuid()).orElseThrow(() -> new UserNotFoundException("User not found with ID: " + uuid));
-
-        Transaction transaction = Transaction.builder()
-                .user(user)
+        // deduct balance from master wallet
+        masterWallet.setBalance(masterWallet.getBalance()- request.getAmount());
+        List<Transaction> transactions = new ArrayList<>();
+        Transaction masterWalletTxn= Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
-                .amount(amount)
-                .transactionType(TransactionType.CREDIT)
+                .amount(request.getAmount())
+                .transactionType(request.getTransactionType())
                 .transactionLevel(TransactionLevel.EXTERNAL)
-                .status("SUCCESS")
-//                .masterWalletId(wallet)
-                .stripePaymentIntentId(paymentIntentId)
+                .description("Deducted from master wallet")
                 .dateTime(LocalDateTime.now())
-                .description("money Added Via Strupe")
+                .mainWallet(mainWallet)
                 .build();
-        transactionRepository.save(transaction);
+            transactions.add(masterWalletTxn);
 
-        wallet.getMainWallet().getTransactionHistory().add(transaction);
+            Transaction debitTxn;
+        if (subWallet!=null && subWallet.getSubWalletId().equals(request.getSubWalletId())){
+            subWallet.setBalance(subWallet.getBalance()-request.getAmount());
+           debitTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
+                   .amount(request.getAmount())
+                   .transactionType(request.getTransactionType())
+                   .transactionLevel(TransactionLevel.EXTERNAL)
+                   .description("deducted from sub wallet" + subWallet.getSubWalletName())
+                   .dateTime(LocalDateTime.now())
+                   .mainWallet(mainWallet)
+                   .build();
+                    transactions.add(debitTxn);
+        }
+        else {
+            mainWallet.setBalance(mainWallet.getBalance() - request.getAmount());
+            debitTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
+                    .amount(request.getAmount())
+                    .transactionType(request.getTransactionType())
+                    .transactionLevel(TransactionLevel.EXTERNAL)
+                    .description("deducted from main wallet")
+                    .dateTime(LocalDateTime.now())
+                    .mainWallet(mainWallet)
+                    .build();
+        transactions.add(debitTxn);
+        }
 
-//        wallet.getTransactionHistory().add(transaction);
-        masterWalletRepository.save(wallet);
+        transactionRepository.saveAll(transactions);
+        mainWallet.getTransactionHistory().addAll(transactions);
+        mainWalletRepository.save(mainWallet);
 
-        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
-        kafkaTemplate.send("transaction-topic", transactionEvent);
+        MainWalletResponse response = MainWalletResponse.builder()
+                .status("SUCCESS")
+                .sourceTransactionId(debitTxn.getTransactionId())
+                .previousSourceWalletBalance(previousSourceWalletBalance)
+                .newSourceWalletBalance(mainWallet.getBalance())
+                .message("Transfer Successful")
+                .build();
+        log.info(response);
+        return response;
+    }
 
-        String message = "An amount of $" + amount + " has been added to your wallet successfully.";
-        log.info(message);
-        return message;
-
+    @Override
+    public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
+       return null;
     }
 
 
-    @Override
-    public String payMoneyFromWallet(String uuid, double amount, String description) {
-        // Fetch wallet
-        MasterWallet wallet = masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
-            log.error("Wallet not found for userId: {}", uuid);
-            return new WalletNotFoundException("Wallet not found for userId: " + uuid);
-        });
-
-
-        User user = userRepository.findById(wallet.getUser().getUuid()).orElseThrow(() -> {
-            log.error("User not found with ID: {}", uuid);
-            return new UserNotFoundException("uuid not found");
-        });
-
-
-        if (wallet.getIsDeleted()) {
-            log.error("Wallet is deleted. Cannot perform payment for userId: {}", uuid);
-            throw new WalletNotFoundException("Cannot perform transaction. Wallet is deleted.");
-        }
-
-MainWallet mainWallet = wallet.getMainWallet();
-
-        if (mainWallet==null) {
-            throw new ResourceNotFoundException("Wallet doesn't have a mainWallet!");
-        }
-
-        if (wallet.getBalance() == null || mainWallet.getBalance() < amount) {
-            log.error("Insufficient balance for userId: {}", uuid);
-            throw new RuntimeException("Insufficient balance in wallet.");
-        }
-
-        // Deduct balance of both wallets
-
-        wallet.setBalance(wallet.getBalance() - amount);
-        mainWallet.setBalance(mainWallet.getBalance() - amount);
-        log.info("Wallet balance deducted. Remaining balance: {}", wallet.getBalance());
-
-
-        // Create transaction
-
-        Transaction transaction = Transaction.builder()
-                .user(user)
-                .transactionId(UUID.randomUUID().toString())
-                .amount(amount)
-                .transactionType(TransactionType.DEBIT)
-                .transactionLevel(TransactionLevel.EXTERNAL)
-                .status("SUCCESS")
-//                .masterWalletId(wallet)
-                .dateTime(LocalDateTime.now())
-                .description("money Debited from wallet")
-                .build();
-        transactionRepository.save(transaction);
-
-        mainWallet.getTransactionHistory().add(transaction);
-
-        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
-        kafkaTemplate.send("transaction-topic", transactionEvent);
-
-        String message = "Payment of $" + amount + " from wallet successful.";
-        log.info(message);
-        return message;
-    }
+//    @Override
+//    public String payMoneyFromWallet(String uuid, double amount, String description) {
+//        // Fetch wallet
+//        MasterWallet wallet = masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
+//            log.error("Wallet not found for userId: {}", uuid);
+//            return new WalletNotFoundException("Wallet not found for userId: " + uuid);
+//        });
+//
+//
+//        User user = userRepository.findById(wallet.getUser().getUuid()).orElseThrow(() -> {
+//            log.error("User not found with ID: {}", uuid);
+//            return new UserNotFoundException("uuid not found");
+//        });
+//
+//
+//        if (wallet.getIsDeleted()) {
+//            log.error("Wallet is deleted. Cannot perform payment for userId: {}", uuid);
+//            throw new WalletNotFoundException("Cannot perform transaction. Wallet is deleted.");
+//        }
+//
+//MainWallet mainWallet = wallet.getMainWallet();
+//
+//        if (mainWallet==null) {
+//            throw new ResourceNotFoundException("Wallet doesn't have a mainWallet!");
+//        }
+//
+//        if (wallet.getBalance() == null || mainWallet.getBalance() < amount) {
+//            log.error("Insufficient balance for userId: {}", uuid);
+//            throw new RuntimeException("Insufficient balance in wallet.");
+//        }
+//
+//        // Deduct balance of both wallets
+//
+//        wallet.setBalance(wallet.getBalance() - amount);
+//        mainWallet.setBalance(mainWallet.getBalance() - amount);
+//        log.info("Wallet balance deducted. Remaining balance: {}", wallet.getBalance());
+//
+//
+//        // Create transaction
+//
+//        Transaction transaction = Transaction.builder()
+//                .user(user)
+//                .transactionId(UUID.randomUUID().toString())
+//                .amount(amount)
+//                .transactionType(TransactionType.DEBIT)
+//                .transactionLevel(TransactionLevel.EXTERNAL)
+//                .status("SUCCESS")
+////                .masterWalletId(wallet)
+//                .dateTime(LocalDateTime.now())
+//                .description("money Debited from wallet")
+//                .build();
+//        transactionRepository.save(transaction);
+//
+//        mainWallet.getTransactionHistory().add(transaction);
+//
+//        TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(transaction);
+//        kafkaTemplate.send("transaction-topic", transactionEvent);
+//
+//        String message = "Payment of $" + amount + " from wallet successful.";
+//        log.info(message);
+//        return message;
+//    }
 
 
 

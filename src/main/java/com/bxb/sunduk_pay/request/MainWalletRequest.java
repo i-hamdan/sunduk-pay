@@ -21,8 +21,8 @@ public class MainWalletRequest {
     private TransactionType transactionType;
     private Double targetBalance;
     private String subWalletId;
-    private String sourceSubWalletId;
-    private String targetSubWalletId;
+    private String sourceWalletId;
+    private String targetWalletId;
     private ActionType actionType;
     private PaymentMethod paymentMethod;
 

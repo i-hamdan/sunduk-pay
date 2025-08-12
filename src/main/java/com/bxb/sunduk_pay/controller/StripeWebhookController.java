@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.factoryPattern.TransferService;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.stripe.exception.SignatureVerificationException;
@@ -18,18 +19,19 @@ import java.io.IOException;
 @RestController
 public class StripeWebhookController {
 
-    private final TransferService transferService;
+    private final WalletService walletService;
 
-    @Autowired
-    public StripeWebhookController(TransferService transferService) {
-        this.transferService = transferService;
+    public StripeWebhookController(WalletService walletService) {
+        this.walletService = walletService;
     }
 
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
+
+
     @PostMapping("/webhook")
-    public void handleStripeEvent(HttpServletRequest request) throws IOException, SignatureVerificationException {
+    public MainWalletResponse handleStripeEvent(HttpServletRequest request) throws IOException, SignatureVerificationException {
         String payload = IOUtils.toString(request.getInputStream(), "UTF-8");
         String sigHeader = request.getHeader("Stripe-Signature");
 
@@ -51,9 +53,14 @@ public class StripeWebhookController {
                 requestObj.setAmount(amount);
                 requestObj.setTransactionType(transactionType);
 
-                // Use the same service for both CREDIT and DEBIT
-                transferService.perform(requestObj);
+                if (transactionType.equals(TransactionType.DEBIT)) {
+                    return walletService.payMoney(requestObj);
+                }
+                else {
+                    return walletService.addMoney(requestObj);
+                }
             }
         }
+        return null;
     }
 }
