@@ -3,11 +3,12 @@ package com.bxb.sunduk_pay.service;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import org.springframework.http.ResponseEntity;
 
 import java.util.concurrent.CompletableFuture;
 
 public interface PaymentService {
 
-    MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType);
+    MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet);
 }

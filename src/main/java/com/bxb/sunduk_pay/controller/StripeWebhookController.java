@@ -45,6 +45,8 @@ public class StripeWebhookController {
                 TransactionType transactionType = TransactionType.valueOf(
                         session.getMetadata().get("type").toUpperCase()
                 );
+                String targetWallet = session.getMetadata().get("targetWallet");
+                String sourceWallet = session.getMetadata().get("sourceWallet");
                 double amount = session.getAmountTotal() / 100.0;
 //                String paymentIntentId = session.getPaymentIntent();
 
@@ -52,6 +54,8 @@ public class StripeWebhookController {
                 requestObj.setUuid(userId);
                 requestObj.setAmount(amount);
                 requestObj.setTransactionType(transactionType);
+                requestObj.setSourceWalletId(sourceWallet);
+                requestObj.setTargetWalletId(targetWallet);
 
                 if (transactionType.equals(TransactionType.DEBIT)) {
                     return walletService.payMoney(requestObj);

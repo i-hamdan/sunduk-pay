@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -23,7 +24,7 @@ public class StripeServiceImpl implements StripeService {
         log.info("Stripe API key initialized.");
     }
     @Override
-    public Session createCheckoutSession(String userId, Double amount, TransactionType transactionType) throws Exception {
+    public Session createCheckoutSession(String userId, Double amount, TransactionType transactionType,WalletWrapper targetWallet, WalletWrapper sourceWallet) throws Exception {
         String productName;
         String successUrl;
         String cancelUrl;
@@ -45,17 +46,20 @@ public class StripeServiceImpl implements StripeService {
                 throw new IllegalArgumentException("Invalid session type: " + transactionType + ". Allowed: ADD, PAY");
         }
 
-        return createSession(userId, amount, productName, transactionType, successUrl, cancelUrl);
+        return createSession(userId, amount, productName, transactionType, successUrl, cancelUrl, targetWallet, sourceWallet);
     }
 
     // Reusable method for creating a Stripe checkout session
     private Session createSession(String userId, Double amount, String productName, TransactionType transactionType,
-                                  String successUrl, String cancelUrl) throws Exception {
+                                  String successUrl, String cancelUrl, WalletWrapper targetWalletId, WalletWrapper sourceWalletId) throws Exception {
         long amountInCents = (long) (amount * 100);
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("userId", userId);
-        metadata.put("type", transactionType.toString());
+        safePut(metadata, "userId", userId);
+        safePut(metadata, "type", transactionType);
+        safePut(metadata, "sourceWallet", targetWalletId.toString()  != null ? sourceWalletId : null);
+        safePut(metadata, "sourceWallet", sourceWalletId.toString()  != null ? sourceWalletId : null);
+
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -82,5 +86,8 @@ public class StripeServiceImpl implements StripeService {
                 .build();
 
         return Session.create(params);
+    }
+    private void safePut(Map<String, String> metadata, String key, Object value) {
+        metadata.put(key, value == null ? "null" : value.toString());
     }
 }
