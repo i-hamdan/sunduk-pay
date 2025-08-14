@@ -20,9 +20,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
-    public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType) {
+    public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
         try {
-            Session session = stripeService.createCheckoutSession(userId, amount, transactionType);
+            Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
             return  MainWalletResponse.builder().url(session.getUrl()).build();
         } catch (Exception e) {
             throw new RuntimeException("Stripe session creation failed", e);

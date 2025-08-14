@@ -10,5 +10,5 @@ import java.util.concurrent.CompletableFuture;
 
 public interface PaymentService {
 
-    MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType);
+    MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet);
 }
