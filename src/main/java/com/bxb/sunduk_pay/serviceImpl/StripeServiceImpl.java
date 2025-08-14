@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
@@ -54,8 +55,9 @@ public class StripeServiceImpl implements StripeService {
         long amountInCents = (long) (amount * 100);
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("userId", userId);
-        metadata.put("type", transactionType.toString());
+        safePut(metadata, "userId", userId);
+        safePut(metadata, "type", transactionType);
+        safePut(metadata,"amount",amount);
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
@@ -82,5 +84,8 @@ public class StripeServiceImpl implements StripeService {
                 .build();
 
         return Session.create(params);
+    }
+    private void safePut(Map<String, String> metadata, String key, Object value) {
+        metadata.put(key, value == null ? "null" : value.toString());
     }
 }

@@ -119,6 +119,7 @@ public class ValidationsImpl implements Validations{
                 .findFirst()
                 .orElse(null);
     }
+
     @Override
     public MasterWallet getMasterWalletInfo(String uuid) {
         return masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {

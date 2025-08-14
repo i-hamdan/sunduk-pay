@@ -17,6 +17,7 @@ public class WalletWrapper {
         this.mainWallet = null;
     }
 
+
     public String getId() {
         return mainWallet != null ? mainWallet.getMainWalletId() : subWallet.getSubWalletId();
     }
