@@ -74,16 +74,17 @@ public class TransferService implements WalletOperation {
             log.info("Processing internal transfer");
             return handleInternalTransfer(user, mainWallet, mainWalletRequest.getAmount(),
                     sourceWallet, targetWallet, previousSourceWalletBalance, previousTargetWalletBalance);
-        } else if ((sourceExists && !targetExists) || (sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI)) {
+        }
+        else if (sourceExists && !targetExists || sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI|| sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.Bank) {
             log.info("Processing external outgoing transfer");
             return handleExternalOutGoingTransfer(sourceWallet, mainWalletRequest.getAmount(),
                     previousSourceWalletBalance, mainWalletRequest, mainWallet);
-        } else if ((!sourceExists && targetExists) ||
-                (!sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI) ||
-                (!sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.Bank)) {
+        }
+        else if (!sourceExists && targetExists ||!sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.Bank) {
             log.info("Processing external incoming transfer");
             return handleExternalIncomingTransfer(user, mainWalletRequest);
-        } else {
+        }
+        else {
             log.error("Both source and target wallets are invalid for UUID: {}", user.getUuid());
             throw new ResourceNotFoundException("both source and target is invalid for this user");
         }
@@ -143,10 +144,7 @@ public class TransferService implements WalletOperation {
     }
 
     private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
-        if (walletId == null) {
-            log.debug("Wallet ID is null, returning null");
-            return null;
-        }
+
         if (walletId.equals(mainWallet.getMainWalletId())) {
             log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
             return new WalletWrapper(mainWallet);

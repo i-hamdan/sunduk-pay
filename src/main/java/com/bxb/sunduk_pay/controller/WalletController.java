@@ -52,7 +52,7 @@ public class WalletController {
 
     @PostMapping("/wallet")
     public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest) {
-        return new ResponseEntity<>(walletService.walletCrud(mainWalletRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(walletService.walletCrud(mainWalletRequest), HttpStatus.OK);
     }
 
 }

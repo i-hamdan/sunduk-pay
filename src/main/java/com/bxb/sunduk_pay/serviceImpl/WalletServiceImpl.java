@@ -169,24 +169,12 @@ private final WalletOperationFactory walletOperationFactory;
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
                 .build();
-        transactions.add(masterWalletTxn);
+            transactions.add(masterWalletTxn);
 
-Transaction creditTxn;
-        // aading amount on subwallet when wallet Request have a targetSubWalletId;
-        if (targetSubWallet!=null){
-            targetSubWallet.setBalance(targetSubWallet.getBalance()+mainWalletRequest.getAmount());
-            creditTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
-                    .amount(mainWalletRequest.getAmount())
-                    .transactionType(mainWalletRequest.getTransactionType())
-                    .transactionLevel(TransactionLevel.EXTERNAL)
-                    .description("Added amount to sub wallet" + targetSubWallet.getSubWalletName())
-                    .dateTime(LocalDateTime.now())
-                    .mainWallet(mainWallet)
-                    .build();
-            transactions.add(creditTxn);
-        }
-// adding amount on main wallet
-        else {
+            Transaction creditTxn;
+
+            // adding amount on main wallet
+
             mainWallet.setBalance(mainWallet.getBalance()+mainWalletRequest.getAmount());
             creditTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .amount(mainWalletRequest.getAmount())
@@ -197,7 +185,7 @@ Transaction creditTxn;
                     .mainWallet(mainWallet)
                     .build();
             transactions.add(creditTxn);
-        }
+
         transactionRepository.saveAll(transactions);
         mainWallet.getTransactionHistory().addAll(transactions);
         mainWalletRepository.save(mainWallet);
