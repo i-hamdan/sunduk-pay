@@ -22,15 +22,15 @@ public class PaymentServiceImpl implements PaymentService {
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
     public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
         try {
-            Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
-            return  MainWalletResponse.builder().url(session.getUrl()).build();
+        stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet,sourceWallet);
         } catch (Exception e) {
             throw new RuntimeException("Stripe session creation failed", e);
         }
+    return MainWalletResponse.builder().message("Session Creating Successful For User: " + userId).build();
     }
 
     // Fallback method must have same params as main method + Throwable at the end
-    public MainWalletResponse paymentFallback(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet, Throwable t) {
+    public MainWalletResponse paymentFallback(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet,Throwable t) {
         return MainWalletResponse.builder().message("Payment provider unavailable: " + t.getMessage()).build();
     }
 }

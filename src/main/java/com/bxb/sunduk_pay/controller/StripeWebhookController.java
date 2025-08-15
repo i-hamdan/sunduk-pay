@@ -65,6 +65,6 @@ public class StripeWebhookController {
                 }
             }
         }
-        return null;
+        return MainWalletResponse.builder().message("Success").build();
     }
 }
