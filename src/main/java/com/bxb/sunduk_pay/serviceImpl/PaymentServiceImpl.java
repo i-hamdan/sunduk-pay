@@ -7,8 +7,12 @@ import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.model.checkout.Session;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
+
+@Slf4j
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -22,11 +26,15 @@ public class PaymentServiceImpl implements PaymentService {
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
     public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
         try {
-        stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet,sourceWallet);
+            Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
+            log.info(String.valueOf(session));
+            return MainWalletResponse.builder()
+                    .message("Session Creating Successful For User: " + userId )
+                    .build();
         } catch (Exception e) {
-            throw new RuntimeException("Stripe session creation failed", e);
+            throw new RuntimeException("session Creation Failed" +e);
         }
-    return MainWalletResponse.builder().message("Session Creating Successful For User: " + userId).build();
+
     }
 
     // Fallback method must have same params as main method + Throwable at the end

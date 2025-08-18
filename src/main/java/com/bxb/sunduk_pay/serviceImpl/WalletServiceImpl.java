@@ -4,8 +4,6 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapperImpl;
 import com.bxb.sunduk_pay.event.TransactionEvent;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
@@ -69,23 +67,30 @@ private final WalletOperationFactory walletOperationFactory;
 
     @Override
     public MainWalletResponse payMoney(MainWalletRequest request) {
+        log.info("=== Deduct Money Request Started ===");
+        log.debug("Request: {}", request);
 
-        MasterWallet masterWallet=validations.getMasterWalletInfo(request.getUuid());
-        MainWallet mainWallet=validations.getMainWalletInfo(request.getUuid());
+        MasterWallet masterWallet = validations.getMasterWalletInfo(request.getUuid());
+        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
         SubWallet sourcesubWallet = validations.findSubWalletIfExists(mainWallet, request.getSourceWalletId());
 
+        log.info("MasterWallet balance before: {}", masterWallet.getBalance());
+        log.info("MainWallet balance before: {}", mainWallet.getBalance());
         Double previousSourceWalletBalance;
-        if (sourcesubWallet!=null){
-            previousSourceWalletBalance= sourcesubWallet.getBalance();
-        }else {
-            previousSourceWalletBalance=null;
+        if (sourcesubWallet != null) {
+            log.info("Source SubWallet [{}] balance before: {}", sourcesubWallet.getSubWalletName(), sourcesubWallet.getBalance());
+            previousSourceWalletBalance = sourcesubWallet.getBalance();
+        }
+        else {
+            previousSourceWalletBalance = null;
         }
 
-
         // deduct balance from master wallet
-        masterWallet.setBalance(masterWallet.getBalance()- request.getAmount());
+        masterWallet.setBalance(masterWallet.getBalance() - request.getAmount());
+        log.info("Deducted {} from MasterWallet. New balance: {}", request.getAmount(), masterWallet.getBalance());
+
         List<Transaction> transactions = new ArrayList<>();
-        Transaction masterWalletTxn= Transaction.builder()
+        Transaction masterWalletTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .amount(request.getAmount())
                 .transactionType(request.getTransactionType())
@@ -94,26 +99,29 @@ private final WalletOperationFactory walletOperationFactory;
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
                 .build();
-            transactions.add(masterWalletTxn);
+        transactions.add(masterWalletTxn);
 
-            Transaction debitTxn;
-        if (sourcesubWallet!=null){
-            validations.validateBalance(sourcesubWallet.getBalance(),request.getAmount());
-            sourcesubWallet.setBalance(sourcesubWallet.getBalance()-request.getAmount());
-           debitTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
-                   .amount(request.getAmount())
-                   .transactionType(request.getTransactionType())
-                   .transactionLevel(TransactionLevel.EXTERNAL)
-                   .description("deducted from sub wallet : " + sourcesubWallet.getSubWalletName())
-                   .dateTime(LocalDateTime.now())
-                   .mainWallet(mainWallet)
-                   .build();
-                    transactions.add(debitTxn);
-        }
-        else {
-            validations.validateBalance(mainWallet.getBalance(),request.getAmount());
+        Transaction debitTxn;
+        if (sourcesubWallet != null) {
+            validations.validateBalance(sourcesubWallet.getBalance(), request.getAmount());
+            sourcesubWallet.setBalance(sourcesubWallet.getBalance() - request.getAmount());
+            log.info("Deducted {} from SubWallet [{}]. New balance: {}", request.getAmount(), sourcesubWallet.getSubWalletName(), sourcesubWallet.getBalance());
+
+            debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+                    .amount(request.getAmount())
+                    .transactionType(request.getTransactionType())
+                    .transactionLevel(TransactionLevel.EXTERNAL)
+                    .description("deducted from sub wallet : " + sourcesubWallet.getSubWalletName())
+                    .dateTime(LocalDateTime.now())
+                    .mainWallet(mainWallet)
+                    .build();
+            transactions.add(debitTxn);
+        } else {
+            validations.validateBalance(mainWallet.getBalance(), request.getAmount());
             mainWallet.setBalance(mainWallet.getBalance() - request.getAmount());
-            debitTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
+            log.info("Deducted {} from MainWallet. New balance: {}", request.getAmount(), mainWallet.getBalance());
+
+            debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(request.getTransactionType())
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -121,7 +129,7 @@ private final WalletOperationFactory walletOperationFactory;
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
                     .build();
-        transactions.add(debitTxn);
+            transactions.add(debitTxn);
         }
 
         transactionRepository.saveAll(transactions);
@@ -136,35 +144,41 @@ private final WalletOperationFactory walletOperationFactory;
                 .newSourceWalletBalance(mainWallet.getBalance())
                 .message("Transfer Successful")
                 .build();
-        log.info(response);
-        return response;
-    }
+
+        log.info("=== Deduct Money Request Completed Successfully ===");
+        log.debug("Response: {}", response);
+        return response;    }
 
 
 
     @Override
     public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
+        log.info("=== Add Money Request Started ===");
+        log.debug("Request: {}", mainWalletRequest);
+
         User user = validations.getUserInfo(mainWalletRequest.getUuid());
-
         MasterWallet masterWallet = validations.getMasterWalletInfo(mainWalletRequest.getUuid());
-
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, mainWalletRequest.getTargetWalletId());
 
-SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, mainWalletRequest.getTargetWalletId());
+        log.info("MasterWallet balance before: {}", masterWallet.getBalance());
+        log.info("MainWallet balance before: {}", mainWallet.getBalance());
 
         Double previousTargetWalletBalance;
-        if (subWallet!=null){
-            previousTargetWalletBalance= subWallet.getBalance();
-        }else {
-            previousTargetWalletBalance= mainWallet.getBalance();
+        if (subWallet != null) {
+            log.info("Target SubWallet [{}] balance before: {}", subWallet.getSubWalletName(), subWallet.getBalance());
+            previousTargetWalletBalance = subWallet.getBalance();
+        }
+         else {
+            previousTargetWalletBalance = mainWallet.getBalance();
         }
 
         // adding amount on master wallet
         masterWallet.setBalance(masterWallet.getBalance() + mainWalletRequest.getAmount());
+        log.info("Added {} to MasterWallet. New balance: {}", mainWalletRequest.getAmount(), masterWallet.getBalance());
 
         List<Transaction> transactions = new ArrayList<>();
-
-        Transaction masterWalletTxn= Transaction.builder()
+        Transaction masterWalletTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .amount(mainWalletRequest.getAmount())
@@ -174,41 +188,42 @@ SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, mainWalletRe
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
                 .build();
-            transactions.add(masterWalletTxn);
+        transactions.add(masterWalletTxn);
 
-            Transaction creditTxn;
+        Transaction creditTxn;
+        Double newTargetWalletBalance = null;
+        if (subWallet != null) {
+            subWallet.setBalance(subWallet.getBalance() + mainWalletRequest.getAmount());
+            newTargetWalletBalance = subWallet.getBalance();
+            log.info("Added {} to SubWallet [{}]. New balance: {}", mainWalletRequest.getAmount(), subWallet.getSubWalletName(), subWallet.getBalance());
 
-            // adding amount on main wallet
-        Double newTargetWalletBalance=null;
-if (subWallet!=null){
-    subWallet.setBalance(subWallet.getBalance()+mainWalletRequest.getAmount());
-    newTargetWalletBalance = subWallet.getBalance();
-    creditTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
-            .user(user)
-            .amount(mainWalletRequest.getAmount())
-            .transactionType(mainWalletRequest.getTransactionType())
-            .transactionLevel(TransactionLevel.EXTERNAL)
-            .description("Added amount to sub wallet : "+subWallet.getSubWalletName())
-            .dateTime(LocalDateTime.now())
-            .subWalletId(subWallet.getSubWalletId())
-            .mainWallet(mainWallet)
-            .build();
-    transactions.add(creditTxn);
-} else{
-    mainWallet.setBalance(mainWallet.getBalance()+mainWalletRequest.getAmount());
-    newTargetWalletBalance = mainWallet.getBalance();
-    creditTxn=Transaction.builder().transactionId(UUID.randomUUID().toString())
-            .user(user)
-            .amount(mainWalletRequest.getAmount())
-            .transactionType(mainWalletRequest.getTransactionType())
-            .transactionLevel(TransactionLevel.EXTERNAL)
-            .description("Added amount to main wallet")
-            .dateTime(LocalDateTime.now())
-            .mainWallet(mainWallet)
-            .build();
-    transactions.add(creditTxn);
-}
+            creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+                    .user(user)
+                    .amount(mainWalletRequest.getAmount())
+                    .transactionType(mainWalletRequest.getTransactionType())
+                    .transactionLevel(TransactionLevel.EXTERNAL)
+                    .description("Added amount to sub wallet : " + subWallet.getSubWalletName())
+                    .dateTime(LocalDateTime.now())
+                    .subWalletId(subWallet.getSubWalletId())
+                    .mainWallet(mainWallet)
+                    .build();
+            transactions.add(creditTxn);
+        } else {
+            mainWallet.setBalance(mainWallet.getBalance() + mainWalletRequest.getAmount());
+            newTargetWalletBalance = mainWallet.getBalance();
+            log.info("Added {} to MainWallet. New balance: {}", mainWalletRequest.getAmount(), mainWallet.getBalance());
 
+            creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+                    .user(user)
+                    .amount(mainWalletRequest.getAmount())
+                    .transactionType(mainWalletRequest.getTransactionType())
+                    .transactionLevel(TransactionLevel.EXTERNAL)
+                    .description("Added amount to main wallet")
+                    .dateTime(LocalDateTime.now())
+                    .mainWallet(mainWallet)
+                    .build();
+            transactions.add(creditTxn);
+        }
 
         transactionRepository.saveAll(transactions);
         mainWallet.getTransactionHistory().addAll(transactions);
@@ -222,9 +237,10 @@ if (subWallet!=null){
                 .newTargetWalletBalance(newTargetWalletBalance)
                 .message("amount recived successfull")
                 .build();
-     
-        return response;
 
+        log.info("=== Add Money Request Completed Successfully ===");
+        log.debug("Response: {}", response);
+        return response;
     }
 
 
