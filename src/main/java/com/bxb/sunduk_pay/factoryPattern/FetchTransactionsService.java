@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 
 @Log4j2
 @Service
-public class FetchService implements WalletOperation {
+public class FetchTransactionsService implements WalletOperation {
     private final Validations validations;
     private final TransactionMapper transactionMapper;
 
-    public FetchService(Validations validations, TransactionMapper transactionMapper) {
+    public FetchTransactionsService(Validations validations, TransactionMapper transactionMapper) {
         this.validations = validations;
         this.transactionMapper = transactionMapper;
     }
@@ -30,7 +30,7 @@ public class FetchService implements WalletOperation {
     @Override
     public RequestType getRequestType() {
 
-        return RequestType.FETCH;
+        return RequestType.FETCH_TRANSACTIONS;
     }
 
     @Override

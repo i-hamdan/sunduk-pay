@@ -41,7 +41,7 @@ private final MainWalletRepository mainWalletRepository;
     //OAuthLogin method
 
     @Override
-    public void userLogin(UserLoginResponse response) {
+    public User userLogin(UserLoginResponse response) {
         Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
@@ -78,5 +78,6 @@ private final MainWalletRepository mainWalletRepository;
             kafkaTemplate.send("user-topic", userEvent);
             log.info("Login successful");
         }
+        return user;
     }
 }

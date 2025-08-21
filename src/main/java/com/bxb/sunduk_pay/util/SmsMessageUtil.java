@@ -19,14 +19,14 @@ public class SmsMessageUtil {
         // Handle CREDIT
         if (event.getTransactionType() == TransactionType.CREDIT) {
             if (event.getTransactionLevel() == TransactionLevel.INTERNAL) {
-                // Internal Credit (sub ↔ main, sub ↔ sub)
+                // Internal Credit (sub <-> main, sub <-> sub)
                 message = firstName + ", +" + amount + " received in "
                         + event.getToWallet()
                         + ". From: " + event.getFromWallet()
                         + ". Txn:" + shortTxnId
                         + ". -SundukPay";
             } else {
-                // External Credit (bank/other user → my wallet)
+                // External Credit (bank/other user -> my wallet)
                 message = firstName + ", +" + amount + " added to "
                         + event.getToWallet()
                         + ". Txn:" + shortTxnId
@@ -36,14 +36,14 @@ public class SmsMessageUtil {
         // Handle DEBIT
         else {
             if (event.getTransactionLevel() == TransactionLevel.INTERNAL) {
-                // Internal Debit (sub ↔ main, sub ↔ sub)
+                // Internal Debit (sub <-> main, sub <-> sub)
                 message = firstName + ", -" + amount + " sent from "
                         + event.getFromWallet()
                         + ". To: " + event.getToWallet()
                         + ". Txn:" + shortTxnId
                         + ". -SundukPay";
             } else {
-                // External Debit (my wallet → bank/other user)
+                // External Debit (my wallet -> bank/other user)
                 message = firstName + ", -" + amount + " paid from "
                         + event.getFromWallet()
                         + ". Txn:" + shortTxnId

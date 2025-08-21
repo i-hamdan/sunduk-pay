@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.controller;
 
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.service.UserService;
@@ -35,7 +36,8 @@ public class SundukController {
     public ResponseEntity<UserLoginResponse> login(HttpSession session, @AuthenticationPrincipal OidcUser user , HttpServletResponse httpServletResponse) throws IOException {
         UserLoginResponse response = userMapper.getUser(user);
         log.info ("Session Id : " + session.getId() + " By: " + user.getFullName());
-        service.userLogin(response);
+        User dbUser = service.userLogin(response);
+        response.setUuid(dbUser.getUuid());
 //        String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
 //                + "&email=" + URLEncoder.encode(user.getEmail(), "UTF-8")
 //                + "&fullName=" + URLEncoder.encode(user.getFullName(), "UTF-8");

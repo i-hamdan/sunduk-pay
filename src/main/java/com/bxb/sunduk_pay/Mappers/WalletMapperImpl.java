@@ -2,8 +2,13 @@ package com.bxb.sunduk_pay.Mappers;
 
 
 import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.response.SubWalletResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -14,10 +19,26 @@ public class WalletMapperImpl implements WalletMapper{
        mainWalletResponse.setWalletId(wallet.getMainWalletId());
        mainWalletResponse.setBalance(wallet.getBalance());
        mainWalletResponse.setUuid(wallet.getUser().getUuid());
-       mainWalletResponse.setSubWallets(wallet.getSubWallets());
+       mainWalletResponse.setSubWallets(toSubWalletResponseList(wallet.getSubWallets()));
        return mainWalletResponse;
    }
 
+   private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallet){
+       List<SubWalletResponse> list = new ArrayList<>();
+       for (SubWallet subWallet1 : subWallet){
+           list.add(toSubWalletResponse(subWallet1));
+       }
+       return list;
+   }
+
+   private SubWalletResponse toSubWalletResponse(SubWallet subWallet){
+       SubWalletResponse subWalletResponse=new SubWalletResponse();
+       subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
+       subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
+       subWalletResponse.setBalance(subWallet.getBalance());
+       subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
+       return subWalletResponse;
+   }
 
 //
 //    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){

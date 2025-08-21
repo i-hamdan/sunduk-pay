@@ -17,8 +17,8 @@ public class MainWalletResponse {
     private String status;
     private String uuid;
     private String walletId; // main walletId
-    private List<SubWallet> subWallets;
     private Double balance;
+    private List<SubWalletResponse> subWallets;
     private Double targetBalance;
     private List<TransactionResponse> transactionHistory;
     private String sourceSubWalletId;
@@ -36,4 +36,5 @@ public class MainWalletResponse {
     // for stripe use
     private String session;
     private String checkoutUrl;
+
 }
