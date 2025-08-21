@@ -5,8 +5,10 @@ import lombok.*;
 @Data
 
 public class UserLoginResponse {
+    private String uuid;
     private String email;
     private String fullName;
+    private String phoneNumber;
 }
 
 

@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.session.web.http.CookieSerializer;
+import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -31,7 +33,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/custom-login").authenticated()
                         .anyRequest().permitAll())
-             //   .oauth2Login(auth->auth.defaultSuccessUrl("http://localhost:5173/React-islamic-bank/landingpage",true))
+//                .oauth2Login(auth->auth.defaultSuccessUrl("http://localhost:5173/React-islamic-bank/landingpage",true))
                 .oauth2Login(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .maximumSessions(1)
@@ -57,7 +59,7 @@ public class SecurityConfig {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowedOrigins(List.of(
                 "http://localhost:5174",
-                "https://8bf14634a4a6.ngrok-free.app",
+                "https://f6be298fe7d5.ngrok-free.app",
                 "http://localhost:5173"
 
                 ));
@@ -69,5 +71,13 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
+    }
+    @Bean
+    public CookieSerializer cookieSerializer() {
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        serializer.setSameSite("None");
+        serializer.setUseSecureCookie(true); // if using https
+        serializer.setCookieName("JSESSIONID");
+        return serializer;
     }
 }

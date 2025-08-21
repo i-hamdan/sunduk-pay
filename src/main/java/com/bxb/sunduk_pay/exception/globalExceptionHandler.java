@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class globalExceptionHandler {
 
-    @ExceptionHandler(value = CannotDeleteWalletException.class)
+    @ExceptionHandler(value = CannotCreateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleCannotDeleteWalletException(CannotDeleteWalletException e, HttpServletRequest request) {
+    public ErrorResponse handleCannotCreateWalletException(CannotCreateWalletException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
@@ -42,9 +42,9 @@ public class globalExceptionHandler {
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException e,HttpServletRequest request){
-        return new ErrorResponse(LocalDateTime.now(),HttpStatus.CONFLICT.value(),HttpStatus.CONFLICT.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+        return new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
     @ExceptionHandler(value = InvalidSessionException.class)
@@ -52,4 +52,58 @@ public class globalExceptionHandler {
     public ErrorResponse handleInvalidSessionException(InvalidSessionException e,HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
+    @ExceptionHandler(CustomExchangeRateException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse CustomExchangeRateException(CustomExchangeRateException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+    @ExceptionHandler(NullAmountException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse invalidAmount(NullAmountException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+
+    @ExceptionHandler(MaxSubWalletsExceededException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMaxSubWalletsExceededException(MaxSubWalletsExceededException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+    @ExceptionHandler(NullValueException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNullValueException(NullValueException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+    @ExceptionHandler(TransactionProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleTransactionProcessingException(TransactionProcessingException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+    @ExceptionHandler(StripeSessionException.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public ErrorResponse handleStripeSessionException(StripeSessionException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_GATEWAY.value(),HttpStatus.BAD_GATEWAY.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+    @ExceptionHandler(InvalidPayloadException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidPayloadException(InvalidPayloadException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
