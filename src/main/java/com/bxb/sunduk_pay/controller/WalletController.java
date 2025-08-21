@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -40,8 +41,21 @@ public class WalletController {
 
 
     @PostMapping("/wallet")
-    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest) {
-        return new ResponseEntity<>(walletService.walletCrud(mainWalletRequest), HttpStatus.OK);
+    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest, HttpServletResponse response) {
+
+        MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
+
+        // Create cookie with checkout URL from response
+        if (walletResponse.getCheckoutUrl() != null) {  // only set cookie if URL exists
+            Cookie urlCookie = new Cookie("stripe_checkout_url", walletResponse.getCheckoutUrl());
+            urlCookie.setPath("/");
+            urlCookie.setHttpOnly(false);
+            urlCookie.setSecure(true);
+            urlCookie.setMaxAge(300);
+            response.addCookie(urlCookie);
+        }
+
+        return new ResponseEntity<>(walletResponse, HttpStatus.OK);
     }
 
 }

@@ -35,4 +35,5 @@ public class MainWalletResponse {
     private String message;
     // for stripe use
     private String session;
+    private String checkoutUrl;
 }
