@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
-import com.bxb.sunduk_pay.event.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
@@ -50,8 +50,6 @@ private final MainWalletRepository mainWalletRepository;
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
             userRepository.save(user);
-
-
 
             MainWallet mainWallet= MainWallet.builder()
                     .mainWalletId(UUID.randomUUID().toString())

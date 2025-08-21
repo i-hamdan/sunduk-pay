@@ -21,8 +21,5 @@ public interface WalletService {
 
     MainWalletResponse addMoney(MainWalletRequest mainWalletRequest);
 
-    List<TransactionResponse> getAllTransactions(String uuid, String walletId);
-
-
     MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);
 }

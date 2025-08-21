@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.event;
+package com.bxb.sunduk_pay.kafkaEvents;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

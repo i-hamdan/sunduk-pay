@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.factoryPattern;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
+import com.bxb.sunduk_pay.exception.TransactionProcessingException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
@@ -20,9 +21,10 @@ import org.springframework.stereotype.Service;
 public class FetchService implements WalletOperation {
     private final Validations validations;
     private final TransactionMapper transactionMapper;
+
     public FetchService(Validations validations, TransactionMapper transactionMapper) {
         this.validations = validations;
-        this.transactionMapper=transactionMapper;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
@@ -44,15 +46,19 @@ public class FetchService implements WalletOperation {
 
             Pageable pageable = PageRequest.of(mainWalletRequest.getPage(), mainWalletRequest.getSize(), Sort.by(direction, mainWalletRequest.getSortBy()));
 
-            Page<Transaction> transactions = validations.validateTransactionsBySubWalletId(mainWalletRequest.getUuid(), mainWalletRequest.getSubWalletId(), pageable);
+            Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId(mainWalletRequest.getUuid(), mainWalletRequest.getWalletId(),mainWalletRequest.getTransactionType(), pageable);
 
-            log.info("Returning {} transactions for SubWallet ID: {}", transactions.getNumberOfElements(), mainWalletRequest.getSubWalletId());
+            log.info("Returning {} transactions for SubWallet ID: {}", transactions.getNumberOfElements(), mainWalletRequest.getWalletId());
 
             return MainWalletResponse.builder().transactionHistory(transactionMapper.toTransactionsResponse(transactions.getContent())).build();
 
         } catch (TransactionNotFoundException | WalletNotFoundException e) {
             log.error("Some error occurred while fetching transactions. Error message : {}", e.getMessage());
             throw e;
+        } catch (Exception e) {
+            log.error("Cannot retrieve transactions for UUID : {}", mainWalletRequest.getUuid());
+            throw new TransactionProcessingException("Unable to fetch transactions for UUID: " + mainWalletRequest.getUuid() + ". Please try again later."
+            );
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
+import com.bxb.sunduk_pay.exception.StripeSessionException;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.service.StripeService;
@@ -25,14 +26,18 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
     public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
+
+        log.info("Creating checkout session. userId={}, amount={}, transactionType={}",userId,amount,transactionType);
+
         try {
             Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
-            log.info(String.valueOf(session));
+
             return MainWalletResponse.builder()
-                    .message("Session Creating Successful For User: " + userId )
+                    .message("Session created Successfully For User: " + userId )
+                    .message("URL: "+session.getUrl())
                     .build();
         } catch (Exception e) {
-            throw new RuntimeException("session Creation Failed" +e);
+            throw new StripeSessionException("session Creation Failed");
         }
 
     }

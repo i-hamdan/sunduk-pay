@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.event.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;

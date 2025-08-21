@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.event.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -29,7 +29,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         User user = new User();
         user.setFullName(response.getFullName());
         user.setEmail(response.getEmail());
-        user.setPhoneNumber(response.getPhoneNumber());
+        user.setPhoneNumber(null);
         return user;
     }
 

@@ -2,29 +2,23 @@ package com.bxb.sunduk_pay.validations;
 
 
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface Validations {
     void validateBalance(Double balance, Double amount);
-    void checkMainWalletAmount(MainWallet mainWallet, SubWallet subWallet, Double amount);
-
-    void checkSubWalletAmount(SubWallet subWallet, Double amount);
 
     User getUserInfo(String uuid);
 
     MainWallet getMainWalletInfo(String uuid);
 
-    SubWallet validateSubWalletExists(MainWallet wallet, String subWalletId);
+    void validateNumberOfSubWallets(int size);
 
-    boolean validateNumberOfSubWallets(int size);
-
-    Page<Transaction> validateTransactionsBySubWalletId(String uuid, String subWalletId, Pageable pageable);
+    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, TransactionType transactionType, Pageable pageable);
 
     SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
 
     MasterWallet getMasterWalletInfo(String uuid);
 
-     void validateWalletIdNotNull(String walletId);
-
-    }
+}

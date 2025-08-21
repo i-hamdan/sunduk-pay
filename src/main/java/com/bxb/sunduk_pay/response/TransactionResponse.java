@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionResponse {
+    private String transactionId;
     private String uuid;
     private String mainWalletId;
     private String subWalletId;
@@ -22,4 +23,9 @@ public class TransactionResponse {
     private String description;
     private LocalDateTime dateTime;
     private String fullName;
+    private String fromWallet;
+    private String fromWalletId;
+    private String toWallet;
+    private String toWalletId;
+
 }

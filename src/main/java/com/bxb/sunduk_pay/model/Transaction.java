@@ -14,24 +14,24 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 public class Transaction {
-    @Id
-    private String transactionId;
-    private TransactionType transactionType;
-    private TransactionLevel transactionLevel;
+@Id
+private String transactionId;
+private TransactionType transactionType;
+private TransactionLevel transactionLevel;
+private Double amount;
+private String description;
+private String status;
+private String stripePaymentIntentId;
+private LocalDateTime dateTime;
+private Boolean isDeleted;
+@DBRef
+private User user;
+@DBRef
+private MainWallet mainWallet;
+private String fromWallet;
+private String fromWalletId;
+private String toWallet;
+private String toWalletId;
+private boolean isMaster;
 
-    private Double amount;
-    private String description;
-    private String status;
-    private String stripePaymentIntentId;
-
-    private LocalDateTime dateTime;
-    private Boolean isDeleted;
-//    @DBRef
-//    private MasterWallet masterWalletId;
-    @DBRef
-    private User user;
-    @DBRef
-    private MainWallet mainWallet;
-
-    private String subWalletId;
 }

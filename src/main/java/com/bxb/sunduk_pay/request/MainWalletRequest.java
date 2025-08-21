@@ -25,6 +25,7 @@ public class MainWalletRequest {
     private String targetWalletId;
     private ActionType actionType;
     private PaymentMethod paymentMethod;
+    private String walletId;
 
     private int page = 0;
     private int size = 10;

@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.event.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 

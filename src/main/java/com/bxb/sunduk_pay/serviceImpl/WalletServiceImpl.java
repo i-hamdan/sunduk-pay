@@ -3,7 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapperImpl;
-import com.bxb.sunduk_pay.event.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
@@ -14,12 +14,10 @@ import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
@@ -36,7 +34,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Log4j2
@@ -49,7 +46,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletMapper walletMapper;
     private final TransactionMapper transactionMapper;
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-private final WalletOperationFactory walletOperationFactory;
+    private final WalletOperationFactory walletOperationFactory;
     private final Validations validations;
 
     public WalletServiceImpl(UserRepository userRepository, MasterWalletRepository masterWalletRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository, WalletMapperImpl walletMapper, TransactionMapper transactionMapper, KafkaTemplate<String, TransactionEvent> kafkaTemplate, WalletOperationFactory walletOperationFactory, Validations validations) {
@@ -69,20 +66,20 @@ private final WalletOperationFactory walletOperationFactory;
     public MainWalletResponse payMoney(MainWalletRequest request) {
         log.info("=== Deduct Money Request Started ===");
         log.debug("Request: {}", request);
-
+        validations.getUserInfo(request.getUuid());
         MasterWallet masterWallet = validations.getMasterWalletInfo(request.getUuid());
         MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
         SubWallet sourcesubWallet = validations.findSubWalletIfExists(mainWallet, request.getSourceWalletId());
 
         log.info("MasterWallet balance before: {}", masterWallet.getBalance());
         log.info("MainWallet balance before: {}", mainWallet.getBalance());
+
         Double previousSourceWalletBalance;
         if (sourcesubWallet != null) {
             log.info("Source SubWallet [{}] balance before: {}", sourcesubWallet.getSubWalletName(), sourcesubWallet.getBalance());
             previousSourceWalletBalance = sourcesubWallet.getBalance();
-        }
-        else {
-            previousSourceWalletBalance = null;
+        } else {
+            previousSourceWalletBalance = mainWallet.getBalance();
         }
 
         // deduct balance from master wallet
@@ -90,18 +87,24 @@ private final WalletOperationFactory walletOperationFactory;
         log.info("Deducted {} from MasterWallet. New balance: {}", request.getAmount(), masterWallet.getBalance());
 
         List<Transaction> transactions = new ArrayList<>();
-        Transaction masterWalletTxn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
+        Transaction masterWalletTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                 .amount(request.getAmount())
-                .transactionType(request.getTransactionType())
+                .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .description("Deducted from master wallet")
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
+                .user(mainWallet.getUser())
+                .fromWallet("Master Wallet")
+                .fromWalletId(masterWallet.getMasterWalletId())
+                .toWallet("Some external source")
+                .toWalletId(request.getTargetWalletId())
+                .isMaster(true)
                 .build();
+
         transactions.add(masterWalletTxn);
 
-        Transaction debitTxn;
+        Transaction debitTxn = null;
         if (sourcesubWallet != null) {
             validations.validateBalance(sourcesubWallet.getBalance(), request.getAmount());
             sourcesubWallet.setBalance(sourcesubWallet.getBalance() - request.getAmount());
@@ -109,13 +112,20 @@ private final WalletOperationFactory walletOperationFactory;
 
             debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
-                    .transactionType(request.getTransactionType())
+                    .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
-                    .description("deducted from sub wallet : " + sourcesubWallet.getSubWalletName())
+                    .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
-                    .build();
+                    .user(mainWallet.getUser())
+                    .fromWallet(sourcesubWallet.getSubWalletName())
+                    .fromWalletId(sourcesubWallet.getSubWalletId())
+                    .toWallet("some external source")
+                    .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
+            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(debitTxn);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
+
         } else {
             validations.validateBalance(mainWallet.getBalance(), request.getAmount());
             mainWallet.setBalance(mainWallet.getBalance() - request.getAmount());
@@ -123,13 +133,20 @@ private final WalletOperationFactory walletOperationFactory;
 
             debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
-                    .transactionType(request.getTransactionType())
+                    .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
-                    .description("deducted from main wallet")
+                    .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
-                    .build();
+                    .user(mainWallet.getUser())
+                    .fromWallet("Main Wallet")
+                    .fromWalletId(mainWallet.getMainWalletId())
+                    .toWallet("some external entity")
+                    .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
+
+            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(debitTxn);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
         }
 
         transactionRepository.saveAll(transactions);
@@ -147,8 +164,8 @@ private final WalletOperationFactory walletOperationFactory;
 
         log.info("=== Deduct Money Request Completed Successfully ===");
         log.debug("Response: {}", response);
-        return response;    }
-
+        return response;
+    }
 
 
     @Override
@@ -168,8 +185,7 @@ private final WalletOperationFactory walletOperationFactory;
         if (subWallet != null) {
             log.info("Target SubWallet [{}] balance before: {}", subWallet.getSubWalletName(), subWallet.getBalance());
             previousTargetWalletBalance = subWallet.getBalance();
-        }
-         else {
+        } else {
             previousTargetWalletBalance = mainWallet.getBalance();
         }
 
@@ -178,21 +194,27 @@ private final WalletOperationFactory walletOperationFactory;
         log.info("Added {} to MasterWallet. New balance: {}", mainWalletRequest.getAmount(), masterWallet.getBalance());
 
         List<Transaction> transactions = new ArrayList<>();
-        Transaction masterWalletTxn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .user(user)
+        Transaction masterWalletTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                 .amount(mainWalletRequest.getAmount())
-                .transactionType(mainWalletRequest.getTransactionType())
+                .user(user)
+                .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
-                .description("amount added successfully to master wallet.")
+                .description("Credited to master wallet.")
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
+                .user(mainWallet.getUser())
+                .fromWallet("Some external source.")
+                .fromWalletId(mainWalletRequest.getSourceWalletId())
+                .toWallet("Master wallet")
+                .toWalletId(masterWallet.getMasterWalletId())
+                .isMaster(true)
                 .build();
         transactions.add(masterWalletTxn);
 
         Transaction creditTxn;
         Double newTargetWalletBalance = null;
         if (subWallet != null) {
+
             subWallet.setBalance(subWallet.getBalance() + mainWalletRequest.getAmount());
             newTargetWalletBalance = subWallet.getBalance();
             log.info("Added {} to SubWallet [{}]. New balance: {}", mainWalletRequest.getAmount(), subWallet.getSubWalletName(), subWallet.getBalance());
@@ -200,14 +222,21 @@ private final WalletOperationFactory walletOperationFactory;
             creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
-                    .transactionType(mainWalletRequest.getTransactionType())
+                    .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
-                    .description("Added amount to sub wallet : " + subWallet.getSubWalletName())
+                    .description("Credited to sub wallet : " + subWallet.getSubWalletName())
                     .dateTime(LocalDateTime.now())
-                    .subWalletId(subWallet.getSubWalletId())
                     .mainWallet(mainWallet)
-                    .build();
+                    .user(mainWallet.getUser())
+                    .fromWallet("Some external source.")
+                    .fromWalletId(mainWalletRequest.getSourceWalletId())
+                    .toWallet(subWallet.getSubWalletName())
+                    .toWalletId(subWallet.getSubWalletId()).build();
+
             transactions.add(creditTxn);
+            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
+
         } else {
             mainWallet.setBalance(mainWallet.getBalance() + mainWalletRequest.getAmount());
             newTargetWalletBalance = mainWallet.getBalance();
@@ -216,13 +245,21 @@ private final WalletOperationFactory walletOperationFactory;
             creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
-                    .transactionType(mainWalletRequest.getTransactionType())
+                    .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
-                    .description("Added amount to main wallet")
+                    .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
-                    .build();
+                    .user(mainWallet.getUser())
+                    .fromWallet("Some external source.")
+                    .fromWalletId(mainWalletRequest.getSourceWalletId())
+                    .toWallet("Main wallet")
+                    .toWalletId(mainWallet.getMainWalletId()).build();
+
             transactions.add(creditTxn);
+            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
+
         }
 
         transactionRepository.saveAll(transactions);
@@ -244,49 +281,11 @@ private final WalletOperationFactory walletOperationFactory;
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    @Override
-    public List<TransactionResponse> getAllTransactions(String uuid, String walletId) {
-        log.info("Fetching all transactions for userId: {} and walletId: {}", uuid, walletId);
-
-        List<Transaction> allTransactionsByWalletId = transactionRepository
-                .findByMainWallet_mainWalletIdAndUser_Uuid(walletId, uuid);
-
-        log.info("Found {} transactions for walletId: {}", allTransactionsByWalletId.size(), walletId);
-
-        List<TransactionResponse> responseList = transactionMapper.toTransactionsResponse(allTransactionsByWalletId);
-
-        log.debug("Mapped transactions to response DTOs: {}", responseList);
-
-        return responseList;
-
-    }
-
     @Override
     public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
-            WalletOperation walletService = walletOperationFactory.getWalletService(mainWalletRequest.getRequestType());
-            return walletService.perform(mainWalletRequest);
-        }
-
+        WalletOperation walletService = walletOperationFactory.getWalletService(mainWalletRequest.getRequestType());
+        return walletService.perform(mainWalletRequest);
+    }
 
 
     //This will simply return the current balance of a wallet.
@@ -347,7 +346,7 @@ private final WalletOperationFactory walletOperationFactory;
         int rowNum = 1;
         int count = 1;
 
-        List<Transaction> list = transactionRepository.findByMainWallet_mainWalletIdAndUser_Uuid(walletId,wallet.getUser().getUuid());
+        List<Transaction> list = transactionRepository.findByMainWallet_mainWalletIdAndUser_Uuid(walletId, wallet.getUser().getUuid());
         log.info("Writing {} transactions into Excel for walletId: {}", list.size(), walletId);
 
         for (Transaction transaction : list) {
