@@ -7,6 +7,9 @@ import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @Data
 public class MainWalletRequest {
@@ -20,12 +23,14 @@ public class MainWalletRequest {
     private RequestType requestType;
     private TransactionType transactionType;
     private Double targetBalance;
+    private LocalDate targetDate;
     private String subWalletId;
     private String sourceWalletId;
     private String targetWalletId;
     private ActionType actionType;
     private PaymentMethod paymentMethod;
     private String walletId;
+    private String transactionGroupId;
 
     private int page = 0;
     private int size = 10;

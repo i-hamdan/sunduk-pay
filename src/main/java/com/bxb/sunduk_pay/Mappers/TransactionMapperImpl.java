@@ -26,6 +26,7 @@ public class TransactionMapperImpl implements TransactionMapper {
     public TransactionResponse toTransactionResponse(Transaction transaction) {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(transaction.getTransactionId());
+        transactionResponse.setGroupId(transaction.getGroupId());
         transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionResponse.setTransactionType(transaction.getTransactionType());
         transactionResponse.setDescription(transaction.getDescription());

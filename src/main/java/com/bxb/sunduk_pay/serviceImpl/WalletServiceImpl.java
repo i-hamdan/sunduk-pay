@@ -298,10 +298,10 @@ public class WalletServiceImpl implements WalletService {
                     return new WalletNotFoundException("Wallet Id is not valid!");
                 });
 
-        if (wallet.getIsDeleted()) {
-            log.error("Wallet with ID {} is deleted.", walletId);
-            throw new WalletNotFoundException("This wallet has been already deleted! Cannot retrieve info.");
-        }
+//        if (wallet.getIsDeleted()) {
+//            log.error("Wallet with ID {} is deleted.", walletId);
+//            throw new WalletNotFoundException("This wallet has been already deleted! Cannot retrieve info.");
+//        }
 
         String balanceMsg = "Current balance in wallet " + wallet.getMainWalletId() + " is " + wallet.getBalance() + ".";
         log.info(balanceMsg);
@@ -320,10 +320,10 @@ public class WalletServiceImpl implements WalletService {
                     return new WalletNotFoundException("invalid wallet id");
                 });
 
-        if (wallet.getIsDeleted()) {
-            log.error("Wallet is deleted. Cannot download transactions for walletId: {}", walletId);
-            throw new WalletNotFoundException("The wallet has been already deleted! Cannot download transactions.");
-        }
+//        if (wallet.getIsDeleted()) {
+//            log.error("Wallet is deleted. Cannot download transactions for walletId: {}", walletId);
+//            throw new WalletNotFoundException("The wallet has been already deleted! Cannot download transactions.");
+//        }
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=transactions.xlsx");

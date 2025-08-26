@@ -46,7 +46,7 @@ public class FetchTransactionsService implements WalletOperation {
 
             Pageable pageable = PageRequest.of(mainWalletRequest.getPage(), mainWalletRequest.getSize(), Sort.by(direction, mainWalletRequest.getSortBy()));
 
-            Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId(mainWalletRequest.getUuid(), mainWalletRequest.getWalletId(),mainWalletRequest.getTransactionType(), pageable);
+            Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId(mainWalletRequest.getUuid(), mainWalletRequest.getWalletId(),mainWalletRequest.getTransactionGroupId(),mainWalletRequest.getTransactionType(), pageable);
 
             log.info("Returning {} transactions for SubWallet ID: {}", transactions.getNumberOfElements(), mainWalletRequest.getWalletId());
 

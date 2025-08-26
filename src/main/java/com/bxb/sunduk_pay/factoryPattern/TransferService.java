@@ -118,8 +118,11 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
             sourceWallet.setBalance(sourceWallet.getBalance() - amount);
             Double newSourceWalletBalance = sourceWallet.getBalance();
 
+            String groupId=UUID.randomUUID().toString();
+
             Transaction debitTransaction = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
+                    .groupId(groupId)
                     .user(user)
                     .amount(amount)
                     .transactionType(TransactionType.DEBIT)
@@ -140,6 +143,7 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
 
             Transaction creditTransaction = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
+                    .groupId(groupId)
                     .user(user)
                     .amount(amount)
                     .transactionType(TransactionType.CREDIT)
@@ -166,6 +170,7 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
                     .status("SUCCESS")
                     .sourceTransactionId(transactions.get(0).getTransactionId())
                     .targetTransactionId(transactions.get(1).getTransactionId())
+                    .transactionGroupId(groupId)
                     .previousSourceWalletBalance(previousSourceWalletBalance)
                     .newSourceWalletBalance(newSourceWalletBalance)
                     .previousTargetWalletBalance(previousTargetWalletBalance)

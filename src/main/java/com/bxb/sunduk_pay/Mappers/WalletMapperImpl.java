@@ -14,12 +14,12 @@ import java.util.List;
 @Component
 public class WalletMapperImpl implements WalletMapper{
 
-   public MainWalletResponse toWalletResponse(MainWallet wallet){
+   public MainWalletResponse toWalletResponse(MainWallet wallet,List<SubWallet> subWallets){
        MainWalletResponse mainWalletResponse = new MainWalletResponse();
-       mainWalletResponse.setWalletId(wallet.getMainWalletId());
+       mainWalletResponse.setMainWalletId(wallet.getMainWalletId());
        mainWalletResponse.setBalance(wallet.getBalance());
        mainWalletResponse.setUuid(wallet.getUser().getUuid());
-       mainWalletResponse.setSubWallets(toSubWalletResponseList(wallet.getSubWallets()));
+       mainWalletResponse.setSubWallets(toSubWalletResponseList(subWallets));
        return mainWalletResponse;
    }
 

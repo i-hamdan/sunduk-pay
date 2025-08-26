@@ -38,12 +38,13 @@ public class SundukController {
         log.info ("Session Id : " + session.getId() + " By: " + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
-//        String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
-//                + "&email=" + URLEncoder.encode(user.getEmail(), "UTF-8")
-//                + "&fullName=" + URLEncoder.encode(user.getFullName(), "UTF-8");
-//
-//        log.info("Redirecting to deep link:{}",deepLink);
-//        httpServletResponse.sendRedirect(deepLink);
+        String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
+                + "&email=" + URLEncoder.encode(user.getEmail(), "UTF-8")
+                + "&fullName=" + URLEncoder.encode(user.getFullName(), "UTF-8")
+                +"&uuid="+URLEncoder.encode(dbUser.getUuid(),"UTF-8");
+
+        log.info("Redirecting to deep link:{}",deepLink);
+        httpServletResponse.sendRedirect(deepLink);
         return ResponseEntity.ok().body(response);
 
     }

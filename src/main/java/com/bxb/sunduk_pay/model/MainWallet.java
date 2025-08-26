@@ -25,7 +25,6 @@ public class MainWallet {
     private LocalDateTime createdAt;
     @Timestamp
     private LocalDateTime updatedAt;
-    private Boolean isDeleted;
     @DBRef
     private User user;
     @DBRef

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class Transaction {
 @Id
 private String transactionId;
+private String groupId;
 private TransactionType transactionType;
 private TransactionLevel transactionLevel;
 private Double amount;
@@ -23,7 +24,6 @@ private String description;
 private String status;
 private String stripePaymentIntentId;
 private LocalDateTime dateTime;
-private Boolean isDeleted;
 @DBRef
 private User user;
 @DBRef

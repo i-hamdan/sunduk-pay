@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,6 +17,7 @@ public class SubWallet {
     private String subWalletName;
     private Double balance;
     private Double targetBalance;
+    private LocalDate targetDate;
     //private Double availableBalance;
     private SubWalletType subWalletType;
     @Timestamp

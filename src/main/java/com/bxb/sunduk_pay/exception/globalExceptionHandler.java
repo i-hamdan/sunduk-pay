@@ -96,10 +96,19 @@ public class globalExceptionHandler {
 
 
 
+    @ExceptionHandler(CannotUpdateWalletException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleCannotUpdateWalletException(CannotUpdateWalletException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
 
 
 
-
+    @ExceptionHandler(CannotDeleteWalletException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleCannotDeleteWalletException(CannotDeleteWalletException e, HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
+    }
 
 
 

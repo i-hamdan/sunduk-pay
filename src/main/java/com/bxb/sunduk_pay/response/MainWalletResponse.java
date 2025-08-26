@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.response;
 
-import com.bxb.sunduk_pay.model.SubWallet;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -16,7 +15,7 @@ import java.util.List;
 public class MainWalletResponse {
     private String status;
     private String uuid;
-    private String walletId; // main walletId
+    private String mainWalletId; // main walletId
     private Double balance;
     private List<SubWalletResponse> subWallets;
     private Double targetBalance;
@@ -32,6 +31,7 @@ public class MainWalletResponse {
     private Double transferredAmount;
     private String sourceTransactionId;
     private String targetTransactionId;
+    private String transactionGroupId;
     private String message;
     // for stripe use
     private String session;

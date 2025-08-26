@@ -49,13 +49,11 @@ private final MainWalletRepository mainWalletRepository;
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
-            userRepository.save(user);
 
             MainWallet mainWallet= MainWallet.builder()
                     .mainWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
-                    .isDeleted(false)
                     .build();
             mainWalletRepository.save(mainWallet);
 
@@ -65,9 +63,13 @@ private final MainWalletRepository mainWalletRepository;
                     .user(user)
                     .mainWallet(mainWallet)
                     .createdAt(LocalDateTime.now())
-                    .isDeleted(false)
                     .build();
             masterWalletRepository.save(masterWallet);
+
+            user.setMasterWallet(masterWallet);
+            user.setMainWallet(mainWallet);
+            userRepository.save(user);
+
 
             UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "SIGNUP");
             kafkaTemplate.send("user-topic", userEvent);

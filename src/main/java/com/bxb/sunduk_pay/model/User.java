@@ -4,6 +4,7 @@ package com.bxb.sunduk_pay.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document
@@ -19,4 +20,8 @@ public class User {
     private String phoneNumber;
     private String password;
     private Boolean isDeleted;
+    @DBRef
+    private MasterWallet masterWallet;
+    @DBRef
+    private MainWallet mainWallet;
 }

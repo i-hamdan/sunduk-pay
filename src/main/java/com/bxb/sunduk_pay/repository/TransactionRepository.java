@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.util.TransactionType;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -34,5 +35,13 @@ public interface TransactionRepository extends MongoRepository<Transaction,Strin
             "] }")
     Page<Transaction> findAllByUserAndWallet(String uuid, String walletId, Pageable pageable);
 
+    @Query("{ 'user.uuid': ?0, $or: [ " +
+            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, " +
+            "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } " +
+            "] }")
+    List<Transaction> findAllByUserAndWallet(String uuid, String walletId);
+
     Page<Transaction> findByUser_UuidAndTransactionTypeAndIsMasterFalse(String uuid, TransactionType transactionType, Pageable pageable);
+
+    Page<Transaction> findByUser_UuidAndGroupId(String uuid,String groupId,Pageable pageable);
 }

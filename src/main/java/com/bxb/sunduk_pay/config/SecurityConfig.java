@@ -33,8 +33,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/custom-login").authenticated()
                         .anyRequest().permitAll())
-//                .oauth2Login(auth->auth.defaultSuccessUrl("http://localhost:5173/React-islamic-bank/landingpage",true))
-                .oauth2Login(Customizer.withDefaults())
+                .oauth2Login(auth->auth.defaultSuccessUrl("/custom-login"))
+                //.oauth2Login(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(true))

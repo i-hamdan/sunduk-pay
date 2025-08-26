@@ -1,9 +1,5 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
-import com.bxb.sunduk_pay.exception.CannotCreateWalletException;
-import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
@@ -13,11 +9,11 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -45,7 +41,7 @@ try {
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
         log.debug("MainWallet fetched successfully for UUID: {}", mainWalletRequest.getUuid());
 
-        List<SubWallet> subWallets = mainWallet.getSubWallets();
+        List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter(sw-> !sw.getIsDeleted()).collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
         log.debug("SubWallet count validation passed. Current size: {}", size);
@@ -54,6 +50,7 @@ try {
                 .subWalletId(UUID.randomUUID().toString())
                 .balance(0d)
                 .targetBalance(mainWalletRequest.getTargetBalance())
+                .targetDate(mainWalletRequest.getTargetDate())
                 .subWalletName(mainWalletRequest.getSubWalletName())
                 .isDeleted(false)
                 .createdAt(LocalDateTime.now())

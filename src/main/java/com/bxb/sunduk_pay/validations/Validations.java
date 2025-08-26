@@ -11,13 +11,17 @@ public interface Validations {
 
     User getUserInfo(String uuid);
 
+    MainWallet getMainWalletByWalletId(String walletId);
+
     MainWallet getMainWalletInfo(String uuid);
 
     void validateNumberOfSubWallets(int size);
 
-    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, TransactionType transactionType, Pageable pageable);
+    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, String transactionGroupId, TransactionType transactionType, Pageable pageable);
 
     SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
+
+    Boolean removeSubwallet(MainWallet wallet, String subWalletId);
 
     MasterWallet getMasterWalletInfo(String uuid);
 

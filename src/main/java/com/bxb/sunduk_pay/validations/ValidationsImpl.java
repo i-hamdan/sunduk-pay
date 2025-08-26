@@ -38,6 +38,11 @@ public class ValidationsImpl implements Validations {
                 });
     }
 
+    @Override
+    public MainWallet getMainWalletByWalletId(String walletId) {
+      return mainWalletRepository.findById(walletId).orElseThrow(()->new ResourceNotFoundException("Cannot find mainWallet By Id : "+walletId));
+    }
+
     public MainWallet getMainWalletInfo(String uuid) {
         log.info("Fetching mainWallet with UUID : {}", uuid);
         return mainWalletRepository.findByUser_Uuid(uuid)
@@ -61,7 +66,11 @@ public class ValidationsImpl implements Validations {
 
     @Override
     public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-            String uuid, String walletId, TransactionType transactionType, Pageable pageable) {
+            String uuid, String walletId,String transactionGroupId, TransactionType transactionType, Pageable pageable) {
+
+        if (transactionGroupId!=null){
+          return transactionRepository.findByUser_UuidAndGroupId(uuid,transactionGroupId,pageable);
+        }
 
         Page<Transaction> transactions;
 
@@ -140,7 +149,7 @@ public class ValidationsImpl implements Validations {
     @Override
     public SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId) {
         if (wallet == null || subWalletId == null) {
-            log.error("Validation failed: wallet or subWalletId is null. Wallet={}, SubWalletId={}", wallet, subWalletId);
+            log.error("Validation failed: wallet or subWalletId is null. Wallet={}, SubWalletId={}", wallet.getMainWalletId(), subWalletId);
             throw new NullValueException("wallet or subWalletId must not be null.");
         }
         log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
@@ -151,6 +160,11 @@ public class ValidationsImpl implements Validations {
                     log.warn("SubWallet not found. SubWalletId={} under MainWallet={}", subWalletId, wallet.getMainWalletId());
                     return null;
                 });
+    }
+
+    @Override
+    public Boolean removeSubwallet(MainWallet wallet, String subWalletId) {
+        return wallet.getSubWallets().removeIf(subwallet->subwallet.getSubWalletId().equals(subWalletId));
     }
 
     @Override
