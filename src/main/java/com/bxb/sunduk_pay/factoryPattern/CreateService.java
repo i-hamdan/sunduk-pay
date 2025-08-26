@@ -59,8 +59,7 @@ try {
                 subWallet.getSubWalletName(), subWallet.getTargetBalance());
 
 
-        subWallets.add(subWallet);
-        mainWallet.setSubWallets(subWallets);
+        mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);
         log.info("SubWallet saved successfully for User UUID: {}", mainWalletRequest.getUuid());
 
