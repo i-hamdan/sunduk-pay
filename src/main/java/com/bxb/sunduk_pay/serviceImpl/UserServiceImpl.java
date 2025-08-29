@@ -70,14 +70,13 @@ private final MainWalletRepository mainWalletRepository;
             user.setMainWallet(mainWallet);
             userRepository.save(user);
 
-
             UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "SIGNUP");
             kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
             UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "LOGIN");
-            kafkaTemplate.send("user-topic", userEvent);
+            kafkaTemplate.send("user-topic",userEvent);
             log.info("Login successful");
         }
         return user;

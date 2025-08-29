@@ -1,5 +1,5 @@
 package com.bxb.sunduk_pay.util;
 
 public enum ActionType {
-    ADD,DEDUCT,RENAME_POT
+   RENAME_POT,GOAL_AMOUNT,GOAL_DATE
 }

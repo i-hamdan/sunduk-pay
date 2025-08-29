@@ -18,6 +18,7 @@ import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
+import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
@@ -29,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -63,6 +65,7 @@ public class WalletServiceImpl implements WalletService {
 
 
     @Override
+    @Transactional
     public MainWalletResponse payMoney(MainWalletRequest request) {
         log.info("=== Deduct Money Request Started ===");
         log.debug("Request: {}", request);
@@ -167,7 +170,7 @@ public class WalletServiceImpl implements WalletService {
         return response;
     }
 
-
+    @Transactional
     @Override
     public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
         log.info("=== Add Money Request Started ===");
@@ -320,10 +323,10 @@ public class WalletServiceImpl implements WalletService {
                     return new WalletNotFoundException("invalid wallet id");
                 });
 
-//        if (wallet.getIsDeleted()) {
-//            log.error("Wallet is deleted. Cannot download transactions for walletId: {}", walletId);
-//            throw new WalletNotFoundException("The wallet has been already deleted! Cannot download transactions.");
-//        }
+
+
+
+
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=transactions.xlsx");

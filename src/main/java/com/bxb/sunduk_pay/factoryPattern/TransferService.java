@@ -11,7 +11,9 @@ import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.service.InternalTransferService;
 import com.bxb.sunduk_pay.service.PaymentService;
+import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
@@ -21,6 +23,7 @@ import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,19 +34,23 @@ import java.util.UUID;
 @Log4j2
 public class TransferService implements WalletOperation {
 
+    private final InternalTransferService internalTransferService;
     private final Validations validations;
     private final TransactionRepository transactionRepository;
-    private final MainWalletRepository mainWalletRepository;
     private final PaymentService paymentService;
+    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+    private final MainWalletRepository mainWalletRepository;
     private final TransactionMapper transactionMapper;
-private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
-    public TransferService(Validations validations, TransactionRepository transactionRepository, MainWalletRepository mainWalletRepository, PaymentService paymentService, TransactionMapper transactionMapper, KafkaTemplate<String, TransactionEvent> kafkaTemplate) {
+
+    public TransferService(InternalTransferService internalTransferService, Validations validations, TransactionRepository transactionRepository, PaymentService paymentService, KafkaTemplate<String, TransactionEvent> kafkaTemplate, MainWalletRepository mainWalletRepository, TransactionMapper transactionMapper) {
+        this.internalTransferService = internalTransferService;
         this.validations = validations;
         this.transactionRepository = transactionRepository;
-        this.mainWalletRepository = mainWalletRepository;
-        this.paymentService = paymentService;
-        this.transactionMapper = transactionMapper;
         this.kafkaTemplate = kafkaTemplate;
+        this.paymentService = paymentService;
+
+        this.mainWalletRepository = mainWalletRepository;
+        this.transactionMapper = transactionMapper;
     }
 
     @Override
@@ -52,6 +59,7 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
     }
 
     @Override
+//    @Transactional
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
         try {
             log.info("Performing transfer request for UUID: {}, Request: {}", mainWalletRequest.getUuid(), mainWalletRequest);
@@ -89,7 +97,7 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
                 throw new InvalidPayloadException("both sourceId and targetId is invalid for this user");
             }
         } catch (Exception e) {
-            log.error("message : {}",e.getMessage());
+            log.error("message : {}", e.getMessage());
             throw e;
         }
     }
@@ -108,79 +116,7 @@ private final KafkaTemplate<String,TransactionEvent> kafkaTemplate;
     public MainWalletResponse handleInternalTransfer(User user, MainWallet mainWallet, Double amount,
                                                      WalletWrapper sourceWallet, WalletWrapper targetWallet,
                                                      Double previousSourceWalletBalance, Double previousTargetWalletBalance) {
-        try {
-            log.info("Starting internal transfer of amount {} from {} to {}", amount, sourceWallet.getId(), targetWallet.getId());
-
-            List<Transaction> transactions = new ArrayList<>();
-
-            validations.validateBalance(sourceWallet.getBalance(), amount);
-
-            sourceWallet.setBalance(sourceWallet.getBalance() - amount);
-            Double newSourceWalletBalance = sourceWallet.getBalance();
-
-            String groupId=UUID.randomUUID().toString();
-
-            Transaction debitTransaction = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .groupId(groupId)
-                    .user(user)
-                    .amount(amount)
-                    .transactionType(TransactionType.DEBIT)
-                    .transactionLevel(TransactionLevel.INTERNAL)
-                    .description("Sent to wallet : "+targetWallet.getName())
-                    .dateTime(LocalDateTime.now())
-                    .mainWallet(mainWallet)
-                    .user(mainWallet.getUser())
-                    .fromWallet(sourceWallet.getName())
-                    .fromWalletId(sourceWallet.getId())
-                    .toWallet(targetWallet.getName())
-                    .toWalletId(targetWallet.getId()).build();
-
-            transactions.add(debitTransaction);
-
-            targetWallet.setBalance(targetWallet.getBalance() + amount);
-            Double newTargetWalletBalance = targetWallet.getBalance();
-
-            Transaction creditTransaction = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .groupId(groupId)
-                    .user(user)
-                    .amount(amount)
-                    .transactionType(TransactionType.CREDIT)
-                    .transactionLevel(TransactionLevel.INTERNAL)
-                    .description("Received from wallet : "+sourceWallet.getName())
-                    .dateTime(LocalDateTime.now())
-                    .mainWallet(mainWallet)
-                    .user(mainWallet.getUser())
-                    .fromWallet(sourceWallet.getName())
-                    .fromWalletId(sourceWallet.getId())
-                    .toWallet(targetWallet.getName())
-                    .toWalletId(targetWallet.getId()).build();
-            transactions.add(creditTransaction);
-
-            transactionRepository.saveAll(transactions);
-            mainWallet.getTransactionHistory().addAll(transactions);
-            mainWalletRepository.save(mainWallet);
-
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTransaction);
-          kafkaTemplate.send("transaction-topic",transactionEvent);
-
-            log.info("Internal transfer completed successfully");
-            return MainWalletResponse.builder()
-                    .status("SUCCESS")
-                    .sourceTransactionId(transactions.get(0).getTransactionId())
-                    .targetTransactionId(transactions.get(1).getTransactionId())
-                    .transactionGroupId(groupId)
-                    .previousSourceWalletBalance(previousSourceWalletBalance)
-                    .newSourceWalletBalance(newSourceWalletBalance)
-                    .previousTargetWalletBalance(previousTargetWalletBalance)
-                    .newTargetWalletBalance(newTargetWalletBalance)
-                    .message("Transfer successful")
-                    .build();
-        } catch (Exception e) {
-            log.error("message : {}",e.getMessage());
-            throw e;
-        }
+     return internalTransferService.doInternalTransfer(user,mainWallet,amount,sourceWallet,targetWallet,previousSourceWalletBalance,previousTargetWalletBalance);
     }
 
     private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {

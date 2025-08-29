@@ -2,11 +2,14 @@ package com.bxb.sunduk_pay.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 @RestControllerAdvice
 public class globalExceptionHandler {
@@ -111,7 +114,31 @@ public class globalExceptionHandler {
     }
 
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        Throwable cause = ex.getCause();
 
+        String message = "Invalid request payload.";
+
+        if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException &&
+                cause.getCause() instanceof java.time.format.DateTimeParseException) {
+            // Wrong date format
+            message = "Invalid date format! Please use yyyy-MM-dd format.";
+        }
+        else if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException) {
+            // Wrong enum or wrong type
+            message = "Invalid value provided for one of the fields (e.g., ActionType).";
+        }
+
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                message,
+                request.getRequestURI()
+        );
+    }
 
 
 

@@ -13,7 +13,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TransactionRepository extends MongoRepository<Transaction,String> {
+public interface
+TransactionRepository extends MongoRepository<Transaction,String> {
 
     List<Transaction> findByMainWallet_mainWalletIdAndUser_Uuid(String walletId, String uuid);
 

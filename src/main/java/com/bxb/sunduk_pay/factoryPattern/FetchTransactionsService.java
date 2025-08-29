@@ -48,7 +48,7 @@ public class FetchTransactionsService implements WalletOperation {
 
             Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId(mainWalletRequest.getUuid(), mainWalletRequest.getWalletId(),mainWalletRequest.getTransactionGroupId(),mainWalletRequest.getTransactionType(), pageable);
 
-            log.info("Returning {} transactions for SubWallet ID: {}", transactions.getNumberOfElements(), mainWalletRequest.getWalletId());
+            log.info("Returning {} transactions for uuid ID:{} And SubWallet ID: {}", transactions.getNumberOfElements(),mainWalletRequest.getUuid(), mainWalletRequest.getWalletId());
 
             return MainWalletResponse.builder().transactionHistory(transactionMapper.toTransactionsResponse(transactions.getContent())).build();
 

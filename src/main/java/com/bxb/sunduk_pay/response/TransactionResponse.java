@@ -28,5 +28,4 @@ public class TransactionResponse {
     private String fromWalletId;
     private String toWallet;
     private String toWalletId;
-
 }

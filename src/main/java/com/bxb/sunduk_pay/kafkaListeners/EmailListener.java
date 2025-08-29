@@ -15,6 +15,6 @@ public class EmailListener {
     }
     @KafkaListener(topics = "user-topic", groupId = "email-service-group", concurrency = "3")
     public void consumeEmailEvent(UserKafkaEvent userKafkaEvent) {
-       emailService.processEmailEvent(userKafkaEvent);
+        emailService.processEmailEvent(userKafkaEvent);
     }
 }

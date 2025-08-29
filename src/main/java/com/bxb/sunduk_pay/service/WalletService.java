@@ -1,12 +1,13 @@
 package com.bxb.sunduk_pay.service;
 
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.response.TransactionResponse;
+import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface WalletService {
 //    String createWallet(WalletRequest walletRequest);
