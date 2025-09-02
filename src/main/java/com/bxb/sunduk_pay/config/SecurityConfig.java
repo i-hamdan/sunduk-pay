@@ -23,8 +23,12 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private AuthenticationFilter filter;
+    private final AuthenticationFilter filter;
+
+    public SecurityConfig(AuthenticationFilter filter) {
+        this.filter = filter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
@@ -33,7 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/custom-login").authenticated()
                         .anyRequest().permitAll())
-                .oauth2Login(auth->auth.defaultSuccessUrl("/custom-login"))
+                .oauth2Login(auth -> auth.defaultSuccessUrl("/custom-login"))
                 //.oauth2Login(Customizer.withDefaults())
                 .sessionManagement(session -> session
                         .maximumSessions(1)
@@ -62,7 +66,7 @@ public class SecurityConfig {
                 "https://f6be298fe7d5.ngrok-free.app",
                 "http://localhost:5173"
 
-                ));
+        ));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowCredentials(true);
         corsConfiguration.setAllowedHeaders(List.of("*"));
@@ -72,6 +76,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;
     }
+
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();

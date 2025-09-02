@@ -18,12 +18,11 @@ public class SubWallet {
     private Double balance;
     private Double targetBalance;
     private LocalDate targetDate;
+    private String icon;
     //private Double availableBalance;
-    private SubWalletType subWalletType;
     @Timestamp
     private LocalDateTime createdAt;
     @Timestamp
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
-
 }

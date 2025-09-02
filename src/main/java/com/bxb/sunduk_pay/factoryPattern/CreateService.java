@@ -53,6 +53,7 @@ try {
                 .targetDate(mainWalletRequest.getTargetDate())
                 .subWalletName(mainWalletRequest.getSubWalletName())
                 .isDeleted(false)
+                .icon(mainWalletRequest.getIcon())
                 .createdAt(LocalDateTime.now())
                 .build();
         log.info("New SubWallet built with name={} and targetBalance={}",

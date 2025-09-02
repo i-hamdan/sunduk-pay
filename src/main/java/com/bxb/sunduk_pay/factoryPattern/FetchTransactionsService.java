@@ -53,7 +53,7 @@ public class FetchTransactionsService implements WalletOperation {
             return MainWalletResponse.builder().transactionHistory(transactionMapper.toTransactionsResponse(transactions.getContent())).build();
 
         } catch (TransactionNotFoundException | WalletNotFoundException e) {
-            log.error("Some error occurred while fetching transactions. Error message : {}", e.getMessage());
+            log.error("Unable to find transactions. Error message : {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Cannot retrieve transactions for UUID : {}", mainWalletRequest.getUuid());

@@ -25,6 +25,7 @@ public class MainWalletRequest {
     private Double targetBalance;
     private LocalDate targetDate;
     private String subWalletId;
+    private String icon;
     private String sourceWalletId;
     private String targetWalletId;
     private ActionType actionType;
