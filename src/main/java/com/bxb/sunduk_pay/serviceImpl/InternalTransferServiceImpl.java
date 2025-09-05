@@ -105,7 +105,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .fromWalletId(sourceWallet.getId())
                     .toWallet(targetWallet.getName())
                     .toWalletId(targetWallet.getId()).build();
-            transactions.add(creditTransaction);
+            transactions.addFirst(creditTransaction);
             log.info("Credit transaction created: {}", creditTransaction.getTransactionId());
 
 

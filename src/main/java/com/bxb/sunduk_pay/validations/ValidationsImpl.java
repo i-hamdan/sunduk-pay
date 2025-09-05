@@ -163,6 +163,32 @@ public class ValidationsImpl implements Validations {
     }
 
     @Override
+    public String getFromIconOfTxn(String mainWalletId, String fromWalletId) {
+        MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
+        SubWallet subWallet = mainWallet.getSubWallets().stream().filter(pot -> pot.getSubWalletId().equals(fromWalletId)).findFirst().orElse(null);
+       if (subWallet!=null){
+           return subWallet.getIcon();
+       } else if (mainWallet.getMainWalletId().equals(fromWalletId)) {
+           return "mainWallet";
+       }else {
+           return "external";
+       }
+    }
+
+    @Override
+    public String getToIconOfTxn(String mainWalletId, String toWalletId) {
+        MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
+        SubWallet subWallet = mainWallet.getSubWallets().stream().filter(pot -> pot.getSubWalletId().equals(toWalletId)).findFirst().orElse(null);
+        if (subWallet!=null){
+            return subWallet.getIcon();
+        } else if (mainWallet.getMainWalletId().equals(toWalletId)) {
+            return "mainWallet";
+        }else {
+            return "external";
+        }
+    }
+
+    @Override
     public Boolean removeSubwallet(MainWallet wallet, String subWalletId) {
         return wallet.getSubWallets().removeIf(subwallet->subwallet.getSubWalletId().equals(subWalletId));
     }

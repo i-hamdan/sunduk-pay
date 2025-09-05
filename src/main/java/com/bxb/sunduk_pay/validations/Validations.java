@@ -21,6 +21,10 @@ public interface Validations {
 
     SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
 
+    String getFromIconOfTxn(String mainWalletId,String fromWalletId);
+
+    String getToIconOfTxn(String mainWalletId,String toWalletId);
+
     Boolean removeSubwallet(MainWallet wallet, String subWalletId);
 
     MasterWallet getMasterWalletInfo(String uuid);

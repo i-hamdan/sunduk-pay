@@ -37,6 +37,7 @@ public class WalletMapperImpl implements WalletMapper{
        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
        subWalletResponse.setBalance(subWallet.getBalance());
        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
+       subWalletResponse.setIcon(subWallet.getIcon());
        return subWalletResponse;
    }
 

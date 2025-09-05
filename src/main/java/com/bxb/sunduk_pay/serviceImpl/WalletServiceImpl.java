@@ -144,7 +144,7 @@ public class WalletServiceImpl implements WalletService {
                     .user(mainWallet.getUser())
                     .fromWallet("Main Wallet")
                     .fromWalletId(mainWallet.getMainWalletId())
-                    .toWallet("some external entity")
+                    .toWallet("some external target")
                     .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
 
@@ -366,9 +366,16 @@ public class WalletServiceImpl implements WalletService {
 
         workbook.write(response.getOutputStream());
         workbook.close();
-
         log.info("Excel file successfully written and sent in response for walletId: {}", walletId);
     }
+
+
+
+
+
+
+
+
 }
 
 

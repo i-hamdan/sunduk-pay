@@ -9,10 +9,10 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.bxb.sunduk_pay.util.TransactionType.CREDIT;
+import java.util.Locale;
 
 @Log4j2
 @Component
@@ -33,12 +33,16 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setAmount(transaction.getAmount());
         transactionResponse.setMainWalletId(transaction.getMainWallet().getMainWalletId());
         transactionResponse.setFullName(transaction.getUser().getFullName());
-        transactionResponse.setDateTime(transaction.getDateTime());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+                .withLocale(Locale.ENGLISH);
+        transactionResponse.setDate(transaction.getDateTime().format(formatter));
         transactionResponse.setTransactionLevel(transaction.getTransactionLevel());
         transactionResponse.setFromWallet(transaction.getFromWallet());
         transactionResponse.setFromWalletId(transaction.getFromWalletId());
+        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
+        transactionResponse.setToWalletIcon(validations.getToIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getToWalletId()));
         return transactionResponse;
     }
 
