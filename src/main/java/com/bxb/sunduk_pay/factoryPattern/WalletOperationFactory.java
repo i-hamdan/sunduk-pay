@@ -10,12 +10,15 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+
 public class WalletOperationFactory {
 private final List<WalletOperation> walletOperations;
 @Autowired
     public WalletOperationFactory(List<WalletOperation> walletOperations) {
         this.walletOperations = walletOperations;
     }
+
+
     Map<RequestType, WalletOperation>walletServiceMap = new HashMap<>();
 
     @PostConstruct

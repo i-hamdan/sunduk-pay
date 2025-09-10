@@ -35,14 +35,14 @@ public class StripeServiceImpl implements StripeService {
         switch (transactionType.toString()) {
             case "CREDIT":
                 productName = "Add Money to Wallet";
-                successUrl = "http://localhost:5173/add-success";
-                cancelUrl = "http://localhost:5173/add-cancel";
+                successUrl = "islamicbank://payment-success";
+                cancelUrl = "islamicbank://payment-failed";
                 break;
 
             case "DEBIT":
                 productName = "Pay From Wallet";
-                successUrl = "http://localhost:5173/pay-success";
-                cancelUrl = "http://localhost:5173/pay-cancel";
+                successUrl = "islamicbank://payment-success";
+                cancelUrl = "islamicbank://payment-failed";
                 break;
 
             default:

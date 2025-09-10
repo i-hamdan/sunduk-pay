@@ -42,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     // Fallback method must have same params as main method + Throwable at the end
-    public MainWalletResponse paymentFallback(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet,Throwable t, HttpServletResponse response) {
+    public MainWalletResponse paymentFallback(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet,Throwable t) {
         return MainWalletResponse.builder().message("Payment provider unavailable: " + t.getMessage())
                 .checkoutUrl(null)
                 .build();

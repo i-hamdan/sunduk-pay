@@ -44,8 +44,6 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public CurrencyResponse convertCurrency(CurrencyRequest currencyRequest) {
-        log.info("Currency conversion started for request: {}", currencyRequest);
-        log.debug("Fetching exchange rate for {} to {}", currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
 
         double exchangeRate = fetchExchangeRate(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
         log.debug("Exchange rate fetched successfully: {}", exchangeRate);
@@ -84,6 +82,16 @@ public class CurrencyServiceImpl implements CurrencyService {
             List<CurrencyRatesResponse> yearlyRates = fetchYearlyRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
             return mapper.currencyResponse(exchangeRate, converted, fee, finalAmount, yearlyRates, null, null);
         }
+
+      // aman bhai ki request
+//        else if (currencyRequest.getTimeSeries() ==TimeSeries.All) {
+//            List<CurrencyRatesResponse> weeklyRates = fetchWeekRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
+//            List<CurrencyRatesResponse> monthlyRates = fetchMonthlyRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
+//            List<CurrencyRatesResponse> yearlyRates = fetchYearlyRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
+//            return mapper.currencyResponse(exchangeRate, converted, fee, finalAmount, yearlyRates, monthlyRates, weeklyRates);
+//
+//
+//        }
         else {
             throw new ResourceNotFoundException("please provide Time Series");
         }
@@ -136,17 +144,16 @@ public class CurrencyServiceImpl implements CurrencyService {
     private List<CurrencyRatesResponse> fetchYearlyRates(String from, String to) {
         String currencyPair = from.concat(to);
         LocalDate oneYear = LocalDate.of(2024, 8, 19);
+       log.info("Fetching yearly rates for currencyPair={} from date={}", currencyPair, oneYear);
 
-        log.info("Fetching yearly rates for currencyPair={} from date={}", currencyPair, oneYear);
 
         List<CurrencyRates> ratesForLastYear = currencyRateRepository.findSpecificRate(oneYear, currencyPair);
+                log.debug("Yearly raw data fetched: {}", ratesForLastYear);
 
-        log.debug("Yearly raw data fetched: {}", ratesForLastYear);
+        //List<CurrencyRatesResponse> response = mapper.toCurrencyRatesResponses(ratesForLastYear, currencyPair,TimeSeries.YEAR);
 
-        List<CurrencyRatesResponse> response = mapper.toCurrencyRatesResponses(ratesForLastYear, currencyPair,TimeSeries.YEAR);
-
+        List<CurrencyRatesResponse> response = mapper.toMonthlyAverageResponses(ratesForLastYear, currencyPair);
         log.info("Yearly rates mapped successfully. Count={}", response.size());
-
         return response;
     }
 

@@ -1,6 +1,8 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
+import org.bson.Document;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +19,16 @@ public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, S
             fields = "{ 'date': 1, 'rates.?1': 1 }"
     )
     List<CurrencyRates> findSpecificRate(LocalDate timePeriod, String rateKey);
+
+
+
 }
+
+
+
+
+
+
+
+
+
