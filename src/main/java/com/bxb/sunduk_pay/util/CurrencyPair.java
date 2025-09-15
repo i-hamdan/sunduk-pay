@@ -1,8 +1,8 @@
 package com.bxb.sunduk_pay.util;
 
 public enum CurrencyPair {
-    SARAED,
-    // OMRUSD,
+//    SARAED,
+//     OMRUSD,
 //    CNYKWD,
 //    KWDSAR,
 //    SARTRY,
@@ -90,5 +90,5 @@ public enum CurrencyPair {
 //    INRUSD,
 //    AEDINR,
 //    SARUSD,
-    CNYSAR;
+//    CNYSAR;
 }

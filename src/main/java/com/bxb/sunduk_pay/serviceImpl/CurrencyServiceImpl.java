@@ -144,10 +144,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     private List<CurrencyRatesResponse> fetchYearlyRates(String from, String to) {
         String currencyPair = from.concat(to);
         LocalDate oneYear = LocalDate.of(2024, 8, 19);
+        LocalDate endDate = LocalDate.of(2025, 8, 19);
        log.info("Fetching yearly rates for currencyPair={} from date={}", currencyPair, oneYear);
 
 
-        List<CurrencyRates> ratesForLastYear = currencyRateRepository.findSpecificRate(oneYear, currencyPair);
+        List<CurrencyRates> ratesForLastYear = currencyRateRepository.findSpecificRate(oneYear,endDate, currencyPair);
                 log.debug("Yearly raw data fetched: {}", ratesForLastYear);
 
         //List<CurrencyRatesResponse> response = mapper.toCurrencyRatesResponses(ratesForLastYear, currencyPair,TimeSeries.YEAR);
@@ -161,10 +162,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     private List<CurrencyRatesResponse> fetchMonthlyRates(String from, String to) {
         String currencyPair = from.concat(to);
         LocalDate oneMonth = LocalDate.of(2025, 7, 19);
+        LocalDate endDate = LocalDate.of(2025, 8, 19);
 
         log.info("Fetching monthly rates for currencyPair={} from date={}", currencyPair, oneMonth);
 
-        List<CurrencyRates> ratesForLastMonth = currencyRateRepository.findSpecificRate(oneMonth, currencyPair);
+        List<CurrencyRates> ratesForLastMonth = currencyRateRepository.findSpecificRate(oneMonth,endDate, currencyPair);
 
         log.debug("Monthly raw data fetched: {}", ratesForLastMonth);
 
@@ -179,11 +181,12 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     private List<CurrencyRatesResponse> fetchWeekRates(String from, String to) {
         String currencyPair = from.concat(to);
-        LocalDate oneWeek = LocalDate.of(2025, 8, 13);
+        LocalDate startDate = LocalDate.of(2025, 8, 13);
+        LocalDate endDate = LocalDate.of(2025, 8, 19);
 
-        log.info("Fetching weekly rates for currencyPair={} from date={}", currencyPair, oneWeek);
+        log.info("Fetching weekly rates for currencyPair={} from date={}", currencyPair, startDate);
 
-        List<CurrencyRates> ratesForLastWeek = currencyRateRepository.findSpecificRate(oneWeek, currencyPair);
+        List<CurrencyRates> ratesForLastWeek = currencyRateRepository.findSpecificRate(startDate,endDate, currencyPair);
 
         log.debug("Weekly raw data fetched: {}", ratesForLastWeek);
 

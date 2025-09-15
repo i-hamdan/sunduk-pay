@@ -2,7 +2,6 @@ package com.bxb.sunduk_pay.factoryPattern;
 
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;

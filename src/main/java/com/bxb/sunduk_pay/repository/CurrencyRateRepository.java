@@ -14,11 +14,16 @@ public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, S
 //    @Query("{ 'date': { $gte: ?1 }, 'rates.?0': { $exists: true } }")
 //    List<CurrencyRates> findRatesForLastYear(String currencyPair, LocalDateTime oneYearAgo);
 
+//    @Query(
+//            value = "{ 'date': { $gte: ?0 } }",
+//            fields = "{ 'date': 1, 'rates.?1': 1 }"
+//    )
+//    List<CurrencyRates> findSpecificRate(LocalDate timePeriod, String rateKey);
     @Query(
-            value = "{ 'date': { $gte: ?0 } }",
-            fields = "{ 'date': 1, 'rates.?1': 1 }"
+            value = "{ 'date': { $gte: ?0, $lte: ?1 } }",
+            fields = "{ 'date': 1, 'rates.?2': 1 }"
     )
-    List<CurrencyRates> findSpecificRate(LocalDate timePeriod, String rateKey);
+    List<CurrencyRates> findSpecificRate(LocalDate startDate, LocalDate endDate, String rateKey);
 
 
 

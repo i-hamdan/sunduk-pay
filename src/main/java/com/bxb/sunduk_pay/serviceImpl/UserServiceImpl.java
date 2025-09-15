@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -9,7 +10,9 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.request.ContactRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
+import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -80,5 +83,27 @@ private final MainWalletRepository mainWalletRepository;
             log.info("Login successful");
         }
         return user;
+    }
+
+    @Override
+    public UserResponse uploadContacts(ContactRequest contactRequest) {
+        log.info("Upload contacts request received for userId: {}", contactRequest.getUserId());
+
+        User user = userRepository.findById(contactRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found for ID: " + contactRequest.getUserId()));
+        log.debug("User fetched: {}", user.getUuid());
+
+        user.setContacts(contactRequest.getContacts());
+        log.info("Setting {} contacts for userId: {}", contactRequest.getContacts().size(), user.getUuid());
+
+        userRepository.save(user);
+        log.info("User with ID: {} successfully updated with contacts", user.getUuid());
+
+        return UserResponse.builder()
+                .uuid(user.getUuid())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .message("successfully saved")
+                .build();
+
     }
 }
