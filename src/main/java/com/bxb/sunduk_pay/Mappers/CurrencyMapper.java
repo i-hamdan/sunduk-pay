@@ -5,7 +5,6 @@ import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
-import org.bson.Document;
 
 import java.util.List;
 import java.util.Map;

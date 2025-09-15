@@ -94,6 +94,7 @@ public class WalletServiceImpl implements WalletService {
                 .amount(request.getAmount())
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
+                .status("SUCCESS")
                 .description("Deducted from master wallet")
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
@@ -117,6 +118,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
@@ -138,6 +140,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .status("SUCCESS")
                     .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
@@ -202,6 +205,7 @@ public class WalletServiceImpl implements WalletService {
                 .user(user)
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
+                .status("SUCCESS")
                 .description("Credited to master wallet.")
                 .dateTime(LocalDateTime.now())
                 .mainWallet(mainWallet)
@@ -227,6 +231,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .status("SUCCESS")
                     .description("Credited to sub wallet : " + subWallet.getSubWalletName())
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
@@ -250,10 +255,10 @@ public class WalletServiceImpl implements WalletService {
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .status("SUCCESS")
                     .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
-                    .user(mainWallet.getUser())
                     .fromWallet("Some external source.")
                     .fromWalletId(mainWalletRequest.getSourceWalletId())
                     .toWallet("Main wallet")
@@ -288,6 +293,72 @@ public class WalletServiceImpl implements WalletService {
     public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
         WalletOperation walletService = walletOperationFactory.getWalletService(mainWalletRequest.getRequestType());
         return walletService.perform(mainWalletRequest);
+    }
+
+    @Override
+        public MainWalletResponse recordFailedTxn(MainWalletRequest request) {
+
+        User user = validations.getUserInfo(request.getUuid());
+        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
+        SubWallet sourceSubWallet = validations.findSubWalletIfExists(mainWallet, request.getSourceWalletId());
+        SubWallet targetSubwallet = validations.findSubWalletIfExists(mainWallet, request.getTargetWalletId());
+
+        String fromWallet=null;
+        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())){
+            fromWallet="Main wallet";
+        } else if (sourceSubWallet!=null && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
+            fromWallet= sourceSubWallet.getSubWalletName();
+        }else{
+            fromWallet="Some external source";
+        }
+
+        String toWallet=null;
+        if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())){
+            toWallet="Main wallet";
+        } else if (targetSubwallet!=null && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
+            toWallet= targetSubwallet.getSubWalletName();
+        }else{
+            toWallet="Some external target";
+        }
+
+
+        Transaction failedTransaction = Transaction.builder().transactionId(UUID.randomUUID().toString())
+                .user(user)
+                .amount(request.getAmount())
+                .transactionType(request.getTransactionType())
+                .description("Transaction failed")
+                .dateTime(LocalDateTime.now())
+                .mainWallet(mainWallet)
+                .status("FAILED")
+                .fromWallet(fromWallet)
+                .fromWalletId(request.getSourceWalletId())
+                .toWallet(toWallet)
+                .toWalletId(request.getTargetWalletId())
+                .build();
+
+        transactionRepository.save(failedTransaction);
+        return MainWalletResponse.builder()
+                    .message("Transaction failed!")
+                    .build();
+        }
+
+    @Override
+    public void addDummy(MainWalletRequest request) {
+        User user = validations.getUserInfo(request.getUuid());
+        MainWallet mainWallet = validations.getMainWalletInfo(user.getUuid());
+        Transaction txn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+                .user(user)
+                .mainWallet(mainWallet)
+                .amount(request.getAmount())
+                .transactionType(request.getTransactionType())
+                .paymentMethod(request.getPaymentMethod())
+                .dateTime(LocalDateTime.now())
+                .toWallet("Dummy Wallet")
+                .toWalletId("123")
+                .fromWallet("Dummy Wallet")
+                .fromWalletId("ABC")
+                .build();
+        transactionRepository.save(txn);
     }
 
 
@@ -369,32 +440,4 @@ public class WalletServiceImpl implements WalletService {
         workbook.close();
         log.info("Excel file successfully written and sent in response for walletId: {}", walletId);
     }
-
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

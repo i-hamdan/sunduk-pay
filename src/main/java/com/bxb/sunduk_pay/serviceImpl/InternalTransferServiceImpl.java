@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
+import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.Transaction;
@@ -31,16 +32,18 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     private final MainWalletRepository mainWalletRepository;
     private final TransactionMapper transactionMapper;
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+    private final KafkaTemplate<String, GoalCompletionEvent>kafkaGoalTemplate;
 
     public InternalTransferServiceImpl(Validations validations, TransactionRepository transactionRepository,
                                        MainWalletRepository mainWalletRepository,
                                        TransactionMapper transactionMapper,
-                                       KafkaTemplate<String, TransactionEvent> kafkaTemplate) {
+                                       KafkaTemplate<String, TransactionEvent> kafkaTemplate, KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate) {
         this.validations = validations;
         this.transactionRepository = transactionRepository;
         this.mainWalletRepository = mainWalletRepository;
         this.transactionMapper = transactionMapper;
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaGoalTemplate = kafkaGoalTemplate;
     }
 
     @Transactional
@@ -72,6 +75,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .transactionId(UUID.randomUUID().toString())
                     .groupId(groupId)
                     .user(user)
+                    .status("SUCCESS")
                     .amount(amount)
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
@@ -90,12 +94,29 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Double newTargetWalletBalance = targetWallet.getBalance();
             log.info("Updated target wallet balance: {}", newTargetWalletBalance);
 
+
+            Double goalAmount = targetWallet.getGoalAmount();
+            if (goalAmount != null && goalAmount > 0) {
+                double completionPercent = (targetWallet.getBalance() / goalAmount) * 100;
+                if (completionPercent >= 50 && previousTargetWalletBalance < goalAmount * 0.5) {
+                    sendGoalCompletionEvent(user, targetWallet, 50);
+                }
+                if (completionPercent >= 75 && previousTargetWalletBalance < goalAmount * 0.75) {
+                    sendGoalCompletionEvent(user, targetWallet, 75);
+                }
+                if (completionPercent >= 100 && previousTargetWalletBalance < goalAmount) {
+                    sendGoalCompletionEvent(user, targetWallet, 100);
+                }
+            }
+
+
             log.info("Creating credit transaction for targetWallet={}", targetWallet.getId());
             Transaction creditTransaction = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .groupId(groupId)
                     .user(user)
                     .amount(amount)
+                    .status("SUCCESS")
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
                     .description("Received from " + sourceWallet.getName())
@@ -107,7 +128,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .toWalletId(targetWallet.getId()).build();
             transactions.addFirst(creditTransaction);
             log.info("Credit transaction created: {}", creditTransaction.getTransactionId());
-
 
             log.debug("Saving transactions into repository, count={}", transactions.size());
             transactionRepository.saveAll(transactions);
@@ -143,4 +163,21 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         }
 
     }
+    private void sendGoalCompletionEvent(User user, WalletWrapper wallet, int milestone) {
+        log.info("Publishing goal milestone {}% completion for wallet {}", milestone, wallet.getId());
+
+        GoalCompletionEvent event = GoalCompletionEvent.builder()
+                .userId(user.getUuid())
+                .email(user.getEmail())
+                .walletId(wallet.getId())
+                .walletName(wallet.getName())
+                .milestone(milestone)
+                .currentBalance(wallet.getBalance())
+                .goalAmount(wallet.getGoalAmount())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        kafkaGoalTemplate.send("goal-completion-topic",event);
+    }
+
 }

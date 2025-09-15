@@ -2,5 +2,8 @@ package com.bxb.sunduk_pay.util;
 
 public enum PaymentMethod {
     UPI,
-    Bank
+    PHONE_NUMBER,
+    BANK,
+    QR,
+    CARD
 }

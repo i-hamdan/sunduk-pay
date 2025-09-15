@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.exception.StripeSessionException;
 import com.bxb.sunduk_pay.factoryPattern.TransferService;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.service.FailedTxnRecorder;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.stripe.exception.SignatureVerificationException;
@@ -25,9 +26,10 @@ import java.io.IOException;
 public class StripeWebhookController {
 
     private final WalletService walletService;
-
-    public StripeWebhookController(WalletService walletService) {
+ private final FailedTxnRecorder failedTxnRecorder;
+    public StripeWebhookController(WalletService walletService, FailedTxnRecorder failedTxnRecorder) {
         this.walletService = walletService;
+        this.failedTxnRecorder = failedTxnRecorder;
     }
 
     @Value("${stripe.webhook.secret}")
@@ -53,37 +55,70 @@ public class StripeWebhookController {
             throw new StripeSessionException("Invalid Stripe signature");
         }
         try {
-            if ("checkout.session.completed".equals(event.getType())) {
-                Object rawData = event.getData().getObject();
+        switch (event.getType()) {
+            case "checkout.session.completed": {
+                Session session = (Session) event.getDataObjectDeserializer()
+                        .getObject()
+                        .orElse(null);
 
-                if (rawData instanceof Session session) {
-                    String userId = session.getMetadata().get("userId");
-                    TransactionType transactionType = TransactionType.valueOf(
-                            session.getMetadata().get("type").toUpperCase()
-                    );
-                    String targetWallet = session.getMetadata().get("targetWallet");
-                    String sourceWallet = session.getMetadata().get("sourceWallet");
-                    double amount = session.getAmountTotal() / 100.0;
-//                String paymentIntentId = session.getPaymentIntent();
-
-                    MainWalletRequest requestObj = new MainWalletRequest();
-                    requestObj.setUuid(userId);
-                    requestObj.setAmount(amount);
-                    requestObj.setTransactionType(transactionType);
-                    requestObj.setSourceWalletId(sourceWallet);
-                    requestObj.setTargetWalletId(targetWallet);
-
-                    if (transactionType.equals(TransactionType.DEBIT)) {
-                        return walletService.payMoney(requestObj);
-                    } else {
-                        return walletService.addMoney(requestObj);
-                    }
+                if (session != null) {
+                    return handleCompletedSession(session);
                 }
+                break;
             }
-        } catch (Exception e) {
-            log.error(" Unexpected error handling Stripe webhook. Event={}", event);
-            throw new StripeSessionException("Failed to process Stripe webhook");
+
+            case "checkout.session.expired":
+            case "checkout.session.async_payment_failed":
+            case "payment_intent.payment_failed": {
+                Session session = (Session) event.getDataObjectDeserializer()
+                        .getObject()
+                        .orElse(null);
+
+                if (session != null) {
+                    log.warn("Payment failed for sessionId={}", session.getId());
+
+                    // Build failed transaction request
+                    MainWalletRequest requestObj = new MainWalletRequest();
+                    requestObj.setUuid(session.getMetadata().get("userId"));
+                    requestObj.setAmount(session.getAmountTotal() / 100.0);
+                    requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata().get("type")));
+                    requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
+                    requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
+                    // Save transaction with FAILED status
+                    return failedTxnRecorder.recordFailedTxn(requestObj);
+                }
+                break;
+            }
+            default:
+                log.info("Unhandled Stripe event type: {}", event.getType());
         }
+    } catch (Exception e) {
+        log.error("Unexpected error handling Stripe webhook. Event={}", event);
+        throw new StripeSessionException("Failed to process Stripe webhook");
+    }
         return MainWalletResponse.builder().message("Success").build();
     }
+    private MainWalletResponse handleCompletedSession(Session session) {
+        String userId = session.getMetadata().get("userId");
+        TransactionType transactionType = TransactionType.valueOf(
+                session.getMetadata().get("type").toUpperCase()
+        );
+        String targetWallet = session.getMetadata().get("targetWallet");
+        String sourceWallet = session.getMetadata().get("sourceWallet");
+        double amount = session.getAmountTotal() / 100.0;
+
+        MainWalletRequest requestObj = new MainWalletRequest();
+        requestObj.setUuid(userId);
+        requestObj.setAmount(amount);
+        requestObj.setTransactionType(transactionType);
+        requestObj.setSourceWalletId(sourceWallet);
+        requestObj.setTargetWalletId(targetWallet);
+
+        if (transactionType.equals(TransactionType.DEBIT)) {
+            return walletService.payMoney(requestObj);
+        } else {
+            return walletService.addMoney(requestObj);
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
@@ -32,6 +33,10 @@ public class WalletController {
         return new ResponseEntity<>(walletService.showBalance(walletId), HttpStatus.OK);
     }
 
+    @PostMapping("/addTxns")
+    public void addDummyData(@RequestBody MainWalletRequest request){
+        walletService.addDummy(request);
+    }
 
     //this api will download all the transactions of a wallet.
     @PostMapping("/wallet-downloadPdf/{walletId}")
@@ -57,5 +62,7 @@ public class WalletController {
 
         return new ResponseEntity<>(walletResponse, HttpStatus.OK);
     }
+
+
 
 }

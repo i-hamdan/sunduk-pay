@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -63,37 +64,65 @@ public class ValidationsImpl implements Validations {
             throw new MaxSubWalletsExceededException("Maximum 19 sub wallets are allowed.");
         }
     }
-
     @Override
     public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-            String uuid, String walletId,String transactionGroupId, TransactionType transactionType, Pageable pageable) {
+            String uuid,
+            String walletId,
+            String transactionGroupId,
+            PaymentMethod method,
+            TransactionType transactionType,
+            Pageable pageable) {
 
-        if (transactionGroupId!=null){
-          return transactionRepository.findByUser_UuidAndGroupId(uuid,transactionGroupId,pageable);
+        if (transactionGroupId != null) {
+            return transactionRepository.findByUser_UuidAndGroupId(uuid, transactionGroupId, pageable);
         }
 
         Page<Transaction> transactions;
-
         if (walletId != null) {
             // Subwallet is specified
             if (transactionType == TransactionType.DEBIT) {
                 // Only those where subWalletId is the FROM wallet
-                transactions = transactionRepository.findByUser_UuidAndFromWalletIdAndTransactionType(
-                        uuid, walletId, TransactionType.DEBIT, pageable);
+                if (method != null) {
+                    transactions = transactionRepository.findByUser_UuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+                            uuid, walletId, TransactionType.DEBIT, method, pageable);
+                } else {
+                    transactions = transactionRepository.findByUser_UuidAndFromWalletIdAndTransactionType(
+                            uuid, walletId, TransactionType.DEBIT, pageable);
+                }
             } else if (transactionType == TransactionType.CREDIT) {
                 // Only those where subWalletId is the TO wallet
-                transactions = transactionRepository.findByUser_UuidAndToWalletIdAndTransactionType(
-                        uuid, walletId, TransactionType.CREDIT, pageable);
+                if (method != null) {
+                    transactions = transactionRepository.findByUser_UuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+                            uuid, walletId, TransactionType.CREDIT, method, pageable);
+                } else {
+                    transactions = transactionRepository.findByUser_UuidAndToWalletIdAndTransactionType(
+                            uuid, walletId, TransactionType.CREDIT, pageable);
+                }
             } else {
-                transactions = transactionRepository.findAllByUserAndWallet(
-                        uuid, walletId, pageable);
+                if (method != null) {
+                    transactions = transactionRepository.findByUser_UuidAndWalletIdAndPaymentMethod(
+                            uuid, walletId, method, pageable);
+                } else {
+                    transactions = transactionRepository.findAllByUserAndWallet(uuid, walletId, pageable);
+                }
             }
         } else {
             // No subwallet filter
             if (transactionType != null) {
-                transactions = transactionRepository.findByUser_UuidAndTransactionTypeAndIsMasterFalse(uuid, transactionType, pageable);
+                if (method != null) {
+                    transactions = transactionRepository.findByUser_UuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+                            uuid, transactionType, method, pageable);
+                } else {
+                    transactions = transactionRepository.findByUser_UuidAndTransactionTypeAndIsMasterFalse(
+                            uuid, transactionType, pageable);
+                }
             } else {
-                transactions = transactionRepository.findByUser_UuidAndIsMasterFalse(uuid, pageable);
+                if (method != null) {
+                    transactions = transactionRepository.findByUser_UuidAndPaymentMethodAndIsMasterFalse(
+                            uuid, method, pageable);
+                } else {
+                    transactions = transactionRepository.findByUser_UuidAndIsMasterFalse(uuid, pageable);
+                }
             }
         }
 
@@ -152,6 +181,18 @@ public class ValidationsImpl implements Validations {
             log.error("Validation failed: wallet or subWalletId is null. Wallet={}, SubWalletId={}", wallet.getMainWalletId(), subWalletId);
             throw new NullValueException("wallet or subWalletId must not be null.");
         }
+        log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
+        return wallet.getSubWallets().stream()
+                .filter(sw -> sw.getSubWalletId().equals(subWalletId))
+                .findFirst()
+                .orElseGet(() -> {
+                    log.warn("SubWallet not found. SubWalletId={} under MainWallet={}", subWalletId, wallet.getMainWalletId());
+                    return null;
+                });
+    }
+
+    @Override
+    public SubWallet getSubWalletIfExists(MainWallet wallet, String subWalletId) {
         log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
         return wallet.getSubWallets().stream()
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))

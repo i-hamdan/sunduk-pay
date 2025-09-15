@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
+import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.exception.EmailSendingException;
 import com.bxb.sunduk_pay.service.EmailService;
@@ -28,6 +29,13 @@ public class EmailServiceImpl implements EmailService {
         sendEmail(event.getEmail(), subject, body);
     }
 
+    @Override
+    public void processGoalCompletionEvent(GoalCompletionEvent event) {
+    String subject= emailMessageUtil.buildGoalSubject(event);
+    String body= emailMessageUtil.buildGoalBody(event);
+    sendEmail(event.getEmail(),subject,body);
+    }
+
     public void sendEmail(String to, String subject, String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -40,5 +48,7 @@ public class EmailServiceImpl implements EmailService {
             throw new EmailSendingException("Failed to send email to: " + to);
         }
     }
+
+
 
 }

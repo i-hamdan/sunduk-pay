@@ -23,4 +23,8 @@ public interface WalletService {
     MainWalletResponse addMoney(MainWalletRequest mainWalletRequest);
 
     MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);
+
+    MainWalletResponse recordFailedTxn(MainWalletRequest requestObj);
+
+    void addDummy(MainWalletRequest request);
 }

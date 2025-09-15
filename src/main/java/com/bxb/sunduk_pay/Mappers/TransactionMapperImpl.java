@@ -29,9 +29,11 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setGroupId(transaction.getGroupId());
         transactionResponse.setUuid(transaction.getUser().getUuid());
         transactionResponse.setTransactionType(transaction.getTransactionType());
+        transactionResponse.setPaymentMethod(transaction.getPaymentMethod());
         transactionResponse.setDescription(transaction.getDescription());
         transactionResponse.setAmount(transaction.getAmount());
         transactionResponse.setMainWalletId(transaction.getMainWallet().getMainWalletId());
+        transactionResponse.setStatus(transaction.getStatus());
         transactionResponse.setFullName(transaction.getUser().getFullName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
                 .withLocale(Locale.ENGLISH);

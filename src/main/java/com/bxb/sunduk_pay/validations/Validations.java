@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.validations;
 
 
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,9 +18,11 @@ public interface Validations {
 
     void validateNumberOfSubWallets(int size);
 
-    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, String transactionGroupId, TransactionType transactionType, Pageable pageable);
+    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, String transactionGroupId, PaymentMethod paymentMethod, TransactionType transactionType, Pageable pageable);
 
     SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
+
+    SubWallet getSubWalletIfExists(MainWallet wallet, String subWalletId);
 
     String getFromIconOfTxn(String mainWalletId,String fromWalletId);
 

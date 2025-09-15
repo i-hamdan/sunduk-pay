@@ -30,6 +30,9 @@ public class WalletWrapper {
         return mainWallet != null ? mainWallet.getBalance() : subWallet.getBalance();
     }
 
+    public Double getGoalAmount() {
+        return subWallet != null ? subWallet.getTargetBalance() : null;
+    }
     public void setBalance(double newBalance) {
         if (mainWallet != null) {
             mainWallet.setBalance(newBalance);

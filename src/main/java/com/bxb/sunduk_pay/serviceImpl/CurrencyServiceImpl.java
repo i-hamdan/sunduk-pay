@@ -155,6 +155,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         List<CurrencyRatesResponse> response = mapper.toMonthlyAverageResponses(ratesForLastYear, currencyPair);
         log.info("Yearly rates mapped successfully. Count={}", response.size());
+
         return response;
     }
 
