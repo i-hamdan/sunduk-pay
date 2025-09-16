@@ -80,7 +80,7 @@ public class TransferService implements WalletOperation {
             } else if (sourceExists && !targetExists || sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
                 log.info("Processing external outgoing transfer");
                 return handleExternalOutGoingTransfer(sourceWallet, targetWallet, mainWalletRequest.getAmount(), user);
-            } else if (!sourceExists && targetExists || !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
+            } else if (!sourceExists && targetExists || targetExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || targetExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
                 log.info("Processing external incoming transfer");
                 return handleExternalIncomingTransfer(user, mainWalletRequest.getAmount(), targetWallet, sourceWallet);
             } else {
@@ -110,16 +110,39 @@ public class TransferService implements WalletOperation {
      return internalTransferService.doInternalTransfer(user,mainWallet,amount,sourceWallet,targetWallet,previousSourceWalletBalance,previousTargetWalletBalance);
     }
 
+//    private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
+//
+//        if (walletId.equals(mainWallet.getMainWalletId())) {
+//            log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
+//            return new WalletWrapper(mainWallet);
+//        }
+//        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.", walletId);
+//
+//        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, walletId);
+//        log.debug("Returning sub wallet wrapper for wallet ID {}", walletId);
+//        if (subWallet != null) {
+//            log.debug("SubWallet found for wallet ID {}. Returning SubWallet wrapper.", walletId);
+//            return new WalletWrapper(subWallet);
+//        } else {
+//            log.warn("No Wallet found for wallet ID {} in MainWalletId {}.", walletId, mainWallet.getMainWalletId());
+//            return null;
+//        }
+//    }
+
     private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
+        if (walletId == null) {
+            log.warn("walletId is null, returning null");
+            return null;
+        }
 
         if (walletId.equals(mainWallet.getMainWalletId())) {
             log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
             return new WalletWrapper(mainWallet);
         }
-        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.", walletId);
 
+        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.", walletId);
         SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, walletId);
-        log.debug("Returning sub wallet wrapper for wallet ID {}", walletId);
+
         if (subWallet != null) {
             log.debug("SubWallet found for wallet ID {}. Returning SubWallet wrapper.", walletId);
             return new WalletWrapper(subWallet);
@@ -128,4 +151,7 @@ public class TransferService implements WalletOperation {
             return null;
         }
     }
+
+
+
 }

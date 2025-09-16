@@ -1,18 +1,15 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
+import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.FailedTxnRecorder;
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.service.StripeService;
-import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.model.checkout.Session;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 
