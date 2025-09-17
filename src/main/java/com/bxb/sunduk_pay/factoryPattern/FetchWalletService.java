@@ -1,0 +1,35 @@
+package com.bxb.sunduk_pay.factoryPattern;
+
+import com.bxb.sunduk_pay.Mappers.WalletMapper;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.request.MainWalletRequest;
+import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.util.RequestType;
+import com.bxb.sunduk_pay.validations.Validations;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class FetchWalletService implements WalletOperation{
+    private final Validations validations;
+    private final WalletMapper walletMapper;
+
+    public FetchWalletService(Validations validations, WalletMapper walletMapper) {
+        this.validations = validations;
+        this.walletMapper = walletMapper;
+    }
+
+    @Override
+    public RequestType getRequestType() {
+        return RequestType.FETCH_WALLET;
+    }
+
+    @Override
+    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+        MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+        List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter(sw -> !sw.getIsDeleted()).toList();
+        return walletMapper.toWalletResponse(mainWallet,subWallets);
+    }
+}
