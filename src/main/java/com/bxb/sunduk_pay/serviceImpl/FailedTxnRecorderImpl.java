@@ -13,16 +13,36 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+/**
+ * Implementation of FailedTxnRecorder service.
+ * Responsible for recording failed transactions in the system.
+ */
 @Service
 public class FailedTxnRecorderImpl implements FailedTxnRecorder {
+
     private final Validations validations;
     private final TransactionRepository transactionRepository;
 
+    /**
+     * Constructs the FailedTxnRecorderImpl.
+     *
+     * @param validations           utility class for performing validations and fetching user/wallet info
+     * @param transactionRepository repository for storing transaction records
+     */
     public FailedTxnRecorderImpl(Validations validations, TransactionRepository transactionRepository) {
         this.validations = validations;
         this.transactionRepository = transactionRepository;
     }
 
+    /**
+     * Records a failed transaction based on the given MainWalletRequest.
+     * Determines the source and target wallets, builds a failed transaction object,
+     * saves it to the database, and returns a response indicating failure.
+     *
+     * @param request the request containing transaction details
+     * @return a MainWalletResponse indicating transaction failure
+     */
     @Override
     public MainWalletResponse recordFailedTxn(MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
@@ -30,27 +50,26 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
         SubWallet sourceSubWallet = validations.getSubWalletIfExists(mainWallet, request.getSourceWalletId());
         SubWallet targetSubwallet = validations.getSubWalletIfExists(mainWallet, request.getTargetWalletId());
 
-        String fromWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())){
-            fromWallet="Main wallet";
-        } else if (sourceSubWallet!=null && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
-            fromWallet= sourceSubWallet.getSubWalletName();
-        }else{
-            fromWallet="Some external source";
+        String fromWallet = null;
+        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())) {
+            fromWallet = "Main wallet";
+        } else if (sourceSubWallet != null && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
+            fromWallet = sourceSubWallet.getSubWalletName();
+        } else {
+            fromWallet = "Some external source";
         }
 
-        String toWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())){
-            toWallet="Main wallet";
-        } else if (targetSubwallet!=null && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
-            toWallet= targetSubwallet.getSubWalletName();
-        }else{
-            toWallet="Some external target";
+        String toWallet = null;
+        if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())) {
+            toWallet = "Main wallet";
+        } else if (targetSubwallet != null && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
+            toWallet = targetSubwallet.getSubWalletName();
+        } else {
+            toWallet = "Some external target";
         }
 
-
-
-        Transaction failedTransaction = Transaction.builder().transactionId(UUID.randomUUID().toString())
+        Transaction failedTransaction = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .amount(request.getAmount())
                 .transactionType(request.getTransactionType())
@@ -65,6 +84,7 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
                 .build();
 
         transactionRepository.save(failedTransaction);
+
         return MainWalletResponse.builder()
                 .message("Transaction failed!")
                 .build();

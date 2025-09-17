@@ -38,6 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * Service implementation for wallet operations such as adding money, paying money,
+ * handling failed transactions, wallet CRUD operations, and exporting transactions.
+ */
 @Log4j2
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -64,6 +69,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
+    /**
+     * Deducts money from the user's wallet(s) and records the transaction.
+     *
+     * @param request The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Override
     @Transactional
     public MainWalletResponse payMoney(MainWalletRequest request) {
@@ -173,6 +184,12 @@ public class WalletServiceImpl implements WalletService {
         return response;
     }
 
+    /**
+     * Adds money to the user's wallet(s) and records the transaction.
+     *
+     * @param mainWalletRequest The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Transactional
     @Override
     public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
@@ -288,13 +305,28 @@ public class WalletServiceImpl implements WalletService {
         return response;
     }
 
-
+    /**
+     * Provides wallet-related operations such as CRUD operations, recording failed transactions,
+     * adding dummy transactions, checking balances, and downloading transaction history.
+     */
     @Override
     public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
+        /**
+         * Performs wallet operations based on the request type using factory pattern.
+         *
+         * @param mainWalletRequest The request containing wallet operation details including type.
+         * @return MainWalletResponse The response after performing the requested wallet operation.
+         */
         WalletOperation walletService = walletOperationFactory.getWalletService(mainWalletRequest.getRequestType());
         return walletService.perform(mainWalletRequest);
     }
 
+    /**
+     * Records a failed transaction in the database.
+     *
+     * @param request The request containing transaction details such as source, target, amount, and type.
+     * @return MainWalletResponse Response indicating that the transaction failed.
+     */
     @Override
         public MainWalletResponse recordFailedTxn(MainWalletRequest request) {
 
@@ -342,6 +374,7 @@ public class WalletServiceImpl implements WalletService {
                     .build();
         }
 
+
     @Override
     public void addDummy(MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
@@ -362,7 +395,13 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
-
+    /**
+     * Returns the current balance of a wallet.
+     *
+     * @param walletId The ID of the wallet to fetch balance for.
+     * @return String A message containing the wallet ID and its current balance.
+     * @throws WalletNotFoundException If the wallet with given ID does not exist.
+     */
     //This will simply return the current balance of a wallet.
     public String showBalance(String walletId) {
         log.info("Fetching balance for walletId: {}", walletId);
@@ -384,7 +423,14 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
-    //method for downloading transactions in Excel file format
+    /**
+     * Downloads the transaction history of a wallet as an Excel file.
+     *
+     * @param walletId The ID of the wallet whose transactions are to be downloaded.
+     * @param response HttpServletResponse used to write the Excel file to the client.
+     * @throws IOException If an I/O error occurs while writing the Excel file.
+     * @throws WalletNotFoundException If the wallet with the given ID does not exist.
+     */
     @Override
     public void downloadTransactions(String walletId, HttpServletResponse response) throws IOException {
         log.info("Starting to download transactions for walletId: {}", walletId);
@@ -394,11 +440,6 @@ public class WalletServiceImpl implements WalletService {
                     log.error("Wallet not found with ID: {}", walletId);
                     return new WalletNotFoundException("invalid wallet id");
                 });
-
-
-
-
-
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=transactions.xlsx");

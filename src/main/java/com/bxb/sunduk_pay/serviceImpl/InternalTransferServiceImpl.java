@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service implementation for performing internal transfers between wallets.
+ * Handles balance deduction, transaction creation, goal milestone checks, and Kafka event publishing.
+ */
 @Service
 @Log4j2
 public class InternalTransferServiceImpl implements InternalTransferService {
@@ -46,6 +50,21 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         this.kafkaGoalTemplate = kafkaGoalTemplate;
     }
 
+
+    /**
+     * Performs an internal transfer between two wallets or subWallets for a user.
+     * Creates debit and credit transactions, updates wallet balances, checks goal milestones,
+     * and publishes events to Kafka topics.
+     *
+     * @param user                        the user performing the transfer
+     * @param mainWallet                  the user's main wallet
+     * @param amount                      the amount to transfer
+     * @param sourceWallet                the source wallet wrapper
+     * @param targetWallet                the target wallet wrapper
+     * @param previousSourceWalletBalance the source wallet balance before transfer
+     * @param previousTargetWalletBalance the target wallet balance before transfer
+     * @return MainWalletResponse containing transaction details and updated balances
+     */
     @Transactional
     public MainWalletResponse doInternalTransfer(User user, MainWallet mainWallet, Double amount,
                                                  WalletWrapper sourceWallet, WalletWrapper targetWallet,
@@ -163,6 +182,14 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         }
 
     }
+
+    /**
+     * Sends a goal completion event to Kafka when a wallet reaches a milestone.
+     *
+     * @param user      the user who owns the wallet
+     * @param wallet    the wallet being tracked
+     * @param milestone the milestone percentage completed
+     */
     private void sendGoalCompletionEvent(User user, WalletWrapper wallet, int milestone) {
         log.info("Publishing goal milestone {}% completion for wallet {}", milestone, wallet.getId());
 

@@ -2,6 +2,19 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.logModel.UserActivityLog;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserActivityLogRepository extends MongoRepository<UserActivityLog,String> {
+/**
+ * Repository for persisting {@link UserActivityLog} entries.
+ * <p>
+ * This repository is primarily used for recording user actions
+ * (e.g., login, signup). It is not intended
+ * for standard CRUD operations.
+ */
+@Repository
+public interface UserActivityLogRepository extends MongoRepository<UserActivityLog, String> {
+
+    // If needed in the future, you can add query methods like:
+    // List<UserActivityLog> findByUserId(String userId);
+    // List<UserActivityLog> findByActionType(String actionType);
 }

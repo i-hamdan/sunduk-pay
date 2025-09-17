@@ -1,18 +1,31 @@
 package com.bxb.sunduk_pay.response;
+
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * Response payload representing basic user information.
+ * <p>
+ * Can be used for user details retrieval or API responses after operations
+ * like registration or profile updates.
+ * </p>
+ */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor
-
 @Builder
 public class UserResponse {
+
+    /** Unique identifier of the user. */
     private String uuid;
+
+    /** Full name of the user. */
     private String fullName;
-//    private String gender;
+
+    /** Email address of the user. */
     private String email;
-//    private String phoneNumber;
- private String message;
+
+    /** Optional message related to the user operation. */
+    private String message;
 }

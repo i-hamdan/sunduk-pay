@@ -12,8 +12,11 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-
-
+/**
+ * Implementation of PaymentService to handle payments via Stripe.
+ * Integrates with Stripe for checkout session creation and uses
+ * circuit breaker pattern to record failed transactions automatically.
+ */
 @Log4j2
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -21,42 +24,81 @@ public class PaymentServiceImpl implements PaymentService {
     private final StripeService stripeService;
     private final FailedTxnRecorder failedTxnRecorder;
 
+    /**
+     * Constructs PaymentServiceImpl with required dependencies.
+     *
+     * @param stripeService       service for interacting with Stripe API
+     * @param failedTxnRecorder   service for recording failed transactions
+     */
     public PaymentServiceImpl(StripeService stripeService, FailedTxnRecorder failedTxnRecorder) {
         this.stripeService = stripeService;
         this.failedTxnRecorder = failedTxnRecorder;
     }
 
+    /**
+     * Creates a Stripe checkout session for a user payment.
+     * Applies circuit breaker to fallback if Stripe is unavailable.
+     *
+     * @param userId          the user initiating the payment
+     * @param amount          the payment amount
+     * @param transactionType type of transaction (DEBIT/CREDIT)
+     * @param targetWallet    target wallet for credit
+     * @param sourceWallet    source wallet for debit
+     * @return MainWalletResponse containing checkout URL or error
+     */
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
-    public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
+    public MainWalletResponse createCheckoutSession(String userId,
+                                                    Double amount,
+                                                    TransactionType transactionType,
+                                                    WalletWrapper targetWallet,
+                                                    WalletWrapper sourceWallet) {
         try {
             Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
-            log.info(String.valueOf(session));
+            log.info("Stripe session created: {}", session);
 
             return MainWalletResponse.builder()
-                    .message("Session Creating Successful For User: " + userId )
+                    .message("Session created successfully for user: " + userId)
                     .checkoutUrl(session.getUrl())
                     .build();
         } catch (Exception e) {
-            throw new RuntimeException("session Creation Failed" +e);
+            log.error("Stripe session creation failed for user {}: {}", userId, e.getMessage());
+            throw new RuntimeException("Session creation failed: " + e.getMessage(), e);
         }
-
     }
 
-    // Fallback method must have same params as main method + Throwable at the end
-    public MainWalletResponse paymentFallback(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet,Throwable t) {
+    /**
+     * Fallback method invoked by Resilience4j circuit breaker when Stripe fails.
+     * Records the failed transaction for auditing and user feedback.
+     *
+     * @param userId          the user initiating the payment
+     * @param amount          the payment amount
+     * @param transactionType type of transaction
+     * @param targetWallet    target wallet for credit
+     * @param sourceWallet    source wallet for debit
+     * @param t               the exception that caused fallback
+     * @return MainWalletResponse with failure message
+     */
+    public MainWalletResponse paymentFallback(String userId,
+                                              Double amount,
+                                              TransactionType transactionType,
+                                              WalletWrapper targetWallet,
+                                              WalletWrapper sourceWallet,
+                                              Throwable t) {
+        log.warn("Payment failed! Recording failed transaction for user {}", userId);
 
-        log.info("Transfer failed ! Failed transaction will be recorded.");
-        MainWalletRequest request=new MainWalletRequest();
+        MainWalletRequest request = new MainWalletRequest();
         request.setUuid(userId);
         request.setAmount(amount);
         request.setTransactionType(transactionType);
-        request.setSourceWalletId((sourceWallet!=null)?sourceWallet.getId():null);
-        request.setTargetWalletId((targetWallet!=null)?targetWallet.getId():null);
+        request.setSourceWalletId(sourceWallet != null ? sourceWallet.getId() : null);
+        request.setTargetWalletId(targetWallet != null ? targetWallet.getId() : null);
 
         failedTxnRecorder.recordFailedTxn(request);
-        log.info("failed transaction saved successfully.");
-        return MainWalletResponse.builder().message("Payment provider unavailable: " + t.getMessage())
+        log.info("Failed transaction recorded successfully.");
+
+        return MainWalletResponse.builder()
+                .message("Payment provider unavailable: " + t.getMessage())
                 .checkoutUrl(null)
                 .build();
     }
