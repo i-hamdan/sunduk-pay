@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,55 +12,92 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
+
+/**
+ * Controller for wallet operations, including balance checking,
+ * transaction downloads, and wallet CRUD operations.
+ */
 @Log4j2
 @RestController
+@RequestMapping("/wallet")
 public class WalletController {
+
     private final WalletOperationFactory walletFactory;
     private final WalletService walletService;
 
-    public WalletController(WalletOperationFactory walletFactory, WalletService walletService) {
+    /**
+     * Constructor-based dependency injection.
+     *
+     * @param walletFactory wallet operation factory
+     * @param walletService wallet service
+     */
+    public WalletController(final WalletOperationFactory walletFactory,
+                            final WalletService walletService) {
         this.walletFactory = walletFactory;
         this.walletService = walletService;
     }
 
-
-    //this api will return the current balance of a wallet by walletId
-    @GetMapping("/wallet-showBalance/{walletId}")
-    public ResponseEntity<String> showBalance(@PathVariable String walletId) {
-        return new ResponseEntity<>(walletService.showBalance(walletId), HttpStatus.OK);
+    /**
+     * Returns the current balance of the specified wallet.
+     *
+     * @param walletId the wallet ID
+     * @return wallet balance as a string
+     */
+    @GetMapping("/showBalance/{walletId}")
+    public ResponseEntity<String> showBalance(@PathVariable final String walletId) {
+        final String balance = walletService.showBalance(walletId);
+        return new ResponseEntity<>(balance, HttpStatus.OK);
     }
 
+    /**
+     * Adds dummy transactions to the wallet.
+     *
+     * @param request main wallet request containing transaction data
+     */
     @PostMapping("/addTxns")
-    public void addDummyData(@RequestBody MainWalletRequest request){
+    public void addDummyData(@RequestBody final MainWalletRequest request) {
         walletService.addDummy(request);
     }
 
-    //this api will download all the transactions of a wallet.
-    @PostMapping("/wallet-downloadPdf/{walletId}")
-    public void downloadTransactions(@PathVariable String walletId, HttpServletResponse response) throws IOException {
+    /**
+     * Downloads all transactions of the specified wallet as a PDF.
+     *
+     * @param walletId wallet ID
+     * @param response HTTP servlet response to write PDF
+     * @throws IOException if PDF generation fails
+     */
+    @PostMapping("/downloadPdf/{walletId}")
+    public void downloadTransactions(
+            @PathVariable final String walletId,
+            final HttpServletResponse response) throws IOException {
         walletService.downloadTransactions(walletId, response);
     }
 
+    /**
+     * Handles wallet CRUD operations and sets Stripe checkout URL cookie
+     * if a checkout URL is returned.
+     *
+     * @param mainWalletRequest request payload
+     * @param response          HTTP servlet response to add cookies
+     * @return main wallet response
+     */
+    @PostMapping
+    public ResponseEntity<MainWalletResponse> walletApi(
+            @RequestBody final MainWalletRequest mainWalletRequest,
+            final HttpServletResponse response) {
 
-    @PostMapping("/wallet")
-    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest, HttpServletResponse response) {
+        final MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
 
-        MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
-
-        // Create cookie with checkout URL from response
-        if (walletResponse.getCheckoutUrl() != null) {  // only set cookie if URL exists
-            Cookie urlCookie = new Cookie("stripe_checkout_url", walletResponse.getCheckoutUrl());
+        // Set cookie with Stripe checkout URL if available
+        if (walletResponse.getCheckoutUrl() != null) {
+            final Cookie urlCookie = new Cookie("stripe_checkout_url", walletResponse.getCheckoutUrl());
             urlCookie.setPath("/");
             urlCookie.setHttpOnly(false);
             urlCookie.setSecure(true);
-            urlCookie.setMaxAge(300);
+            urlCookie.setMaxAge(300); // 5 minutes
             response.addCookie(urlCookie);
         }
 
         return new ResponseEntity<>(walletResponse, HttpStatus.OK);
     }
-
-
-
 }
