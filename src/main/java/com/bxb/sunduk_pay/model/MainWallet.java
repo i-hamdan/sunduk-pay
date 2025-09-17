@@ -12,22 +12,52 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-@Builder
+
+/**
+ * Represents a main wallet in the system.
+ * Contains balance, transactions, and associated sub-wallets.
+ */
 @Document
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MainWallet {
+
     @Id
     private String mainWalletId;
+
+    /**
+     * Current balance of the wallet.
+     */
     private Double balance;
+
+    /**
+     * Timestamp of wallet creation.
+     */
     @Timestamp
     private LocalDateTime createdAt;
+
+    /**
+     * Timestamp of last wallet update.
+     */
     @Timestamp
     private LocalDateTime updatedAt;
+
+    /**
+     * User who owns this wallet.
+     */
     @DBRef
     private User user;
+
+    /**
+     * List of transactions associated with this wallet.
+     */
     @DBRef
-    private List<Transaction> transactionHistory=new ArrayList<>();
-    private List<SubWallet> subWallets=new ArrayList<>();
+    private List<Transaction> transactionHistory = new ArrayList<>();
+
+    /**
+     * List of sub-wallets under this main wallet.
+     */
+    private List<SubWallet> subWallets = new ArrayList<>();
 }
