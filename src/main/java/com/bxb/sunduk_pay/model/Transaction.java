@@ -1,12 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.util.PaymentMethod;
-import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,29 +10,14 @@ import java.time.LocalDateTime;
 
 @Document
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Transaction {
-@Id
-private String transactionId;
-private String groupId;
-private TransactionType transactionType;
-private TransactionLevel transactionLevel;
-private PaymentMethod paymentMethod;
-private Double amount;
-private String description;
-private String status;
-private String stripePaymentIntentId;
-private LocalDateTime dateTime;
-@DBRef
-private User user;
-@DBRef
-private MainWallet mainWallet;
-private String fromWallet;
-private String fromWalletId;
-private String toWallet;
-private String toWalletId;
-private boolean isMaster;
-
+    @Id
+    private String transactionId;
+    private TransactionType transactionType;
+    private Double amount;
+    private String description;
+    private LocalDateTime dateTime;
+    @DBRef
+    private Wallet wallet;
+    private Boolean isDeleted;
 }

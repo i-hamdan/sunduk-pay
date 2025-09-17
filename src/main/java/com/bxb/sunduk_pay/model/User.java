@@ -2,12 +2,10 @@ package com.bxb.sunduk_pay.model;
 
 
 
+import com.bxb.sunduk_pay.util.UserType;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.List;
 
 @Document
 @Data
@@ -21,11 +19,6 @@ public class User {
     private String email;
     private String phoneNumber;
     private String password;
+    private UserType userType;
     private Boolean isDeleted;
-    @DBRef
-    private MasterWallet masterWallet;
-    @DBRef
-    private MainWallet mainWallet;
-     private List<UserContact> contacts;
-
 }

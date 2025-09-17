@@ -1,13 +1,21 @@
 package com.bxb.sunduk_pay.service;
 
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.request.ContactRequest;
+import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
 
+import java.util.List;
+
 public interface UserService {
+    String createUser(UserRequest request);
 
-    User userLogin(UserLoginResponse response);
+    List<UserResponse> getAll();
 
-    UserResponse uploadContacts(ContactRequest contactRequest);
+    UserResponse getById(String id);
+
+    String updateUser(String id, UserRequest request);
+
+    String deleteUser(String id);
+
+    void login(UserLoginResponse response);
 }
