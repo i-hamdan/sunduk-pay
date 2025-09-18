@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a user session is invalid, expired, or unauthorized.
@@ -12,9 +12,9 @@ public class InvalidSessionException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidSessionException} with the specified detail message.
      *
-     * @param message the detail message explaining why the session is invalid
+     * @param msg the detail message explaining why the session is invalid
      */
-    public InvalidSessionException(String message) {
-        super(message);
+    public InvalidSessionException(final String msg) {
+        super(msg);
     }
 }

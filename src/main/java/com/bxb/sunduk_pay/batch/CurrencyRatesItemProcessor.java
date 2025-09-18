@@ -38,7 +38,8 @@ public class CurrencyRatesItemProcessor implements ItemProcessor<CurrencyPair, C
 
         final String url = String.format(
                 "https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca/pair/%s/%s",
-                from, to
+                from,
+                to
         );
         log.debug("Calling API URL: {}", url);
 

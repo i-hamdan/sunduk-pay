@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a wallet or account has insufficient balance
@@ -13,9 +13,9 @@ public class InsufficientBalanceException extends RuntimeException {
     /**
      * Constructs a new {@code InsufficientBalanceException} with the specified detail message.
      *
-     * @param message the detail message explaining why the balance is insufficient
+     * @param message final detail message explaining why the balance is insufficient
      */
-    public InsufficientBalanceException(String message) {
+    public InsufficientBalanceException(final String message) {
         super(message);
     }
 }

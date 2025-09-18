@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.exception.InvalidPayloadException;
+import com.bxb.sunduk_pay.exceptions.InvalidPayloadException;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;

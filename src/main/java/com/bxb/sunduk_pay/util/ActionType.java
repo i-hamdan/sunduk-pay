@@ -5,12 +5,12 @@ package com.bxb.sunduk_pay.util;
  */
 public enum ActionType {
 
-   /** Action to rename a pot */
+   /** Action to rename a pot. */
    RENAME_POT,
 
-   /** Action to update goal amount */
+   /** Action to update goal amount. */
    GOAL_AMOUNT,
 
-   /** Action to update goal date */
+   /** Action to update goal date. */
    GOAL_DATE
 }

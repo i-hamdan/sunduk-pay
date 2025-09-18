@@ -1,3 +1,7 @@
+/**
+ * Batch components for SundukPay application.
+ * Contains ItemReaders, ItemWriters, and other batch-related classes.
+ */
 package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.util.CurrencyPair;
@@ -19,16 +23,22 @@ import java.util.List;
 @Component
 public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {
 
+    /** Iterator over all CurrencyPair enum values. */
     private final Iterator<CurrencyPair> currencyPairsIterator;
 
+    /** Constructor to initialize the iterator with all CurrencyPair values. */
     public CurrencyRateItemReader() {
-        // snapshot of enum values, so repeated runs start cleanly
         final List<CurrencyPair> allPairs = Arrays.asList(CurrencyPair.values());
         this.currencyPairsIterator = allPairs.iterator();
     }
 
+    /**
+     * Reads the next CurrencyPair from the iterator.
+     *
+     * @return the next CurrencyPair, or null if no more pairs
+     */
     @Override
-    public CurrencyPair read() throws UnexpectedInputException,
+    public final CurrencyPair read() throws UnexpectedInputException,
             ParseException,
             NonTransientResourceException {
         if (currencyPairsIterator.hasNext()) {
@@ -37,6 +47,6 @@ public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {
             return nextPair;
         }
         log.info("No more CurrencyPairs to read. Returning null.");
-        return null; // Spring Batch signals end-of-input
+        return null;
     }
 }

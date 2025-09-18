@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an error occurs during the processing of a transaction.
@@ -12,9 +12,9 @@ public class TransactionProcessingException extends RuntimeException {
     /**
      * Constructs a new {@code TransactionProcessingException} with the specified detail message.
      *
-     * @param message the detail message explaining the transaction processing failure
+     * @param message final detail message explaining the transaction processing failure
      */
-    public TransactionProcessingException(String message) {
+    public TransactionProcessingException(final String message) {
         super(message);
     }
 }

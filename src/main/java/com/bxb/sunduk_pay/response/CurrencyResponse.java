@@ -11,8 +11,10 @@ import java.util.List;
 /**
  * Response payload for currency conversion operations.
  * <p>
- * Contains the exchange rate, converted amount, conversion fee, final amount,
- * and historical rates (weekly, monthly, yearly) for display or analysis.
+ * Contains the exchange rate, converted amount,
+ * conversion fee, final amount,
+ * and historical rates (weekly,
+ * monthly, yearly) for display or analysis.
  * </p>
  */
 @Data

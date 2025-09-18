@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a required transaction amount is null or missing.
@@ -12,9 +12,9 @@ public class NullAmountException extends RuntimeException {
     /**
      * Constructs a new {@code NullAmountException} with the specified detail message.
      *
-     * @param message the detail message explaining why the amount is null
+     * @param message final detail message explaining why the amount is null
      */
-    public NullAmountException(String message) {
+    public NullAmountException(final String message) {
         super(message);
     }
 }

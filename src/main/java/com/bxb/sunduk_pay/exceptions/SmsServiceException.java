@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an error occurs while sending an SMS
@@ -15,7 +15,7 @@ public class SmsServiceException extends RuntimeException {
      *
      * @param message the detail message explaining the SMS sending failure
      */
-    public SmsServiceException(String message) {
+    public SmsServiceException(final String message) {
         super(message);
     }
 }

@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a wallet cannot be updated due to business rules
@@ -13,9 +13,9 @@ public class CannotUpdateWalletException extends RuntimeException {
     /**
      * Constructs a new {@code CannotUpdateWalletException} with the specified detail message.
      *
-     * @param message the detail message explaining why the wallet could not be updated
+     * @param message final detail message explaining why the wallet could not be updated
      */
-    public CannotUpdateWalletException(String message) {
+    public CannotUpdateWalletException(final String message) {
         super(message);
     }
 }

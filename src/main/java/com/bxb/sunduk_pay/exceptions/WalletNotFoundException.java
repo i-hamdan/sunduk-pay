@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a requested wallet (main or sub-wallet) cannot be found
@@ -15,7 +15,7 @@ public class WalletNotFoundException extends RuntimeException {
      *
      * @param message the detail message explaining which wallet was not found
      */
-    public WalletNotFoundException(String message) {
+    public WalletNotFoundException(final String message) {
         super(message);
     }
 }

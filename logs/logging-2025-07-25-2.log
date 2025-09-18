@@ -165,7 +165,7 @@ org.springframework.dao.IncorrectResultSizeDataAccessException: Query { "$java" 
 	at java.lang.Thread.run(Thread.java:1570) [?:?]
 2025-07-25 14:50:30 [http-nio-8080-exec-2] ERROR com.bxb.sunduk_pay.config.AuthenticationFilter - Session is invalid
 2025-07-25 14:50:30 [http-nio-8080-exec-2] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/api/sunduk-service].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] threw exception
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:48) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]
@@ -229,7 +229,7 @@ com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.19.jar:10.1.19]
 	at java.lang.Thread.run(Thread.java:1570) [?:?]
 2025-07-25 14:50:30 [http-nio-8080-exec-2] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost] - Exception Processing [ErrorPage[errorCode=0, location=/error]]
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:48) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]
@@ -341,7 +341,7 @@ com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
 2025-07-25 16:06:08 [http-nio-8080-exec-4] INFO  com.bxb.sunduk_pay.serviceImpl.UserServiceImpl - Login successful
 2025-07-25 16:06:41 [http-nio-8080-exec-7] ERROR com.bxb.sunduk_pay.config.AuthenticationFilter - Session is invalid
 2025-07-25 16:06:41 [http-nio-8080-exec-7] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/api/sunduk-service].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [/api/sunduk-service] threw exception
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:46) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]
@@ -410,7 +410,7 @@ com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
 	at java.lang.Thread.run(Thread.java:1570) [?:?]
 2025-07-25 16:06:41 [http-nio-8080-exec-7] ERROR com.bxb.sunduk_pay.config.AuthenticationFilter - Session is invalid
 2025-07-25 16:06:41 [http-nio-8080-exec-7] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/api/sunduk-service].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] threw exception
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:46) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]
@@ -474,7 +474,7 @@ com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63) ~[tomcat-embed-core-10.1.19.jar:10.1.19]
 	at java.lang.Thread.run(Thread.java:1570) [?:?]
 2025-07-25 16:06:41 [http-nio-8080-exec-7] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost] - Exception Processing [ErrorPage[errorCode=0, location=/error]]
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:46) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]

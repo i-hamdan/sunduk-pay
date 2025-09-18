@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.exception.InvalidPayloadException;
-import com.bxb.sunduk_pay.exception.StripeSessionException;
+import com.bxb.sunduk_pay.exceptions.InvalidPayloadException;
+import com.bxb.sunduk_pay.exceptions.StripeSessionException;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.FailedTxnRecorder;
@@ -16,7 +16,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;

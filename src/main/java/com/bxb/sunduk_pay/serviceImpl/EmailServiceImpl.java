@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-import com.bxb.sunduk_pay.exception.EmailSendingException;
+import com.bxb.sunduk_pay.exceptions.EmailSendingException;
 import com.bxb.sunduk_pay.service.EmailService;
 import com.bxb.sunduk_pay.util.EmailMessageUtil;
 import lombok.extern.log4j.Log4j2;

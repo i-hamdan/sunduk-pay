@@ -1,20 +1,24 @@
 package com.bxb.sunduk_pay.util;
 
 /**
- * Represents the type of a financial transaction in SundukPay.
+ * Represents the type of financial transaction in SundukPay.
  *
- * <p>This enum indicates whether funds are coming into (CREDIT)
+ * <p>This enum indicates whether
+ * funds are coming into (CREDIT)
  * or going out of (DEBIT) a wallet.</p>
  */
 public enum TransactionType {
 
     /**
-     * Money credited to a wallet (e.g., deposits, received payments).
+     * Money credited to a wallet
+     * (e.g., deposits, received payments).
      */
     CREDIT,
 
     /**
-     * Money debited from a wallet (e.g., withdrawals, sent payments).
+     * Money debited from a wallet
+     * (e.g., withdrawals, sent payments).
      */
+
     DEBIT
 }

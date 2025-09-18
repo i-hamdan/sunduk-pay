@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.config.TwilioConfig;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
-import com.bxb.sunduk_pay.exception.SmsServiceException;
+import com.bxb.sunduk_pay.exceptions.SmsServiceException;
 import com.bxb.sunduk_pay.service.SmsService;
 import com.bxb.sunduk_pay.util.FallbackEmailUtil;
 import com.bxb.sunduk_pay.util.SmsMessageUtil;

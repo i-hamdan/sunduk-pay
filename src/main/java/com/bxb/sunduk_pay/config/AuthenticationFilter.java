@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.config;
 
-import com.bxb.sunduk_pay.exception.InvalidUserException;
+import com.bxb.sunduk_pay.exceptions.InvalidUserException;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;

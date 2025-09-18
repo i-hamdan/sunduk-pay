@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a wallet cannot be deleted due to business rules
@@ -13,9 +13,9 @@ public class CannotDeleteWalletException extends RuntimeException {
     /**
      * Constructs a new {@code CannotDeleteWalletException} with the specified detail message.
      *
-     * @param message the detail message explaining why the wallet could not be deleted
+     * @param msg the detail message explaining why the wallet could not be deleted
      */
-    public CannotDeleteWalletException(String message) {
-        super(message);
+    public CannotDeleteWalletException(final String msg) {
+        super(msg);
     }
 }

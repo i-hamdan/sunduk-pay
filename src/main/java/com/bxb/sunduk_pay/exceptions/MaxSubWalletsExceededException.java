@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a user attempts to create more sub-wallets
@@ -13,9 +13,9 @@ public class MaxSubWalletsExceededException extends RuntimeException {
     /**
      * Constructs a new {@code MaxSubWalletsExceededException} with the specified detail message.
      *
-     * @param message the detail message explaining why the maximum sub-wallet limit was exceeded
+     * @param msg the detail message explaining why the maximum sub-wallet limit was exceeded
      */
-    public MaxSubWalletsExceededException(String message) {
-        super(message);
+    public MaxSubWalletsExceededException(final String msg) {
+        super(msg);
     }
 }

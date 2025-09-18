@@ -15,40 +15,36 @@ import java.util.List;
 @Data
 public class User {
 
+    /** Unique identifier for the user. */
     @Id
     private String uuid;
 
-    /**
-     * Full name of the user.
-     */
+    /** Full name of the user. */
     private String fullName;
 
-    // Optional: You can uncomment if you want firstName/lastName separately
-    // private String firstName;
-    // private String lastName;
-
+    /** Gender of the user (e.g., Male, Female, Other). */
     private String gender;
+
+    /** Email address of the user. */
     private String email;
+
+    /** Phone number of the user. */
     private String phoneNumber;
 
-    /**
-     * User's password (should be stored hashed in production).
-     */
+    /** User's password (should be stored hashed in production). */
     private String password;
 
-    /**
-     * Indicates whether the user is deleted or inactive.
-     */
+    /** Indicates whether the user is deleted or inactive. */
     private Boolean isDeleted;
 
+    /** Reference to the user's master wallet. */
     @DBRef
     private MasterWallet masterWallet;
 
+    /** Reference to the user's main wallet. */
     @DBRef
     private MainWallet mainWallet;
 
-    /**
-     * List of user contacts.
-     */
+    /** List of contacts associated with the user. */
     private List<UserContact> contacts;
 }

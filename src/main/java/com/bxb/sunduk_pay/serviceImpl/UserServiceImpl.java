@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exceptions.UserNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;

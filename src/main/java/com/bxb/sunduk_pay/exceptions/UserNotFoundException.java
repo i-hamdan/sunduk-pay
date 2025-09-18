@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a requested user cannot be found in the system.
@@ -12,9 +12,9 @@ public class UserNotFoundException extends RuntimeException {
     /**
      * Constructs a new {@code UserNotFoundException} with the specified detail message.
      *
-     * @param message the detail message explaining which user was not found
+     * @param message final detail message explaining which user was not found
      */
-    public UserNotFoundException(String message) {
+    public UserNotFoundException(final String message) {
         super(message);
     }
 }

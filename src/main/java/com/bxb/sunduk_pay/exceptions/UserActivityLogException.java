@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an error occurs while recording or processing
@@ -15,7 +15,7 @@ public class UserActivityLogException extends RuntimeException {
      *
      * @param message the detail message explaining the user activity log failure
      */
-    public UserActivityLogException(String message) {
+    public UserActivityLogException(final String message) {
         super(message);
     }
 }

@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a requested resource (e.g., user, wallet, transaction)
@@ -13,9 +13,9 @@ public class ResourceNotFoundException extends RuntimeException {
     /**
      * Constructs a new {@code ResourceNotFoundException} with the specified detail message.
      *
-     * @param message the detail message explaining which resource was not found
+     * @param message final detail message explaining which resource was not found
      */
-    public ResourceNotFoundException(String message) {
+    public ResourceNotFoundException(final String message) {
         super(message);
     }
 }

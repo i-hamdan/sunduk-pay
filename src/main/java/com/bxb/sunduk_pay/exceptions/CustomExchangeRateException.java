@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a custom exchange rate operation fails
@@ -13,9 +13,9 @@ public class CustomExchangeRateException extends RuntimeException {
     /**
      * Constructs a new {@code CustomExchangeRateException} with the specified detail message.
      *
-     * @param message the detail message explaining the reason for the failure
+     * @param message final detail message explaining the reason for the failure
      */
-    public CustomExchangeRateException(String message) {
+    public CustomExchangeRateException(final String message) {
         super(message);
     }
 }

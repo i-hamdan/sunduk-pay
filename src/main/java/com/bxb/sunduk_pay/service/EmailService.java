@@ -16,7 +16,8 @@ public interface EmailService {
     void processEmailEvent(UserKafkaEvent event);
 
     /**
-     * Sends an email with the specified subject and body to the given recipient.
+     * Sends an email with the specified subject
+     * and body to the given recipient.
      *
      * @param to      recipient email address
      * @param subject subject of the email

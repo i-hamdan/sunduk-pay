@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when the request payload is invalid or cannot be processed.
@@ -14,7 +14,7 @@ public class InvalidPayloadException extends RuntimeException {
      *
      * @param message the detail message explaining why the payload is invalid
      */
-    public InvalidPayloadException(String message) {
+    public InvalidPayloadException(final String message) {
         super(message);
     }
 }

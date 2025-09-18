@@ -1,3 +1,6 @@
+/**
+ * This package contains classes related to batch processing of currency rates.
+ */
 package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
@@ -14,23 +17,32 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Spring Batch writer that merges all {@link CurrencyRates} in a chunk into a single document and persists it.
+ * Spring Batch writer that merges all {@link CurrencyRates} in a chunk into a single document
+ * and persists it to the database.
  */
 @Component
 @RequiredArgsConstructor
 @Log4j2
 public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
 
+    /** Repository to persist CurrencyRates. */
     private final CurrencyRateRepository currencyRateRepository;
 
+    /**
+     * Merges all CurrencyRates in the given chunk into a single CurrencyRates document
+     * and saves it to MongoDB.
+     *
+     * @param chunk the chunk of CurrencyRates to write
+     */
     @Override
-    public void write(final Chunk<? extends CurrencyRates> chunk) {
+    public final void write(final Chunk<? extends CurrencyRates> chunk) {
         if (chunk == null || chunk.isEmpty()) {
             log.warn("Received null or empty chunk, nothing to write.");
             return;
         }
 
-        log.info("Merging {} CurrencyRates items into a single document.", chunk.size());
+        log.info("Merging {} CurrencyRates items into a single document.",
+                chunk.size());
 
         final Map<String, Double> allRates = new HashMap<>();
         for (CurrencyRates rate : chunk.getItems()) {
@@ -51,6 +63,7 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
         merged.setRates(allRates);
 
         currencyRateRepository.save(merged);
-        log.info("Saved merged rates to MongoDB. Total pairs: {}", allRates.size());
+        log.info("Saved merged rates to MongoDB. Total pairs: {}",
+                allRates.size());
     }
 }

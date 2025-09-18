@@ -17,7 +17,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JobScheduler {
 
+    /** Spring Batch JobLauncher to run jobs */
     private final JobLauncher jobLauncher;
+
+    /** Job instance that imports currency exchange rates */
     private final Job importExchangeRatesJob;
 
     /**
@@ -34,7 +37,8 @@ public class JobScheduler {
                     .addLong("timestamp", System.currentTimeMillis())
                     .toJobParameters();
 
-            log.debug("Starting job 'importExchangeRatesJob' with params: {}", params);
+            log.debug("Starting job 'importExchangeRatesJob' with params: {}",
+                    params);
 
             if (jobLauncher == null || importExchangeRatesJob == null) {
                 log.error("JobLauncher or Job is null. Cannot run job.");

@@ -5,7 +5,8 @@ import lombok.Data;
 /**
  * Response payload representing a sub-wallet.
  * <p>
- * Contains the sub-wallet ID, name, current balance, target balance, and associated icon.
+ * Contains the sub-wallet ID, name, current balance,
+ * target balance, and associated icon.
  * Used in responses where sub-wallet details are required.
  * </p>
  */

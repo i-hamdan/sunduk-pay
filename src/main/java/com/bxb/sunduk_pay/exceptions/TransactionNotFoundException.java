@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a requested transaction cannot be found in the system.
@@ -14,7 +14,7 @@ public class TransactionNotFoundException extends RuntimeException {
      *
      * @param message the detail message explaining which transaction was not found
      */
-    public TransactionNotFoundException(String message) {
+    public TransactionNotFoundException(final String message) {
         super(message);
     }
 }

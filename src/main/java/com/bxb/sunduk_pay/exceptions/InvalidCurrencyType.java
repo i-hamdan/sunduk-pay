@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an invalid or unsupported currency type is used
@@ -13,9 +13,9 @@ public class InvalidCurrencyType extends RuntimeException {
     /**
      * Constructs a new {@code InvalidCurrencyType} exception with the specified detail message.
      *
-     * @param message the detail message explaining why the currency type is invalid
+     * @param message final detail message explaining why the currency type is invalid
      */
-    public InvalidCurrencyType(String message) {
+    public InvalidCurrencyType(final String message) {
         super(message);
     }
 }

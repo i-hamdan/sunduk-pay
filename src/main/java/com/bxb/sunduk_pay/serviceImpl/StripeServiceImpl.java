@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
-import com.bxb.sunduk_pay.exception.StripeSessionException;
+import com.bxb.sunduk_pay.exceptions.StripeSessionException;
 import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;

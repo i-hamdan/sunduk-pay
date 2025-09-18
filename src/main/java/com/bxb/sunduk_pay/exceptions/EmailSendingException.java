@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an email cannot be sent successfully.
@@ -12,9 +12,9 @@ public class EmailSendingException extends RuntimeException {
     /**
      * Constructs a new {@code EmailSendingException} with the specified detail message.
      *
-     * @param message the detail message explaining why the email could not be sent
+     * @param msg the detail message explaining why the email could not be sent
      */
-    public EmailSendingException(String message) {
-        super(message);
+    public EmailSendingException(final String msg) {
+        super(msg);
     }
 }

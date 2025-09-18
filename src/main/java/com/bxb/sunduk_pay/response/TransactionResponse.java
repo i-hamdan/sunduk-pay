@@ -9,8 +9,10 @@ import lombok.*;
 /**
  * Response payload representing a transaction.
  * <p>
- * Includes transaction details such as IDs, type, level, payment method,
- * amount, description, status, date, and associated wallets.
+ * Includes transaction details such as IDs,
+ * type, level, payment method,
+ * amount, description, status,
+ * date, and associated wallets.
  * </p>
  */
 @Getter

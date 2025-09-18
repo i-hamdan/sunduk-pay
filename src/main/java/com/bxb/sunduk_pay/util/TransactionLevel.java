@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.util;
 
 /**
- * Represents the level or scope of a transaction within SundukPay.
+ * Represents the level or scope of a transaction.
  *
  * <p>This enum distinguishes whether a transaction occurs
  * inside the user's ecosystem (internal transfers)
@@ -11,13 +11,15 @@ public enum TransactionLevel {
 
     /**
      * Internal transaction within the user's ecosystem
-     * (e.g., main wallet ↔ sub-wallet or sub-wallet ↔ sub-wallet).
+     * (e.g., main wallet ↔ sub-wallet
+     * or sub-wallet ↔ sub-wallet).
      */
     INTERNAL,
 
     /**
      * External transaction involving parties outside the user's ecosystem
-     * (e.g., bank transfers, payments to other users, card/UPI payments).
+     * (e.g., bank transfers, payments to other users,
+     * card/UPI payments).
      */
     EXTERNAL
 }

@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -31,17 +31,18 @@ public class ErrorResponse {
     /**
      * Constructs a new {@code ErrorResponse} with all fields.
      *
-     * @param localDateTime timestamp when the error occurred
-     * @param status HTTP status code of the error
-     * @param error short description of the error type
-     * @param message detailed message explaining the error
-     * @param path the API path where the error occurred
+     * @param timestamp timestamp when the error occurred
+     * @param httpStatus HTTP status code of the error
+     * @param errorType short description of the error type
+     * @param errorMessage detailed message explaining the error
+     * @param apiPath the API path where the error occurred
      */
-    public ErrorResponse(LocalDateTime localDateTime, Integer status, String error, String message, String path) {
-        this.localDateTime = localDateTime;
-        this.status = status;
-        this.error = error;
-        this.message = message;
-        this.path = path;
+    public ErrorResponse(final LocalDateTime timestamp, final Integer httpStatus,
+                         final String errorType, final String errorMessage, final String apiPath) {
+        this.localDateTime = timestamp;
+        this.status = httpStatus;
+        this.error = errorType;
+        this.message = errorMessage;
+        this.path = apiPath;
     }
 }

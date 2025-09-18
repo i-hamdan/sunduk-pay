@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a wallet cannot be created due to business rules
@@ -15,7 +15,7 @@ public class CannotCreateWalletException extends RuntimeException {
      *
      * @param message the detail message explaining why the wallet could not be created
      */
-    public CannotCreateWalletException(String message) {
+    public CannotCreateWalletException(final String message) {
         super(message);
     }
 }

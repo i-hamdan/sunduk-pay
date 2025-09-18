@@ -24,6 +24,9 @@ import java.util.List;
 @AllArgsConstructor
 public class MainWallet {
 
+    /**
+     * Unique identifier for the main wallet.
+     */
     @Id
     private String mainWalletId;
 

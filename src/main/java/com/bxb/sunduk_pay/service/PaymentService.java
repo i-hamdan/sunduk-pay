@@ -12,11 +12,11 @@ public interface PaymentService {
     /**
      * Creates a checkout session for a payment.
      *
-     * @param userId          the ID of the user initiating the payment
-     * @param amount          the amount to be transacted
+     * @param userId the ID of the user initiating the payment
+     * @param amount  the amount to be transacted
      * @param transactionType the type of transaction (CREDIT or DEBIT)
-     * @param targetWallet    the wallet receiving the funds
-     * @param sourceWallet    the wallet sending the funds
+     * @param targetWallet  the wallet receiving the funds
+     * @param sourceWallet  the wallet sending the funds
      * @return a response containing the status and details of the payment session
      */
     MainWalletResponse createCheckoutSession(

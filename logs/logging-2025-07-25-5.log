@@ -1,5 +1,5 @@
 2025-07-25 19:58:24 [http-nio-8080-exec-6] ERROR org.apache.catalina.core.ContainerBase.[Tomcat].[localhost] - Exception Processing [ErrorPage[errorCode=0, location=/error]]
-com.bxb.sunduk_pay.exception.InvalidUserException: Session is invalid
+com.bxb.sunduk_pay.exceptions.InvalidUserException: Session is invalid
 	at com.bxb.sunduk_pay.config.AuthenticationFilter.doFilter(AuthenticationFilter.java:46) ~[classes/:?]
 	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:374) ~[spring-security-web-6.1.7.jar:6.1.7]
 	at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:227) ~[spring-security-web-6.1.7.jar:6.1.7]

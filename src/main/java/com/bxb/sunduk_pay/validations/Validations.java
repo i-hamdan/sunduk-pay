@@ -57,12 +57,12 @@ public interface Validations {
     /**
      * Validates and retrieves a paginated list of transactions.
      *
-     * @param uuid              user UUID
-     * @param walletId          wallet ID (main or sub-wallet)
+     * @param uuid user UUID
+     * @param walletId wallet ID (main or sub-wallet)
      * @param transactionGroupId transaction group ID
-     * @param paymentMethod     payment method filter
-     * @param transactionType   transaction type filter
-     * @param pageable          pagination info
+     * @param paymentMethod payment method filter
+     * @param transactionType transaction type filter
+     * @param pageable pagination info
      * @return page of {@link Transaction}
      */
     Page<Transaction> validateTransactionsByUuidAndSubWalletId(
@@ -77,7 +77,7 @@ public interface Validations {
     /**
      * Finds a sub-wallet if it exists in a main wallet.
      *
-     * @param wallet      main wallet
+     * @param wallet main wallet
      * @param subWalletId sub-wallet ID
      * @return {@link SubWallet} or null
      */
@@ -113,7 +113,7 @@ public interface Validations {
     /**
      * Removes a sub-wallet from a main wallet.
      *
-     * @param wallet      main wallet
+     * @param wallet main wallet
      * @param subWalletId sub-wallet ID
      * @return true if removed successfully
      */

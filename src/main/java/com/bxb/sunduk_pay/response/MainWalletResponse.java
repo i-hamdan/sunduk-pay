@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Response payload for main wallet operations.
  * <p>
- * Includes wallet details, balances, sub-wallet information, transaction history,
+ * Includes wallet details, balances,
+ * sub-wallet information, transaction history,
  * transfer details, and optional Stripe payment session info.
  * </p>
  */

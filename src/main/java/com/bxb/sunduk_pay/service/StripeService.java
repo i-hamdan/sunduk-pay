@@ -12,11 +12,11 @@ public interface StripeService {
     /**
      * Creates a Stripe checkout session for a given transaction.
      *
-     * @param userId          the UUID of the user initiating the transaction
-     * @param amount          the transaction amount
+     * @param userId the UUID of the user initiating the transaction
+     * @param amount   the transaction amount
      * @param transactionType the type of transaction (CREDIT or DEBIT)
-     * @param targetWallet    the target wallet for the transaction
-     * @param sourceWallet    the source wallet for the transaction
+     * @param targetWallet the target wallet for the transaction
+     * @param sourceWallet the source wallet for the transaction
      * @return the created Stripe Checkout Session
      * @throws Exception if the session creation fails
      */

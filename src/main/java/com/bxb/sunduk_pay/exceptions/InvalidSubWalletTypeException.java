@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when an invalid or unsupported sub-wallet type is used
@@ -15,7 +15,7 @@ public class InvalidSubWalletTypeException extends RuntimeException {
      *
      * @param message the detail message explaining why the sub-wallet type is invalid
      */
-    public InvalidSubWalletTypeException(String message) {
+    public InvalidSubWalletTypeException(final String message) {
         super(message);
     }
 }

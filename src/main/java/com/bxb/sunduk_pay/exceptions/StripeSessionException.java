@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when there is an error while creating or processing
@@ -15,7 +15,7 @@ public class StripeSessionException extends RuntimeException {
      *
      * @param message the detail message explaining the Stripe session failure
      */
-    public StripeSessionException(String message) {
+    public StripeSessionException(final String message) {
         super(message);
     }
 }

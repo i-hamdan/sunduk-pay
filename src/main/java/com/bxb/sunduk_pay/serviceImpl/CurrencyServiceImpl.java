@@ -1,9 +1,9 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.CurrencyMapper;
-import com.bxb.sunduk_pay.exception.CustomExchangeRateException;
-import com.bxb.sunduk_pay.exception.InvalidCurrencyType;
-import com.bxb.sunduk_pay.exception.NullAmountException;
+import com.bxb.sunduk_pay.exceptions.CustomExchangeRateException;
+import com.bxb.sunduk_pay.exceptions.InvalidCurrencyType;
+import com.bxb.sunduk_pay.exceptions.NullAmountException;
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.repository.CurrencyRateRepository;
 import com.bxb.sunduk_pay.request.CurrencyRequest;

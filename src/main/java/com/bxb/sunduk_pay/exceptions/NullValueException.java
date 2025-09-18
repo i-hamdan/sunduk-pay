@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a required field or value is null or missing.
@@ -12,9 +12,9 @@ public class NullValueException extends RuntimeException {
     /**
      * Constructs a new {@code NullValueException} with the specified detail message.
      *
-     * @param message the detail message explaining which value was null or missing
+     * @param message final detail message explaining which value was null or missing
      */
-    public NullValueException(String message) {
+    public NullValueException(final String message) {
         super(message);
     }
 }

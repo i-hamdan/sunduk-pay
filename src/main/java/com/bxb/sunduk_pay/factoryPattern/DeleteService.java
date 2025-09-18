@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
-import com.bxb.sunduk_pay.exception.CannotDeleteWalletException;
+import com.bxb.sunduk_pay.exceptions.CannotDeleteWalletException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;

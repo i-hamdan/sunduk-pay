@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.exception;
+package com.bxb.sunduk_pay.exceptions;
 
 /**
  * Exception thrown when a user is invalid, unauthorized, or does not meet
@@ -13,9 +13,9 @@ public class InvalidUserException extends RuntimeException {
     /**
      * Constructs a new {@code InvalidUserException} with the specified detail message.
      *
-     * @param msg the detail message explaining why the user is considered invalid
+     * @param msg the detail message explaining why the user is invalid
      */
-    public InvalidUserException(String msg) {
+    public InvalidUserException(final String msg) {
         super(msg);
     }
 }

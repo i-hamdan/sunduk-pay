@@ -22,100 +22,105 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends MongoRepository<Transaction, String> {
 
-    /**
-     * Finds all transactions by main wallet ID and user UUID.
-     *
-     * @param walletId main wallet ID
-     * @param uuid     user UUID
-     * @return list of matching transactions
-     */
+    /** Finds all transactions by main wallet ID and user UUID. */
+    @SuppressWarnings("checkstyle:MethodName")
     List<Transaction> findByMainWallet_mainWalletIdAndUser_Uuid(String walletId, String uuid);
 
-    /**
-     * Finds all non-master transactions for a user with pagination.
-     *
-     * @param uuid     user UUID
-     * @param pageable pagination information
-     * @return page of transactions
-     */
+    /** Finds all non-master transactions for a user with pagination. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndIsMasterFalse(String uuid, Pageable pageable);
 
-    /**
-     * Finds debit transactions of a specific sub-wallet.
-     */
+    /** Finds debit transactions of a specific sub-wallet. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndFromWalletIdAndTransactionType(
-            String uuid, String fromWalletId, TransactionType transactionType, Pageable pageable);
+            String uuid,
+            String fromWalletId,
+            TransactionType transactionType,
+            Pageable pageable
+    );
 
-    /**
-     * Finds debit transactions of a specific sub-wallet filtered by payment method.
-     */
+    /** Finds debit transactions of a specific sub-wallet filtered by payment method. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-            String uuid, String fromWalletId, TransactionType transactionType,
-            PaymentMethod paymentMethod, Pageable pageable);
+            String uuid,
+            String fromWalletId,
+            TransactionType transactionType,
+            PaymentMethod paymentMethod,
+            Pageable pageable
+    );
 
-    /**
-     * Finds credit transactions of a specific sub-wallet.
-     */
+    /** Finds credit transactions of a specific sub-wallet. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndToWalletIdAndTransactionType(
-            String uuid, String toWalletId, TransactionType transactionType, Pageable pageable);
+            String uuid,
+            String toWalletId,
+            TransactionType transactionType,
+            Pageable pageable
+    );
 
-    /**
-     * Finds credit transactions of a specific sub-wallet filtered by payment method.
-     */
+    /** Finds credit transactions of a specific sub-wallet filtered by payment method. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-            String uuid, String toWalletId, TransactionType transactionType,
-            PaymentMethod paymentMethod, Pageable pageable);
+            String uuid,
+            String toWalletId,
+            TransactionType transactionType,
+            PaymentMethod paymentMethod,
+            Pageable pageable
+    );
 
-    /**
-     * Finds all sub-wallet transactions (both debit and credit) for a user.
-     */
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, " +
-            "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } " +
-            "] }")
+    /** Finds all sub-wallet transactions (both debit and credit) for a user. */
+    @Query("{ 'user.uuid': ?0, $or: [ "
+            + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+            + "] }")
     Page<Transaction> findAllByUserAndWallet(String uuid, String walletId, Pageable pageable);
 
-    /**
-     * Finds all sub-wallet transactions (debit and credit) for a user,
-     * filtered by payment method.
-     */
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, " +
-            "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } " +
-            "], 'paymentMethod': ?2 }")
+    /** Finds all sub-wallet transactions (debit and credit) for a user, filtered by payment method. */
+    @Query("{ 'user.uuid': ?0, $or: [ "
+            + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+            + "], 'paymentMethod': ?2 }")
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndWalletIdAndPaymentMethod(
-            String uuid, String walletId, PaymentMethod paymentMethod, Pageable pageable);
+            String uuid,
+            String walletId,
+            PaymentMethod paymentMethod,
+            Pageable pageable
+    );
 
-    /**
-     * Finds all sub-wallet transactions (debit and credit) as a list.
-     */
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, " +
-            "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } " +
-            "] }")
+    /** Finds all sub-wallet transactions (debit and credit) as a list. */
+    @Query("{ 'user.uuid': ?0, $or: [ "
+            + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+            + "] }")
     List<Transaction> findAllByUserAndWallet(String uuid, String walletId);
 
-    /**
-     * Finds transactions by type (credit or debit) excluding master transactions.
-     */
+    /** Finds transactions by type (credit or debit) excluding master transactions. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndTransactionTypeAndIsMasterFalse(
-            String uuid, TransactionType transactionType, Pageable pageable);
+            String uuid,
+            TransactionType transactionType,
+            Pageable pageable
+    );
 
-    /**
-     * Finds transactions by type and payment method, excluding master transactions.
-     */
+    /** Finds transactions by type and payment method, excluding master transactions. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
-            String uuid, TransactionType transactionType,
-            PaymentMethod paymentMethod, Pageable pageable);
+            String uuid,
+            TransactionType transactionType,
+            PaymentMethod paymentMethod,
+            Pageable pageable
+    );
 
-    /**
-     * Finds transactions belonging to a specific group ID.
-     */
+    /** Finds transactions belonging to a specific group ID. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndGroupId(String uuid, String groupId, Pageable pageable);
 
-    /**
-     * Finds transactions by payment method only, excluding master transactions.
-     */
+    /** Finds transactions by payment method only, excluding master transactions. */
+    @SuppressWarnings("checkstyle:MethodName")
     Page<Transaction> findByUser_UuidAndPaymentMethodAndIsMasterFalse(
-            String uuid, PaymentMethod paymentMethod, Pageable pageable);
+            String uuid,
+            PaymentMethod paymentMethod,
+            Pageable pageable
+    );
 }
