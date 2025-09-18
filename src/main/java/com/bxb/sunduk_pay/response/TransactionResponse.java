@@ -15,6 +15,7 @@ import lombok.*;
  */
 @Getter
 @Setter
+@Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionResponse {

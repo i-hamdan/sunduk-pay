@@ -14,38 +14,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Implementation of TransactionMapper to convert Transaction entities to DTOs and Kafka events.
+ */
 @Log4j2
 @Component
 public class TransactionMapperImpl implements TransactionMapper {
+
     private final Validations validations;
 
     public TransactionMapperImpl(Validations validations) {
         this.validations = validations;
     }
 
+    @Override
     public TransactionResponse toTransactionResponse(Transaction transaction) {
-        TransactionResponse transactionResponse = new TransactionResponse();
-        transactionResponse.setTransactionId(transaction.getTransactionId());
-        transactionResponse.setGroupId(transaction.getGroupId());
-        transactionResponse.setUuid(transaction.getUser().getUuid());
-        transactionResponse.setTransactionType(transaction.getTransactionType());
-        transactionResponse.setPaymentMethod(transaction.getPaymentMethod());
-        transactionResponse.setDescription(transaction.getDescription());
-        transactionResponse.setAmount(transaction.getAmount());
-        transactionResponse.setMainWalletId(transaction.getMainWallet().getMainWalletId());
-        transactionResponse.setStatus(transaction.getStatus());
-        transactionResponse.setFullName(transaction.getUser().getFullName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
                 .withLocale(Locale.ENGLISH);
-        transactionResponse.setDate(transaction.getDateTime().format(formatter));
-        transactionResponse.setTransactionLevel(transaction.getTransactionLevel());
-        transactionResponse.setFromWallet(transaction.getFromWallet());
-        transactionResponse.setFromWalletId(transaction.getFromWalletId());
-        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getFromWalletId()));
-        transactionResponse.setToWallet(transaction.getToWallet());
-        transactionResponse.setToWalletId(transaction.getToWalletId());
-        transactionResponse.setToWalletIcon(validations.getToIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getToWalletId()));
-        return transactionResponse;
+
+        TransactionResponse response = TransactionResponse.builder()
+                .transactionId(transaction.getTransactionId())
+                .groupId(transaction.getGroupId())
+                .uuid(transaction.getUser().getUuid())
+                .transactionType(transaction.getTransactionType())
+                .paymentMethod(transaction.getPaymentMethod())
+                .description(transaction.getDescription())
+                .amount(transaction.getAmount())
+                .mainWalletId(transaction.getMainWallet().getMainWalletId())
+                .status(transaction.getStatus())
+                .fullName(transaction.getUser().getFullName())
+                .date(transaction.getDateTime().format(formatter))
+                .transactionLevel(transaction.getTransactionLevel())
+                .fromWallet(transaction.getFromWallet())
+                .fromWalletId(transaction.getFromWalletId())
+                .fromWalletIcon(validations.getFromIconOfTxn(transaction.getMainWallet().getMainWalletId(), transaction.getFromWalletId()))
+                .toWallet(transaction.getToWallet())
+                .toWalletId(transaction.getToWalletId())
+                .toWalletIcon(validations.getToIconOfTxn(transaction.getMainWallet().getMainWalletId(), transaction.getToWalletId()))
+                .build();
+
+        return response;
     }
 
     @Override
@@ -57,62 +65,65 @@ public class TransactionMapperImpl implements TransactionMapper {
         return responses;
     }
 
+    @Override
     public TransactionEvent toTransactionEvent(Transaction transaction) {
-        TransactionEvent transactionEvent = new TransactionEvent();
-        transactionEvent.setWalletId(transaction.getMainWallet().getMainWalletId());
-        transactionEvent.setTransactionId(transaction.getTransactionId());
-        transactionEvent.setTransactionType(transaction.getTransactionType());
-        transactionEvent.setTransactionLevel(transaction.getTransactionLevel());
-        transactionEvent.setFromWallet(transaction.getFromWallet());
-        transactionEvent.setFromWalletId(transaction.getFromWalletId());
-        transactionEvent.setToWallet(transaction.getToWallet());
-        transactionEvent.setToWalletId(transaction.getToWalletId());
-        transactionEvent.setAmount(transaction.getAmount());
-        transactionEvent.setDateTime(transaction.getDateTime());
-        transactionEvent.setEmail(transaction.getUser().getEmail());
-        transactionEvent.setUuid(transaction.getUser().getUuid());
-        transactionEvent.setFullName(transaction.getUser().getFullName());
-        transactionEvent.setPhoneNumber(transaction.getUser().getPhoneNumber());
+        TransactionEvent event = TransactionEvent.builder()
+                .walletId(transaction.getMainWallet().getMainWalletId())
+                .transactionId(transaction.getTransactionId())
+                .transactionType(transaction.getTransactionType())
+                .transactionLevel(transaction.getTransactionLevel())
+                .fromWallet(transaction.getFromWallet())
+                .fromWalletId(transaction.getFromWalletId())
+                .toWallet(transaction.getToWallet())
+                .toWalletId(transaction.getToWalletId())
+                .amount(transaction.getAmount())
+                .dateTime(transaction.getDateTime())
+                .email(transaction.getUser().getEmail())
+                .uuid(transaction.getUser().getUuid())
+                .fullName(transaction.getUser().getFullName())
+                .phoneNumber(transaction.getUser().getPhoneNumber())
+                .remainingBalance(resolveBalance(transaction))
+                .build();
 
-        Double balance = null;
-
-        try {
-            if (transaction.getTransactionType() == TransactionType.CREDIT) {
-                if (transaction.getToWalletId() != null &&
-                        transaction.getToWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
-                    balance = transaction.getMainWallet().getBalance();
-                } else if (transaction.getToWalletId() != null) {
-                    SubWallet subWallet = validations.findSubWalletIfExists(
-                            transaction.getMainWallet(),
-                            transaction.getToWalletId()
-                    );
-                    if (subWallet != null) balance = subWallet.getBalance();
-                }
-
-            } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
-                if (transaction.getFromWalletId() != null &&
-                        transaction.getFromWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
-                    balance = transaction.getMainWallet().getBalance();
-                } else if (transaction.getFromWalletId() != null) {
-                    SubWallet subWallet = validations.findSubWalletIfExists(
-                            transaction.getMainWallet(),
-                            transaction.getFromWalletId()
-                    );
-                    if (subWallet != null) balance = subWallet.getBalance();
-                }
-            }
-        } catch (Exception e) {
-            // fallback if something goes wrong
-            balance = transaction.getMainWallet().getBalance();
-            log.warn("Balance resolution failed for txn={}, falling back to mainWallet balance", transaction.getTransactionId(), e);
-        }
-
-        transactionEvent.setRemainingBalance(balance);
-        return transactionEvent;
+        return event;
     }
 
+    /**
+     * Resolves the remaining balance for the transaction depending on type and wallet.
+     */
+    private Double resolveBalance(Transaction transaction) {
+        try {
+            if (transaction.getTransactionType() == TransactionType.CREDIT) {
+                return resolveCreditBalance(transaction);
+            } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
+                return resolveDebitBalance(transaction);
+            }
+        } catch (Exception e) {
+            log.warn("Balance resolution failed for txn={}, falling back to mainWallet balance",
+                    transaction.getTransactionId(), e);
+        }
+        return transaction.getMainWallet().getBalance();
+    }
 
+    private Double resolveCreditBalance(Transaction transaction) {
+        if (transaction.getToWalletId() != null) {
+            if (transaction.getToWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
+                return transaction.getMainWallet().getBalance();
+            }
+            SubWallet subWallet = validations.findSubWalletIfExists(transaction.getMainWallet(), transaction.getToWalletId());
+            if (subWallet != null) return subWallet.getBalance();
+        }
+        return transaction.getMainWallet().getBalance();
+    }
+
+    private Double resolveDebitBalance(Transaction transaction) {
+        if (transaction.getFromWalletId() != null) {
+            if (transaction.getFromWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
+                return transaction.getMainWallet().getBalance();
+            }
+            SubWallet subWallet = validations.findSubWalletIfExists(transaction.getMainWallet(), transaction.getFromWalletId());
+            if (subWallet != null) return subWallet.getBalance();
+        }
+        return transaction.getMainWallet().getBalance();
+    }
 }
-
-
-

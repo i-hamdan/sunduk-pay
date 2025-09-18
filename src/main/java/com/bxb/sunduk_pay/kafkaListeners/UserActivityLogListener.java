@@ -5,15 +5,26 @@ import com.bxb.sunduk_pay.service.ActivityLogService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+/**
+ * Kafka listener that consumes user events from "user-topic"
+ * and sends them to {@link ActivityLogService} for logging.
+ */
 @Component
 public class UserActivityLogListener {
+
     private final ActivityLogService activityLogService;
 
     public UserActivityLogListener(ActivityLogService activityLogService) {
         this.activityLogService = activityLogService;
     }
-    @KafkaListener(topics = "user-topic", groupId = "activity-log-group", concurrency = "3")
+
+    @KafkaListener(
+            topics = "user-topic",
+            groupId = "activity-log-group",
+            concurrency = "3"
+    )
     public void consumeActivityLog(UserKafkaEvent userKafkaEvent) {
+        // Delegate the processing to ActivityLogService
         activityLogService.processUserActivity(userKafkaEvent);
     }
 }

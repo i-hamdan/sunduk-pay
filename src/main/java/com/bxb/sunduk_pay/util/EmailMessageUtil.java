@@ -6,6 +6,11 @@ import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.EmailService;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility component for building email subjects and bodies
+ * for different user and goal events.
+ */
+
 @Component
 public class EmailMessageUtil {
 

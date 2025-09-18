@@ -14,12 +14,23 @@ import java.util.stream.Collectors;
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
 
+    private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("dd MMM");
+    private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("MMM yyyy");
+
     @Override
-    public CurrencyResponse currencyResponse(double exchangeRate, double converted, double fee, double finalAmount, List<CurrencyRatesResponse> yearlyRates, List<CurrencyRatesResponse> monthlyRates, List<CurrencyRatesResponse> weeklyRates) {
+    public CurrencyResponse currencyResponse(
+            double exchangeRate,
+            double convertedAmount,
+            double conversionFee,
+            double finalAmount,
+            List<CurrencyRatesResponse> yearlyRates,
+            List<CurrencyRatesResponse> monthlyRates,
+            List<CurrencyRatesResponse> weeklyRates
+    ) {
         CurrencyResponse response = new CurrencyResponse();
         response.setExchangeRate(exchangeRate);
-        response.setConvertedAmount(converted);
-        response.setConversionFee(fee);
+        response.setConvertedAmount(convertedAmount);
+        response.setConversionFee(conversionFee);
         response.setFinalAmount(finalAmount);
         response.setYearlyRates(yearlyRates);
         response.setMonthlyRates(monthlyRates);
@@ -27,55 +38,50 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         return response;
     }
 
-
-    public List<CurrencyRatesResponse> toCurrencyRatesResponses(List<CurrencyRates> currencyRates, String rateKey, TimeSeries timeSeries) {
-        List<CurrencyRatesResponse> list = new ArrayList<>();
-        for (CurrencyRates rates : currencyRates) {
-            list.add(toCurrencyRatesResponse(rates, rateKey, timeSeries));
+    @Override
+    public List<CurrencyRatesResponse> toCurrencyRatesResponses(
+            List<CurrencyRates> currencyRates,
+            String rateKey,
+            TimeSeries timeSeries
+    ) {
+        if (currencyRates == null || currencyRates.isEmpty()) {
+            return Collections.emptyList();
         }
-        return list;
+
+        return currencyRates.stream()
+                .map(rate -> mapToCurrencyRatesResponse(rate, rateKey, timeSeries))
+                .collect(Collectors.toList());
     }
 
+    private CurrencyRatesResponse mapToCurrencyRatesResponse(
+            CurrencyRates currencyRates,
+            String rateKey,
+            TimeSeries timeSeries
+    ) {
+        CurrencyRatesResponse response = new CurrencyRatesResponse();
+        response.setDate(currencyRates.getDate());
+        Double value = currencyRates.getRates().get(rateKey);
+        response.setValue(value);
 
-
-    private CurrencyRatesResponse toCurrencyRatesResponse(CurrencyRates currencyRates, String rateKey, TimeSeries timeSeries) {
-        CurrencyRatesResponse currencyRatesResponse = new CurrencyRatesResponse();
-        currencyRatesResponse.setDate(currencyRates.getDate());
-        Double value = currencyRates.getRates().get(rateKey); // sirf ek key ka value nikalo
-        currencyRatesResponse.setValue(value);
-        switch (timeSeries) {
-            case WEEK -> {
-                // Sirf day name (MONDAY, TUESDAY ...)
-                //String day = currencyRates.getDate().getDayOfWeek().toString().substring(0,3);
-                String day = currencyRates.getDate().format(DateTimeFormatter.ofPattern("dd MMM"));
-                currencyRatesResponse.setDay(day);
+        if (timeSeries != null) {
+            switch (timeSeries) {
+                case WEEK -> response.setDay(currencyRates.getDate().format(DAY_FORMATTER));
+                case MONTH -> response.setDayMonth(currencyRates.getDate().format(DAY_FORMATTER));
             }
-            case MONTH -> {
-                // Format: 25.Aug
-                String formatted = currencyRates.getDate().format(DateTimeFormatter.ofPattern("dd MMM"));
-                currencyRatesResponse.setDayMonth(formatted);
-            }
-//            case YEAR -> {
-//// Sirf Month name (August)
-//                String month = currencyRates.getDate().format(DateTimeFormatter.ofPattern("MMM YY"));
-//                currencyRatesResponse.setMonth(month);
-//            }
         }
-        return currencyRatesResponse;
+
+        return response;
     }
 
+    @Override
+    public List<CurrencyRatesResponse> toMonthlyAverageResponses(
+            List<CurrencyRates> currencyRates,
+            String rateKey
+    ) {
+        if (currencyRates == null || currencyRates.isEmpty()) {
+            return Collections.emptyList();
+        }
 
-
-
-
-
-
-
-
-
-
-    public List<CurrencyRatesResponse> toMonthlyAverageResponses(List<CurrencyRates> currencyRates, String rateKey) {
-        // Group by Month and calculate average
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
                 .filter(r -> r.getRates().get(rateKey) != null)
                 .collect(Collectors.groupingBy(
@@ -84,20 +90,14 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                         Collectors.averagingDouble(r -> r.getRates().get(rateKey))
                 ));
 
-        List<CurrencyRatesResponse> list = new ArrayList<>();
+        List<CurrencyRatesResponse> responses = new ArrayList<>();
         monthlyAverages.forEach((yearMonth, avgValue) -> {
-            CurrencyRatesResponse res = new CurrencyRatesResponse();
-            res.setMonth(yearMonth.format(DateTimeFormatter.ofPattern("MMM yyyy")));
-            res.setValue(avgValue);
-            list.add(res);
+            CurrencyRatesResponse response = new CurrencyRatesResponse();
+            response.setMonth(yearMonth.format(MONTH_FORMATTER));
+            response.setValue(avgValue);
+            responses.add(response);
         });
-        return list;
+
+        return responses;
     }
-
-
-
-
-
-
-
 }

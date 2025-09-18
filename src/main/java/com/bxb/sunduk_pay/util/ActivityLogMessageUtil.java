@@ -6,6 +6,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActivityLogMessageUtil {
 
+    /**
+     * Builds a user-friendly description for a {@link UserKafkaEvent}.
+     *
+     * @param event the user event received from Kafka
+     * @return a descriptive message for logging or notifications
+     */
     public String buildDescription(UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
             return "User '" + event.getFullName() + "' successfully logged in to the system.";

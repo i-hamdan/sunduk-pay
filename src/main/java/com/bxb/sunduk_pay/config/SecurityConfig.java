@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,76 +12,94 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final AuthenticationFilter filter;
 
-    public SecurityConfig(AuthenticationFilter filter) {
-        this.filter = filter;
+    private final AuthenticationFilter authenticationFilter;
+
+    public SecurityConfig(AuthenticationFilter authenticationFilter) {
+        this.authenticationFilter = authenticationFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors(Customizer.withDefaults())
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // enable CORS with your bean below
+                .cors(Customizer.withDefaults())
+                // disable CSRF for APIs
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
+                        // allow pre-flight CORS requests
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // protect login endpoint
                         .requestMatchers("/custom-login").authenticated()
+                        // all other endpoints open (adjust as needed)
                         .anyRequest().permitAll())
-                .oauth2Login(auth -> auth.defaultSuccessUrl("/custom-login"))
-                //.oauth2Login(Customizer.withDefaults())
+                // OAuth2 login
+                .oauth2Login(oauth -> oauth.defaultSuccessUrl("/custom-login", true))
                 .sessionManagement(session -> session
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(true))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .invalidateHttpSession(true))
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID"))
+                // add your custom filter before Spring Security's authentication filter
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-
+    /**
+     * Publishes session lifecycle events so Spring Security’s concurrent session control works.
+     */
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
 
-
+    /**
+     * Configure allowed origins/headers/methods for cross-origin requests.
+     */
     @Bean
-    /* we will be not needing this method once moved to domain**/
     public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of(
+        CorsConfiguration cors = new CorsConfiguration();
+        cors.setAllowedOrigins(List.of(
                 "http://localhost:5174",
                 "https://f6be298fe7d5.ngrok-free.app",
                 "http://localhost:5173"
-
         ));
-        corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.setAllowedHeaders(List.of("*"));
-
+        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cors.setAllowedHeaders(List.of("*"));
+        cors.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
+        source.registerCorsConfiguration("/**", cors);
         return source;
     }
 
+    /**
+     * Customize session cookie behaviour.
+     */
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
-        serializer.setSameSite("None");
-        serializer.setUseSecureCookie(true); // if using https
         serializer.setCookieName("JSESSIONID");
+        serializer.setSameSite("None");         // needed for cross-site cookies
+        serializer.setUseSecureCookie(true);    // true if you’re using HTTPS
         return serializer;
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

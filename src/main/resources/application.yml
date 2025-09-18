@@ -80,6 +80,7 @@ sunduk:
     exclude-paths:
       - /api/sunduk-service/oauth2/authorization
       - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
       - /api/sunduk-service/webhook

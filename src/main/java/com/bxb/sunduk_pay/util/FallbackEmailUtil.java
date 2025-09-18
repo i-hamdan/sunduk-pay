@@ -6,6 +6,14 @@ import com.bxb.sunduk_pay.service.EmailService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility component responsible for sending fallback emails
+ * when an SMS notification for a transaction cannot be delivered.
+ *
+ * <p>This ensures that the user still receives critical transaction
+ * information via email even if the SMS fails.</p>
+ */
+
 @Component
 @Log4j2
 public class FallbackEmailUtil {
