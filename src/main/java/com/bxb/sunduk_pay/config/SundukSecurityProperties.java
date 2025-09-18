@@ -33,9 +33,14 @@ public class SundukSecurityProperties {
     private List<String> excludePaths = Collections.emptyList();
 
     /**
-     * Convenience method to check whether a given path should be excluded.
+     * Checks whether a given request path should be excluded
+     * from authentication based on the configured list.
+     *
+     * @param path the request path to evaluate
+     * @return true if the path should be excluded, false otherwise
      */
-    public boolean isExcluded(String path) {
-        return excludePaths != null && excludePaths.stream().anyMatch(path::startsWith);
+    public boolean isExcluded(final String path) {
+        return excludePaths != null
+                && excludePaths.stream().anyMatch(path::startsWith);
     }
 }

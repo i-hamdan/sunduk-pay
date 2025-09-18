@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Holds Twilio configuration properties from application.yml:
+ * Holds Twilio configuration properties from application.yml.
  *
  * twilio:
  *   account-sid: your-account-sid

@@ -13,7 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -25,28 +29,31 @@ import java.nio.charset.StandardCharsets;
 @Log4j2
 @RestController
 @CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
-// TODO: Remove CORS once moved to production domain
+// NOTE: Remove CORS configuration when moving to production domain
 public class SundukController {
 
+    /** Service for user operations. */
     private final UserService userService;
+
+    /** Mapper to convert OIDC user to local user response. */
     private final UserMapper userMapper;
 
     /**
      * Constructor for SundukController.
      *
-     * @param userService service for user operations
-     * @param userMapper  mapper for converting OIDC user to local user response
+     * @param userServiceParam service for user operations
+     * @param userMapperParam  mapper for converting OIDC user to local user response
      */
-    public SundukController(final UserService userService, final UserMapper userMapper) {
-        this.userService = userService;
-        this.userMapper = userMapper;
+    public SundukController(final UserService userServiceParam, final UserMapper userMapperParam) {
+        this.userService = userServiceParam;
+        this.userMapper = userMapperParam;
     }
 
     /**
      * Handles custom login via OIDC.
      *
-     * @param session            current HTTP session
-     * @param oidcUser           authenticated OIDC user
+     * @param session             current HTTP session
+     * @param oidcUser            authenticated OIDC user
      * @param httpServletResponse HTTP response to send redirect
      * @return user login response
      * @throws IOException if redirect fails
@@ -64,7 +71,8 @@ public class SundukController {
         final User dbUser = userService.userLogin(response);
         response.setUuid(dbUser.getUuid());
 
-        final String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
+        final String deepLink = "islamicbank://login-success?sessionId="
+                + session.getId()
                 + "&email=" + URLEncoder.encode(oidcUser.getEmail(), StandardCharsets.UTF_8)
                 + "&fullName=" + URLEncoder.encode(oidcUser.getFullName(), StandardCharsets.UTF_8)
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid(), StandardCharsets.UTF_8);

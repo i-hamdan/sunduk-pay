@@ -19,18 +19,38 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Spring Security configuration for the application.
+ */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public  class SecurityConfig {
 
+    /**
+     * Custom authentication filter injected into the Spring Security chain.
+     */
     private final AuthenticationFilter authenticationFilter;
 
-    public SecurityConfig(AuthenticationFilter authenticationFilter) {
+    /**
+     * Instantiates SecurityConfig with the provided authentication filter.
+     *
+     * @param authenticationFilter custom authentication filter
+     */
+    public SecurityConfig(final AuthenticationFilter authenticationFilter) {
         this.authenticationFilter = authenticationFilter;
     }
 
+    /**
+     * Defines the Spring Security filter chain.
+     *
+     * @param http the {@link HttpSecurity} to modify
+     * @return configured {@link SecurityFilterChain}
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http)
+            throws Exception {
+
         http
                 // enable CORS with your bean below
                 .cors(Customizer.withDefaults())
@@ -38,28 +58,36 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // allow pre-flight CORS requests
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**")
+                        .permitAll()
                         // protect login endpoint
-                        .requestMatchers("/custom-login").authenticated()
+                        .requestMatchers("/custom-login")
+                        .authenticated()
                         // all other endpoints open (adjust as needed)
-                        .anyRequest().permitAll())
+                        .anyRequest()
+                        .permitAll())
                 // OAuth2 login
-                .oauth2Login(oauth -> oauth.defaultSuccessUrl("/custom-login", true))
-                .sessionManagement(session -> session
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true))
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID"))
+                .oauth2Login(oauth ->
+                        oauth.defaultSuccessUrl("/custom-login", true))
+                .sessionManagement(session ->
+                        session.maximumSessions(1)
+                                .maxSessionsPreventsLogin(true))
+                .logout(logout ->
+                        logout.logoutUrl("/logout")
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID"))
                 // add your custom filter before Spring Security's authentication filter
-                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     /**
-     * Publishes session lifecycle events so Spring Security’s concurrent session control works.
+     * Publishes session lifecycle events so Spring Security’s concurrent
+     * session control works.
+     *
+     * @return {@link HttpSessionEventPublisher} bean
      */
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
@@ -68,6 +96,8 @@ public class SecurityConfig {
 
     /**
      * Configure allowed origins/headers/methods for cross-origin requests.
+     *
+     * @return {@link CorsConfigurationSource} with allowed settings
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -77,27 +107,37 @@ public class SecurityConfig {
                 "https://f6be298fe7d5.ngrok-free.app",
                 "http://localhost:5173"
         ));
-        cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        cors.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cors.setAllowedHeaders(List.of("*"));
         cors.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", cors);
         return source;
     }
 
     /**
      * Customize session cookie behaviour.
+     *
+     * @return {@link CookieSerializer} with configured settings
      */
     @Bean
     public CookieSerializer cookieSerializer() {
-        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        DefaultCookieSerializer serializer =
+                new DefaultCookieSerializer();
         serializer.setCookieName("JSESSIONID");
         serializer.setSameSite("None");         // needed for cross-site cookies
         serializer.setUseSecureCookie(true);    // true if you’re using HTTPS
         return serializer;
     }
 
+    /**
+     * Provides a RestTemplate bean for making REST API calls.
+     *
+     * @return new {@link RestTemplate} instance
+     */
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();

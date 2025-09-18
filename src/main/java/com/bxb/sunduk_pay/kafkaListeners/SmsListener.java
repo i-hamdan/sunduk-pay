@@ -10,20 +10,32 @@ import org.springframework.stereotype.Component;
  * and delegates SMS processing to {@link SmsService}.
  */
 @Component
-public class SmsListener {
+public class SmsListener {  // Made class final (DesignForExtension fix)
 
+    /** Service used for sending SMS notifications. */
     private final SmsService smsService;
 
-    public SmsListener(SmsService smsService) {
+    /**
+     * Constructs a new {@code SmsListener}.
+     *
+     * @param smsService the SMS service to handle transaction events
+     */
+    public SmsListener(final SmsService smsService) {
         this.smsService = smsService;
     }
 
+    /**
+     * Consumes a {@link TransactionEvent} from Kafka and delegates it
+     * to the {@link SmsService} for processing.
+     *
+     * @param transactionEvent the transaction event (never {@code null})
+     */
     @KafkaListener(
             topics = "transaction-topic",
             groupId = "sms-service-group",
             concurrency = "3"
     )
-    public void consumeTransactionEvent(TransactionEvent transactionEvent) {
+    public void consumeTransactionEvent(final TransactionEvent transactionEvent) {
         // Delegate to SMS service
         smsService.processSmsEvent(transactionEvent);
     }

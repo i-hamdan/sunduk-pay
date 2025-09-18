@@ -14,10 +14,21 @@ import java.util.List;
  * into corresponding response DTOs.
  */
 @Component
-public class WalletMapperImpl implements WalletMapper {
+public  class WalletMapperImpl implements WalletMapper {
 
+    /**
+     * Converts a MainWallet entity and its associated SubWallets into
+     * a MainWalletResponse DTO.
+     *
+     * @param wallet     the main wallet entity
+     * @param subWallets the list of sub-wallets
+     * @return a MainWalletResponse containing main wallet and sub-wallets
+     */
     @Override
-    public MainWalletResponse toWalletResponse(MainWallet wallet, List<SubWallet> subWallets) {
+    public MainWalletResponse toWalletResponse(
+            final MainWallet wallet,
+            final List<SubWallet> subWallets
+    ) {
         MainWalletResponse response = new MainWalletResponse();
         response.setMainWalletId(wallet.getMainWalletId());
         response.setBalance(wallet.getBalance());
@@ -32,7 +43,9 @@ public class WalletMapperImpl implements WalletMapper {
      * @param subWallets the list of sub-wallets
      * @return a list of SubWalletResponse DTOs
      */
-    private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallets) {
+    private List<SubWalletResponse> toSubWalletResponseList(
+            final List<SubWallet> subWallets
+    ) {
         List<SubWalletResponse> responses = new ArrayList<>();
         for (SubWallet subWallet : subWallets) {
             responses.add(toSubWalletResponse(subWallet));
@@ -46,7 +59,7 @@ public class WalletMapperImpl implements WalletMapper {
      * @param subWallet the sub-wallet entity
      * @return the corresponding SubWalletResponse DTO
      */
-    private SubWalletResponse toSubWalletResponse(SubWallet subWallet) {
+    private SubWalletResponse toSubWalletResponse(final SubWallet subWallet) {
         SubWalletResponse response = new SubWalletResponse();
         response.setSubWalletId(subWallet.getSubWalletId());
         response.setSubWalletName(subWallet.getSubWalletName());
@@ -55,5 +68,4 @@ public class WalletMapperImpl implements WalletMapper {
         response.setIcon(subWallet.getIcon());
         return response;
     }
-
 }

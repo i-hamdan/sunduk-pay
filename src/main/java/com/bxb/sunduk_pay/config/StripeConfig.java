@@ -7,7 +7,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Central place for Stripe credentials. This sets the global Stripe API key once at startup.
+ * Central place for Stripe credentials.
+ * This sets the global Stripe API key once at startup.
  */
 @Configuration
 @Getter // only getters are normally needed for config values
@@ -31,7 +32,9 @@ public class StripeConfig {
     @PostConstruct
     public void init() {
         if (secretKey == null || secretKey.isBlank()) {
-            throw new IllegalStateException("Stripe secret key must be configured!");
+            throw new IllegalStateException(
+                    "Stripe secret key must be configured!"
+            );
         }
         Stripe.apiKey = secretKey;
     }

@@ -5,7 +5,10 @@ import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.service.CurrencyService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for currency conversion operations.
@@ -15,15 +18,16 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class CurrencyController {
 
+    /** Service for handling currency operations. */
     private final CurrencyService currencyService;
 
     /**
      * Constructor-based dependency injection.
      *
-     * @param currencyService the service handling currency operations
+     * @param currencyServiceParam the service handling currency operations
      */
-    public CurrencyController(final CurrencyService currencyService) {
-        this.currencyService = currencyService;
+    public CurrencyController(final CurrencyService currencyServiceParam) {
+        this.currencyService = currencyServiceParam;
     }
 
     /**
@@ -37,7 +41,8 @@ public class CurrencyController {
             @RequestBody final CurrencyRequest currencyRequest) {
 
         log.info(
-                "Currency conversion API called: from = {}, to = {}, amount = {}",
+                "Currency conversion API called: from = {},"
+                        + " to = {}, amount = {}",
                 currencyRequest.getFromCurrency(),
                 currencyRequest.getToCurrency(),
                 currencyRequest.getAmount()

@@ -10,21 +10,33 @@ import org.springframework.stereotype.Component;
  * delegates email handling to {@link EmailService}.
  */
 @Component
-public class EmailListener {
+public class EmailListener {  // Made class final (DesignForExtension fix)
 
+    /** Service used for sending emails based on user events. */
     private final EmailService emailService;
 
-    public EmailListener(EmailService emailService) {
+    /**
+     * Constructs a new {@code EmailListener}.
+     *
+     * @param emailService the email service to handle user-related events
+     */
+    public EmailListener(final EmailService emailService) {
         this.emailService = emailService;
     }
 
+    /**
+     * Consumes a {@link UserKafkaEvent} from Kafka and delegates it
+     * to the {@link EmailService} for processing.
+     *
+     * @param userKafkaEvent the user event (never {@code null})
+     */
     @KafkaListener(
             topics = "user-topic",
             groupId = "email-service-group",
             concurrency = "3"
     )
-    public void consumeEmailEvent(UserKafkaEvent userKafkaEvent) {
-        // delegate directly to service; error handling is inside the service
+    public void consumeEmailEvent(final UserKafkaEvent userKafkaEvent) {
+        // Delegate directly to the service; error handling is inside the service
         emailService.processEmailEvent(userKafkaEvent);
     }
 }

@@ -8,24 +8,40 @@ import org.springframework.stereotype.Component;
 
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of {@link CurrencyMapper}.
+ */
 @Component
-public class CurrencyMapperImpl implements CurrencyMapper {
+public  class CurrencyMapperImpl implements CurrencyMapper {
 
-    private static final DateTimeFormatter DAY_FORMATTER = DateTimeFormatter.ofPattern("dd MMM");
-    private static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("MMM yyyy");
+    /**
+     * Formatter for displaying days in short format (e.g. 05 Jan).
+     */
+    private static final DateTimeFormatter DAY_FORMATTER =
+            DateTimeFormatter.ofPattern("dd MMM");
+
+    /**
+     * Formatter for displaying months in format (e.g. Jan 2024).
+     */
+    private static final DateTimeFormatter MONTH_FORMATTER =
+            DateTimeFormatter.ofPattern("MMM yyyy");
 
     @Override
     public CurrencyResponse currencyResponse(
-            double exchangeRate,
-            double convertedAmount,
-            double conversionFee,
-            double finalAmount,
-            List<CurrencyRatesResponse> yearlyRates,
-            List<CurrencyRatesResponse> monthlyRates,
-            List<CurrencyRatesResponse> weeklyRates
+            final double exchangeRate,
+            final double convertedAmount,
+            final double conversionFee,
+            final double finalAmount,
+            final List<CurrencyRatesResponse> yearlyRates,
+            final List<CurrencyRatesResponse> monthlyRates,
+            final List<CurrencyRatesResponse> weeklyRates
     ) {
         CurrencyResponse response = new CurrencyResponse();
         response.setExchangeRate(exchangeRate);
@@ -40,9 +56,9 @@ public class CurrencyMapperImpl implements CurrencyMapper {
 
     @Override
     public List<CurrencyRatesResponse> toCurrencyRatesResponses(
-            List<CurrencyRates> currencyRates,
-            String rateKey,
-            TimeSeries timeSeries
+            final List<CurrencyRates> currencyRates,
+            final String rateKey,
+            final TimeSeries timeSeries
     ) {
         if (currencyRates == null || currencyRates.isEmpty()) {
             return Collections.emptyList();
@@ -54,9 +70,9 @@ public class CurrencyMapperImpl implements CurrencyMapper {
     }
 
     private CurrencyRatesResponse mapToCurrencyRatesResponse(
-            CurrencyRates currencyRates,
-            String rateKey,
-            TimeSeries timeSeries
+            final CurrencyRates currencyRates,
+            final String rateKey,
+            final TimeSeries timeSeries
     ) {
         CurrencyRatesResponse response = new CurrencyRatesResponse();
         response.setDate(currencyRates.getDate());
@@ -65,8 +81,13 @@ public class CurrencyMapperImpl implements CurrencyMapper {
 
         if (timeSeries != null) {
             switch (timeSeries) {
-                case WEEK -> response.setDay(currencyRates.getDate().format(DAY_FORMATTER));
-                case MONTH -> response.setDayMonth(currencyRates.getDate().format(DAY_FORMATTER));
+                case WEEK ->
+                        response.setDay(currencyRates.getDate().format(DAY_FORMATTER));
+                case MONTH ->
+                        response.setDayMonth(currencyRates.getDate().format(DAY_FORMATTER));
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -75,8 +96,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
 
     @Override
     public List<CurrencyRatesResponse> toMonthlyAverageResponses(
-            List<CurrencyRates> currencyRates,
-            String rateKey
+            final List<CurrencyRates> currencyRates,
+            final String rateKey
     ) {
         if (currencyRates == null || currencyRates.isEmpty()) {
             return Collections.emptyList();
@@ -87,7 +108,9 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                 .collect(Collectors.groupingBy(
                         r -> YearMonth.from(r.getDate()),
                         TreeMap::new,
-                        Collectors.averagingDouble(r -> r.getRates().get(rateKey))
+                        Collectors.averagingDouble(
+                                r -> r.getRates().get(rateKey)
+                        )
                 ));
 
         List<CurrencyRatesResponse> responses = new ArrayList<>();

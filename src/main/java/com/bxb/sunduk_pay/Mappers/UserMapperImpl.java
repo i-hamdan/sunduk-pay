@@ -15,18 +15,30 @@ import java.util.List;
  * OAuth2 user info, and response or event DTOs.
  */
 @Component
-public class UserMapperImpl implements UserMapper {
+public  class UserMapperImpl implements UserMapper {
 
+    /**
+     * Builds a UserLoginResponse from an OIDC user.
+     *
+     * @param user the OIDC user
+     * @return the login response with email and full name
+     */
     @Override
-    public UserLoginResponse getUser(OidcUser user) {
+    public UserLoginResponse getUser(final OidcUser user) {
         UserLoginResponse response = new UserLoginResponse();
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullName());
         return response;
     }
 
+    /**
+     * Converts a UserLoginResponse into a User entity.
+     *
+     * @param response the login response
+     * @return a User entity
+     */
     @Override
-    public User toUser(UserLoginResponse response) {
+    public User toUser(final UserLoginResponse response) {
         User user = new User();
         user.setFullName(response.getFullName());
         user.setEmail(response.getEmail());
@@ -35,8 +47,14 @@ public class UserMapperImpl implements UserMapper {
         return user;
     }
 
+    /**
+     * Converts a User entity into a UserResponse DTO.
+     *
+     * @param user the User entity
+     * @return a UserResponse DTO
+     */
     @Override
-    public UserResponse toUserResponse(User user) {
+    public UserResponse toUserResponse(final User user) {
         UserResponse response = new UserResponse();
         response.setUuid(user.getUuid());
         response.setFullName(user.getFullName());
@@ -50,7 +68,7 @@ public class UserMapperImpl implements UserMapper {
      * @param users the list of User entities
      * @return list of UserResponse DTOs
      */
-    public List<UserResponse> toUserResponseList(List<User> users) {
+    public List<UserResponse> toUserResponseList(final List<User> users) {
         List<UserResponse> responses = new ArrayList<>(users.size());
         for (User user : users) {
             responses.add(toUserResponse(user));
@@ -58,8 +76,15 @@ public class UserMapperImpl implements UserMapper {
         return responses;
     }
 
+    /**
+     * Builds a UserKafkaEvent from a User entity and event type.
+     *
+     * @param user the User entity
+     * @param eventType the type of event
+     * @return a UserKafkaEvent DTO
+     */
     @Override
-    public UserKafkaEvent toKafkaEvent(User user, String eventType) {
+    public UserKafkaEvent toKafkaEvent(final User user, final String eventType) {
         UserKafkaEvent kafkaEvent = new UserKafkaEvent();
         kafkaEvent.setUuid(user.getUuid());
         kafkaEvent.setFullName(user.getFullName());

@@ -9,7 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -22,19 +27,25 @@ import java.io.IOException;
 @RequestMapping("/wallet")
 public class WalletController {
 
+    /** Factory for wallet operations. */
     private final WalletOperationFactory walletFactory;
+
+    /** Service for wallet-related operations. */
     private final WalletService walletService;
+
+    /** Max age of Stripe checkout URL cookie in seconds. */
+    private static final int COOKIE_MAX_AGE = 300; // 5 minutes
 
     /**
      * Constructor-based dependency injection.
      *
-     * @param walletFactory wallet operation factory
-     * @param walletService wallet service
+     * @param walletFactoryParam wallet operation factory
+     * @param walletServiceParam wallet service
      */
-    public WalletController(final WalletOperationFactory walletFactory,
-                            final WalletService walletService) {
-        this.walletFactory = walletFactory;
-        this.walletService = walletService;
+    public WalletController(final WalletOperationFactory walletFactoryParam,
+                            final WalletService walletServiceParam) {
+        this.walletFactory = walletFactoryParam;
+        this.walletService = walletServiceParam;
     }
 
     /**
@@ -94,7 +105,7 @@ public class WalletController {
             urlCookie.setPath("/");
             urlCookie.setHttpOnly(false);
             urlCookie.setSecure(true);
-            urlCookie.setMaxAge(300); // 5 minutes
+            urlCookie.setMaxAge(COOKIE_MAX_AGE);
             response.addCookie(urlCookie);
         }
 
