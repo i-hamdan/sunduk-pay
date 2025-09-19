@@ -1,14 +1,13 @@
 package com.bxb.sunduk_pay.model;
-
-
-
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-
+/**
+ * Represents a user in the system.
+ */
 @Document
 @Data
 public class User {

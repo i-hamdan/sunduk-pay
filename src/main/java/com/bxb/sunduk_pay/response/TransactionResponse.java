@@ -10,6 +10,9 @@ import lombok.*;
 @Setter
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
+/**
+ * Response object representing a transaction.
+ */
 public class TransactionResponse {
     private String transactionId;
     private String groupId;

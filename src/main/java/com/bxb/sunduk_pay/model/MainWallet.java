@@ -12,6 +12,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+/**
+ * MainWallet entity representing a user's main wallet.
+ */
+
 @Builder
 @Document
 @AllArgsConstructor

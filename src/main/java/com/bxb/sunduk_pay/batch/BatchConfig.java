@@ -11,6 +11,11 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+/**
+ * Batch configuration class for setting up jobs and steps.
+ * This class defines a job to fetch currency exchange rates using a reader, processor, and writer.
+ */
+
 @Configuration
 @RequiredArgsConstructor
 @Log4j2
@@ -20,6 +25,13 @@ public class BatchConfig {
     private final CurrencyRateItemReader reader;
     private final CurrencyRatesItemProcessor processor;
     private final CurrencyRatesItemWriter writer;
+
+/**
+     * Defines a step to fetch currency rates.
+     *
+     * @param jobRepository the job repository
+     * @return the configured step
+     */
 
 
     @Bean
@@ -33,6 +45,13 @@ public class BatchConfig {
                 .build();
     }
 
+
+    /** Defines a job to import exchange rates.
+     *
+     * @param fetchRatesStep the step to fetch rates
+     * @param jobRepository  the job repository
+     * @return the configured job
+     */
     @Bean
     public Job importExchangeRatesJob(Step fetchRatesStep, JobRepository jobRepository) {
         log.info("Creating Job: ExchangeRatesJob");

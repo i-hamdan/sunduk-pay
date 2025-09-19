@@ -12,12 +12,24 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.Map;
+
+/**
+ * ItemWriter implementation that merges multiple CurrencyRates items into a single document
+ * and saves it to MongoDB.
+ */
 @Component
 @RequiredArgsConstructor
 @Log4j2
 public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
 
     private final CurrencyRateRepository currencyRateRepository;
+    /**
+     * Writes a chunk of CurrencyRates items by merging them into a single document
+     * and saving it to MongoDB.
+     *
+     * @param chunk The chunk of CurrencyRates items to write.
+     * @throws Exception If an error occurs during writing.
+     */
     @Override
     public void write(Chunk<? extends CurrencyRates> chunk) throws Exception {
         Map<String, Double> allRates = new HashMap<>();

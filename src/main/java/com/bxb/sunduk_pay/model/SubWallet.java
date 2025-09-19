@@ -8,6 +8,9 @@ import org.springframework.data.annotation.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * Model class representing a SubWallet entity.
+ */
 @Data
 @Builder
 public class SubWallet {

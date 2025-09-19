@@ -12,6 +12,10 @@ import java.util.List;
 @Builder
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
+/**
+ * Response object for main wallet operations, including details about the main wallet,
+ * associated sub-wallets, transaction history, and transfer details.
+ */
 public class MainWalletResponse {
     private String status;
     private String uuid;

@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Iterator;
+    /**
+ * ItemReader implementation that reads CurrencyPair values one by one.
+ * This reader iterates over all defined CurrencyPair enum values.
+ */
 @Log4j2
 @Component
 public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {

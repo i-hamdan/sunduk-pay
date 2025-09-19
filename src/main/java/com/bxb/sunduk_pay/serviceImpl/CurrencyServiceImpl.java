@@ -108,10 +108,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
     private double fetchExchangeRate(String from, String to) {
-        log.debug("Preparing to fetch exchange rate from API for {} to {}", from, to);
         String url = exchangeApiUrl + "/latest" +"/" + from;
-        log.debug("Constructed API URL: {}", url);
-
+        log.debug("Preparing to fetch exchange rate from API for {} to {}", from, to);
         ResponseEntity<Map> response;
         try {
             log.debug("Calling external API for exchange rate...");

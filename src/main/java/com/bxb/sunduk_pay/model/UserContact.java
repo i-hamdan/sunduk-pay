@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Model representing a user's contact information.
+ */
 public class UserContact {
 
     private String name;

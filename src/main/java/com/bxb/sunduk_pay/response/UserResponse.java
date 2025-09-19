@@ -8,11 +8,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @NoArgsConstructor
 
 @Builder
+/**
+ * Response object for user-related operations.
+ */
 public class UserResponse {
     private String uuid;
     private String fullName;
-//    private String gender;
     private String email;
-//    private String phoneNumber;
- private String message;
+    private String message;
 }

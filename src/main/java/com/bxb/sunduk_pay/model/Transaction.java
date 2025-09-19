@@ -13,6 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a financial transaction within the system.
+ */
 @Document
 @Data
 @Builder

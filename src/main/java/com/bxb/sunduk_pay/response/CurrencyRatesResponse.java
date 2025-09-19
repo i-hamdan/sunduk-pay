@@ -2,10 +2,12 @@ package com.bxb.sunduk_pay.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.ToString;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+/**
+ * Response object for currency rates.
+ */
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

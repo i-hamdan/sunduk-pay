@@ -12,6 +12,9 @@ import java.time.LocalDate;
 
 @NoArgsConstructor
 @Data
+/**
+ * Request object for main wallet operations.
+ */
 public class MainWalletRequest {
     @NonNull
     private String uuid;

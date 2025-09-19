@@ -5,6 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 @Data
+/**
+ * Request object for uploading user contacts.
+ */
 public class ContactRequest {
     private String userId;
     private List<UserContact> contacts;

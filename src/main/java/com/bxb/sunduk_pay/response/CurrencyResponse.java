@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.response;
 
-import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+/**
+ * Response object for currency conversion and exchange rate information.
+ */
 public class CurrencyResponse {
     private double exchangeRate;
     private double convertedAmount;
