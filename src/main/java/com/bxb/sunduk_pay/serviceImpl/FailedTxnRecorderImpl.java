@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+/**
+ * Implementation of FailedTxnRecorder service.
+ * Responsible for recording failed transactions in the system.
+ */
 @Service
 public class FailedTxnRecorderImpl implements FailedTxnRecorder {
     private final Validations validations;
@@ -22,6 +27,14 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
         this.validations = validations;
         this.transactionRepository = transactionRepository;
     }
+    /**
+     * Records a failed transaction based on the given MainWalletRequest.
+     * Determines the source and target wallets, builds a failed transaction object,
+     * saves it to the database, and returns a response indicating failure.
+     *
+     * @param request the request containing transaction details
+     * @return a MainWalletResponse indicating transaction failure
+     */
 
     @Override
     public MainWalletResponse recordFailedTxn(MainWalletRequest request) {

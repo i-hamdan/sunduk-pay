@@ -16,11 +16,6 @@ spring:
           starttls:
             enable: true
 
-            logging:
-              level:
-                com:
-                  bxb:
-                    sunduk_pay: DEBUG
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -46,11 +41,14 @@ spring:
           google:
             client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
             client-secret: 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
+            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
             redirect-uri: "https://b4f31d0a81e4.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+            #            redirect-uri: "{baseUrl}/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -107,6 +105,13 @@ stripe:
     secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
   webhook:
     secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+    url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca/latest
+
+stripe:
+  key:
+    secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR
+  webhook:
+    secret: whsec_3e927c453a257e87bdd1e7955b41653afb52feec4282321a0235ecb5c8dde6a6
 
 resilience4j:
   circuitbreaker:
@@ -129,3 +134,6 @@ management:
   endpoint:
     health:
       show-details: always
+logging:
+  level:
+    com.bxb.sunduk_pay: DEBUG

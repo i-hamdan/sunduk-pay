@@ -3,28 +3,26 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.Mappers.WalletMapperImpl;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -38,6 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service implementation for wallet operations such as adding money, paying money,
+ * handling failed transactions, wallet CRUD operations, and exporting transactions.
+ */
 @Log4j2
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -64,6 +66,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
+    /**
+     * Deducts money from the user's wallet(s) and records the transaction.
+     *
+     * @param request The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Override
     @Transactional
     public MainWalletResponse payMoney(MainWalletRequest request) {
@@ -172,7 +180,12 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
-
+    /**
+     * Adds money to the user's wallet(s) and records the transaction.
+     *
+     * @param mainWalletRequest The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Transactional
     @Override
     public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
@@ -287,7 +300,10 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
-
+    /**
+     * Provides wallet-related operations such as CRUD operations, recording failed transactions,
+     * adding dummy transactions, checking balances, and downloading transaction history.
+     */
 
     @Override
     public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
@@ -342,6 +358,13 @@ public class WalletServiceImpl implements WalletService {
                     .build();
         }
 
+    /**
+     * Records a failed transaction in the database.
+     *
+     * @param request The request containing transaction details such as source, target, amount, and type.
+     * @return MainWalletResponse Response indicating that the transaction failed.
+     */
+
     @Override
     public void addDummy(MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
@@ -361,6 +384,13 @@ public class WalletServiceImpl implements WalletService {
         transactionRepository.save(txn);
     }
 
+    /**
+     * Returns the current balance of a wallet.
+     *
+     * @param walletId The ID of the wallet to fetch balance for.
+     * @return String A message containing the wallet ID and its current balance.
+     * @throws WalletNotFoundException If the wallet with given ID does not exist.
+     */
 
 
     //This will simply return the current balance of a wallet.

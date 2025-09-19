@@ -5,17 +5,18 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.FailedTxnRecorder;
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.service.StripeService;
-import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.model.checkout.Session;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of PaymentService to handle payments via Stripe.
+ * Integrates with Stripe for checkout session creation and uses
+ * circuit breaker pattern to record failed transactions automatically.
+ */
 
 
 @Log4j2
@@ -30,6 +31,17 @@ public class PaymentServiceImpl implements PaymentService {
         this.failedTxnRecorder = failedTxnRecorder;
     }
 
+    /**
+     * Creates a Stripe checkout session for a user payment.
+     * Applies circuit breaker to fallback if Stripe is unavailable.
+     *
+     * @param userId          the user initiating the payment
+     * @param amount          the payment amount
+     * @param transactionType type of transaction (DEBIT/CREDIT)
+     * @param targetWallet    target wallet for credit
+     * @param sourceWallet    source wallet for debit
+     * @return MainWalletResponse containing checkout URL or error
+     */
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
     public MainWalletResponse createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) {

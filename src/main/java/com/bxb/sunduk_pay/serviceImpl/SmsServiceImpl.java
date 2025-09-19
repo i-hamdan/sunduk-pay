@@ -2,9 +2,8 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 
 import com.bxb.sunduk_pay.config.TwilioConfig;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.exception.SmsServiceException;
-import com.bxb.sunduk_pay.service.EmailService;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.service.SmsService;
 import com.bxb.sunduk_pay.util.FallbackEmailUtil;
 import com.bxb.sunduk_pay.util.SmsMessageUtil;
@@ -14,7 +13,10 @@ import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
+/**
+ * Service implementation for sending SMS using Twilio.
+ * Falls back to sending emails if SMS fails.
+ */
 @Service
 @Log4j2
 public class SmsServiceImpl implements SmsService {
@@ -28,6 +30,9 @@ public class SmsServiceImpl implements SmsService {
         this.smsMessageUtil = smsMessageUtil;
         this.fallbackEmailUtil = fallbackEmailUtil;
     }
+    /**
+     * Initializes Twilio SDK after bean creation.
+     */
 
     @PostConstruct
     public void initTwilio() {
@@ -39,6 +44,14 @@ public class SmsServiceImpl implements SmsService {
             throw new SmsServiceException("Twilio initialization failed.");
         }
     }
+
+
+    /**
+     * Processes a transaction event to send SMS notification.
+     * Falls back to email if SMS sending fails.
+     *
+     * @param event transaction event
+     */
 
     @Override
     public void processSmsEvent(TransactionEvent event) {
@@ -52,7 +65,13 @@ public class SmsServiceImpl implements SmsService {
  }
 
  }
-
+    /**
+     * Sends an SMS to the specified phone number.
+     *
+     * @param to      recipient phone number
+     * @param message message content
+     * @throws SmsServiceException if SMS sending fails
+     */
 
     public void sendSms(String to,String message){
         try {
