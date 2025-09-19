@@ -29,7 +29,7 @@ import java.io.IOException;
 public class StripeWebhookController {
 
     private final WalletService walletService;
- private final FailedTxnRecorder failedTxnRecorder;
+    private final FailedTxnRecorder failedTxnRecorder;
     public StripeWebhookController(WalletService walletService, FailedTxnRecorder failedTxnRecorder) {
         this.walletService = walletService;
         this.failedTxnRecorder = failedTxnRecorder;
@@ -64,47 +64,47 @@ public class StripeWebhookController {
             throw new StripeSessionException("Invalid Stripe signature");
         }
         try {
-        switch (event.getType()) {
-            case "checkout.session.completed": {
-                Session session = (Session) event.getDataObjectDeserializer()
-                        .getObject()
-                        .orElse(null);
+            switch (event.getType()) {
+                case "checkout.session.completed": {
+                    Session session = (Session) event.getDataObjectDeserializer()
+                            .getObject()
+                            .orElse(null);
 
-                if (session != null) {
-                    return handleCompletedSession(session);
+                    if (session != null) {
+                        return handleCompletedSession(session);
+                    }
+                    break;
                 }
-                break;
-            }
 
-            case "checkout.session.expired":
-            case "checkout.session.async_payment_failed":
-            case "payment_intent.payment_failed": {
-                Session session = (Session) event.getDataObjectDeserializer()
-                        .getObject()
-                        .orElse(null);
+                case "checkout.session.expired":
+                case "checkout.session.async_payment_failed":
+                case "payment_intent.payment_failed": {
+                    Session session = (Session) event.getDataObjectDeserializer()
+                            .getObject()
+                            .orElse(null);
 
-                if (session != null) {
-                    log.warn("Payment failed for sessionId={}", session.getId());
+                    if (session != null) {
+                        log.warn("Payment failed for sessionId={}", session.getId());
 
-                    // Build failed transaction request
-                    MainWalletRequest requestObj = new MainWalletRequest();
-                    requestObj.setUuid(session.getMetadata().get("userId"));
-                    requestObj.setAmount(session.getAmountTotal() / 100.0);
-                    requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata().get("type")));
-                    requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
-                    requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
-                    // Save transaction with FAILED status
-                    return failedTxnRecorder.recordFailedTxn(requestObj);
+                        // Build failed transaction request
+                        MainWalletRequest requestObj = new MainWalletRequest();
+                        requestObj.setUuid(session.getMetadata().get("userId"));
+                        requestObj.setAmount(session.getAmountTotal() / 100.0);
+                        requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata().get("type")));
+                        requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
+                        requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
+                        // Save transaction with FAILED status
+                        return failedTxnRecorder.recordFailedTxn(requestObj);
+                    }
+                    break;
                 }
-                break;
+                default:
+                    log.info("Unhandled Stripe event type: {}", event.getType());
             }
-            default:
-                log.info("Unhandled Stripe event type: {}", event.getType());
+        } catch (Exception e) {
+            log.error("Unexpected error handling Stripe webhook. Event={}", event);
+            throw new StripeSessionException("Failed to process Stripe webhook");
         }
-    } catch (Exception e) {
-        log.error("Unexpected error handling Stripe webhook. Event={}", event);
-        throw new StripeSessionException("Failed to process Stripe webhook");
-    }
         return MainWalletResponse.builder().message("Success").build();
     }
 
@@ -129,98 +129,12 @@ public class StripeWebhookController {
         requestObj.setTransactionType(transactionType);
         requestObj.setSourceWalletId(sourceWallet);
         requestObj.setTargetWalletId(targetWallet);
-    /**
-     * Handles a completed Stripe checkout session.
-     *
-     * @param event Stripe event object
-     * @return response after processing payment
-     */
-    private MainWalletResponse handleCompletedSession(final Event event) {
-        final Session session = (Session) event.getDataObjectDeserializer()
-                .getObject()
-                .orElse(null);
 
-        if (session == null) {
-            log.warn("Session object is null for completed checkout event.");
-            return MainWalletResponse.builder()
-                    .message("No session data")
-                    .build();
-        }
-
-        try {
-            // 🔑 Fetch full session (with metadata) from Stripe
-            Session fullSession = Session.retrieve(session.getId());
-            log.info("Full Stripe session retrieved: {}", fullSession.toJson());
-
-            final String userId = fullSession.getMetadata().get("userId");
-            final String type = fullSession.getMetadata().get("type");
-            final Long totalAmount = fullSession.getAmountTotal();
-
-            if (userId == null || type == null || totalAmount == null) {
-                log.error("Missing required metadata in session {}", fullSession.getId());
-                return MainWalletResponse.builder()
-                        .message("Invalid session data")
-                        .build();
-            }
-
-            // Optional metadata (can be null, safe to pass through)
-            final String sourceWallet = fullSession.getMetadata().get("sourceWallet");
-            final String targetWallet = fullSession.getMetadata().get("targetWallet");
-
-            final TransactionType transactionType =
-                    TransactionType.valueOf(type.toUpperCase());
-            final double amount = totalAmount / AMOUNT_DIVISOR;
-
-            final MainWalletRequest requestObj = new MainWalletRequest();
-            requestObj.setUuid(userId);
-            requestObj.setAmount(amount);
-            requestObj.setTransactionType(transactionType);
-            requestObj.setSourceWalletId(sourceWallet);  // may be null
-            requestObj.setTargetWalletId(targetWallet);  // may be null
-
-            return transactionType.equals(TransactionType.DEBIT)
-                    ? walletService.payMoney(requestObj)
-                    : walletService.addMoney(requestObj);
-
-        } catch (Exception e) {
-            log.error("Failed to process completed session", e);
-            return MainWalletResponse.builder()
-                    .message("Error processing session")
-                    .build();
+        if (transactionType.equals(TransactionType.DEBIT)) {
+            return walletService.payMoney(requestObj);
+        } else {
+            return walletService.addMoney(requestObj);
         }
     }
 
-}
-
-    /**
-     * Handles failed or expired Stripe sessions and records them.
-     *
-     * @param event Stripe event object
-     * @return response after recording failed transaction
-     */
-    private MainWalletResponse handleFailedSession(final Event event) {
-        final Session session = (Session) event.getDataObjectDeserializer()
-                .getObject()
-                .orElse(null);
-
-        if (session == null) {
-            log.warn("Session object is null for failed/expired checkout event.");
-            return MainWalletResponse.builder()
-                    .message("No session data")
-                    .build();
-        }
-
-        log.warn("Payment failed for sessionId={}", session.getId());
-
-        final MainWalletRequest requestObj = new MainWalletRequest();
-        requestObj.setUuid(session.getMetadata().get("userId"));
-        requestObj.setAmount(session.getAmountTotal() / AMOUNT_DIVISOR);
-        requestObj.setTransactionType(
-                TransactionType.valueOf(session.getMetadata().get("type"))
-        );
-        requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
-        requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
-
-        return failedTxnRecorder.recordFailedTxn(requestObj);
-    }
 }
