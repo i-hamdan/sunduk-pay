@@ -23,6 +23,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Service implementation for currency conversion and fetching historical exchange rates.
+ * Handles real-time conversion using external API and historical data from the database.
+ */
+
 @Service
 @Log4j2
 public class CurrencyServiceImpl implements CurrencyService {
@@ -42,6 +48,17 @@ public class CurrencyServiceImpl implements CurrencyService {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Converts an amount from one currency to another and optionally fetches historical rates.
+     *
+     * @param currencyRequest request containing source currency,
+     *                        target currency, amount, and time series
+     * @return CurrencyResponse containing converted amount,
+     * exchange rate, fees, and historical rates
+     * @throws NullAmountException       if amount is null
+     * @throws InvalidCurrencyType       if the currency is invalid
+     * @throws CustomExchangeRateException if API response is invalid
+     */
     @Override
     public CurrencyResponse convertCurrency(CurrencyRequest currencyRequest) {
 
@@ -62,13 +79,6 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         double finalAmount = converted - fee;
         log.debug("Final amount after fee deduction = {}", finalAmount);
-        log.debug("Fetching historical rates for {} to {}", currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
-
-
-
-
-
-
 
         if (currencyRequest.getTimeSeries()== TimeSeries.WEEK) {
             List<CurrencyRatesResponse> weeklyRates = fetchWeekRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
@@ -83,23 +93,23 @@ public class CurrencyServiceImpl implements CurrencyService {
             return mapper.currencyResponse(exchangeRate, converted, fee, finalAmount, yearlyRates, null, null);
         }
 
-      // aman bhai ki request
-//        else if (currencyRequest.getTimeSeries() ==TimeSeries.All) {
-//            List<CurrencyRatesResponse> weeklyRates = fetchWeekRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
-//            List<CurrencyRatesResponse> monthlyRates = fetchMonthlyRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
-//            List<CurrencyRatesResponse> yearlyRates = fetchYearlyRates(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
-//            return mapper.currencyResponse(exchangeRate, converted, fee, finalAmount, yearlyRates, monthlyRates, weeklyRates);
-//
-//
-//        }
+
         else {
             throw new ResourceNotFoundException("please provide Time Series");
         }
     }
+    /**
+     * Fetches the real-time exchange rate from external API.
+     *
+     * @param from source currency
+     * @param to   target currency
+     * @return exchange rate
+     */
+
 
     private double fetchExchangeRate(String from, String to) {
         log.debug("Preparing to fetch exchange rate from API for {} to {}", from, to);
-        String url = exchangeApiUrl + "/" + from;
+        String url = exchangeApiUrl + "/latest" +"/" + from;
         log.debug("Constructed API URL: {}", url);
 
         ResponseEntity<Map> response;
@@ -139,7 +149,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     /**
-     * Fetches historical rates
+     * Fetches historical yearly rates.
+     *
+     * @param from source currency
+     * @param to   target currency
+     * @return list of yearly currency rates
      */
     private List<CurrencyRatesResponse> fetchYearlyRates(String from, String to) {
         String currencyPair = from.concat(to);
@@ -158,6 +172,9 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         return response;
     }
+
+
+    /** Fetches historical monthly rates. */
 
 
     private List<CurrencyRatesResponse> fetchMonthlyRates(String from, String to) {
@@ -179,6 +196,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
 
+    /** Fetches historical monthly weekly. */
 
     private List<CurrencyRatesResponse> fetchWeekRates(String from, String to) {
         String currencyPair = from.concat(to);

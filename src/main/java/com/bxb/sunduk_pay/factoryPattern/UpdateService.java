@@ -1,16 +1,13 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
-import com.bxb.sunduk_pay.Mappers.WalletMapper;
-
 import com.bxb.sunduk_pay.exception.CannotUpdateWalletException;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
+import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
-import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.ActionType;
@@ -22,9 +19,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service to handle
+ * updates to SubWallets.
+ * Supports renaming,
+ * updating goal amounts,
+ * and changing target dates.
+ * Validates user and wallet info before performing updates.
+ */
 @Log4j2
 @Service
 public class UpdateService implements WalletOperation {
@@ -38,11 +42,31 @@ public class UpdateService implements WalletOperation {
         this.validations = validations;
     }
 
+    /**
+     * Returns the RequestType handled by this service.
+     *
+     * @return RequestType.UPDATE
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.UPDATE;
     }
 
+    /**
+     * Updates a SubWallet based on the action
+     * type specified in the request.
+     * Supports renaming, updating goal amounts,
+     * and changing target dates.
+     *
+     * @param mainWalletRequest
+     * request containing user UUID, wallet ID,
+     *action type, and relevant update details
+     * @return response indicating success or failure of the update
+     * @throws ResourceNotFoundException if user or wallet is not found
+     * @throws CannotUpdateWalletException if the
+     * update cannot be performed due to existing transactions
+     * @throws InvalidPayloadException if the request payload is invalid
+     */
     @Override
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
 

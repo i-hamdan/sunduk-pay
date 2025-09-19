@@ -1,5 +1,8 @@
 package com.bxb.sunduk_pay.util;
 
+/**
+ * Enum representing all supported currency pairs.
+ */
 public enum CurrencyPair {
 //    SARAED,
 //     OMRUSD,

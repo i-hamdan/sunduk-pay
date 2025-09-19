@@ -3,7 +3,12 @@ package com.bxb.sunduk_pay.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+/**
+ * Global CORS configuration for the application.
+ * This applies to controllers that are not covered by Spring Security CORS rules.
+ * Applies to controllers that are not covered by
+ * Spring Security CORS rules.
+ */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     @Override

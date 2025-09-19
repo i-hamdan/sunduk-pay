@@ -12,6 +12,12 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * Filter for authenticating requests by validating session and cookies.
+ */
+    /**
+     * Security properties containing excluded paths and other configs.
+     */
 @Log4j2
 @Component
 public class AuthenticationFilter implements Filter {
@@ -20,7 +26,15 @@ public class AuthenticationFilter implements Filter {
     public AuthenticationFilter(SundukSecurityProperties securityProperties) {
         this.securityProperties = securityProperties;
     }
-
+        /**
+         * Performs authentication checks on incoming requests.
+         *
+         * @param request  incoming servlet request
+         * @param response servlet response
+         * @param chain    filter chain
+         * @throws IOException      if an input or output error occurs
+         * @throws ServletException if a servlet error occurs
+         */
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -67,4 +81,22 @@ public class AuthenticationFilter implements Filter {
         log.info("Request passed filter and is authorized.");
         chain.doFilter(request, response);
     }
-}
+        /**
+         * Initializes the filter.
+         *
+         * @param filterConfig filter configuration
+         */
+        @Override
+        public void init(final FilterConfig filterConfig) {
+            log.info("AuthenticationFilter initialised");
+        }
+
+        /**
+         * Destroys the filter.
+         */
+        @Override
+        public void destroy() {
+            log.info("AuthenticationFilter destroyed");
+        }
+
+    }

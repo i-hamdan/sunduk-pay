@@ -1,18 +1,22 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
+import com.bxb.sunduk_pay.exception.EmailSendingException;
 import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-import com.bxb.sunduk_pay.exception.EmailSendingException;
 import com.bxb.sunduk_pay.service.EmailService;
 import com.bxb.sunduk_pay.util.EmailMessageUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 @Service
 @Log4j2
+
+/**
+ * Service implementation for sending emails.
+ * Handles user activity emails and goal completion notifications.
+ */
+
 public class EmailServiceImpl implements EmailService {
     private final JavaMailSender mailSender;
     private final EmailMessageUtil emailMessageUtil;
@@ -21,7 +25,11 @@ public class EmailServiceImpl implements EmailService {
         this.mailSender = mailSender;
         this.emailMessageUtil = emailMessageUtil;
     }
-
+    /**
+     * Processes a user-related Kafka event and sends an email notification.
+     *
+     * @param event the user Kafka event containing email and event details
+     */
 
     public void processEmailEvent(UserKafkaEvent event) {
         String subject = emailMessageUtil.buildSubject(event);
@@ -29,12 +37,27 @@ public class EmailServiceImpl implements EmailService {
         sendEmail(event.getEmail(), subject, body);
     }
 
+    /**
+     * Processes a goal completion event and sends an email notification.
+     *
+     * @param event the goal completion event containing email and goal details
+     */
     @Override
     public void processGoalCompletionEvent(GoalCompletionEvent event) {
     String subject= emailMessageUtil.buildGoalSubject(event);
     String body= emailMessageUtil.buildGoalBody(event);
     sendEmail(event.getEmail(),subject,body);
     }
+
+    /**
+     * Sends an email with the specified recipient, subject, and body.
+     *
+     * @param to      recipient email address
+     * @param subject subject of the email
+     * @param body    body content of the email
+     * @throws EmailSendingException if the email fails to send
+     * @throws EmailSendingException if sending fails
+     */
 
     public void sendEmail(String to, String subject, String body) {
         try {

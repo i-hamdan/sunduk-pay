@@ -6,6 +6,12 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+
+/**
+ * Central place for Stripe credentials. This sets the global Stripe API key once at startup.
+ * Central place for Stripe credentials.
+ * This sets the global Stripe API key once at startup.
+ */
 @Configuration
 @Data
 public class StripeConfig {

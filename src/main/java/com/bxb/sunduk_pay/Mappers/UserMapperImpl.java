@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of UserMapper for converting between User entities,
+ * OAuth2 user info, and response or event DTOs.
+ */
 @Component
 public class UserMapperImpl implements UserMapper {
     public UserLoginResponse getUser(OidcUser user) {
@@ -23,7 +27,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
     }
 
 
-
+    /** {@inheritDoc} */
     @Override
     public User toUser(UserLoginResponse response) {
         User user = new User();
@@ -33,7 +37,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         return user;
     }
 
-
+    /** {@inheritDoc} */
     public UserResponse toUserResponse(User user){
         UserResponse response = new UserResponse();
         response.setFullName(user.getFullName());
@@ -44,6 +48,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         return response;
     }
 
+    /** Supporting method for converting list of users into list of user response*/
     public List<UserResponse> toUserResponseList(List<User> users){
         List<UserResponse> responses = new ArrayList<>(users.size());
         for (User user : users){
@@ -52,6 +57,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         return responses;
     }
 
+    /** {@inheritDoc} */
     public UserKafkaEvent toKafkaEvent(User user,String eventType){
         UserKafkaEvent kafkaEvent=new UserKafkaEvent();
         kafkaEvent.setEmail(user.getEmail());

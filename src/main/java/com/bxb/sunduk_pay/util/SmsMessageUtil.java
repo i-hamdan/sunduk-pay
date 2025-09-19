@@ -3,8 +3,25 @@ package com.bxb.sunduk_pay.util;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility component for building SMS messages for transaction events.
+ *
+ * <p>This class generates user-friendly SMS text for different transaction types:
+ * <ul>
+ *   <li>Credits (internal or external)</li>
+ *   <li>Debits (internal or external)</li>
+ * </ul>
+ * </p>
+ */
 @Component
 public class SmsMessageUtil {
+
+    /**
+     * Builds an SMS message for a transaction event.
+     *
+     * @param event the transaction event
+     * @return formatted SMS message
+     */
     public String buildTransactionSms(TransactionEvent event) {
         String firstName = event.getFullName() != null
                 ? event.getFullName().split(" ")[0]

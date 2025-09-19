@@ -2,103 +2,211 @@ package com.bxb.sunduk_pay.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 
+/**
+ * Global exception handler for the application.
+ * <p>
+ * Catches exceptions thrown by controllers/services and returns
+ * structured {@link ErrorResponse} with proper HTTP status and
+ * message.
+ * </p>
+ */
 @RestControllerAdvice
-public class globalExceptionHandler {
+public class GlobalExceptionHandler {
 
+    /**
+     * Handles {@link CannotCreateWalletException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = CannotCreateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleCannotCreateWalletException(CannotCreateWalletException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(), HttpStatus.FORBIDDEN.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link TransactionNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = TransactionNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleTransactionNotFoundException(TransactionNotFoundException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link UserNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link WalletNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = WalletNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleWalletNotFoundException(WalletNotFoundException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link InsufficientBalanceException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = InsufficientBalanceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInsufficientBalanceException(InsufficientBalanceException e, HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(), e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link ResourceNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException(ResourceNotFoundException e,HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
-
+    /**
+     * Handles {@link InvalidSessionException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = InvalidSessionException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleInvalidSessionException(InvalidSessionException e,HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
+
+    /**
+     * Handles {@link CustomExchangeRateException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(CustomExchangeRateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse CustomExchangeRateException(CustomExchangeRateException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
+    /**
+     * Handles {@link NullAmountException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(NullAmountException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse invalidAmount(NullAmountException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
-
+    /**
+     * Handles {@link MaxSubWalletsExceededException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(MaxSubWalletsExceededException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMaxSubWalletsExceededException(MaxSubWalletsExceededException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
+    /**
+     * Handles {@link NullValueException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(NullValueException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleNullValueException(NullValueException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
+    /**
+     * Handles {@link TransactionProcessingException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(TransactionProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleTransactionProcessingException(TransactionProcessingException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
+    /**
+     * Handles {@link StripeSessionException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(StripeSessionException.class)
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
     public ErrorResponse handleStripeSessionException(StripeSessionException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_GATEWAY.value(),HttpStatus.BAD_GATEWAY.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
+    /**
+     * Handles {@link InvalidPayloadException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(InvalidPayloadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidPayloadException(InvalidPayloadException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),HttpStatus.BAD_REQUEST.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
-
-
+    /**
+     * Handles {@link CannotUpdateWalletException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(CannotUpdateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleCannotUpdateWalletException(CannotUpdateWalletException e, HttpServletRequest request){
@@ -106,14 +214,26 @@ public class globalExceptionHandler {
     }
 
 
-
+    /**
+     * Handles {@link CannotDeleteWalletException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(CannotDeleteWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleCannotDeleteWalletException(CannotDeleteWalletException e, HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(),HttpStatus.FORBIDDEN.getReasonPhrase(),e.getMessage(),request.getRequestURI());
     }
 
-
+    /**
+     * Handles {@link HttpMessageNotReadableException} for invalid JSON payloads.
+     *
+     * @param ex      the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {

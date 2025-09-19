@@ -10,11 +10,15 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Implementation of WalletMapper to convert MainWallet and SubWallet entities
+ * into corresponding response DTOs.
+ */
 @Component
 public class WalletMapperImpl implements WalletMapper{
 
-   public MainWalletResponse toWalletResponse(MainWallet wallet,List<SubWallet> subWallets){
+    /** {@inheritDoc} */
+    public MainWalletResponse toWalletResponse(MainWallet wallet,List<SubWallet> subWallets){
        MainWalletResponse mainWalletResponse = new MainWalletResponse();
        mainWalletResponse.setMainWalletId(wallet.getMainWalletId());
        mainWalletResponse.setBalance(wallet.getBalance());
@@ -23,14 +27,15 @@ public class WalletMapperImpl implements WalletMapper{
        return mainWalletResponse;
    }
 
-   private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallet){
+    /** Supporting method for converting list of subWallets into list of subWalletResponse*/
+    private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallet){
        List<SubWalletResponse> list = new ArrayList<>();
        for (SubWallet subWallet1 : subWallet){
            list.add(toSubWalletResponse(subWallet1));
        }
        return list;
    }
-
+    /** Supporting method for converting subWallet into subWalletResponse*/
    private SubWalletResponse toSubWalletResponse(SubWallet subWallet){
        SubWalletResponse subWalletResponse=new SubWalletResponse();
        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
@@ -41,27 +46,5 @@ public class WalletMapperImpl implements WalletMapper{
        return subWalletResponse;
    }
 
-//
-//    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){
-//       List<TransactionResponse> responses = new ArrayList<>(transactions.size());
-//       for(Transaction transaction : transactions){
-//           responses.add(toTransactionResponse(transaction));
-//       }
-//   return responses;
-//   }
-//
-//
-//
-//    private TransactionResponse toTransactionResponse(Transaction transaction){
-//       TransactionResponse transactionResponse = new TransactionResponse();
-//       transactionResponse.setUuid(transaction.getUser().getUuid());
-//       transactionResponse.setTransactionType(transaction.getTransactionType());
-//       transactionResponse.setAmount(transaction.getAmount());
-//       transactionResponse.setDescription(transaction.getDescription());
-//       transactionResponse.setDateTime(transaction.getDateTime());
-//       transactionResponse.setMainWalletId(transaction.getMasterWalletId().getMainWalletId());
-//       transactionResponse.setFullName(transaction.getMasterWalletId().getUser().getFullName());
-//       return transactionResponse;
-//    }
 
 }

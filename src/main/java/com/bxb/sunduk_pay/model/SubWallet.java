@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.util.SubWalletType;
 import jdk.jfr.Timestamp;
 import lombok.Builder;
 import lombok.Data;

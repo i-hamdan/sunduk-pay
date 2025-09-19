@@ -1,24 +1,29 @@
 package com.bxb.sunduk_pay.controller;
 
+import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.ContactRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
-import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.net.URLEncoder;
+
+/**
+ * Controller for handling user login, logout, and contact upload.
+ */
 
 @Log4j2
 @RestController
@@ -34,6 +39,16 @@ public class SundukController {
 
         this.userMapper = userMapper;
     }
+
+
+    /**
+     * Handles custom login via OIDC.
+     *
+     * @param session current HTTP session
+     * @param httpServletResponse HTTP response to send redirect
+     * @return user login response
+     * @throws IOException if redirect fails
+     */
     @GetMapping(value = "/custom-login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserLoginResponse> login(HttpSession session, @AuthenticationPrincipal OidcUser user , HttpServletResponse httpServletResponse) throws IOException {
         UserLoginResponse response = userMapper.getUser(user);
@@ -51,19 +66,22 @@ public class SundukController {
 
     }
 
-
+    /**
+     * Uploads contacts for the authenticated user.
+     *
+     * @param contactRequest contact request payload
+     * @return user response after upload
+     */
 @PostMapping("/upload-contact")
-public UserResponse uploadContacts(@RequestBody ContactRequest ContactRequest) {
-    return service.uploadContacts(ContactRequest);
+public UserResponse uploadContacts(@RequestBody ContactRequest contactRequest) {
+    return service.uploadContacts(contactRequest);
 }
-
-
-
-
-
-
-
-
+    /**
+     * Logs out the current user by invalidating the session.
+     *
+     * @param session current HTTP session
+     * @return logout confirmation message
+     */
     @GetMapping("/custom-logout")
     public String logout(HttpSession session) {
         session.invalidate();

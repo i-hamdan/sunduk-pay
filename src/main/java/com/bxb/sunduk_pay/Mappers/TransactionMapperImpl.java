@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Implementation of TransactionMapper to convert Transaction entities to DTOs and Kafka events.
+ * Implementation of TransactionMapper to convert Transaction entities
+ * to DTOs and Kafka events.
+ */
 @Log4j2
 @Component
 public class TransactionMapperImpl implements TransactionMapper {
@@ -23,6 +28,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         this.validations = validations;
     }
 
+    /** {@inheritDoc} */
     public TransactionResponse toTransactionResponse(Transaction transaction) {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(transaction.getTransactionId());
@@ -48,6 +54,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         return transactionResponse;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions) {
         List<TransactionResponse> responses = new ArrayList<>(transactions.size());
@@ -57,6 +64,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         return responses;
     }
 
+    /** {@inheritDoc} */
     public TransactionEvent toTransactionEvent(Transaction transaction) {
         TransactionEvent transactionEvent = new TransactionEvent();
         transactionEvent.setWalletId(transaction.getMainWallet().getMainWalletId());

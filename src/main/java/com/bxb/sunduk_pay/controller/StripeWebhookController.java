@@ -19,6 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+
+/**
+ * Controller to handle Stripe webhook events such as completed payments,
+ * failed payments, and expired checkout sessions.
+ */
 @Log4j2
 @RestController
 public class StripeWebhookController {
@@ -33,7 +38,13 @@ public class StripeWebhookController {
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
-
+    /**
+     * Handles incoming Stripe webhook events.
+     *
+     * @param request the HttpServletRequest containing Stripe payload
+     * @return a response indicating the processing result
+     * @throws IOException if reading the request payload fails
+     */
     @PostMapping("/webhook")
     public MainWalletResponse handleStripeEvent(HttpServletRequest request) throws IOException {
         String payload;
@@ -96,6 +107,13 @@ public class StripeWebhookController {
     }
         return MainWalletResponse.builder().message("Success").build();
     }
+
+    /**
+     * Handles a completed Stripe checkout session.
+     *
+     * @param session Stripe event object
+     * @return response after processing payment
+     */
     private MainWalletResponse handleCompletedSession(Session session) {
         String userId = session.getMetadata().get("userId");
         TransactionType transactionType = TransactionType.valueOf(

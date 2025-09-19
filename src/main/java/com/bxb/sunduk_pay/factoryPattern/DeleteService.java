@@ -12,6 +12,11 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Service to handle deletion of sub-wallets.
+ * Only allows deletion if the sub-wallet balance is zero.
+ */
 @Log4j2
 @Service
 public class DeleteService implements WalletOperation {
@@ -23,11 +28,23 @@ public class DeleteService implements WalletOperation {
         this.mainWalletRepository = mainWalletRepository;
     }
 
+    /**
+     * Returns the RequestType handled by this service.
+     *
+     * @return RequestType.DELETE
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.DELETE;
     }
 
+    /**
+     * Performs the deletion of a sub-wallet if balance is zero.
+     *
+     * @param mainWalletRequest request containing wallet and sub-wallet IDs
+     * @return response with a success message
+     * @throws CannotDeleteWalletException if the sub-wallet balance is not zero
+     */
     @Override
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
         log.info("Received request to delete SubWallet.");

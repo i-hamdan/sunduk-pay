@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * Service to handle the creation of SubWallets.
+ * Validates user and main wallet, checks existing sub-wallet count, then adds a new SubWallet.
+ */
 @Log4j2
 @Service
 public class CreateService implements WalletOperation {
@@ -26,11 +30,23 @@ public class CreateService implements WalletOperation {
         this.mainWalletRepository = mainWalletRepository;
     }
 
+
+    /**
+     * Returns the RequestType handled by this service.
+     *
+     * @return RequestType.CREATE
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.CREATE;
     }
 
+    /**
+     * Creates a new sub-wallet for a user.
+     *
+     * @param mainWalletRequest request containing user UUID and sub-wallet details
+     * @return response indicating success
+     */
     @Override
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
         log.info("Starting SubWallet creation for User UUID: {}", mainWalletRequest.getUuid());

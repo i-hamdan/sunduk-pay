@@ -13,6 +13,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implements validation logic for users, wallets, and transactions.
+ */
 @Log4j2
 @Component
 public class ValidationsImpl implements Validations {
@@ -30,6 +33,7 @@ public class ValidationsImpl implements Validations {
     }
 
 
+    /** {@inheritDoc} */
     public User getUserInfo(String uuid) {
         log.info("Fetching user with UUID: {}", uuid);
         return userRepository.findById(uuid)
@@ -39,10 +43,16 @@ public class ValidationsImpl implements Validations {
                 });
     }
 
+
+    /** {@inheritDoc} */
+
     @Override
     public MainWallet getMainWalletByWalletId(String walletId) {
       return mainWalletRepository.findById(walletId).orElseThrow(()->new ResourceNotFoundException("Cannot find mainWallet By Id : "+walletId));
     }
+
+
+    /** {@inheritDoc} */
 
     public MainWallet getMainWalletInfo(String uuid) {
         log.info("Fetching mainWallet with UUID : {}", uuid);
@@ -53,6 +63,7 @@ public class ValidationsImpl implements Validations {
                 });
     }
 
+    /** {@inheritDoc} */
 
     @Override
     public void validateNumberOfSubWallets(int size) {
@@ -64,6 +75,9 @@ public class ValidationsImpl implements Validations {
             throw new MaxSubWalletsExceededException("Maximum 19 sub wallets are allowed.");
         }
     }
+
+    /** {@inheritDoc} */
+
     @Override
     public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
             String uuid,
@@ -134,32 +148,7 @@ public class ValidationsImpl implements Validations {
     }
 
 
-//
-//    @Override
-//    public Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String subWalletId, Pageable pageable) {
-//        if (subWalletId != null) {
-//            log.info("Fetching transactions for User UUID: {} and SubWallet ID: {}", uuid, subWalletId);
-//            Page<Transaction> transactions = transactionRepository.findByUser_UuidAndFromWalletId(uuid, subWalletId, pageable);
-//
-//            if (transactions.isEmpty()) {
-//                log.error("No transactions found for User UUID: {} and SubWallet ID: {}. Possible invalid ID(s).", uuid, subWalletId);
-//                throw new TransactionNotFoundException(
-//                        "No transactions found for the given SubWallet ID: " + subWalletId + " under User UUID: " + uuid);
-//            }
-//            return transactions;
-//        }
-//        log.info("Fetching transactions for User UUID: {}", uuid);
-//        Page<Transaction> transactions = transactionRepository.findByUser_UuidAndIsMasterFalse(uuid, pageable);
-//        if (transactions.isEmpty()) {
-//            log.error("No transactions found for User UUID: {}. Possible invalid UUID.", uuid);
-//            throw new TransactionNotFoundException(
-//                    "No transactions found for the given User UUID: " + uuid);
-//        }
-//        log.debug("Found {} transactions for User UUID: {}", transactions.getTotalElements(), uuid);
-//        return transactions;
-//
-//    }
-
+    /** {@inheritDoc} */
     @Override
     public void validateBalance(Double balance, Double amount) {
         log.info("Validating transaction with balance: {} and amount: {}", balance, amount);
@@ -174,7 +163,7 @@ public class ValidationsImpl implements Validations {
         log.debug("Validation successful: Transaction can proceed. Balance={}, Amount={}", balance, amount);
     }
 
-
+    /** {@inheritDoc} */
     @Override
     public SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId) {
         if (wallet == null || subWalletId == null) {
@@ -191,6 +180,7 @@ public class ValidationsImpl implements Validations {
                 });
     }
 
+    /** {@inheritDoc} */
     @Override
     public SubWallet getSubWalletIfExists(MainWallet wallet, String subWalletId) {
         log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
@@ -203,6 +193,7 @@ public class ValidationsImpl implements Validations {
                 });
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getFromIconOfTxn(String mainWalletId, String fromWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
@@ -216,6 +207,7 @@ public class ValidationsImpl implements Validations {
        }
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getToIconOfTxn(String mainWalletId, String toWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
@@ -229,11 +221,13 @@ public class ValidationsImpl implements Validations {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Boolean removeSubwallet(MainWallet wallet, String subWalletId) {
         return wallet.getSubWallets().removeIf(subwallet->subwallet.getSubWalletId().equals(subWalletId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public MasterWallet getMasterWalletInfo(String uuid) {
         log.info("Fetching MasterWallet for User UUID: {}", uuid);

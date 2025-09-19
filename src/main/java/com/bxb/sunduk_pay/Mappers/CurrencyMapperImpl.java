@@ -5,7 +5,6 @@ import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
 import org.springframework.stereotype.Component;
-
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
-
+    /** {@inheritDoc} */
     @Override
     public CurrencyResponse currencyResponse(double exchangeRate, double converted, double fee, double finalAmount, List<CurrencyRatesResponse> yearlyRates, List<CurrencyRatesResponse> monthlyRates, List<CurrencyRatesResponse> weeklyRates) {
         CurrencyResponse response = new CurrencyResponse();
@@ -27,7 +26,7 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         return response;
     }
 
-
+    /** {@inheritDoc} */
     public List<CurrencyRatesResponse> toCurrencyRatesResponses(List<CurrencyRates> currencyRates, String rateKey, TimeSeries timeSeries) {
         List<CurrencyRatesResponse> list = new ArrayList<>();
         for (CurrencyRates rates : currencyRates) {
@@ -36,8 +35,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         return list;
     }
 
-
-
+    /** Helper method to convert a single CurrencyRates to CurrencyRatesResponse
+     */
     private CurrencyRatesResponse toCurrencyRatesResponse(CurrencyRates currencyRates, String rateKey, TimeSeries timeSeries) {
         CurrencyRatesResponse currencyRatesResponse = new CurrencyRatesResponse();
         currencyRatesResponse.setDate(currencyRates.getDate());
@@ -55,11 +54,7 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                 String formatted = currencyRates.getDate().format(DateTimeFormatter.ofPattern("dd MMM"));
                 currencyRatesResponse.setDayMonth(formatted);
             }
-//            case YEAR -> {
-//// Sirf Month name (August)
-//                String month = currencyRates.getDate().format(DateTimeFormatter.ofPattern("MMM YY"));
-//                currencyRatesResponse.setMonth(month);
-//            }
+
         }
         return currencyRatesResponse;
     }
@@ -73,9 +68,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
 
 
 
-
+    /** {@inheritDoc} */
     public List<CurrencyRatesResponse> toMonthlyAverageResponses(List<CurrencyRates> currencyRates, String rateKey) {
-        // Group by Month and calculate average
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
                 .filter(r -> r.getRates().get(rateKey) != null)
                 .collect(Collectors.groupingBy(

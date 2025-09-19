@@ -13,11 +13,20 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 @CrossOrigin(origins = "http://localhost:5174",allowCredentials = "true")
 
+
+/**
+ * Controller for currency conversion operations.
+ */
 public class CurrencyController {
 
     @Autowired
     private CurrencyService currencyService;
-
+    /**
+     * Converts an amount from one currency to another.
+     *
+     * @param currencyRequest the currency conversion request
+     * @return the conversion response wrapped in ResponseEntity
+     */
     @PostMapping("/convert")
     public ResponseEntity<CurrencyResponse> convert(@RequestBody CurrencyRequest currencyRequest) {
         log.info("Currency conversion API called: from = {}, to = {}, amount = {}", currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(), currencyRequest.getAmount());

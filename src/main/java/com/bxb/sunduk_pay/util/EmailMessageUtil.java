@@ -1,15 +1,24 @@
 package com.bxb.sunduk_pay.util;
 
 import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-import com.bxb.sunduk_pay.service.EmailService;
 import org.springframework.stereotype.Component;
+
+/**
+ * Utility component for building email subjects and bodies
+ * for different user and goal events.
+ */
 
 @Component
 public class EmailMessageUtil {
 
 
+    /**
+     * Build the subject line for a user event.
+     *
+     * @param event the user Kafka event
+     * @return the subject line
+     */
     public String buildSubject(UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
             return "Login Alert - Welcome back to Sunduk, " + event.getFullName() + "!";
@@ -17,6 +26,12 @@ public class EmailMessageUtil {
             return "Welcome to Sunduk family " + event.getFullName() + "!";
         }
     }
+/**
+     * Build the body content for a user event.
+     *
+     * @param event the user Kafka event
+     * @return the body content
+     */
 
     public String buildBody(UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
@@ -44,6 +59,12 @@ public class EmailMessageUtil {
         }
     }
 
+    /**
+     * Build the subject line for a goal completion event.
+     *
+     * @param event the goal completion event
+     * @return the subject line
+     */
     public String buildGoalSubject(GoalCompletionEvent event) {
         return switch (event.getMilestone()) {
             case 50 -> "🎯 You’re halfway to your savings goal, " + event.getWalletName() + "!";
@@ -52,6 +73,13 @@ public class EmailMessageUtil {
             default -> "Update on your savings goal";
         };
     }
+
+    /**
+     * Build the body content for a goal completion event.
+     *
+     * @param event the goal completion event
+     * @return the body content
+     */
     public String buildGoalBody(GoalCompletionEvent event) {
         return switch (event.getMilestone()) {
             case 50 -> "Hello,\n\n" +

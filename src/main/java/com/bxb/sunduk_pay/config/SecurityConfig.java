@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -13,12 +12,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Spring Security configuration for the application.
+ */
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +31,15 @@ public class SecurityConfig {
     public SecurityConfig(AuthenticationFilter filter) {
         this.filter = filter;
     }
+
+    /**
+     * Defines the Spring Security filter chain.
+     *
+     * @param http the {@link HttpSecurity} to modify
+     * @return configured {@link SecurityFilterChain}
+     * @throws Exception if an error occurs during configuration
+     */
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -50,11 +62,23 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Publishes session lifecycle events so Spring Security’s concurrent
+     * session control works.
+     *
+     * @return {@link HttpSessionEventPublisher} bean
+     */
 
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
+
+    /**
+     * Configure allowed origins/headers/methods for cross-origin requests.
+     *
+     * @return {@link CorsConfigurationSource} with allowed settings
+     */
 
 
     @Bean
@@ -77,6 +101,12 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Customize session cookie behaviour.
+     *
+     * @return {@link CookieSerializer} with configured settings
+     */
+
     @Bean
     public CookieSerializer cookieSerializer() {
         DefaultCookieSerializer serializer = new DefaultCookieSerializer();
@@ -84,5 +114,15 @@ public class SecurityConfig {
         serializer.setUseSecureCookie(true); // if using https
         serializer.setCookieName("JSESSIONID");
         return serializer;
+    }
+
+    /**
+     * Provides a RestTemplate bean for making REST API calls.
+     *
+     * @return new {@link RestTemplate} instance
+     */
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

@@ -21,6 +21,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service to handle money transfers between wallets.
+ * Supports internal transfers and external transfers via payment gateways.
+ */
 @Service
 @Log4j2
 public class TransferService implements WalletOperation {
@@ -44,15 +48,25 @@ public class TransferService implements WalletOperation {
         this.transactionMapper = transactionMapper;
     }
 
+    /**
+     * Returns the request type handled by this service.
+     *
+     * @return request type TRANSFER_MONEY
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.TRANSFER_MONEY;
     }
 
+    /**
+     * Performs a money transfer based on source and target wallets.
+     *
+     * @param mainWalletRequest request containing source, target, amount, and method
+     * @return MainWalletResponse with transfer result
+     */
     @Override
-//    @Transactional
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
-//        try {
+        try {
             log.info("Performing transfer request for UUID: {}, Request: {}", mainWalletRequest.getUuid(), mainWalletRequest);
 
             User user = validations.getUserInfo(mainWalletRequest.getUuid());
@@ -87,29 +101,33 @@ public class TransferService implements WalletOperation {
                 log.error("Both source and target wallets are invalid for UUID: {}", user.getUuid());
                 throw new InvalidPayloadException("both sourceId and targetId is invalid for this user");
             }
-//        } catch (Exception e) {
-//            log.error("message : {}", e.getMessage());
-//            throw e;
-//        }
+        } catch (Exception e) {
+            log.error("message : {}", e.getMessage());
+            throw e;
+        }
     }
 
+    /** Handle external incoming transfer */
     private MainWalletResponse handleExternalIncomingTransfer(User user, Double amount, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
         log.info("Creating checkout session for incoming transfer, Amount: {}", amount);
         return paymentService.createCheckoutSession(user.getUuid(), amount, TransactionType.CREDIT, targetWallet, sourceWallet);
     }
 
+    /** Handle external outgoing transfer */
     private MainWalletResponse handleExternalOutGoingTransfer(WalletWrapper sourceSubWallet, WalletWrapper targetWallet, Double amount, User user) {
         log.info("Processing outgoing transfer, Amount: {}", amount);
         validations.validateBalance(sourceSubWallet.getBalance(), amount);
         return paymentService.createCheckoutSession(user.getUuid(), amount, TransactionType.DEBIT, targetWallet, sourceSubWallet);
     }
 
+    /** Handle internal transfer between main<->subWallet subWallet<->subWallet*/
     public MainWalletResponse handleInternalTransfer(User user, MainWallet mainWallet, Double amount,
                                                      WalletWrapper sourceWallet, WalletWrapper targetWallet,
                                                      Double previousSourceWalletBalance, Double previousTargetWalletBalance) {
      return internalTransferService.doInternalTransfer(user,mainWallet,amount,sourceWallet,targetWallet,previousSourceWalletBalance,previousTargetWalletBalance);
     }
 
+    /** Get WalletWrapper for mainWallet or subWallet based on walletId */
     private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
 
         if (walletId == null) {
