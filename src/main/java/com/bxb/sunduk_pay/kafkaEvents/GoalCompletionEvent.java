@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * Event representing the completion of a savings goal milestone.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

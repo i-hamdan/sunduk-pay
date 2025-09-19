@@ -90,7 +90,11 @@ sunduk:
 
 exchange:
   api:
+<<<<<<< Updated upstream
    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
+=======
+    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
+>>>>>>> Stashed changes
 
 
 exchange-rate:

@@ -7,6 +7,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+/**
+ * Represents a transaction event in the SundukPay system.
+ * This class is used for Kafka messaging to convey transaction details.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
