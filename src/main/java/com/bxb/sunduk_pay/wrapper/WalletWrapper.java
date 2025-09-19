@@ -3,6 +3,10 @@ package com.bxb.sunduk_pay.wrapper;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 
+/**
+ * A wrapper class that can hold either a MainWallet or a SubWallet.
+ * Provides a unified interface to access common properties of both wallet types.
+ */
 public class WalletWrapper {
     private final MainWallet mainWallet;
     private final SubWallet subWallet;
@@ -19,19 +23,23 @@ public class WalletWrapper {
 
 
     public String getId() {
-        return mainWallet != null ? mainWallet.getMainWalletId() : subWallet.getSubWalletId();
+        return mainWallet != null ?
+                mainWallet.getMainWalletId() : subWallet.getSubWalletId();
     }
 
     public String getName() {
-        return mainWallet != null ? "Main Wallet" : subWallet.getSubWalletName();
+        return mainWallet != null ?
+                "Main Wallet" : subWallet.getSubWalletName();
     }
 
     public double getBalance() {
-        return mainWallet != null ? mainWallet.getBalance() : subWallet.getBalance();
+        return mainWallet != null ?
+                mainWallet.getBalance() : subWallet.getBalance();
     }
 
     public Double getGoalAmount() {
-        return subWallet != null ? subWallet.getTargetBalance() : null;
+        return subWallet != null ?
+                subWallet.getTargetBalance() : null;
     }
     public void setBalance(double newBalance) {
         if (mainWallet != null) {

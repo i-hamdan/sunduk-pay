@@ -15,9 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class SundukPayApplication {
 
-	/** Private constructor to prevent instantiation. */
-	private SundukPayApplication() {}
-
 	/**
 	 * Main method to start the Spring Boot application.
 	 *
