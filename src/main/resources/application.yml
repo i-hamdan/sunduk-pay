@@ -41,13 +41,15 @@ spring:
           google:
             client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
             client-secret: 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
+
             scope:
               - openid
               - profile
               - email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
             #redirect-uri: "https://3e4367127e0f.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
-        provider:
+         
+            provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
@@ -67,6 +69,8 @@ server:
     session:
       timeout: 60m
       cookie:
+        name: JSESSIONID
+        http-only: true
         same-site: none
         secure: true
   tomcat:
@@ -86,7 +90,23 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
+   url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
+
+
+exchange-rate:
+  base-url: https://v6.exchangerate-api.com/v6
+  api-key: b4373c5a26b8292e2e1cbd8b
+  pair-path: /pair
+
+
+
+
+stripe:
+  key:
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
+  webhook:
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+    url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca/latest
 
 stripe:
   key:
