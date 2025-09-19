@@ -112,6 +112,11 @@ public class TransferService implements WalletOperation {
 
     private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
 
+        if (walletId == null) {
+            log.warn("walletId is null, returning null");
+            return null;
+        }
+
         if (walletId.equals(mainWallet.getMainWalletId())) {
             log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
             return new WalletWrapper(mainWallet);
