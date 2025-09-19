@@ -1,13 +1,14 @@
 twilio:
-  account-sid: ${TWILIO_ACCOUNT_SID}
-  auth-token: ${TWILIO_AUTH_TOKEN}
-  from-number: ${TWILIO_FROM_NUMBER}
+  account-sid: ACdf2676753d81814c50b7115c5617a9a4
+  auth-token: b94932d45ef4af3f720d5096a94f9f19
+  from-number: "+19136751850"
+
 spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    username: playzzzaid@gmail.com
+    password: edse cxrp xysc nfhz
     properties:
       mail:
         smtp:
@@ -43,13 +44,13 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            redirect-uri: "https://b4f31d0a81e4.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -70,6 +71,8 @@ server:
     session:
       timeout: 60m
       cookie:
+        name: JSESSIONID
+        http-only: true
         same-site: none
         secure: true
   tomcat:
@@ -88,12 +91,22 @@ sunduk:
 
 exchange:
   api:
-    url: ${EXCHANGE_API_URL}
+    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b/latest
+
+
+exchange-rate:
+  base-url: https://v6.exchangerate-api.com/v6
+  api-key: b4373c5a26b8292e2e1cbd8b
+  pair-path: /pair
+
+
+
+
 stripe:
   key:
-    secret: ${STRIPE_SECRET_KEY}
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
   webhook:
-    secret: ${STRIPE_WEBHOOK_SECRET}
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
 
 resilience4j:
   circuitbreaker:
