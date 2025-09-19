@@ -66,6 +66,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
+    /**
+     * Deducts money from the user's wallet(s) and records the transaction.
+     *
+     * @param request The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Override
     @Transactional
     public MainWalletResponse payMoney(MainWalletRequest request) {
@@ -174,7 +180,12 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
-
+    /**
+     * Adds money to the user's wallet(s) and records the transaction.
+     *
+     * @param mainWalletRequest The request containing amount, source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing transaction details and updated balances.
+     */
     @Transactional
     @Override
     public MainWalletResponse addMoney(MainWalletRequest mainWalletRequest) {
@@ -289,7 +300,10 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
-
+    /**
+     * Provides wallet-related operations such as CRUD operations, recording failed transactions,
+     * adding dummy transactions, checking balances, and downloading transaction history.
+     */
 
     @Override
     public MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest) {
@@ -344,6 +358,13 @@ public class WalletServiceImpl implements WalletService {
                     .build();
         }
 
+    /**
+     * Records a failed transaction in the database.
+     *
+     * @param request The request containing transaction details such as source, target, amount, and type.
+     * @return MainWalletResponse Response indicating that the transaction failed.
+     */
+
     @Override
     public void addDummy(MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
@@ -363,6 +384,13 @@ public class WalletServiceImpl implements WalletService {
         transactionRepository.save(txn);
     }
 
+    /**
+     * Returns the current balance of a wallet.
+     *
+     * @param walletId The ID of the wallet to fetch balance for.
+     * @return String A message containing the wallet ID and its current balance.
+     * @throws WalletNotFoundException If the wallet with given ID does not exist.
+     */
 
 
     //This will simply return the current balance of a wallet.

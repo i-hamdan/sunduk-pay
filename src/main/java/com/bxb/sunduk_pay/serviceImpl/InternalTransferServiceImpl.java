@@ -24,6 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+
+/**
+ * Service implementation for performing internal transfers between wallets.
+ * Handles balance deduction, transaction creation, goal milestone checks, and
+ * Kafka event publishing.
+ */
 @Service
 @Log4j2
 public class InternalTransferServiceImpl implements InternalTransferService {
@@ -46,6 +53,18 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         this.kafkaGoalTemplate = kafkaGoalTemplate;
     }
 
+    /**
+     * Performs an internal transfer between wallets or sub-wallets for a user.
+     *
+     * @param user                        the user performing transfer
+     * @param mainWallet                  user's main wallet
+     * @param amount                      transfer amount
+     * @param sourceWallet                source wallet
+     * @param targetWallet                target wallet
+     * @param previousSourceWalletBalance previous source balance
+     * @param previousTargetWalletBalance previous target balance
+     * @return MainWalletResponse with transaction details
+     */
     @Transactional
     public MainWalletResponse doInternalTransfer(User user, MainWallet mainWallet, Double amount,
                                                  WalletWrapper sourceWallet, WalletWrapper targetWallet,
@@ -163,6 +182,13 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         }
 
     }
+    /**
+     * Sends a goal completion event to Kafka for a milestone.
+     *
+     * @param user      the user
+     * @param wallet    the wallet
+     * @param milestone milestone percentage
+     */
     private void sendGoalCompletionEvent(User user, WalletWrapper wallet, int milestone) {
         log.info("Publishing goal milestone {}% completion for wallet {}", milestone, wallet.getId());
 

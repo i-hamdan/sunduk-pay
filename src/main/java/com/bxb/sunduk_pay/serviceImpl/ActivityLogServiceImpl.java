@@ -1,19 +1,23 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 
-import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.exception.UserActivityLogException;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.logModel.UserActivityLog;
 import com.bxb.sunduk_pay.repository.UserActivityLogRepository;
 import com.bxb.sunduk_pay.service.ActivityLogService;
 import com.bxb.sunduk_pay.util.ActivityLogMessageUtil;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Implementation of {@link ActivityLogService} for processing and
+ * saving user activity logs. Consumes events and stores them in
+ * the database.
+ */
 @Service
 @Log4j2
 public class ActivityLogServiceImpl implements ActivityLogService {
@@ -25,6 +29,14 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         this.activityLogRepository = activityLogRepository;
     }
 
+    /**
+     * Processes a user activity event and saves the corresponding log entry
+     * in the database. Builds a descriptive message based on the event type.
+     *
+     * @param event the user Kafka event containing activity details
+     * @throws UserActivityLogException if saving the log entry fails
+     */
+    @Override
     public void processUserActivity(UserKafkaEvent event) {
         try {
             String description = activityLogMessageUtil.buildDescription(event);

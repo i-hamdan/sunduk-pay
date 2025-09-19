@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 @Log4j2
 @Service
+
+/**
+ * Service for handling Stripe checkout sessions.
+ */
 public class StripeServiceImpl implements StripeService {
 
     @Autowired
@@ -24,6 +28,18 @@ public class StripeServiceImpl implements StripeService {
         Stripe.apiKey = secretKey;
         log.info("Stripe API key initialized.");
     }
+
+    /**
+     * Creates a Stripe checkout session for a user.
+     *
+     * @param userId          the user ID
+     * @param amount          the transaction amount
+     * @param transactionType CREDIT or DEBIT
+     * @param targetWallet    the target wallet
+     * @param sourceWallet    the source wallet
+     * @return Stripe Session object
+     * @throws StripeSessionException if session creation fails
+     */
     @Override
     public Session createCheckoutSession(String userId, Double amount, TransactionType transactionType, WalletWrapper targetWallet, WalletWrapper sourceWallet) throws Exception {
         log.info("Creating Stripe checkout session for userId={}, amount={}, type={}", userId, amount, transactionType);
@@ -61,7 +77,10 @@ try {
 }
     }
 
-    // Reusable method for creating a Stripe checkout session
+    /**
+     * Internal method to build and create a Stripe session.
+     */
+
     private Session createSession(String userId, Double amount, String productName, TransactionType transactionType,
                                   String successUrl, String cancelUrl, WalletWrapper sourceWallet, WalletWrapper targetWallet) throws StripeSessionException, StripeException {
         long amountInCents = (long) (amount * 100);

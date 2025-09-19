@@ -22,6 +22,11 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+
+/**
+ * Service implementation for managing users.
+ * Handles user login, registration, and contact upload.
+ */
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
@@ -41,8 +46,14 @@ private final MainWalletRepository mainWalletRepository;
     }
 
 
-    //OAuthLogin method
 
+    /**
+     * Handles OAuth login for a user. If the user does not exist in the database,
+     * a new user is created along with main and master wallets.
+     *
+     * @param response The user login response containing user details.
+     * @return The User object after login or creation.
+     */
     @Override
     public User userLogin(UserLoginResponse response) {
         Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(response.getEmail());
@@ -84,6 +95,15 @@ private final MainWalletRepository mainWalletRepository;
         }
         return user;
     }
+
+
+    /**
+     * Uploads contacts for a user.
+     *
+     * @param contactRequest The contact request containing userId and contacts list.
+     * @return UserResponse containing updated user details and success message.
+     * @throws UserNotFoundException If the userId does not exist in the database.
+     */
 
     @Override
     public UserResponse uploadContacts(ContactRequest contactRequest) {
