@@ -14,14 +14,21 @@ import java.util.Map;
  * based on the provided RequestType.
  */
 @Component
-public class WalletOperationFactory {
+public final class WalletOperationFactory {
 
+    /** List of all WalletOperation implementations. */
     private final List<WalletOperation> walletOperations;
 
+    /** Map to quickly retrieve WalletOperation by RequestType. */
     private final Map<RequestType, WalletOperation> walletServiceMap = new HashMap<>();
 
+    /**
+     * Constructor for WalletOperationFactory.
+     *
+     * @param walletOperations list of all WalletOperation implementations
+     */
     @Autowired
-    public WalletOperationFactory(List<WalletOperation> walletOperations) {
+    public WalletOperationFactory(final List<WalletOperation> walletOperations) {
         this.walletOperations = walletOperations;
     }
 
@@ -30,7 +37,7 @@ public class WalletOperationFactory {
      */
     @PostConstruct
     private void initialize() {
-        for (WalletOperation service : walletOperations) {
+        for (final WalletOperation service : walletOperations) {
             walletServiceMap.put(service.getRequestType(), service);
         }
     }
@@ -41,7 +48,7 @@ public class WalletOperationFactory {
      * @param requestType the type of request
      * @return WalletOperation implementation, or null if not found
      */
-    public WalletOperation getWalletService(RequestType requestType) {
+    public WalletOperation getWalletService(final RequestType requestType) {
         return walletServiceMap.get(requestType);
     }
 }

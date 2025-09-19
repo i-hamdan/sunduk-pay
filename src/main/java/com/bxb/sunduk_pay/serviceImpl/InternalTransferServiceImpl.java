@@ -26,22 +26,53 @@ import java.util.UUID;
 
 /**
  * Service implementation for performing internal transfers between wallets.
- * Handles balance deduction, transaction creation, goal milestone checks, and Kafka event publishing.
+ * Handles balance deduction, transaction creation, goal milestone checks, and
+ * Kafka event publishing.
  */
 @Service
 @Log4j2
 public class InternalTransferServiceImpl implements InternalTransferService {
-    private final Validations validations;
-    private final TransactionRepository transactionRepository;
-    private final MainWalletRepository mainWalletRepository;
-    private final TransactionMapper transactionMapper;
-    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-    private final KafkaTemplate<String, GoalCompletionEvent>kafkaGoalTemplate;
 
-    public InternalTransferServiceImpl(Validations validations, TransactionRepository transactionRepository,
-                                       MainWalletRepository mainWalletRepository,
-                                       TransactionMapper transactionMapper,
-                                       KafkaTemplate<String, TransactionEvent> kafkaTemplate, KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate) {
+    private static final int GOAL_MILESTONE_50 = 50;
+    private static final int GOAL_MILESTONE_75 = 75;
+    private static final int GOAL_MILESTONE_100 = 100;
+    private static final double PERCENT_50 = 0.5;
+    private static final double PERCENT_75 = 0.75;
+
+    /** Validation utility for wallet balances */
+    private final Validations validations;
+
+    /** Repository for storing transactions */
+    private final TransactionRepository transactionRepository;
+
+    /** Repository for storing main wallet updates */
+    private final MainWalletRepository mainWalletRepository;
+
+    /** Mapper for transaction to event conversion */
+    private final TransactionMapper transactionMapper;
+
+    /** Kafka template for transaction events */
+    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+
+    /** Kafka template for goal completion events */
+    private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
+
+    /**
+     * Constructs the service with required dependencies.
+     *
+     * @param validations           validation utility
+     * @param transactionRepository repository for transactions
+     * @param mainWalletRepository  repository for main wallet
+     * @param transactionMapper     mapper for transactions
+     * @param kafkaTemplate         kafka template for transaction events
+     * @param kafkaGoalTemplate     kafka template for goal events
+     */
+    public InternalTransferServiceImpl(final Validations validations,
+                                       final TransactionRepository transactionRepository,
+                                       final MainWalletRepository mainWalletRepository,
+                                       final TransactionMapper transactionMapper,
+                                       final KafkaTemplate<String, TransactionEvent> kafkaTemplate,
+                                       final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate) {
         this.validations = validations;
         this.transactionRepository = transactionRepository;
         this.mainWalletRepository = mainWalletRepository;
@@ -50,47 +81,42 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         this.kafkaGoalTemplate = kafkaGoalTemplate;
     }
 
-
     /**
-     * Performs an internal transfer between two wallets or subWallets for a user.
-     * Creates debit and credit transactions, updates wallet balances, checks goal milestones,
-     * and publishes events to Kafka topics.
+     * Performs an internal transfer between wallets or sub-wallets for a user.
      *
-     * @param user                        the user performing the transfer
-     * @param mainWallet                  the user's main wallet
-     * @param amount                      the amount to transfer
-     * @param sourceWallet                the source wallet wrapper
-     * @param targetWallet                the target wallet wrapper
-     * @param previousSourceWalletBalance the source wallet balance before transfer
-     * @param previousTargetWalletBalance the target wallet balance before transfer
-     * @return MainWalletResponse containing transaction details and updated balances
+     * @param user                        the user performing transfer
+     * @param mainWallet                  user's main wallet
+     * @param amount                      transfer amount
+     * @param sourceWallet                source wallet
+     * @param targetWallet                target wallet
+     * @param previousSourceWalletBalance previous source balance
+     * @param previousTargetWalletBalance previous target balance
+     * @return MainWalletResponse with transaction details
      */
     @Transactional
-    public MainWalletResponse doInternalTransfer(User user, MainWallet mainWallet, Double amount,
-                                                 WalletWrapper sourceWallet, WalletWrapper targetWallet,
-                                                 Double previousSourceWalletBalance, Double previousTargetWalletBalance) {
+    public MainWalletResponse doInternalTransfer(final User user,
+                                                 final MainWallet mainWallet,
+                                                 final Double amount,
+                                                 final WalletWrapper sourceWallet,
+                                                 final WalletWrapper targetWallet,
+                                                 final Double previousSourceWalletBalance,
+                                                 final Double previousTargetWalletBalance) {
         try {
-            log.info("Starting internal transfer of amount {} from {} to {}", amount, sourceWallet.getId(), targetWallet.getId());
+            log.info("Starting internal transfer {} from {} to {}",
+                    amount, sourceWallet.getId(), targetWallet.getId());
 
-            List<Transaction> transactions = new ArrayList<>();
-
-            log.debug("Validating source wallet balance: currentBalance={}, transferAmount={}",
-                    sourceWallet.getBalance(), amount);
-
+            final List<Transaction> transactions = new ArrayList<>();
             validations.validateBalance(sourceWallet.getBalance(), amount);
-            log.info("Balance validation successful");
 
-            log.info("Deducting {} from source wallet {}", amount, sourceWallet.getId());
+            // Deduct from source
             sourceWallet.setBalance(sourceWallet.getBalance() - amount);
-            Double newSourceWalletBalance = sourceWallet.getBalance();
-            log.info("Updated source wallet balance: {}", newSourceWalletBalance);
+            final double newSourceBalance = sourceWallet.getBalance();
 
-            String groupId = UUID.randomUUID().toString();
-            log.debug("Generated transaction groupId={}", groupId);
+            // Generate transaction group ID
+            final String groupId = UUID.randomUUID().toString();
 
-            log.info("Creating debit transaction for sourceWallet={}", sourceWallet.getId());
-
-            Transaction debitTransaction = Transaction.builder()
+            // Create debit transaction
+            final Transaction debitTransaction = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .groupId(groupId)
                     .user(user)
@@ -104,33 +130,19 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .fromWallet(sourceWallet.getName())
                     .fromWalletId(sourceWallet.getId())
                     .toWallet(targetWallet.getName())
-                    .toWalletId(targetWallet.getId()).build();
+                    .toWalletId(targetWallet.getId())
+                    .build();
             transactions.add(debitTransaction);
-            log.info("Debit transaction created: {}", debitTransaction.getTransactionId());
 
-            log.info("Adding {} to target wallet {}", amount, targetWallet.getId());
+            // Add to target
             targetWallet.setBalance(targetWallet.getBalance() + amount);
-            Double newTargetWalletBalance = targetWallet.getBalance();
-            log.info("Updated target wallet balance: {}", newTargetWalletBalance);
+            final double newTargetBalance = targetWallet.getBalance();
 
+            // Check goal milestones
+            checkGoalMilestones(user, targetWallet, previousTargetWalletBalance);
 
-            Double goalAmount = targetWallet.getGoalAmount();
-            if (goalAmount != null && goalAmount > 0) {
-                double completionPercent = (targetWallet.getBalance() / goalAmount) * 100;
-                if (completionPercent >= 50 && previousTargetWalletBalance < goalAmount * 0.5) {
-                    sendGoalCompletionEvent(user, targetWallet, 50);
-                }
-                if (completionPercent >= 75 && previousTargetWalletBalance < goalAmount * 0.75) {
-                    sendGoalCompletionEvent(user, targetWallet, 75);
-                }
-                if (completionPercent >= 100 && previousTargetWalletBalance < goalAmount) {
-                    sendGoalCompletionEvent(user, targetWallet, 100);
-                }
-            }
-
-
-            log.info("Creating credit transaction for targetWallet={}", targetWallet.getId());
-            Transaction creditTransaction = Transaction.builder()
+            // Create credit transaction
+            final Transaction creditTransaction = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .groupId(groupId)
                     .user(user)
@@ -144,56 +156,79 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .fromWallet(sourceWallet.getName())
                     .fromWalletId(sourceWallet.getId())
                     .toWallet(targetWallet.getName())
-                    .toWalletId(targetWallet.getId()).build();
-            transactions.addFirst(creditTransaction);
-            log.info("Credit transaction created: {}", creditTransaction.getTransactionId());
+                    .toWalletId(targetWallet.getId())
+                    .build();
+            transactions.add(0, creditTransaction);
 
-            log.debug("Saving transactions into repository, count={}", transactions.size());
+            // Save transactions
             transactionRepository.saveAll(transactions);
-            log.info("Transactions saved successfully");
 
-            log.debug("Updating main wallet with new transactions");
+            // Update main wallet
             mainWallet.getTransactionHistory().addAll(transactions);
             mainWalletRepository.save(mainWallet);
-            log.info("Main wallet updated successfully");
 
-            log.info("Publishing transaction event to Kafka topic 'transaction-topic'");
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTransaction);
+            // Publish transaction event
+            final TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTransaction);
             kafkaTemplate.send("transaction-topic", transactionEvent);
-            log.info("Transaction event published to Kafka successfully");
 
-
-            log.info("Internal transfer completed successfully for user {}", user.getUuid());
             return MainWalletResponse.builder()
                     .status("SUCCESS")
                     .sourceTransactionId(transactions.get(0).getTransactionId())
                     .targetTransactionId(transactions.get(1).getTransactionId())
                     .transactionGroupId(groupId)
                     .previousSourceWalletBalance(previousSourceWalletBalance)
-                    .newSourceWalletBalance(newSourceWalletBalance)
+                    .newSourceWalletBalance(newSourceBalance)
                     .previousTargetWalletBalance(previousTargetWalletBalance)
-                    .newTargetWalletBalance(newTargetWalletBalance)
+                    .newTargetWalletBalance(newTargetBalance)
                     .message("Transfer successful")
                     .build();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Internal transfer failed for user {}, amount {}, error: {}",
                     user.getUuid(), amount, e.getMessage(), e);
             throw e;
         }
-
     }
 
     /**
-     * Sends a goal completion event to Kafka when a wallet reaches a milestone.
+     * Checks and sends goal milestone events for a wallet.
      *
-     * @param user      the user who owns the wallet
-     * @param wallet    the wallet being tracked
-     * @param milestone the milestone percentage completed
+     * @param user                     the user
+     * @param wallet                   the wallet
+     * @param previousTargetWalletBalance previous balance
      */
-    private void sendGoalCompletionEvent(User user, WalletWrapper wallet, int milestone) {
-        log.info("Publishing goal milestone {}% completion for wallet {}", milestone, wallet.getId());
+    private void checkGoalMilestones(final User user,
+                                     final WalletWrapper wallet,
+                                     final Double previousTargetWalletBalance) {
+        final Double goalAmount = wallet.getGoalAmount();
+        if (goalAmount == null || goalAmount <= 0) return;
 
-        GoalCompletionEvent event = GoalCompletionEvent.builder()
+        final double completionPercent = (wallet.getBalance() / goalAmount) * 100;
+
+        if (completionPercent >= GOAL_MILESTONE_50
+                && previousTargetWalletBalance < goalAmount * PERCENT_50) {
+            sendGoalCompletionEvent(user, wallet, GOAL_MILESTONE_50);
+        }
+        if (completionPercent >= GOAL_MILESTONE_75
+                && previousTargetWalletBalance < goalAmount * PERCENT_75) {
+            sendGoalCompletionEvent(user, wallet, GOAL_MILESTONE_75);
+        }
+        if (completionPercent >= GOAL_MILESTONE_100
+                && previousTargetWalletBalance < goalAmount) {
+            sendGoalCompletionEvent(user, wallet, GOAL_MILESTONE_100);
+        }
+    }
+
+    /**
+     * Sends a goal completion event to Kafka for a milestone.
+     *
+     * @param user      the user
+     * @param wallet    the wallet
+     * @param milestone milestone percentage
+     */
+    private void sendGoalCompletionEvent(final User user,
+                                         final WalletWrapper wallet,
+                                         final int milestone) {
+        final GoalCompletionEvent event = GoalCompletionEvent.builder()
                 .userId(user.getUuid())
                 .email(user.getEmail())
                 .walletId(wallet.getId())
@@ -203,8 +238,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 .goalAmount(wallet.getGoalAmount())
                 .timestamp(LocalDateTime.now())
                 .build();
-
-        kafkaGoalTemplate.send("goal-completion-topic",event);
+        kafkaGoalTemplate.send("goal-completion-topic", event);
     }
-
 }

@@ -21,17 +21,31 @@ import java.util.stream.Collectors;
  */
 @Log4j2
 @Service
-public class CreateService implements WalletOperation {
+public final class CreateService implements WalletOperation {
 
+    /** Validations utility. */
     private final Validations validations;
+
+    /** Repository for MainWallet entity. */
     private final MainWalletRepository mainWalletRepository;
 
+    /**
+     * Constructor-based dependency injection.
+     *
+     * @param validations validations utility
+     * @param mainWalletRepository repository for MainWallet operations
+     */
     public CreateService(final Validations validations,
                          final MainWalletRepository mainWalletRepository) {
         this.validations = validations;
         this.mainWalletRepository = mainWalletRepository;
     }
 
+    /**
+     * Returns the RequestType handled by this service.
+     *
+     * @return RequestType.CREATE
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.CREATE;
@@ -49,11 +63,11 @@ public class CreateService implements WalletOperation {
 
         try {
             // Validate user
-            validations.getUserInfo(mainWalletRequest.getUuid());
+            this.validations.getUserInfo(mainWalletRequest.getUuid());
             log.debug("User validation successful for UUID: {}", mainWalletRequest.getUuid());
 
             // Fetch main wallet
-            final MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+            final MainWallet mainWallet = this.validations.getMainWalletInfo(mainWalletRequest.getUuid());
             log.debug("MainWallet fetched successfully for UUID: {}", mainWalletRequest.getUuid());
 
             // Filter non-deleted sub-wallets
@@ -63,7 +77,7 @@ public class CreateService implements WalletOperation {
 
             // Validate number of sub-wallets
             final int size = subWallets.size();
-            validations.validateNumberOfSubWallets(size);
+            this.validations.validateNumberOfSubWallets(size);
             log.debug("SubWallet count validation passed. Current size: {}", size);
 
             // Build new sub-wallet
@@ -83,7 +97,7 @@ public class CreateService implements WalletOperation {
 
             // Save to main wallet
             mainWallet.getSubWallets().add(subWallet);
-            mainWalletRepository.save(mainWallet);
+            this.mainWalletRepository.save(mainWallet);
             log.info("SubWallet saved successfully for User UUID: {}", mainWalletRequest.getUuid());
 
             return MainWalletResponse.builder()

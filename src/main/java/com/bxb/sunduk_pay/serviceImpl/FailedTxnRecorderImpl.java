@@ -19,9 +19,12 @@ import java.util.UUID;
  * Responsible for recording failed transactions in the system.
  */
 @Service
-public class FailedTxnRecorderImpl implements FailedTxnRecorder {
+public final class FailedTxnRecorderImpl implements FailedTxnRecorder {
 
+    /** Utility class for performing validations and fetching user/wallet info. */
     private final Validations validations;
+
+    /** Repository for storing transaction records. */
     private final TransactionRepository transactionRepository;
 
     /**
@@ -30,7 +33,8 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
      * @param validations           utility class for performing validations and fetching user/wallet info
      * @param transactionRepository repository for storing transaction records
      */
-    public FailedTxnRecorderImpl(Validations validations, TransactionRepository transactionRepository) {
+    public FailedTxnRecorderImpl(final Validations validations,
+                                 final TransactionRepository transactionRepository) {
         this.validations = validations;
         this.transactionRepository = transactionRepository;
     }
@@ -44,31 +48,35 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
      * @return a MainWalletResponse indicating transaction failure
      */
     @Override
-    public MainWalletResponse recordFailedTxn(MainWalletRequest request) {
-        User user = validations.getUserInfo(request.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
-        SubWallet sourceSubWallet = validations.getSubWalletIfExists(mainWallet, request.getSourceWalletId());
-        SubWallet targetSubwallet = validations.getSubWalletIfExists(mainWallet, request.getTargetWalletId());
+    public MainWalletResponse recordFailedTxn(final MainWalletRequest request) {
+        final User user = validations.getUserInfo(request.getUuid());
+        final MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
+        final SubWallet sourceSubWallet = validations.getSubWalletIfExists(
+                mainWallet, request.getSourceWalletId());
+        final SubWallet targetSubwallet = validations.getSubWalletIfExists(
+                mainWallet, request.getTargetWalletId());
 
-        String fromWallet = null;
+        final String fromWallet;
         if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())) {
             fromWallet = "Main wallet";
-        } else if (sourceSubWallet != null && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
+        } else if (sourceSubWallet != null &&
+                sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
             fromWallet = sourceSubWallet.getSubWalletName();
         } else {
             fromWallet = "Some external source";
         }
 
-        String toWallet = null;
+        final String toWallet;
         if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())) {
             toWallet = "Main wallet";
-        } else if (targetSubwallet != null && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
+        } else if (targetSubwallet != null &&
+                targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
             toWallet = targetSubwallet.getSubWalletName();
         } else {
             toWallet = "Some external target";
         }
 
-        Transaction failedTransaction = Transaction.builder()
+        final Transaction failedTransaction = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .amount(request.getAmount())

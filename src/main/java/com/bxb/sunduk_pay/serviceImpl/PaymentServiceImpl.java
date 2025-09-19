@@ -21,7 +21,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    /** Service for interacting with Stripe API */
     private final StripeService stripeService;
+
+    /** Service for recording failed transactions */
     private final FailedTxnRecorder failedTxnRecorder;
 
     /**
@@ -30,7 +33,8 @@ public class PaymentServiceImpl implements PaymentService {
      * @param stripeService       service for interacting with Stripe API
      * @param failedTxnRecorder   service for recording failed transactions
      */
-    public PaymentServiceImpl(StripeService stripeService, FailedTxnRecorder failedTxnRecorder) {
+    public PaymentServiceImpl(final StripeService stripeService,
+                              final FailedTxnRecorder failedTxnRecorder) {
         this.stripeService = stripeService;
         this.failedTxnRecorder = failedTxnRecorder;
     }
@@ -48,13 +52,15 @@ public class PaymentServiceImpl implements PaymentService {
      */
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
-    public MainWalletResponse createCheckoutSession(String userId,
-                                                    Double amount,
-                                                    TransactionType transactionType,
-                                                    WalletWrapper targetWallet,
-                                                    WalletWrapper sourceWallet) {
+    public MainWalletResponse createCheckoutSession(final String userId,
+                                                    final Double amount,
+                                                    final TransactionType transactionType,
+                                                    final WalletWrapper targetWallet,
+                                                    final WalletWrapper sourceWallet) {
         try {
-            Session session = stripeService.createCheckoutSession(userId, amount, transactionType, targetWallet, sourceWallet);
+            Session session = stripeService.createCheckoutSession(
+                    userId, amount, transactionType, targetWallet, sourceWallet
+            );
             log.info("Stripe session created: {}", session);
 
             return MainWalletResponse.builder()
@@ -79,12 +85,12 @@ public class PaymentServiceImpl implements PaymentService {
      * @param t               the exception that caused fallback
      * @return MainWalletResponse with failure message
      */
-    public MainWalletResponse paymentFallback(String userId,
-                                              Double amount,
-                                              TransactionType transactionType,
-                                              WalletWrapper targetWallet,
-                                              WalletWrapper sourceWallet,
-                                              Throwable t) {
+    public MainWalletResponse paymentFallback(final String userId,
+                                              final Double amount,
+                                              final TransactionType transactionType,
+                                              final WalletWrapper targetWallet,
+                                              final WalletWrapper sourceWallet,
+                                              final Throwable t) {
         log.warn("Payment failed! Recording failed transaction for user {}", userId);
 
         MainWalletRequest request = new MainWalletRequest();

@@ -27,7 +27,8 @@ public interface WalletService {
      * @param response the HttpServletResponse to write the download
      * @throws IOException if an I/O error occurs
      */
-    void downloadTransactions(String walletId, HttpServletResponse response) throws IOException;
+    void downloadTransactions(String walletId,
+                              HttpServletResponse response) throws IOException;
 
     /**
      * Performs a payment operation from a wallet.

@@ -14,27 +14,42 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Service to fetch main wallet and its active sub-wallets for a user.
+ * Service to fetch the main wallet and active sub-wallets for a user.
  */
 @Log4j2
 @Service
-public class FetchWalletService implements WalletOperation {
+public final class FetchWalletService implements WalletOperation {
 
+    /** Validations utility for user and wallet checks. */
     private final Validations validations;
+
+    /** Mapper to convert wallet entities to response DTOs. */
     private final WalletMapper walletMapper;
 
-    public FetchWalletService(final Validations validations, final WalletMapper walletMapper) {
+    /**
+     * Constructor for FetchWalletService.
+     *
+     * @param validations validations utility
+     * @param walletMapper wallet mapper
+     */
+    public FetchWalletService(final Validations validations,
+                              final WalletMapper walletMapper) {
         this.validations = validations;
         this.walletMapper = walletMapper;
     }
 
+    /**
+     * Returns the request type handled by this service.
+     *
+     * @return request type FETCH_WALLET
+     */
     @Override
     public RequestType getRequestType() {
         return RequestType.FETCH_WALLET;
     }
 
     /**
-     * Fetches main wallet and non-deleted sub-wallets for a given user UUID.
+     * Fetches main wallet and active (non-deleted) sub-wallets for a given user UUID.
      *
      * @param mainWalletRequest request containing the user UUID
      * @return response containing wallet and sub-wallet details
@@ -43,17 +58,22 @@ public class FetchWalletService implements WalletOperation {
     public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
         log.info("Fetching wallet for user UUID: {}", mainWalletRequest.getUuid());
 
-        // Get main wallet
-        final MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+        // Fetch main wallet
+        final MainWallet mainWallet = validations.getMainWalletInfo(
+                mainWalletRequest.getUuid()
+        );
 
         // Filter active sub-wallets
         final List<SubWallet> activeSubWallets = mainWallet.getSubWallets().stream()
                 .filter(subWallet -> !subWallet.getIsDeleted())
                 .collect(Collectors.toList());
 
-        log.debug("Found {} active sub-wallet(s) for user UUID: {}", activeSubWallets.size(), mainWalletRequest.getUuid());
+        log.debug("Found {} active sub-wallet(s) for user UUID: {}",
+                activeSubWallets.size(),
+                mainWalletRequest.getUuid()
+        );
 
-        // Map to response
+        // Map main wallet and active sub-wallets to response DTO
         return walletMapper.toWalletResponse(mainWallet, activeSubWallets);
     }
 }

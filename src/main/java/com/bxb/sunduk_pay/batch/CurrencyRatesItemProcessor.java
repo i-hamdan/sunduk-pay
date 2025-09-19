@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.util.CurrencyPair;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +20,18 @@ import java.util.Objects;
 @Component
 @Log4j2
 public class CurrencyRatesItemProcessor implements ItemProcessor<CurrencyPair, CurrencyRates> {
+
+    @Value("${exchange-rate.base-url}")
+    private String baseUrl;
+
+    @Value("${exchange-rate.api-key}")
+    private String apiKey;
+
+    @Value("${exchange-rate.pair-path}")
+    private String pairPath;
+
+
+
 
     /**
      * In production you’d typically inject this as a @Bean for reuse and testability.
@@ -37,10 +50,15 @@ public class CurrencyRatesItemProcessor implements ItemProcessor<CurrencyPair, C
         log.info("Processing CurrencyPair: {} -> {}", from, to);
 
         final String url = String.format(
-                "https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca/pair/%s/%s",
+                "%s/%s%s/%s/%s",
+                baseUrl,
+                apiKey,
+                pairPath,
                 from,
                 to
         );
+        log.debug("Calling API URL: {}", url);
+
         log.debug("Calling API URL: {}", url);
 
         final Map<String, Object> response = restTemplate.getForObject(url, Map.class);

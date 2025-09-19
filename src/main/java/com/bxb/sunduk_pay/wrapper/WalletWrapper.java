@@ -5,10 +5,17 @@ import com.bxb.sunduk_pay.model.SubWallet;
 
 /**
  * Wrapper class to handle both MainWallet and SubWallet uniformly.
+ * <p>
+ * Provides unified methods to get ID, name, balance, and goal amount,
+ * as well as updating balance for either type of wallet.
+ * </p>
  */
 public class WalletWrapper {
 
+    /** The main wallet instance, if wrapping a main wallet. */
     private final MainWallet mainWallet;
+
+    /** The sub-wallet instance, if wrapping a sub-wallet. */
     private final SubWallet subWallet;
 
     /**
@@ -16,7 +23,7 @@ public class WalletWrapper {
      *
      * @param mainWallet the main wallet to wrap
      */
-    public WalletWrapper(MainWallet mainWallet) {
+    public WalletWrapper(final MainWallet mainWallet) {
         this.mainWallet = mainWallet;
         this.subWallet = null;
     }
@@ -26,7 +33,7 @@ public class WalletWrapper {
      *
      * @param subWallet the sub-wallet to wrap
      */
-    public WalletWrapper(SubWallet subWallet) {
+    public WalletWrapper(final SubWallet subWallet) {
         this.subWallet = subWallet;
         this.mainWallet = null;
     }
@@ -37,7 +44,8 @@ public class WalletWrapper {
      * @return main wallet ID if present; otherwise, sub-wallet ID
      */
     public String getId() {
-        return mainWallet != null ? mainWallet.getMainWalletId() : subWallet.getSubWalletId();
+        return mainWallet != null ? mainWallet.getMainWalletId()
+                : subWallet.getSubWalletId();
     }
 
     /**
@@ -46,7 +54,8 @@ public class WalletWrapper {
      * @return "Main Wallet" for main wallet; otherwise, sub-wallet name
      */
     public String getName() {
-        return mainWallet != null ? "Main Wallet" : subWallet.getSubWalletName();
+        return mainWallet != null ? "Main Wallet"
+                : subWallet.getSubWalletName();
     }
 
     /**
@@ -55,7 +64,8 @@ public class WalletWrapper {
      * @return balance amount
      */
     public double getBalance() {
-        return mainWallet != null ? mainWallet.getBalance() : subWallet.getBalance();
+        return mainWallet != null ? mainWallet.getBalance()
+                : subWallet.getBalance();
     }
 
     /**
@@ -72,7 +82,7 @@ public class WalletWrapper {
      *
      * @param newBalance the new balance to set
      */
-    public void setBalance(double newBalance) {
+    public void setBalance(final double newBalance) {
         if (mainWallet != null) {
             mainWallet.setBalance(newBalance);
         } else {

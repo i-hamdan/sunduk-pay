@@ -4,7 +4,10 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Response payload representing a transaction.

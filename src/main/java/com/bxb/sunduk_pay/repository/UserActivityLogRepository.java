@@ -8,13 +8,15 @@ import org.springframework.stereotype.Repository;
  * Repository for persisting {@link UserActivityLog} entries.
  * <p>
  * This repository is primarily used for recording user actions
- * (e.g., login, signup). It is not intended
- * for standard CRUD operations.
+ * (e.g., login, signup). It is not intended for
+ * standard CRUD operations.
+ * </p>
  */
 @Repository
-public interface UserActivityLogRepository extends MongoRepository<UserActivityLog, String> {
+public interface UserActivityLogRepository
+        extends MongoRepository<UserActivityLog, String> {
 
-    // If needed in the future, you can add query methods like:
+    // Future custom query methods, for example:
     // List<UserActivityLog> findByUserId(String userId);
     // List<UserActivityLog> findByActionType(String actionType);
 }
