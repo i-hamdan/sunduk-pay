@@ -1,14 +1,13 @@
 twilio:
-  account-sid: ACdf2676753d81814c50b7115c5617a9a4
-  auth-token: b94932d45ef4af3f720d5096a94f9f19
-  from-number: "+19136751850"
-
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  from-number: ${TWILIO_FROM_NUMBER}
 spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: playzzzaid@gmail.com
-    password: edse cxrp xysc nfhz
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -16,6 +15,11 @@ spring:
           starttls:
             enable: true
 
+            logging:
+              level:
+                com:
+                  bxb:
+                    sunduk_pay: DEBUG
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -39,17 +43,14 @@ spring:
       client:
         registration:
           google:
-            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
-            client-secret: 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
-
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - openid
               - profile
               - email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
-            #redirect-uri: "https://3e4367127e0f.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
-         
-            provider:
+        provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
@@ -69,8 +70,6 @@ server:
     session:
       timeout: 60m
       cookie:
-        name: JSESSIONID
-        http-only: true
         same-site: none
         secure: true
   tomcat:
@@ -81,43 +80,40 @@ sunduk:
     exclude-paths:
       - /api/sunduk-service/oauth2/authorization
       - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
-      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/webhook
 
 
 
 exchange:
   api:
-<<<<<<< Updated upstream
-   url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
-=======
-    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
->>>>>>> Stashed changes
-
-
-exchange-rate:
-  base-url: https://v6.exchangerate-api.com/v6
-  api-key: b4373c5a26b8292e2e1cbd8b
-  pair-path: /pair
-
-
-
-
+    url: ${EXCHANGE_API_URL}
 stripe:
   key:
-    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
+    secret: ${STRIPE_SECRET_KEY}
   webhook:
-    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
-    url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca/latest
+    secret: ${STRIPE_WEBHOOK_SECRET}
 
-stripe:
-  key:
-    secret: sk_test_51RohZUFjIPvwIVrLyRAcI7OWRbYVmEZ976vhMmJDyYyXeCDkpxE0ZPA5XUr7xxqw168zJTtU9S8S5YFFNHoKyYPR00MaFmFn8l
-  webhook:
-    secret: whsec_ada8e07c83edd36fb4e5110e64dd53607228345dd6520476ab01dd208701e6b5
+resilience4j:
+  circuitbreaker:
+    instances:
+      stripeGateway:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
 
-logging:
-  level:
-    com.bxb.sunduk_pay: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
