@@ -79,7 +79,7 @@ jobs:
       - name: Build WAR
         run: mvn clean package -DskipTests
 
-          restore-keys: ${{ runner.os }}-maven-
+        restore-keys: ${{ runner.os }}-maven-
       - name: Build WAR
         run: mvn clean package -DskipTests
       - name: Upload WAR artifact
