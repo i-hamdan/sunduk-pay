@@ -28,7 +28,9 @@ public class ErrorResponse {
      * @param message detailed message explaining the error
      * @param path the API path where the error occurred
      */
-    public ErrorResponse(LocalDateTime localDateTime, Integer status,String error, String message, String path) {
+    public ErrorResponse(LocalDateTime localDateTime,
+                         Integer status,String error,
+                         String message, String path) {
         this.error = error;
         this.localDateTime = localDateTime;
         this.message = message;

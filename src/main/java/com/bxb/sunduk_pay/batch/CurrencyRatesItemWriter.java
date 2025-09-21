@@ -24,9 +24,8 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
 
     private final CurrencyRateRepository currencyRateRepository;
     /**
-     * Writes a chunk of CurrencyRates items by merging them into a single document
-     * and saving it to MongoDB.
-     *
+     * Writes a chunk of CurrencyRates items by merging them into a
+     * single document and saving it to MongoDB.
      * @param chunk The chunk of CurrencyRates items to write.
      * @throws Exception If an error occurs during writing.
      */
