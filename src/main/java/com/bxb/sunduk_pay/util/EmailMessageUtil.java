@@ -42,10 +42,11 @@ public class EmailMessageUtil {
     public String buildBody(final UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
             return "Assalamualaikum " + event.getFullName() + ",\n\n"
-                    + "We're happy to see you back on Sunduk!\n"
-                    + "You have successfully logged in to your account.\n\n"
-                    + "If this wasn't you, please secure your account immediately.\n\n"
-                    + "JazakAllah Khair,\nTeam Sunduk";
+                     + "We're happy to see you back on Sunduk!\n"
+                     + "You have successfully logged in to your account.\n\n"
+                     + "If this wasn't you, please"
+                     +  "secure your account immediately.\n\n"
+                     + "JazakAllah Khair,\nTeam Sunduk";
         } else {
             return "Assalamualaikum " + event.getFullName() + ",\n\n"
                     + "Welcome to SundukPay! \n\n"
@@ -54,16 +55,21 @@ public class EmailMessageUtil {
                     + "to manage your money.\n\n"
                     + "Here’s what you can do with SundukPay:\n"
                     + "• Add and manage funds with ease\n"
-                    + "• Create **Saving Pots** to set goals and track your progress\n"
+                    + "• Create **Saving Pots** to"
+                    + "set goals and track your progress\n"
                     + "• Deposit or withdraw money from your pots anytime\n"
-                    + "• Transfer funds flexibly: pot ↔ wallet, and even pot ↔ pot\n"
+                    + "• Transfer funds flexibly:"
+                    + "pot ↔ wallet, and even pot ↔ pot\n"
                     + "• Make safe payments and monitor all wallet activity in "
                     + "real-time\n\n"
-                    + "Start exploring today and take control of your finances like "
+                    + "Start exploring today and "
+                    +"take control of your finances like "
                     + "never before!\n\n"
-                    + "If you ever need assistance, our support team is always ready "
+                    + "If you ever need assistance "
+                    + "our support team is always ready "
                     + "to help.\n\n"
-                    + "Thank you for choosing SundukPay – we’re excited to see you "
+                    + "Thank you for choosing SundukPay "
+                    +"– we’re excited to see you "
                     + "achieve your financial goals with us!\n\n"
                     + "Warm regards,\n"
                     + "SundukPay Team";
@@ -80,7 +86,8 @@ public class EmailMessageUtil {
         return switch (event.getMilestone()) {
             case MILESTONE_50 -> "🎯 You’re halfway to your savings goal, "
                     + event.getWalletName() + "!";
-            case MILESTONE_75 -> "💪 75% milestone reached in your savings goal!";
+            case MILESTONE_75 ->
+                    "💪 75% milestone reached in your savings goal!";
             case MILESTONE_100 -> "🎉 Congratulations! You’ve achieved your "
                     + "savings goal!";
             default -> "Update on your savings goal";
@@ -96,30 +103,37 @@ public class EmailMessageUtil {
     public String buildGoalBody(final GoalCompletionEvent event) {
         return switch (event.getMilestone()) {
             case MILESTONE_50 -> "Hello,\n\n"
-                    + "Great progress! You’ve reached **50% of your savings goal** in *"
+                    + "Great progress! You’ve reached"
+                    +" **50% of your savings goal** in *"
                     + event.getWalletName() + "*.\n\n"
-                    + "You’re halfway there — stay consistent, and you’ll achieve your "
+                    + "You’re halfway there — stay consistent,"
+                    + "and you’ll achieve your "
                     + "goal in no time.\n\n"
                     + "Keep it up!\n\n"
                     + "Best wishes,\nTeam Sunduk";
             case MILESTONE_75 -> "Hello,\n\n"
-                    + "Amazing work! You’ve now reached **75% of your goal** in *"
+                    + "Amazing work! You’ve now reached"
+                    +"**75% of your goal** in *"
                     + event.getWalletName() + "*.\n\n"
-                    + "You’re so close — just a little more effort and you’ll get "
+                    + "You’re so close — just a little"
+                    + "more effort and you’ll get "
                     + "there.\n\n"
                     + "Stay motivated!\n\n"
                     + "Cheers,\nTeam Sunduk";
             case MILESTONE_100 -> "Hello,\n\n"
-                    + "🎉 Congratulations! You’ve successfully achieved **100% of your "
+                    + "🎉 Congratulations!"
+                    + "You’ve successfully achieved **100% of your "
                     + "savings goal** in *" + event.getWalletName() + "*.\n\n"
-                    + "This is a fantastic accomplishment, and we’re proud to see your "
+                    + "This is a fantastic accomplishment,"
+                    +" and we’re proud to see your "
                     + "dedication paying off.\n\n"
                     + "Here’s to even bigger goals ahead!\n\n"
                     + "With warm regards,\nTeam Sunduk";
             default -> "Hello,\n\n"
                     + "Here’s an update on your savings journey in *"
                     + event.getWalletName() + "*.\n\n"
-                    + "Every step counts — keep moving forward and you’ll reach your "
+                    + "Every step counts — keep moving"
+                    + "forward and you’ll reach your "
                     + "goal.\n\n"
                     + "Best wishes,\nTeam Sunduk";
         };

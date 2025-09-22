@@ -6,7 +6,8 @@ import org.springframework.stereotype.Component;
 /**
  * Utility component for building SMS messages for transaction events.
  *
- * <p>This class generates user-friendly SMS text for different transaction types:
+ * <p>This class generates user-friendly
+ * SMS text for different transaction types:
  * <ul>
  *   <li>Credits (internal or external)</li>
  *   <li>Debits (internal or external)</li>
@@ -30,8 +31,11 @@ public class SmsMessageUtil {
                 ? event.getFullName().split(" ")[0]
                 : "User";
 
-        String amount = String.format("%.0f", event.getAmount());
-        String shortTxnId = event.getTransactionId().substring(0, TXN_ID_TRIM_LENGTH);
+        String amount = String.format(
+                "%.0f", event.getAmount());
+        String shortTxnId = event
+                .getTransactionId()
+                .substring(0, TXN_ID_TRIM_LENGTH);
 
         String message;
 
