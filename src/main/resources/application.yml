@@ -45,8 +45,8 @@ spring:
               - openid
               - profile
               - email
-            #redirect-uri: "{baseUrl}/login/oauth2/code/google"
-            redirect-uri: "https://1ade22207b22.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+#            redirect-uri: "https://1ade22207b22.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth

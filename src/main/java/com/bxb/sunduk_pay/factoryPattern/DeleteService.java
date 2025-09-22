@@ -58,8 +58,8 @@ public class DeleteService implements WalletOperation {
         log.debug("Validated MainWallet info for userUuid={}",
                 user.getUuid());
 
-        MainWallet mainWallet = validations.getMainWalletByWalletId
-                (mainWalletRequest.getMainWalletId());
+        MainWallet mainWallet = validations.getMainWalletByWalletId(
+                mainWalletRequest.getMainWalletId());
         log.debug("Fetched MainWallet. mainWalletId={}, userUuid={}",
                 mainWallet.getMainWalletId(), user.getUuid());
 
@@ -81,20 +81,20 @@ public class DeleteService implements WalletOperation {
                     "SubWallet [{}] successfully deleted (soft delete).",
                     subWallet.getSubWalletName());
 
-            return MainWalletResponse.builder().message("SubWallet named [" +
-                            subWallet.getSubWalletName() +
-                            "] was deleted successfully as its balance was 0." )
+            return MainWalletResponse.builder().message("SubWallet named ["
+                            + subWallet.getSubWalletName()
+                            + "] was deleted successfully as its balance was 0.")
                     .build();
-
         } else {
             log.error(
-                    "Attempted to delete SubWallet [{}] with non-zero balance: {}",
-                    subWallet.getSubWalletName(), subWallet.getBalance());
+         "Attempted to delete SubWallet [{}] with non-zero balance: {}",
+                    subWallet.getSubWalletName(),
+                    subWallet.getBalance());
             throw new CannotDeleteWalletException(
-                    "Cannot delete SubWallet [" + subWallet.getSubWalletName()
-                            + "] because it still contains a balance of " +
-                            subWallet.getBalance() +
-                            ". Please transfer or withdraw the funds first."
+             "Cannot delete SubWallet [" + subWallet.getSubWalletName()
+                + "] because it still contains a balance of "
+                     + subWallet.getBalance()
+                     + ". Please transfer or withdraw the funds first."
             );
         }
 

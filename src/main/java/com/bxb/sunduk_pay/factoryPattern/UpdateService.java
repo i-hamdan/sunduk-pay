@@ -216,9 +216,9 @@ public class UpdateService implements WalletOperation {
                         oldTargetDate,
                         subWallet.getTargetDate());
                 return MainWalletResponse.builder()
-                        .message(subWallet.getSubWalletName()
-                                        + "'s target date was successfully updated to "
-                                        + mainWalletRequest.getTargetDate() + ".").build();
+                   .message(subWallet.getSubWalletName()
+                  + "'s target date was successfully updated to "
+                + mainWalletRequest.getTargetDate() + ".").build();
             } else {
                 log.error(
         "Update failed! unable to find subWallet with Id [{}] ",
@@ -226,11 +226,9 @@ public class UpdateService implements WalletOperation {
                 throw new CannotUpdateWalletException(
                         " Cannot find subWallet with Id : "
                                 + mainWalletRequest.getSubWalletId()
-                                + " ! SubWallet Id might be invalid. "
-                );
+                                + " ! SubWallet Id might be invalid. ");
             }
         }
-
         log.error("Invalid ActionType [{}] provided in request",
                 mainWalletRequest.getActionType());
         throw new InvalidPayloadException("Please provide a valid ActionType!");

@@ -24,5 +24,5 @@ RequestType getRequestType();
  *                          necessary data for the operation.
      * @return MainWalletResponse containing the result of the operation.
      */
-MainWalletResponse perform (MainWalletRequest mainWalletRequest);
+MainWalletResponse perform(MainWalletRequest mainWalletRequest);
 }

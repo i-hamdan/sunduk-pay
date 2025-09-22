@@ -42,12 +42,13 @@ public class CreateService implements WalletOperation {
 
     /**
      * Creates a new sub-wallet for a user.
-     *
-     * @param mainWalletRequest request containing user UUID and sub-wallet details
+     * @param mainWalletRequest request containing
+     *       user UUID and sub-wallet details
      * @return response indicating success
      */
     @Override
-    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+           final MainWalletRequest mainWalletRequest) {
         log.info("Starting SubWallet creation for User UUID: {}",
                 mainWalletRequest.getUuid());
 try {
@@ -55,12 +56,13 @@ try {
         log.debug("User validation successful for UUID: {}",
                 mainWalletRequest.getUuid());
 
-        MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
+        MainWallet mainWallet = validations.getMainWalletInfo(
+                mainWalletRequest.getUuid());
         log.debug("MainWallet fetched successfully for UUID: {}",
                 mainWalletRequest.getUuid());
 
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
-                .filter(sw-> !sw.getIsDeleted()).
+                .filter(sw -> !sw.getIsDeleted()).
                 collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
@@ -89,10 +91,9 @@ try {
         return MainWalletResponse.builder()
                 .message("Sub wallet created successfully")
                 .build();
-    }
-    catch (Exception e){
-    log.error("Failed to create SubWallet for User UUID: {}. " +
-            "Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
+    } catch (Exception e) {
+    log.error("Failed to create SubWallet for User UUID: {}. "
+            + "Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
     throw e;
 }
 }
