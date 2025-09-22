@@ -22,7 +22,8 @@ public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {
             Arrays.asList(CurrencyPair.values()).iterator();
 
     @Override
-    public CurrencyPair read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public CurrencyPair read() throws Exception, UnexpectedInputException,
+            ParseException, NonTransientResourceException {
         if (currencyPairs.hasNext()) {
             CurrencyPair nextPair = currencyPairs.next();
             log.info("Reading CurrencyPair: {}", nextPair);

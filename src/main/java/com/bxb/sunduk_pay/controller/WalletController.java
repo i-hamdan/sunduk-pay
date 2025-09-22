@@ -30,7 +30,8 @@ public class WalletController {
     private final WalletOperationFactory walletFactory;
     private final WalletService walletService;
 
-    public WalletController(WalletOperationFactory walletFactory, WalletService walletService) {
+    public WalletController(WalletOperationFactory walletFactory,
+                            WalletService walletService) {
         this.walletFactory = walletFactory;
         this.walletService = walletService;
     }
@@ -46,7 +47,8 @@ public class WalletController {
     //this api will return the current balance of a wallet by walletId
     @GetMapping("/wallet-showBalance/{walletId}")
     public ResponseEntity<String> showBalance(@PathVariable String walletId) {
-        return new ResponseEntity<>(walletService.showBalance(walletId), HttpStatus.OK);
+        return new ResponseEntity<>(walletService.showBalance(walletId),
+                HttpStatus.OK);
     }
 
     @PostMapping("/addTxns")
@@ -65,7 +67,9 @@ public class WalletController {
 
     //this api will download all the transactions of a wallet.
     @PostMapping("/wallet-downloadPdf/{walletId}")
-    public void downloadTransactions(@PathVariable String walletId, HttpServletResponse response) throws IOException {
+    public void downloadTransactions(@PathVariable String walletId,
+                                     HttpServletResponse response)
+            throws IOException {
         walletService.downloadTransactions(walletId, response);
     }
 
@@ -78,13 +82,16 @@ public class WalletController {
      * @return main wallet response
      */
     @PostMapping("/wallet")
-    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest mainWalletRequest, HttpServletResponse response) {
+    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest
+                                                                    mainWalletRequest,
+                                                        HttpServletResponse response) {
 
         MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
 
         // Create cookie with checkout URL from response
         if (walletResponse.getCheckoutUrl() != null) {  // only set cookie if URL exists
-            Cookie urlCookie = new Cookie("stripe_checkout_url", walletResponse.getCheckoutUrl());
+            Cookie urlCookie = new Cookie("stripe_checkout_url",
+                    walletResponse.getCheckoutUrl());
             urlCookie.setPath("/");
             urlCookie.setHttpOnly(false);
             urlCookie.setSecure(true);

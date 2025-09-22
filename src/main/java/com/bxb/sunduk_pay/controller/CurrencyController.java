@@ -28,8 +28,11 @@ public class CurrencyController {
      * @return the conversion response wrapped in ResponseEntity
      */
     @PostMapping("/convert")
-    public ResponseEntity<CurrencyResponse> convert(@RequestBody CurrencyRequest currencyRequest) {
-        log.info("Currency conversion API called: from = {}, to = {}, amount = {}", currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(), currencyRequest.getAmount());
+    public ResponseEntity<CurrencyResponse> convert(@RequestBody CurrencyRequest
+                                                                currencyRequest) {
+        log.info("Currency conversion API called: from = {}, to = {}, amount = {}",
+                currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(),
+                currencyRequest.getAmount());
         CurrencyResponse response = currencyService.convertCurrency(currencyRequest);
         log.debug("Conversion successful. Response: {}", response);
         return ResponseEntity.ok(response);

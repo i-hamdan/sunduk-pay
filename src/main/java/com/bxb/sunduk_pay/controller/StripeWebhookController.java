@@ -30,7 +30,8 @@ public class StripeWebhookController {
 
     private final WalletService walletService;
     private final FailedTxnRecorder failedTxnRecorder;
-    public StripeWebhookController(WalletService walletService, FailedTxnRecorder failedTxnRecorder) {
+    public StripeWebhookController(WalletService walletService,
+                                   FailedTxnRecorder failedTxnRecorder) {
         this.walletService = walletService;
         this.failedTxnRecorder = failedTxnRecorder;
     }
@@ -90,7 +91,8 @@ public class StripeWebhookController {
                         MainWalletRequest requestObj = new MainWalletRequest();
                         requestObj.setUuid(session.getMetadata().get("userId"));
                         requestObj.setAmount(session.getAmountTotal() / 100.0);
-                        requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata().get("type")));
+                        requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata()
+                                .get("type")));
                         requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
                         requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
                         // Save transaction with FAILED status

@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 
 /**
  * Service to handle the creation of SubWallets.
- * Validates user and main wallet, checks existing sub-wallet count, then adds a new SubWallet.
+ * Validates user and main wallet, checks existing sub-wallet count,
+ * then adds a new SubWallet.
  */
 @Log4j2
 @Service
@@ -25,7 +26,8 @@ public class CreateService implements WalletOperation {
     private final Validations validations;
     private final MainWalletRepository mainWalletRepository;
 
-    public CreateService(Validations validations, MainWalletRepository mainWalletRepository) {
+    public CreateService(Validations validations,
+                         MainWalletRepository mainWalletRepository) {
         this.validations = validations;
         this.mainWalletRepository = mainWalletRepository;
     }
@@ -49,15 +51,20 @@ public class CreateService implements WalletOperation {
      */
     @Override
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
-        log.info("Starting SubWallet creation for User UUID: {}", mainWalletRequest.getUuid());
+        log.info("Starting SubWallet creation for User UUID: {}",
+                mainWalletRequest.getUuid());
 try {
         validations.getUserInfo(mainWalletRequest.getUuid());
-        log.debug("User validation successful for UUID: {}", mainWalletRequest.getUuid());
+        log.debug("User validation successful for UUID: {}",
+                mainWalletRequest.getUuid());
 
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
-        log.debug("MainWallet fetched successfully for UUID: {}", mainWalletRequest.getUuid());
+        log.debug("MainWallet fetched successfully for UUID: {}",
+                mainWalletRequest.getUuid());
 
-        List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter(sw-> !sw.getIsDeleted()).collect(Collectors.toList());
+        List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
+                .filter(sw-> !sw.getIsDeleted()).
+                collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
         log.debug("SubWallet count validation passed. Current size: {}", size);
@@ -78,14 +85,16 @@ try {
 
         mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);
-        log.info("SubWallet saved successfully for User UUID: {}", mainWalletRequest.getUuid());
+        log.info("SubWallet saved successfully for User UUID: {}",
+                mainWalletRequest.getUuid());
 
         return MainWalletResponse.builder()
                 .message("Sub wallet created successfully")
                 .build();
     }
     catch (Exception e){
-    log.error("Failed to create SubWallet for User UUID: {}. Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
+    log.error("Failed to create SubWallet for User UUID: {}. " +
+            "Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
     throw e;
 }
 }

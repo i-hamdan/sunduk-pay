@@ -18,7 +18,8 @@ import java.util.Map;
  */
 @Component
 @Log4j2
-public class CurrencyRatesItemProcessor implements ItemProcessor<CurrencyPair, CurrencyRates> {
+public class CurrencyRatesItemProcessor implements
+        ItemProcessor<CurrencyPair, CurrencyRates> {
 
 
     @Value("${exchange.api.url}")
