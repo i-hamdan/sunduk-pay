@@ -13,10 +13,20 @@ import java.time.LocalDateTime;
  */
 @Data
 public class ErrorResponse {
+
+    /** Timestamp when the error occurred */
     private LocalDateTime localDateTime;
+
+    /** HTTP status code of the error */
     private Integer status;
+
+    /** Short description of the error type */
     private String error;
+
+    /** Detailed message explaining the error */
     private String message;
+
+    /** The API path where the error occurred */
     private String path;
 
     /**
@@ -28,9 +38,9 @@ public class ErrorResponse {
      * @param message detailed message explaining the error
      * @param path the API path where the error occurred
      */
-    public ErrorResponse(LocalDateTime localDateTime,
-                         Integer status,String error,
-                         String message, String path) {
+    public ErrorResponse(final LocalDateTime localDateTime,
+                         final Integer status, final String error,
+                         final String message, final String path) {
         this.error = error;
         this.localDateTime = localDateTime;
         this.message = message;

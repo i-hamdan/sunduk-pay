@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.factoryPattern;
 
 import com.bxb.sunduk_pay.util.RequestType;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -13,15 +14,13 @@ import java.util.Map;
  * based on the provided RequestType.
  */
 @Component
+@RequiredArgsConstructor
 public class WalletOperationFactory {
-    /** List of all WalletOperation implementations injected by Spring */
+    /** List of all WalletOperation implementations injected by Spring. */
 private final List<WalletOperation> walletOperations;
-    public WalletOperationFactory(final List<WalletOperation> walletOperations) {
-        this.walletOperations = walletOperations;
-    }
 
 
-    Map <RequestType , WalletOperation> walletServiceMap = new HashMap <> ();
+    Map <RequestType , WalletOperation> walletServiceMap = new HashMap<>();
 
     /**
      * Initialize the factory by populating the map with
@@ -30,17 +29,17 @@ private final List<WalletOperation> walletOperations;
     @PostConstruct
 private void putValues(){
 for (WalletOperation service : walletOperations) {
-    walletServiceMap.put(service.getRequestType() , service);
+    walletServiceMap.put(service.getRequestType(), service);
 }
 }
 
     /**
      * Retrieve the WalletOperation implementation for the given RequestType.
-     *
      * @param requestType the type of request
      * @return WalletOperation implementation, or null if not found
      */
-public WalletOperation getWalletService (final RequestType requestType) {
+public WalletOperation getWalletService (
+        final RequestType requestType) {
 return walletServiceMap.get(requestType);
 }
 }

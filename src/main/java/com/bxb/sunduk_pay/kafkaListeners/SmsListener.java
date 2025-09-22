@@ -6,13 +6,23 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Kafka listener for processing transaction events and sending SMS notifications.
+ * Kafka listener for processing transaction events and
+ * sending SMS notifications.
  */
 @Component
 public class SmsListener {
-private final SmsService smsService;
 
-    public SmsListener(SmsService smsService) {
+    /**
+     * Service for handling SMS notifications.
+     */
+    private final SmsService smsService;
+
+    /**
+     * Constructs the SmsListener with the given SmsService.
+     *
+     * @param smsService the SMS service to process events
+     */
+    public SmsListener(final SmsService smsService) {
         this.smsService = smsService;
     }
 
@@ -27,9 +37,9 @@ private final SmsService smsService;
     @KafkaListener(topics = "transaction-topic",
             groupId = "sms-service-group",
             concurrency = "3")
-    public void consumeTransactionEvent(TransactionEvent transactionEvent){
+    public void consumeTransactionEvent(final TransactionEvent transactionEvent) {
         smsService.processSmsEvent(transactionEvent);
-        }
-
     }
+
+}
 

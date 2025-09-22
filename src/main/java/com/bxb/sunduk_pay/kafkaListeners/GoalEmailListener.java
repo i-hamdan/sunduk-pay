@@ -6,26 +6,38 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 /**
- * Kafka listener for processing goal completion events and sending notification emails.
+ * Kafka listener for processing goal completion events and
+ * sending notification emails.
  */
 @Component
 public class GoalEmailListener {
+
+    /**
+     * Service for handling email operations.
+     */
     private final EmailService emailService;
 
-    public GoalEmailListener(EmailService emailService) {
+    /**
+     * Constructs a GoalEmailListener with the specified EmailService.
+     *
+     * @param emailService the email service to be used for sending emails
+     */
+    public GoalEmailListener(final EmailService emailService) {
         this.emailService = emailService;
     }
 
     /**
-     * Listens to the "goal-completion-topic" Kafka topic for goal completion events.
-     * Processes each event by invoking the email service to send notification emails.
+     * Listens to the "goal-completion-topic" Kafka topic for
+     * goal completion events.
+     * Processes each event by invoking the email service to
+     * send notification emails.
      *
      * @param event the goal completion event received from Kafka
      */
     @KafkaListener(topics = "goal-completion-topic",
             groupId = "email-service-group",
             concurrency = "3")
-    public void consumeGoalEvent(GoalCompletionEvent event) {
+    public void consumeGoalEvent(final GoalCompletionEvent event) {
         emailService.processGoalCompletionEvent(event);
     }
 }

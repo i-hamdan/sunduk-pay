@@ -27,11 +27,31 @@ import java.io.IOException;
 @Log4j2
 @RestController
 public class WalletController {
+
+    /**
+     * Factory to get the appropriate wallet operation service
+     * based on the request type.
+     */
     private final WalletOperationFactory walletFactory;
+
+    /**
+     * Service to handle wallet-related business logic.
+     */
     private final WalletService walletService;
 
-    public WalletController(WalletOperationFactory walletFactory,
-                            WalletService walletService) {
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param walletFactory factory for wallet operations
+     * @param walletService service for wallet business logic
+     */
+
+    /** Cookie max age for Stripe checkout URL in seconds (5 minutes).
+     */
+    private static final int STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS = 300;
+
+    public WalletController(final WalletOperationFactory walletFactory,
+                           final WalletService walletService) {
         this.walletFactory = walletFactory;
         this.walletService = walletService;
     }
@@ -43,16 +63,19 @@ public class WalletController {
      * @param walletId the wallet ID
      * @return wallet balance as a string
      */
-
-    //this api will return the current balance of a wallet by walletId
     @GetMapping("/wallet-showBalance/{walletId}")
     public ResponseEntity<String> showBalance(@PathVariable String walletId) {
         return new ResponseEntity<>(walletService.showBalance(walletId),
                 HttpStatus.OK);
     }
 
+    /**
+     * Adds dummy transaction data to the specified wallet.
+     *
+     * @param request request containing wallet ID and dummy data details
+     */
     @PostMapping("/addTxns")
-    public void addDummyData(@RequestBody MainWalletRequest request) {
+    public void addDummyData(@RequestBody final MainWalletRequest request) {
         walletService.addDummy(request);
     }
 
@@ -63,12 +86,9 @@ public class WalletController {
      * @param response HTTP servlet response to write PDF
      * @throws IOException if PDF generation fails
      */
-
-
-    //this api will download all the transactions of a wallet.
     @PostMapping("/wallet-downloadPdf/{walletId}")
-    public void downloadTransactions(@PathVariable String walletId,
-                                     HttpServletResponse response)
+    public void downloadTransactions(@PathVariable final String walletId,
+                                     final HttpServletResponse response)
             throws IOException {
         walletService.downloadTransactions(walletId, response);
     }
@@ -82,8 +102,10 @@ public class WalletController {
      * @return main wallet response
      */
     @PostMapping("/wallet")
-    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody MainWalletRequest
+    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody
+                                                            final MainWalletRequest
                                                                     mainWalletRequest,
+                                                        final
                                                         HttpServletResponse response) {
 
         MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
@@ -95,7 +117,7 @@ public class WalletController {
             urlCookie.setPath("/");
             urlCookie.setHttpOnly(false);
             urlCookie.setSecure(true);
-            urlCookie.setMaxAge(300);
+            urlCookie.setMaxAge(STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS);
             response.addCookie(urlCookie);
         }
 

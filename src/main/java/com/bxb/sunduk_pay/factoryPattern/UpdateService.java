@@ -13,6 +13,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.ActionType;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Service to handle
- * updates to SubWallets.
+ * Service to handle updates to SubWallets.
  * Supports renaming,
  * updating goal amounts,
  * and changing target dates.
@@ -31,6 +31,7 @@ import java.util.List;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class UpdateService implements WalletOperation {
     /**
      * Repository for accessing MainWallet data.
@@ -44,14 +45,6 @@ public class UpdateService implements WalletOperation {
      * Validations class for various validations.
      */
     private final Validations validations;
-
-    public UpdateService(final MainWalletRepository mainWalletRepository,
-                         final TransactionRepository transactionRepository,
-                         Validations validations) {
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionRepository = transactionRepository;
-        this.validations = validations;
-    }
 
     /**
      * Returns the RequestType handled by this service.
@@ -74,7 +67,7 @@ public class UpdateService implements WalletOperation {
      * @return response indicating success or failure of the update
      * @throws ResourceNotFoundException   if user or wallet is not found
      * @throws CannotUpdateWalletException if the
-     *                                     update cannot be performed due to existing transactions
+     *  update cannot be performed due to existing transactions
      * @throws InvalidPayloadException     if the request payload is invalid
      */
     @Override
@@ -167,9 +160,9 @@ public class UpdateService implements WalletOperation {
                 subWallet.setUpdatedAt(LocalDateTime.now());
                 mainWalletRepository.save(mainWallet);
                 log.info(
-                        "SubWallet [{}] goal amount was successfully updated from [{}] to [{}]" ,
-                        subWallet.getSubWalletId() ,
-                        oldTargetBalance ,
+                        "SubWallet [{}] goal amount was successfully updated from [{}] to [{}]",
+                        subWallet.getSubWalletId(),
+                        oldTargetBalance,
                         subWallet.getTargetBalance()
                 );
                 return MainWalletResponse.builder()
@@ -177,17 +170,15 @@ public class UpdateService implements WalletOperation {
                                 subWallet.getSubWalletName() +
                                         "'s target balance was successfully updated to " +
                                         mainWalletRequest.getTargetBalance() + "."
-                        )
-                        .build();
+                        ).build();
 
             } else {
-                log.error("Update failed! unable to find subWallet with Id [{}] " ,
+                log.error("Update failed! unable to find subWallet with Id [{}] ",
                         mainWalletRequest.getSubWalletId());
                 throw new CannotUpdateWalletException(
                         "Cannot update subWallet! Unable to find subWallet with Id: " +
                                 mainWalletRequest.getSubWalletId()
                 );
-
             }
         }
 
@@ -195,7 +186,7 @@ public class UpdateService implements WalletOperation {
         if (mainWalletRequest.getActionType() == ActionType.GOAL_DATE) {
             if (subWallet != null) {
                 log.info(
-                        "Attempting to update goal date of SubWallet [{}] under MainWallet [{}]" ,
+                        "Attempting to update goal date of SubWallet [{}] under MainWallet [{}]",
                         subWallet.getSubWalletId(), mainWallet.getMainWalletId());
 
                 subWallet.setTargetDate(mainWalletRequest.getTargetDate());
@@ -203,9 +194,9 @@ public class UpdateService implements WalletOperation {
                 mainWalletRepository.save(mainWallet);
 
                 log.info(
-                        "SubWallet [{}] goal date was successfully updated from [{}] to [{}]" ,
-                        subWallet.getSubWalletId() ,
-                        oldTargetDate ,
+                        "SubWallet [{}] goal date was successfully updated from [{}] to [{}]",
+                        subWallet.getSubWalletId(),
+                        oldTargetDate,
                         subWallet.getTargetDate()
                 );
                 return MainWalletResponse.builder()
@@ -213,10 +204,9 @@ public class UpdateService implements WalletOperation {
                                 subWallet.getSubWalletName() +
                                         "'s target date was successfully updated to " +
                                         mainWalletRequest.getTargetDate() + "."
-                        )
-                        .build();
+                        ).build();
             } else {
-                log.error("Update failed! unable to find subWallet with Id [{}] " ,
+                log.error("Update failed! unable to find subWallet with Id [{}] ",
                         mainWalletRequest.getSubWalletId());
                 throw new CannotUpdateWalletException(
                         " Cannot find subWallet with Id : " +
@@ -226,10 +216,8 @@ public class UpdateService implements WalletOperation {
             }
         }
 
-        log.error("Invalid ActionType [{}] provided in request" ,
+        log.error("Invalid ActionType [{}] provided in request",
                 mainWalletRequest.getActionType());
         throw new InvalidPayloadException("Please provide a valid ActionType!");
     }
-
-
 }

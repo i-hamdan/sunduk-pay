@@ -11,11 +11,13 @@ package com.bxb.sunduk_pay.exception;
  */
 public class CannotCreateWalletException extends RuntimeException{
     /**
-     * Constructs a new {@code CannotCreateWalletException} with the specified detail message.
+     * Constructs a new {@code CannotCreateWalletException} with the
+     * specified detail message.
      *
-     * @param message the detail message explaining why the wallet could not be created
+     * @param message the detail message explaining why the wallet
+     *                could not be created
      */
-    public CannotCreateWalletException(String message) {
+    public CannotCreateWalletException(final String message) {
         super(message);
     }
 }

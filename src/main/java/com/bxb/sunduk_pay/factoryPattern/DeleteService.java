@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +20,13 @@ import org.springframework.stereotype.Service;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class DeleteService implements WalletOperation {
     /** Validations utility for checking user and wallet info. */
     private final Validations validations;
     /** Repository for accessing and modifying main wallet data. */
     private final MainWalletRepository mainWalletRepository;
 
-    public DeleteService(final Validations validations , final MainWalletRepository mainWalletRepository) {
-        this.validations = validations;
-        this.mainWalletRepository = mainWalletRepository;
-    }
 
     /**
      * Returns the RequestType handled by this service.
@@ -48,38 +46,39 @@ public class DeleteService implements WalletOperation {
      * @throws CannotDeleteWalletException if the sub-wallet balance is not zero
      */
     @Override
-    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
         log.info("Received request to delete SubWallet.");
 
         User user = validations.getUserInfo(mainWalletRequest.getUuid());
-        log.debug("Fetched user info. userUuid={}, userName={}" ,
-                user.getUuid() , user.getFullName());
+        log.debug("Fetched user info. userUuid={}, userName={}",
+                user.getUuid(), user.getFullName());
 
         validations.getMainWalletInfo(user.getUuid());
-        log.debug("Validated MainWallet info for userUuid={}" ,
+        log.debug("Validated MainWallet info for userUuid={}",
                 user.getUuid());
 
         MainWallet mainWallet = validations.getMainWalletByWalletId
                 (mainWalletRequest.getMainWalletId());
-        log.debug("Fetched MainWallet. mainWalletId={} , userUuid={}",
-                mainWallet.getMainWalletId() , user.getUuid());
+        log.debug("Fetched MainWallet. mainWalletId={}, userUuid={}",
+                mainWallet.getMainWalletId(), user.getUuid());
 
         SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,
                 mainWalletRequest.getSubWalletId());
         log.debug(
-                "Found SubWallet. subWalletId={} , subWalletName={} , balance={}",
-                subWallet.getSubWalletId() , subWallet.getSubWalletName(),
+                "Found SubWallet. subWalletId={}, subWalletName={}, balance={}",
+                subWallet.getSubWalletId(), subWallet.getSubWalletName(),
                 subWallet.getBalance());
 
         if (subWallet.getBalance() == 0) {
             log.info(
-                    "SubWallet [{}] has zero balance. Marking as deleted." ,
+                    "SubWallet [{}] has zero balance. Marking as deleted.",
                     subWallet.getSubWalletName());
             subWallet.setIsDeleted(true);
             mainWalletRepository.save(mainWallet);
 
             log.info(
-                    "SubWallet [{}] successfully deleted (soft delete)." ,
+                    "SubWallet [{}] successfully deleted (soft delete).",
                     subWallet.getSubWalletName());
 
             return MainWalletResponse.builder().message("SubWallet named [" +
@@ -89,8 +88,8 @@ public class DeleteService implements WalletOperation {
 
         } else {
             log.error(
-                    "Attempted to delete SubWallet [{}] with non-zero balance: {}" ,
-                    subWallet.getSubWalletName() , subWallet.getBalance());
+                    "Attempted to delete SubWallet [{}] with non-zero balance: {}",
+                    subWallet.getSubWalletName(), subWallet.getBalance());
             throw new CannotDeleteWalletException(
                     "Cannot delete SubWallet [" + subWallet.getSubWalletName()
                             + "] because it still contains a balance of " +

@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +23,12 @@ import java.util.stream.Collectors;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class CreateService implements WalletOperation {
-    /** Dependencies for validations and main wallet repository */
+    /** Dependencies for validations and main wallet repository. */
     private final Validations validations;
-    /** Repository for MainWallet persistence */
+    /** Repository for MainWallet persistence. */
     private final MainWalletRepository mainWalletRepository;
-
-    public CreateService(Validations validations,
-                         MainWalletRepository mainWalletRepository) {
-        this.validations = validations;
-        this.mainWalletRepository = mainWalletRepository;
-    }
-
 
     /**
      * Returns the RequestType handled by this service.
@@ -57,11 +52,11 @@ public class CreateService implements WalletOperation {
                 mainWalletRequest.getUuid());
 try {
         validations.getUserInfo(mainWalletRequest.getUuid());
-        log.debug("User validation successful for UUID: {}" ,
+        log.debug("User validation successful for UUID: {}",
                 mainWalletRequest.getUuid());
 
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
-        log.debug("MainWallet fetched successfully for UUID: {}" ,
+        log.debug("MainWallet fetched successfully for UUID: {}",
                 mainWalletRequest.getUuid());
 
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
@@ -69,8 +64,8 @@ try {
                 collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
-        log.debug("SubWallet count validation passed. Current size: {}"
-                , size);
+        log.debug("SubWallet count validation passed. Current size: {}",
+                size);
 
         SubWallet subWallet = SubWallet.builder()
                 .subWalletId(UUID.randomUUID().toString())
@@ -82,13 +77,13 @@ try {
                 .icon(mainWalletRequest.getIcon())
                 .createdAt(LocalDateTime.now())
                 .build();
-        log.info("New SubWallet built with name={} and targetBalance={}" ,
-                subWallet.getSubWalletName() , subWallet.getTargetBalance());
+        log.info("New SubWallet built with name={} and targetBalance={}",
+                subWallet.getSubWalletName(), subWallet.getTargetBalance());
 
 
         mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);
-        log.info("SubWallet saved successfully for User UUID: {}" ,
+        log.info("SubWallet saved successfully for User UUID: {}",
                 mainWalletRequest.getUuid());
 
         return MainWalletResponse.builder()
