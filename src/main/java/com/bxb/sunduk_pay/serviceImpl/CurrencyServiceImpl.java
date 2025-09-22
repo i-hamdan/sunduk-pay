@@ -112,16 +112,15 @@ public class CurrencyServiceImpl implements CurrencyService {
         log.debug("Preparing to fetch exchange rate from API for {} to {}", from, to);
         ResponseEntity<Map> response;
         try {
-            log.debug("Calling external API for exchange rate...");
             response = restTemplate.getForEntity(url, Map.class);
             log.debug("API call successful, response received");
         } catch (Exception e) {
             log.error("API call failed for fromCurrency={} with error: {}", from, e.getMessage());
-            throw new InvalidCurrencyType("Invalid currency: " + from);
+            throw new InvalidCurrencyType("API call failed for fromCurrency={} with error: {}" + e.getMessage());
         }
 
         Map<String, Object> body = response.getBody();
-        log.debug("Parsing API response body: {}", body);
+        log.debug("Parsing API response body: {}", from);
 
         if (body == null) {
             log.error("Response from exchange rate API is null!");
@@ -157,11 +156,11 @@ public class CurrencyServiceImpl implements CurrencyService {
         String currencyPair = from.concat(to);
         LocalDate oneYear = LocalDate.of(2024, 8, 19);
         LocalDate endDate = LocalDate.of(2025, 8, 19);
-       log.info("Fetching yearly rates for currencyPair={} from date={}", currencyPair, oneYear);
+        log.info("Fetching yearly rates for currencyPair={} from date={}", currencyPair, oneYear);
 
 
         List<CurrencyRates> ratesForLastYear = currencyRateRepository.findSpecificRate(oneYear,endDate, currencyPair);
-                log.debug("Yearly raw data fetched: {}", ratesForLastYear);
+        log.debug("Yearly raw data fetched: {}", ratesForLastYear);
 
         //List<CurrencyRatesResponse> response = mapper.toCurrencyRatesResponses(ratesForLastYear, currencyPair,TimeSeries.YEAR);
 

@@ -24,15 +24,11 @@ public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, S
      * @return a list of CurrencyRates objects
      * containing only the date and specified rate
      */
-
     @Query(
             value = "{ 'date': { $gte: ?0, $lte: ?1 } }",
             fields = "{ 'date': 1, 'rates.?2': 1 }"
     )
     List<CurrencyRates> findSpecificRate(LocalDate startDate, LocalDate endDate, String rateKey);
-
-
-
 }
 
 
