@@ -18,7 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
- * Service to fetch transactions of a user/sub-wallet with pagination and sorting.
+ * Service to fetch transactions of a user/sub-wallet with pagination.
+ * And sorting.
  */
 @Log4j2
 @Service
@@ -51,10 +52,13 @@ public class FetchTransactionsService implements WalletOperation {
      * @throws TransactionNotFoundException   if transactions are not found
      * @throws WalletNotFoundException        if wallet does not exist
      * @throws TransactionProcessingException for other processing failures
+     * @returns MainWalletResponse with transaction history
      */
     @Override
-    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
-        log.info("Fetching transactions for user : {}", mainWalletRequest.getUuid());
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
+        log.info("Fetching transactions for user : {}",
+                mainWalletRequest.getUuid());
         try {
             Sort.Direction direction;
             if ("ASC".equalsIgnoreCase(mainWalletRequest.getSortDirection())) {
@@ -65,35 +69,40 @@ public class FetchTransactionsService implements WalletOperation {
 
             Pageable pageable = PageRequest.of(mainWalletRequest.getPage(),
                     mainWalletRequest.getSize(),
-                    Sort.by(direction,
-                            mainWalletRequest.getSortBy()));
+                    Sort.by(direction, mainWalletRequest.getSortBy()));
 
-            Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId
-                    (mainWalletRequest.getUuid(),
+            Page<Transaction> transactions = validations
+                    .validateTransactionsByUuidAndSubWalletId(
+                            mainWalletRequest.getUuid(),
                             mainWalletRequest.getWalletId(),
                             mainWalletRequest.getTransactionGroupId(),
                             mainWalletRequest.getPaymentMethod(),
                             mainWalletRequest.getTransactionType(),
                             pageable);
 
-            log.info("Returning {} transactions for uuid ID:{} And SubWallet ID: {}",
+            log.info(
+                "Returning {} transactions for uuid ID:{} And SubWallet ID: {}",
                     transactions.getNumberOfElements(),
                     mainWalletRequest.getUuid(),
                     mainWalletRequest.getWalletId());
 
-            return MainWalletResponse.builder().transactionHistory
-                    (transactionMapper.toTransactionsResponse
+            return MainWalletResponse.builder().transactionHistory(
+                    transactionMapper.toTransactionsResponse
                             (transactions.getContent())).build();
 
         } catch (TransactionNotFoundException | WalletNotFoundException e) {
-            log.error("Unable to find transactions. Error message : {}", e.getMessage());
+            log.error(
+             "Unable to find transactions. Error message : {}",
+                    e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Cannot retrieve transactions for UUID : {}," +
-                    " error {}", mainWalletRequest.getUuid(), e.getMessage());
+            log.error(
+                    "Cannot retrieve transactions for UUID : {},"
+                    + " error {}", mainWalletRequest.getUuid(), e.getMessage());
             throw new TransactionProcessingException(
                     "Unable to fetch transactions for UUID: "
-                            + mainWalletRequest.getUuid() + ". Please try again later."
+                            + mainWalletRequest.getUuid()
+                            + ". Please try again later."
             );
         }
     }
