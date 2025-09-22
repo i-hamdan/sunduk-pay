@@ -13,7 +13,8 @@ import java.util.List;
  */
 public interface WalletMapper {
     /**
-     * Converts a MainWallet entity and its associated SubWallets
+     * Converts a MainWallet entity and its
+     * associated SubWallets
      * into a MainWalletResponse DTO.
      *
      * @param wallet the main wallet entity
@@ -21,6 +22,7 @@ public interface WalletMapper {
      * @return a MainWalletResponse representing the main wallet
      *         and its sub-wallets
      */
-     MainWalletResponse toWalletResponse(MainWallet wallet, List<SubWallet> subWallets);
-
+     MainWalletResponse toWalletResponse( final MainWallet wallet,
+                                          final List<SubWallet> subWallets);
 }
+

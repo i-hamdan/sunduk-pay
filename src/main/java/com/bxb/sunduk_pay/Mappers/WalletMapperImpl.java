@@ -39,7 +39,8 @@ public class WalletMapperImpl implements WalletMapper{
 
 
     /** Supporting method for converting list of subWallets into list of subWalletResponse*/
-    private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallet){
+    private List<SubWalletResponse> toSubWalletResponseList(
+            final List<SubWallet> subWallet){
        List<SubWalletResponse> list = new ArrayList<>();
        for (SubWallet subWallet1 : subWallet){
            list.add(toSubWalletResponse(subWallet1));
@@ -47,8 +48,8 @@ public class WalletMapperImpl implements WalletMapper{
        return list;
    }
     /** Supporting method for converting subWallet into subWalletResponse*/
-   private SubWalletResponse toSubWalletResponse(SubWallet subWallet){
-       SubWalletResponse subWalletResponse=new SubWalletResponse();
+   private SubWalletResponse toSubWalletResponse( final SubWallet subWallet){
+       SubWalletResponse subWalletResponse = new SubWalletResponse();
        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
        subWalletResponse.setBalance(subWallet.getBalance());
@@ -56,6 +57,4 @@ public class WalletMapperImpl implements WalletMapper{
        subWalletResponse.setIcon(subWallet.getIcon());
        return subWalletResponse;
    }
-
-
 }

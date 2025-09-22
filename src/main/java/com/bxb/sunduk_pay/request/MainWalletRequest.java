@@ -41,7 +41,9 @@ public class MainWalletRequest {
     private String sourceWalletId;
     /** ID of the target wallet for transfers */
     private String targetWalletId;
-
+/** Action type for Updating pot (e.g., RENAME_POT,
+    GOAL_AMOUNT,
+    GOAL_DATE) */
     private ActionType actionType;
    /** Payment method used in the transaction */
     private PaymentMethod paymentMethod;

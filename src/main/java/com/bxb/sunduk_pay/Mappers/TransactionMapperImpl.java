@@ -22,9 +22,10 @@ import java.util.Locale;
 @Log4j2
 @Component
 public class TransactionMapperImpl implements TransactionMapper {
+/** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
 
-    public TransactionMapperImpl(Validations validations) {
+    public TransactionMapperImpl( final Validations validations) {
         this.validations = validations;
     }
 
@@ -47,16 +48,19 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setTransactionLevel(transaction.getTransactionLevel());
         transactionResponse.setFromWallet(transaction.getFromWallet());
         transactionResponse.setFromWalletId(transaction.getFromWalletId());
-        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getFromWalletId()));
+        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn
+                (transaction.getMainWallet().getMainWalletId(),
+                        transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
-        transactionResponse.setToWalletIcon(validations.getToIconOfTxn(transaction.getMainWallet().getMainWalletId(),transaction.getToWalletId()));
+        transactionResponse.setToWalletIcon(validations.getToIconOfTxn(transaction.getMainWallet()
+                .getMainWalletId(),transaction.getToWalletId()));
         return transactionResponse;
     }
 
     /** {@inheritDoc} */
     @Override
-    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions) {
+    public List<TransactionResponse> toTransactionsResponse(final List<Transaction> transactions) {
         List<TransactionResponse> responses = new ArrayList<>(transactions.size());
         for (Transaction transaction : transactions) {
             responses.add(toTransactionResponse(transaction));
@@ -65,7 +69,7 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
     /** {@inheritDoc} */
-    public TransactionEvent toTransactionEvent(Transaction transaction) {
+    public TransactionEvent toTransactionEvent(final Transaction transaction) {
         TransactionEvent transactionEvent = new TransactionEvent();
         transactionEvent.setWalletId(transaction.getMainWallet().getMainWalletId());
         transactionEvent.setTransactionId(transaction.getTransactionId());
@@ -87,7 +91,8 @@ public class TransactionMapperImpl implements TransactionMapper {
         try {
             if (transaction.getTransactionType() == TransactionType.CREDIT) {
                 if (transaction.getToWalletId() != null &&
-                        transaction.getToWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
+                        transaction.getToWalletId()
+                                .equals(transaction.getMainWallet().getMainWalletId())) {
                     balance = transaction.getMainWallet().getBalance();
                 } else if (transaction.getToWalletId() != null) {
                     SubWallet subWallet = validations.findSubWalletIfExists(
@@ -99,7 +104,8 @@ public class TransactionMapperImpl implements TransactionMapper {
 
             } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
                 if (transaction.getFromWalletId() != null &&
-                        transaction.getFromWalletId().equals(transaction.getMainWallet().getMainWalletId())) {
+                        transaction.getFromWalletId().equals(transaction
+                                .getMainWallet().getMainWalletId())) {
                     balance = transaction.getMainWallet().getBalance();
                 } else if (transaction.getFromWalletId() != null) {
                     SubWallet subWallet = validations.findSubWalletIfExists(
@@ -118,9 +124,8 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionEvent.setRemainingBalance(balance);
         return transactionEvent;
     }
-
-
 }
+
 
 
 

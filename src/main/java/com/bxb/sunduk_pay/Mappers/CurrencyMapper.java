@@ -14,8 +14,8 @@ import java.util.List;
  */
 public interface CurrencyMapper {
     /**
-     * Builds a CurrencyResponse containing exchange details and historical rates.
-     *
+     * Builds a CurrencyResponse containing exchange
+     * details and historical rates.
      * @param exchangeRate the current exchange rate
      * @param converted    the converted amount
      * @param fee          the fee applied
@@ -25,7 +25,13 @@ public interface CurrencyMapper {
      * @param weeklyRates  list of weekly rate responses
      * @return a CurrencyResponse object
      */
-    CurrencyResponse currencyResponse(double exchangeRate, double converted, double fee, double finalAmount, List<CurrencyRatesResponse> yearlyRates, List<CurrencyRatesResponse> monthlyRates, List<CurrencyRatesResponse> weeklyRates);
+    CurrencyResponse currencyResponse(final double exchangeRate,
+                                       final double converted,
+                                       final double fee,
+                                      final double finalAmount,
+                                       final List<CurrencyRatesResponse> yearlyRates,
+                                      final List<CurrencyRatesResponse> monthlyRates,
+                                       final List<CurrencyRatesResponse> weeklyRates);
 
     /**
      * Converts a list of CurrencyRates into CurrencyRatesResponse
@@ -34,12 +40,12 @@ public interface CurrencyMapper {
      * @param currencyRates list of CurrencyRates
      * @param rateKey       key to extract rate
      * @param timeSeries    type of time series (WEEKLY, MONTHLY, YEARLY)
-     * @param timeSeries    type of time series
-     *                      (WEEKLY, MONTHLY, YEARLY)
      * @return list of CurrencyRatesResponse
      */
 
-    List<CurrencyRatesResponse> toCurrencyRatesResponses(List<CurrencyRates> currencyRates, String rateKey, TimeSeries timeSeries);
+    List<CurrencyRatesResponse> toCurrencyRatesResponses(final List<CurrencyRates> currencyRates,
+                                                          final String rateKey,
+                                                         final TimeSeries timeSeries);
 
     /**
      * Computes monthly average rates from a list of CurrencyRates.
@@ -47,8 +53,8 @@ public interface CurrencyMapper {
      * @param currencyRates list of CurrencyRates
      * @param rateKey       key to extract rate
      * @return list of CurrencyRatesResponse representing monthly averages
-     * @return list of CurrencyRatesResponse
      * representing monthly averages
      */
-    List<CurrencyRatesResponse> toMonthlyAverageResponses(List<CurrencyRates> currencyRates, String rateKey);
+    List<CurrencyRatesResponse> toMonthlyAverageResponses(final List<CurrencyRates> currencyRates,
+                                                           final String rateKey);
 }

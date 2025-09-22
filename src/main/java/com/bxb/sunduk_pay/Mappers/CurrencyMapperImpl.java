@@ -7,14 +7,39 @@ import com.bxb.sunduk_pay.util.TimeSeries;
 import org.springframework.stereotype.Component;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of CurrencyMapper to map currency data to response objects.
+ */
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
-    /** {@inheritDoc} */
+    /**
+     * Maps currency conversion details and rate lists to a CurrencyResponse object.
+     *
+     * @param exchangeRate the exchange rate used for conversion
+     * @param converted the converted amount
+     * @param fee the conversion fee
+     * @param finalAmount the final amount after conversion and fee
+     * @param yearlyRates list of yearly currency rates responses
+     * @param monthlyRates list of monthly currency rates responses
+     * @param weeklyRates list of weekly currency rates responses
+     * @return a populated CurrencyResponse object
+     */
+
     @Override
-    public CurrencyResponse currencyResponse(double exchangeRate, double converted, double fee, double finalAmount, List<CurrencyRatesResponse> yearlyRates, List<CurrencyRatesResponse> monthlyRates, List<CurrencyRatesResponse> weeklyRates) {
+    public CurrencyResponse currencyResponse(final double exchangeRate,
+                                             final double converted,
+                                             final double fee,
+                                             final double finalAmount,
+                                             final List<CurrencyRatesResponse> yearlyRates,
+                                             final List<CurrencyRatesResponse> monthlyRates,
+                                              final List<CurrencyRatesResponse> weeklyRates) {
         CurrencyResponse response = new CurrencyResponse();
         response.setExchangeRate(exchangeRate);
         response.setConvertedAmount(converted);
@@ -26,8 +51,17 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         return response;
     }
 
-    /** {@inheritDoc} */
-    public List<CurrencyRatesResponse> toCurrencyRatesResponses(List<CurrencyRates> currencyRates, String rateKey, TimeSeries timeSeries) {
+    /**
+     * Converts a list of CurrencyRates to a list of CurrencyRatesResponse objects.
+     *
+     * @param currencyRates the list of CurrencyRates to convert
+     * @param rateKey the key to extract the rate value
+     * @param timeSeries the time series granularity (WEEK, MONTH, etc.)
+     * @return a list of CurrencyRatesResponse objects
+     */
+    public List<CurrencyRatesResponse> toCurrencyRatesResponses(final List<CurrencyRates> currencyRates,
+                                                                final String rateKey,
+                                                                final TimeSeries timeSeries) {
         List<CurrencyRatesResponse> list = new ArrayList<>();
         for (CurrencyRates rates : currencyRates) {
             list.add(toCurrencyRatesResponse(rates, rateKey, timeSeries));
@@ -35,9 +69,17 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         return list;
     }
 
-    /** Helper method to convert a single CurrencyRates to CurrencyRatesResponse
+    /**
+     * Converts a single CurrencyRates object to a CurrencyRatesResponse.
+     *
+     * @param currencyRates the CurrencyRates object to convert
+     * @param rateKey the key to extract the rate value
+     * @param timeSeries the time series granularity
+     * @return a CurrencyRatesResponse object
      */
-    private CurrencyRatesResponse toCurrencyRatesResponse(CurrencyRates currencyRates, String rateKey, TimeSeries timeSeries) {
+    private CurrencyRatesResponse toCurrencyRatesResponse(final CurrencyRates currencyRates,
+                                                           final String rateKey,
+                                                          final TimeSeries timeSeries) {
         CurrencyRatesResponse currencyRatesResponse = new CurrencyRatesResponse();
         currencyRatesResponse.setDate(currencyRates.getDate());
         Double value = currencyRates.getRates().get(rateKey); // sirf ek key ka value nikalo
@@ -58,18 +100,16 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         }
         return currencyRatesResponse;
     }
+    /**
+     * Calculates monthly average rates and maps them to CurrencyRatesResponse objects.
+     *
+     * @param currencyRates the list of CurrencyRates to process
+     * @param rateKey the key to extract the rate value
+     * @return a list of CurrencyRatesResponse objects with monthly averages
+     */
 
-
-
-
-
-
-
-
-
-
-    /** {@inheritDoc} */
-    public List<CurrencyRatesResponse> toMonthlyAverageResponses(List<CurrencyRates> currencyRates, String rateKey) {
+    public List<CurrencyRatesResponse> toMonthlyAverageResponses(final List<CurrencyRates> currencyRates,
+                                                                 final String rateKey) {
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
                 .filter(r -> r.getRates().get(rateKey) != null)
                 .collect(Collectors.groupingBy(
@@ -87,11 +127,4 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         });
         return list;
     }
-
-
-
-
-
-
-
 }
