@@ -109,8 +109,8 @@ public class TransferService implements WalletOperation {
                         targetWallet,
                         sourceWallet);
             } else {
-                log.error("Both source and target " +
-                                "wallets are invalid for UUID: {}",
+                log.error("Both source and target "
+                                + "wallets are invalid for UUID: {}",
                         user.getUuid());
                 throw new InvalidPayloadException(
                         "both sourceId and targetId is invalid for this user");
@@ -127,6 +127,7 @@ public class TransferService implements WalletOperation {
      @param targetWallet the wallet receiving the funds,
      @param sourceWallet the wallet from which the
      funds are sent (can be null)
+     @return MainWalletResponse with transfer result
      * */
     private MainWalletResponse handleExternalIncomingTransfer(
             final User user,
@@ -166,8 +167,8 @@ public class TransferService implements WalletOperation {
                 sourceSubWallet);
     }
 
-    /** Handle internal transfer between main<->subWallet
-     * subWallet<->subWallet
+    /** Handle internal transfer between main<->subWallet.
+     * And subWallet<->subWallet.
      @param user the user initiating the transfer,
         @param mainWallet the user's main wallet,
         @param amount the amount to be transferred,
