@@ -9,13 +9,17 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Repository interface for accessing currency rates stored in MongoDB.
- * Extends MongoRepository to provide CRUD operations and custom queries.
+ * Repository interface for accessing
+ * currency rates stored in MongoDB.
+ * Extends MongoRepository to provide
+ * CRUD operations and custom queries.
  */
 @Repository
+
 public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, String> {
     /**
-     * Finds currency rates within a specified date range and retrieves only the specified rate key.
+     * Finds currency rates within a specified date
+     * range and retrieves only the specified rate key.
      *
      * @param startDate the start date of the range (inclusive)
      * @param endDate   the end date of the range (inclusive)
@@ -24,12 +28,16 @@ public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, S
      * @return a list of CurrencyRates objects
      * containing only the date and specified rate
      */
+    @SuppressWarnings("checkstyle:MethodName")
     @Query(
             value = "{ 'date': { $gte: ?0, $lte: ?1 } }",
             fields = "{ 'date': 1, 'rates.?2': 1 }"
     )
-    List<CurrencyRates> findSpecificRate(LocalDate startDate, LocalDate endDate, String rateKey);
+    List<CurrencyRates> findSpecificRate(LocalDate startDate,
+                                         LocalDate endDate,
+                                         String rateKey);
 }
+
 
 
 

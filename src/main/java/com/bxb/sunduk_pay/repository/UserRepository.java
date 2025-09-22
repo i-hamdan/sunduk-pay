@@ -17,6 +17,7 @@ public interface UserRepository extends MongoRepository<User,String>{
      * @param email the email of the user
      * @return an Optional containing the User if found, or empty if not found
      */
+    @SuppressWarnings("checkstyle:MethodName")
     Optional<User> findByEmailAndIsDeletedFalse(String email);
 
 }

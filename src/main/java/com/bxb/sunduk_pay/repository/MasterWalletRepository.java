@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface MasterWalletRepository extends MongoRepository<MasterWallet,String> {
    /**
     * Finds a MasterWallet by the associated user's UUID.
+    * @param uuid the UUID of the user
     */
-    Optional<MasterWallet> findByUser_Uuid(String uuid);
+   @SuppressWarnings("checkstyle:MethodName")
+   Optional<MasterWallet> findByUser_Uuid(String uuid);
 }
