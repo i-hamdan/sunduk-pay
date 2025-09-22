@@ -27,14 +27,26 @@ import java.net.URLEncoder;
 
 @Log4j2
 @RestController
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 // this needs to remove once we moved to domain
 public class SundukController {
+    /**
+     * Service for user-related operations.
+     */
     private final UserService service;
+
+    /**
+     * Mapper for converting OIDC user info to application user models.
+     */
     private final UserMapper userMapper;
 
-
-    public SundukController(UserService service, UserMapper userMapper) {
+    /**
+     * Constructor for SundukController.
+     *
+     * @param service UserService for user operations
+     * @param userMapper UserMapper for mapping user data
+     */
+    public SundukController(final UserService service,
+                            final UserMapper userMapper) {
         this.service = service;
 
         this.userMapper = userMapper;
@@ -50,19 +62,20 @@ public class SundukController {
      * @throws IOException if redirect fails
      */
     @GetMapping(value = "/custom-login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserLoginResponse> login(HttpSession session,
-                                                   @AuthenticationPrincipal OidcUser user,
-                                                   HttpServletResponse httpServletResponse) throws IOException {
+    public ResponseEntity<UserLoginResponse> login(final HttpSession session,
+                                                   @AuthenticationPrincipal final OidcUser user, final
+                                                   HttpServletResponse
+                                                               httpServletResponse) throws IOException {
         UserLoginResponse response = userMapper.getUser(user);
         log.info ("Session Id : " + session.getId() + " By: " + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
-        String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
-                + "&email=" + URLEncoder.encode(user.getEmail(), "UTF-8")
-                + "&fullName=" + URLEncoder.encode(user.getFullName(), "UTF-8")
-                +"&uuid="+URLEncoder.encode(dbUser.getUuid(),"UTF-8");
+        String deepLink = "islamicbank://login-success?sessionId = " + session.getId()
+                + "&email = " + URLEncoder.encode(user.getEmail(), "UTF-8")
+                + "&fullName = " + URLEncoder.encode(user.getFullName(), "UTF-8")
+                + "&uuid = " + URLEncoder.encode(dbUser.getUuid(),"UTF-8");
 
-        log.info("Redirecting to deep link:{}",deepLink);
+        log.info("Redirecting to deep link:{}", deepLink);
         httpServletResponse.sendRedirect(deepLink);
         return ResponseEntity.ok().body(response);
 
@@ -75,7 +88,7 @@ public class SundukController {
      * @return user response after upload
      */
 @PostMapping("/upload-contact")
-public UserResponse uploadContacts(@RequestBody ContactRequest contactRequest) {
+public UserResponse uploadContacts(@RequestBody final ContactRequest contactRequest) {
     return service.uploadContacts(contactRequest);
 }
     /**
@@ -85,7 +98,7 @@ public UserResponse uploadContacts(@RequestBody ContactRequest contactRequest) {
      * @return logout confirmation message
      */
     @GetMapping("/custom-logout")
-    public String logout(HttpSession session) {
+    public String logout(final HttpSession session) {
         session.invalidate();
         return "You have been logged out";
     }

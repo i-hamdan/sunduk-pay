@@ -20,14 +20,37 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Document
 public class MasterWallet {
+    /**
+     * Unique identifier for the master wallet.
+     */
     @Id
     private String masterWalletId;
+
+    /**
+     * Current balance of the master wallet.
+     */
     private Double balance;
+
+    /**
+     * Indicates whether the master wallet is deleted.
+     */
     private Boolean isDeleted;
+
+    /**
+     * Timestamp when the master wallet was created.
+     */
     @Timestamp
     private LocalDateTime createdAt;
+
+    /**
+     * Reference to the user who owns this wallet.
+     */
     @DBRef
     private User user;
+
+    /**
+     * Reference to the associated main wallet.
+     */
     @DBRef
     private MainWallet mainWallet;
 }

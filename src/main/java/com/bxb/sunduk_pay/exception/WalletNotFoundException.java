@@ -9,7 +9,13 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class WalletNotFoundException extends RuntimeException {
-    public WalletNotFoundException(String message) {
+    /**
+     * Constructs a new {@code WalletNotFoundException} with the specified
+     * detail message.
+     *
+     * @param message the detail message explaining why the wallet was not found
+     */
+    public WalletNotFoundException(final String message) {
         super(message);
     }
 }
