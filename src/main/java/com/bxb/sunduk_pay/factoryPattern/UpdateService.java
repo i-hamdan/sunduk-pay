@@ -63,12 +63,12 @@ public class UpdateService implements WalletOperation {
      * and changing target dates.
      *
      * @param mainWalletRequest request containing user UUID, wallet ID,
-     *                          action type, and relevant update details
+     *  action type, and relevant update details
      * @return response indicating success or failure of the update
-     * @throws ResourceNotFoundException   if user or wallet is not found
+     * @throws ResourceNotFoundException if user or wallet is not found
      * @throws CannotUpdateWalletException if the
-     *                                     update cannot be performed due to existing transactions
-     * @throws InvalidPayloadException     if the request payload is invalid
+     *  update cannot be performed due to existing transactions
+     * @throws InvalidPayloadException if the request payload is invalid
      */
     @Override
     public MainWalletResponse perform(
@@ -77,7 +77,8 @@ public class UpdateService implements WalletOperation {
         log.info("Performing action [{}]",
                 mainWalletRequest.getActionType());
 
-        User user = validations.getUserInfo(mainWalletRequest.getUuid());
+        User user = validations.getUserInfo(
+                mainWalletRequest.getUuid());
         log.debug("Fetched user details for UUID: {}",
                 user.getUuid());
 
@@ -104,12 +105,12 @@ public class UpdateService implements WalletOperation {
         if (mainWalletRequest.getActionType() == ActionType.RENAME_POT) {
             if (subWallet != null) {
                 log.info(
-                        "Attempting to rename SubWallet [{}] under MainWallet [{}]",
+          "Attempting to rename SubWallet [{}] under MainWallet [{}]",
                         subWallet.getSubWalletId(),
                         mainWallet.getMainWalletId());
 
-                List<Transaction> allSubWalletTransactions = transactionRepository
-                        .findAllByUserAndWallet(
+                List<Transaction> allSubWalletTransactions
+                        = transactionRepository.findAllByUserAndWallet(
                                 user.getUuid(),
                                 subWallet.getSubWalletId());
                 log.debug(
@@ -123,7 +124,7 @@ public class UpdateService implements WalletOperation {
                     subWallet.setUpdatedAt(LocalDateTime.now());
                     mainWalletRepository.save(mainWallet);
                     log.info(
-                            "SubWallet [{}] successfully renamed from [{}] to [{}]",
+                      "SubWallet [{}] successfully renamed from [{}] to [{}]",
                             subWallet.getSubWalletId(),
                             oldName,
                             subWallet.getSubWalletName()
@@ -138,13 +139,13 @@ public class UpdateService implements WalletOperation {
 
                 } else {
                     log.error(
-                  "Rename failed! SubWallet [{}] has existing [{}] transactions",
+       "Rename failed! SubWallet [{}] has existing [{}] transactions",
                             subWallet.getSubWalletId(),
                             allSubWalletTransactions.size());
                     throw new CannotUpdateWalletException(
-                            "The particular subWallet with name : "
-                                    + subWallet.getSubWalletName()
-                                    + " is involved in transactions! Cannot update this wallet."
+                 "The particular subWallet with name : "
+                + subWallet.getSubWalletName()
+                + " is involved in transactions! Cannot update this wallet."
                     );
                 }
 
@@ -153,8 +154,8 @@ public class UpdateService implements WalletOperation {
                    "Rename failed! SubWallet with ID [{}] not found",
                         mainWalletRequest.getSubWalletId());
                 throw new ResourceNotFoundException(
-                        "Cannot find subWallet with subWallet Id : " +
-                                mainWalletRequest.getSubWalletId()
+                        "Cannot find subWallet with subWallet Id : "
+                                + mainWalletRequest.getSubWalletId()
                 );
             }
 
@@ -164,7 +165,7 @@ public class UpdateService implements WalletOperation {
         if (mainWalletRequest.getActionType() == ActionType.GOAL_AMOUNT) {
             if (subWallet != null) {
                 log.info(
-                        "Attempting to update goal amount of SubWallet [{}] under MainWallet [{}]",
+           "Updating goal amount of SubWallet [{}] under MainWallet [{}]",
                         subWallet.getSubWalletId(),
                         mainWallet.getMainWalletId());
                 if (mainWalletRequest.getTargetBalance() == null
@@ -172,60 +173,55 @@ public class UpdateService implements WalletOperation {
                     throw new InvalidPayloadException(
                             "Target balance cannot be null or zero.");
                 }
-                subWallet.setTargetBalance(mainWalletRequest.getTargetBalance());
+               subWallet.setTargetBalance(mainWalletRequest.getTargetBalance());
                 subWallet.setUpdatedAt(LocalDateTime.now());
                 mainWalletRepository.save(mainWallet);
                 log.info(
-                  "SubWallet [{}] goal amount was successfully updated from [{}] to [{}]",
+           "SubWallet [{}] goal amount successfully updated from [{}] to [{}]",
                         subWallet.getSubWalletId(),
                         oldTargetBalance,
                         subWallet.getTargetBalance()
                 );
                 return MainWalletResponse.builder()
                         .message(
-                                subWallet.getSubWalletName()
-                                        + "'s target balance was successfully updated to "
-                                        + mainWalletRequest.getTargetBalance() + "."
+                          subWallet.getSubWalletName()
+                          + "'s target balance was successfully updated to "
+                          + mainWalletRequest.getTargetBalance() + "."
                         ).build();
 
             } else {
                 log.error(
-               "Update failed! unable to find subWallet with Id [{}] ",
-                        mainWalletRequest.getSubWalletId());
+        "Update failed! unable to find subWallet with Id [{}] ",
+             mainWalletRequest.getSubWalletId());
                 throw new CannotUpdateWalletException(
-                        "Cannot update subWallet! Unable to find subWallet with Id: "
-                                + mainWalletRequest.getSubWalletId()
+             "Cannot update subWallet! Unable to find subWallet with Id: "
+                 + mainWalletRequest.getSubWalletId()
                 );
             }
         }
 
-
         if (mainWalletRequest.getActionType() == ActionType.GOAL_DATE) {
             if (subWallet != null) {
                 log.info(
-                        "Attempting to update goal date of SubWallet [{}] under MainWallet [{}]",
+               "Updating goal date of SubWallet [{}] under MainWallet [{}]",
                         subWallet.getSubWalletId(),
                         mainWallet.getMainWalletId());
 
                 subWallet.setTargetDate(mainWalletRequest.getTargetDate());
                 subWallet.setUpdatedAt(LocalDateTime.now());
                 mainWalletRepository.save(mainWallet);
-
                 log.info(
-                        "SubWallet [{}] goal date was successfully updated from [{}] to [{}]",
+           "SubWallet [{}] goal date was updated from [{}] to [{}]",
                         subWallet.getSubWalletId(),
                         oldTargetDate,
-                        subWallet.getTargetDate()
-                );
+                        subWallet.getTargetDate());
                 return MainWalletResponse.builder()
-                        .message(
-                                subWallet.getSubWalletName()
+                        .message(subWallet.getSubWalletName()
                                         + "'s target date was successfully updated to "
-                                        + mainWalletRequest.getTargetDate() + "."
-                        ).build();
+                                        + mainWalletRequest.getTargetDate() + ".").build();
             } else {
                 log.error(
-                  "Update failed! unable to find subWallet with Id [{}] ",
+        "Update failed! unable to find subWallet with Id [{}] ",
                         mainWalletRequest.getSubWalletId());
                 throw new CannotUpdateWalletException(
                         " Cannot find subWallet with Id : "
