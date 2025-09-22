@@ -51,10 +51,10 @@ public class UserServiceImpl implements UserService {
      */
     private final MasterWalletRepository masterWalletRepository;
 
-    public UserServiceImpl(final UserRepository repository ,
+    public UserServiceImpl(final UserRepository repository,
                            final UserMapper userMapper,
-                           final KafkaTemplate <String , UserKafkaEvent> kafkaTemplate ,
-                           final MainWalletRepository mainWalletRepository ,
+                           final KafkaTemplate <String, UserKafkaEvent> kafkaTemplate,
+                           final MainWalletRepository mainWalletRepository,
                            final MasterWalletRepository masterWalletRepository) {
         this.userRepository = repository;
         this.userMapper = userMapper;
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
                 response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
-            log.info("User not found in DB. Creating new user for email: {}" ,
+            log.info("User not found in DB. Creating new user for email: {}",
                     response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
-            UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "LOGIN");
-            kafkaTemplate.send("user-topic",userEvent);
+            UserKafkaEvent userEvent = userMapper.toKafkaEvent(user,  "LOGIN");
+            kafkaTemplate.send("user-topic", userEvent);
             log.info("Login successful");
         }
         return user;
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserResponse uploadContacts(ContactRequest contactRequest) {
-        log.info("Upload contacts request received for userId: {}" ,
+        log.info("Upload contacts request received for userId: {}",
                 contactRequest.getUserId());
 
         User user = userRepository.findById(contactRequest.getUserId()).orElseThrow(() -> new RuntimeException(
@@ -134,11 +134,11 @@ public class UserServiceImpl implements UserService {
         log.debug("User fetched: {}", user.getUuid());
 
         user.setContacts(contactRequest.getContacts());
-        log.info("Setting {} contacts for userId: {}" ,
+        log.info("Setting {} contacts for userId: {}",
                 contactRequest.getContacts().size(), user.getUuid());
 
         userRepository.save(user);
-        log.info("User with ID: {} successfully updated with contacts" , user.getUuid());
+        log.info("User with ID: {} successfully updated with contacts", user.getUuid());
 
         return UserResponse.builder()
                 .uuid(user.getUuid())

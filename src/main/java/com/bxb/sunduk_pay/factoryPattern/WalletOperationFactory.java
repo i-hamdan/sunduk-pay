@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Component
 public class WalletOperationFactory {
-    /** List of all WalletOperation implementations injected by Spring */
+    /** List of all WalletOperation implementations injected by Spring. */
 private final List<WalletOperation> walletOperations;
     public WalletOperationFactory(final List<WalletOperation> walletOperations) {
         this.walletOperations = walletOperations;
@@ -30,13 +30,12 @@ private final List<WalletOperation> walletOperations;
     @PostConstruct
 private void putValues(){
 for (WalletOperation service : walletOperations) {
-    walletServiceMap.put(service.getRequestType() , service);
+    walletServiceMap.put(service.getRequestType(), service);
 }
 }
 
     /**
      * Retrieve the WalletOperation implementation for the given RequestType.
-     *
      * @param requestType the type of request
      * @return WalletOperation implementation, or null if not found
      */

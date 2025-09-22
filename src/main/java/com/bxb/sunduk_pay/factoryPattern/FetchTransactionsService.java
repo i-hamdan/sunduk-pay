@@ -51,8 +51,6 @@ public class FetchTransactionsService implements WalletOperation {
      *
      * @param mainWalletRequest request containing user UUID,
      *                          wallet ID, paging, sorting info
-     * @param mainWalletRequest request containing UUID, wallet ID,
-     *                          paging, and sorting info
      * @return MainWalletResponse containing the transaction history
      * @throws TransactionNotFoundException   if transactions are not found
      * @throws WalletNotFoundException        if wallet does not exist

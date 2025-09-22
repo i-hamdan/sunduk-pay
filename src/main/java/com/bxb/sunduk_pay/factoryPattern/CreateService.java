@@ -69,8 +69,8 @@ try {
                 collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
-        log.debug("SubWallet count validation passed. Current size: {}"
-                , size);
+        log.debug("SubWallet count validation passed. Current size: {}",
+                size);
 
         SubWallet subWallet = SubWallet.builder()
                 .subWalletId(UUID.randomUUID().toString())

@@ -39,8 +39,8 @@ public class FetchWalletService implements WalletOperation {
     }
 
     /**
-     * Fetches main wallet and non-deleted
-     * sub-wallets for a given user UUID.
+     * Fetches main wallet,
+     * and non-deleted sub-wallets for a given user UUID.
      * Fetches main wallet and active (non-deleted)-
      * -sub-wallets for a given user UUID.
      * @param mainWalletRequest request containing the user UUID
@@ -51,6 +51,6 @@ public class FetchWalletService implements WalletOperation {
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter(
                 sw -> !sw.getIsDeleted()).toList();
-        return walletMapper.toWalletResponse(mainWallet , subWallets);
+        return walletMapper.toWalletResponse(mainWallet, subWallets);
     }
 }
