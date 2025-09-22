@@ -16,11 +16,14 @@ public class ActivityLogMessageUtil {
      * @param event the user event received from Kafka
      * @return a descriptive message for logging or notifications
      */
-    public String buildDescription(UserKafkaEvent event) {
+    public String buildDescription(final UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
-            return "User '" + event.getFullName() + "' successfully logged in to the system.";
-        } else if ("SIGNUP".equalsIgnoreCase(event.getEventType())) {
-            return "New user registration completed for '" + event.getFullName() + "'.";
+            return "User '" + event.getFullName()
+                    + "' successfully logged in to the system.";
+        } else if ("SIGNUP"
+                .equalsIgnoreCase(event.getEventType())) {
+            return "New user registration completed for '"
+                    + event.getFullName() + "'.";
         } else {
             return "User event received for '" + event.getFullName() + "' with unknown action.";
         }

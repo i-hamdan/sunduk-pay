@@ -8,6 +8,8 @@ package com.bxb.sunduk_pay.util;
  * or going out of (DEBIT) a wallet.</p>
  */
 public enum TransactionType {
+    /** Transaction type indicating funds are added to a wallet. */
     CREDIT,
+    /** Transaction type indicating funds are removed from a wallet. */
     DEBIT
 }

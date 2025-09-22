@@ -16,20 +16,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class SmsMessageUtil {
 
+    /** Number of characters to show for transaction ID. */
+    private static final int TXN_ID_TRIM_LENGTH = 6;
+
     /**
      * Builds an SMS message for a transaction event.
      *
      * @param event the transaction event
      * @return formatted SMS message
      */
-    public String buildTransactionSms(TransactionEvent event) {
+    public String buildTransactionSms(final TransactionEvent event) {
         String firstName = event.getFullName() != null
                 ? event.getFullName().split(" ")[0]
                 : "User";
 
         String amount = String.format("%.0f", event.getAmount());
-//        String balance = String.format("%.0f", event.getRemainingBalance());
-        String shortTxnId = event.getTransactionId().substring(0, 6);
+        String shortTxnId = event.getTransactionId().substring(0, TXN_ID_TRIM_LENGTH);
 
         String message;
 
@@ -49,9 +51,8 @@ public class SmsMessageUtil {
                         + ". Txn:" + shortTxnId
                         + ". -SundukPay";
             }
-        }
-        // Handle DEBIT
-        else {
+        } else {
+            // Handle DEBIT
             if (event.getTransactionLevel() == TransactionLevel.INTERNAL) {
                 // Internal Debit (sub <-> main, sub <-> sub)
                 message = firstName + ", -" + amount + " sent from "
@@ -70,5 +71,4 @@ public class SmsMessageUtil {
 
         return message;
     }
-
 }

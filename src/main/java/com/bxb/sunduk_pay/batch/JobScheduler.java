@@ -51,7 +51,7 @@ public class JobScheduler {
                     "Starting job: importExchangeRatesJob with params {}",
                     params
             );
-            jobLauncher.run(importExchangeRatesJob,params);
+            jobLauncher.run(importExchangeRatesJob, params);
 
             log.info(" Job execution triggered successfully.");
 
