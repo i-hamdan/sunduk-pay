@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.batch;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
