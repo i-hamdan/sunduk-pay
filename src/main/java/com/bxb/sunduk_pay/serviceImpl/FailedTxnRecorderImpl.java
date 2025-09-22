@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.FailedTxnRecorder;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,16 +20,13 @@ import java.util.UUID;
  * Responsible for recording failed transactions in the system.
  */
 @Service
+@RequiredArgsConstructor
 public class FailedTxnRecorderImpl implements FailedTxnRecorder {
     /** validations to verify user and wallet information. */
     private final Validations validations;
     /** Repository for Transaction entity. */
     private final TransactionRepository transactionRepository;
 
-    public FailedTxnRecorderImpl(final Validations validations, final TransactionRepository transactionRepository) {
-        this.validations = validations;
-        this.transactionRepository = transactionRepository;
-    }
     /**
      * Records a failed transaction based on the given MainWalletRequest.
      * Determines the source and target wallets, builds a failed transaction object,

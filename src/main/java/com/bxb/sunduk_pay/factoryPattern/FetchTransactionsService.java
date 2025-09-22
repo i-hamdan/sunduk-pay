@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,17 +22,12 @@ import org.springframework.stereotype.Service;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class FetchTransactionsService implements WalletOperation {
-    /** Validations utility for input validation and data retrieval. **/
+    /** Validations utility for input validation and data retrieval.**/
     private final Validations validations;
     /** Mapper to convert transaction entities to response DTOs. **/
     private final TransactionMapper transactionMapper;
-
-    public FetchTransactionsService(final Validations validations,
-                                    final TransactionMapper transactionMapper) {
-        this.validations = validations;
-        this.transactionMapper = transactionMapper;
-    }
 
     /**
      * Returns the request type handled by this service.

@@ -14,6 +14,7 @@ import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,7 @@ import java.util.UUID;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class InternalTransferServiceImpl implements InternalTransferService {
     /** Validations utility for business rule enforcement. */
     private final Validations validations;
@@ -47,19 +49,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     /** Kafka template for publishing goal completion events. */
     private final KafkaTemplate<String, GoalCompletionEvent>kafkaGoalTemplate;
 
-    public InternalTransferServiceImpl(final Validations validations,
-                                       final TransactionRepository transactionRepository,
-                                       final MainWalletRepository mainWalletRepository,
-                                       final TransactionMapper transactionMapper,
-                                       final KafkaTemplate <String, TransactionEvent> kafkaTemplate ,
-                                       final KafkaTemplate <String, GoalCompletionEvent> kafkaGoalTemplate) {
-        this.validations = validations;
-        this.transactionRepository = transactionRepository;
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionMapper = transactionMapper;
-        this.kafkaTemplate = kafkaTemplate;
-        this.kafkaGoalTemplate = kafkaGoalTemplate;
-    }
 
     /**
      * Performs an internal transfer between wallets or sub-wallets for a user.

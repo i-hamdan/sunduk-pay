@@ -16,6 +16,7 @@ import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -39,6 +40,7 @@ import java.util.UUID;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
     /**MasterWalletRepository instance for database operations on MasterWallets.*/
     private final MasterWalletRepository masterWalletRepository;
@@ -54,22 +56,6 @@ public class WalletServiceImpl implements WalletService {
     private final WalletOperationFactory walletOperationFactory;
     /**Validations instance for performing various validation checks.*/
     private final Validations validations;
-
-    public WalletServiceImpl(final MasterWalletRepository masterWalletRepository,
-                             final MainWalletRepository mainWalletRepository,
-                             final TransactionRepository transactionRepository,
-                             final TransactionMapper transactionMapper,
-                             final KafkaTemplate<String, TransactionEvent> kafkaTemplate,
-                             final WalletOperationFactory walletOperationFactory,
-                             final Validations validations) {
-        this.masterWalletRepository = masterWalletRepository;
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionRepository = transactionRepository;
-        this.transactionMapper = transactionMapper;
-        this.kafkaTemplate = kafkaTemplate;
-        this.walletOperationFactory = walletOperationFactory;
-        this.validations = validations;
-    }
 
 
     /**

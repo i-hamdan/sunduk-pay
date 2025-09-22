@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.EmailService;
 import com.bxb.sunduk_pay.util.EmailMessageUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -16,17 +17,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
     /** JavaMailSender for sending emails. */
     private final JavaMailSender mailSender;
     /** Utility for building email subjects and bodies. */
     private final EmailMessageUtil emailMessageUtil;
 
-    public EmailServiceImpl(final JavaMailSender mailSender,
-                            final EmailMessageUtil emailMessageUtil) {
-        this.mailSender = mailSender;
-        this.emailMessageUtil = emailMessageUtil;
-    }
+
 
     /**
      * Processes a user-related Kafka event and sends an email notification.

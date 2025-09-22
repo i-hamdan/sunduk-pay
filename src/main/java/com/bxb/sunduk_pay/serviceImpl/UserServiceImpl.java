@@ -14,6 +14,7 @@ import com.bxb.sunduk_pay.request.ContactRequest;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ import java.util.UUID;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     /**
      * Repository for user data access.
@@ -50,18 +52,6 @@ public class UserServiceImpl implements UserService {
      * Repository for master wallet data access.
      */
     private final MasterWalletRepository masterWalletRepository;
-
-    public UserServiceImpl(final UserRepository repository,
-                           final UserMapper userMapper,
-                           final KafkaTemplate <String, UserKafkaEvent> kafkaTemplate,
-                           final MainWalletRepository mainWalletRepository,
-                           final MasterWalletRepository masterWalletRepository) {
-        this.userRepository = repository;
-        this.userMapper = userMapper;
-        this.kafkaTemplate = kafkaTemplate;
-        this.mainWalletRepository = mainWalletRepository;
-        this.masterWalletRepository = masterWalletRepository;
-    }
 
 
 

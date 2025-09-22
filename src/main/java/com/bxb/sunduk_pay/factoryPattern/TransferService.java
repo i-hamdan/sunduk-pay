@@ -13,6 +13,7 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class TransferService implements WalletOperation {
 
     /**internal transfer service for handling internal wallet transfers.*/
@@ -32,16 +34,6 @@ public class TransferService implements WalletOperation {
 
     /** Payment service for handling external payments. */
     private final PaymentService paymentService;
-
-
-    public TransferService(final InternalTransferService internalTransferService,
-                           final Validations validations,
-                           final PaymentService paymentService) {
-        this.internalTransferService = internalTransferService;
-        this.validations = validations;
-        this.paymentService = paymentService;
-
-    }
 
     /**
      * Returns the request type handled by this service.
@@ -78,8 +70,10 @@ public class TransferService implements WalletOperation {
             log.debug("Source wallet: {}, Previous balance: {}",
                     sourceWallet, previousSourceWalletBalance);
 
-            WalletWrapper targetWallet = getWallet(mainWallet, mainWalletRequest.getTargetWalletId());
-            Double previousTargetWalletBalance = (targetWallet == null) ? null : targetWallet.getBalance();
+            WalletWrapper targetWallet = getWallet(
+                    mainWallet, mainWalletRequest.getTargetWalletId());
+            Double previousTargetWalletBalance = (
+                    targetWallet == null) ? null : targetWallet.getBalance();
             log.debug("Target wallet: {} , Previous balance: {}",
                     targetWallet, previousTargetWalletBalance);
 
@@ -128,11 +122,12 @@ public class TransferService implements WalletOperation {
     }
 
     /** Handle external incoming transfer */
-    private MainWalletResponse handleExternalIncomingTransfer(final User user,
-                                                              final Double amount,
-                                                              final WalletWrapper targetWallet,
-                                                              final WalletWrapper sourceWallet) {
-        log.info("Creating checkout session for incoming transfer, Amount: {}" ,
+    private MainWalletResponse handleExternalIncomingTransfer(
+            final User user,
+            final Double amount,
+            final WalletWrapper targetWallet,
+            final WalletWrapper sourceWallet) {
+        log.info("Creating checkout session for incoming transfer, Amount: {}",
                 amount);
         return paymentService.createCheckoutSession(user.getUuid(),
                 amount,
@@ -142,10 +137,11 @@ public class TransferService implements WalletOperation {
     }
 
     /** Handle external outgoing transfer */
-    private MainWalletResponse handleExternalOutGoingTransfer(final WalletWrapper sourceSubWallet,
-                                                              final WalletWrapper targetWallet,
-                                                              final Double amount,
-                                                              final User user) {
+    private MainWalletResponse handleExternalOutGoingTransfer(
+            final WalletWrapper sourceSubWallet,
+            final WalletWrapper targetWallet,
+            final Double amount,
+            final User user) {
         log.info("Processing outgoing transfer, Amount: {}",
                 amount);
         validations.validateBalance(sourceSubWallet.getBalance(), amount);
@@ -157,13 +153,14 @@ public class TransferService implements WalletOperation {
     }
 
     /** Handle internal transfer between main<->subWallet subWallet<->subWallet*/
-    public MainWalletResponse handleInternalTransfer(final User user,
-                                                     final MainWallet mainWallet,
-                                                     final Double amount,
-                                                     final WalletWrapper sourceWallet,
-                                                     final WalletWrapper targetWallet,
-                                                     final Double previousSourceWalletBalance,
-                                                     final Double previousTargetWalletBalance) {
+    public MainWalletResponse handleInternalTransfer(
+            final User user,
+            final MainWallet mainWallet,
+            final Double amount,
+            final WalletWrapper sourceWallet,
+            final WalletWrapper targetWallet,
+            final Double previousSourceWalletBalance,
+            final Double previousTargetWalletBalance) {
         return internalTransferService.doInternalTransfer(user,
                 mainWallet,
                 amount,
@@ -174,8 +171,9 @@ public class TransferService implements WalletOperation {
     }
 
     /** Get WalletWrapper for mainWallet or subWallet based on walletId.*/
-    private WalletWrapper getWallet(final MainWallet mainWallet,
-                                    final String walletId) {
+    private WalletWrapper getWallet(
+            final MainWallet mainWallet,
+            final String walletId) {
 
         if (walletId == null) {
             log.warn("walletId is null, returning null");
@@ -187,7 +185,8 @@ public class TransferService implements WalletOperation {
                     walletId);
             return new WalletWrapper(mainWallet);
         }
-        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.",
+        log.debug("Requested wallet ID {} does not match MainWallet. " +
+                        "Validating sub wallet.",
                 walletId);
 
         SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,

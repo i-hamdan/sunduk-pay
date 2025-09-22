@@ -12,6 +12,7 @@ import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.service.CurrencyService;
 import com.bxb.sunduk_pay.util.TimeSeries;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ import java.util.Map;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
     /** CurrencyMapper for mapping entities to DTOs. */
     private final CurrencyMapper mapper;
@@ -43,15 +45,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     /** RestTemplate for making HTTP requests. */
     private final RestTemplate restTemplate;
 
-    public CurrencyServiceImpl(final CurrencyMapper mapper,
-                               final CurrencyRateRepository currencyRateRepository,
-                               final RestTemplate restTemplate) {
-        this.currencyRateRepository = currencyRateRepository;
-        log.debug("Initializing CurrencyServiceImpl with CurrencyMapper " +
-                "and RestTemplate");
-        this.mapper = mapper;
-        this.restTemplate = restTemplate;
-    }
+
 
     /**
      * Converts an amount from one currency to another and

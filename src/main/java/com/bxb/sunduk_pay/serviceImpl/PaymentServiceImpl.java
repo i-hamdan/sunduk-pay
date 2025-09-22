@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import com.stripe.model.checkout.Session;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
     /**stripeService to interact with Stripe API.*/
@@ -26,11 +28,6 @@ public class PaymentServiceImpl implements PaymentService {
     /**failedTxnRecorder to log failed transactions.*/
     private final FailedTxnRecorder failedTxnRecorder;
 
-    public PaymentServiceImpl(final StripeService stripeService,
-                              final FailedTxnRecorder failedTxnRecorder) {
-        this.stripeService = stripeService;
-        this.failedTxnRecorder = failedTxnRecorder;
-    }
 
     /**
      * Creates a Stripe checkout session for a user payment.

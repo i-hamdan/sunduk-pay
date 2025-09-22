@@ -13,6 +13,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.ActionType;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class UpdateService implements WalletOperation {
     /**
      * Repository for accessing MainWallet data.
@@ -43,14 +45,6 @@ public class UpdateService implements WalletOperation {
      * Validations class for various validations.
      */
     private final Validations validations;
-
-    public UpdateService(final MainWalletRepository mainWalletRepository,
-                         final TransactionRepository transactionRepository,
-                         Validations validations) {
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionRepository = transactionRepository;
-        this.validations = validations;
-    }
 
     /**
      * Returns the RequestType handled by this service.
@@ -226,6 +220,4 @@ public class UpdateService implements WalletOperation {
                 mainWalletRequest.getActionType());
         throw new InvalidPayloadException("Please provide a valid ActionType!");
     }
-
-
 }

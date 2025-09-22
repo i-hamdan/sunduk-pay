@@ -11,6 +11,7 @@ import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 /**
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @Log4j2
+@RequiredArgsConstructor
 public class SmsServiceImpl implements SmsService {
     /**
      * Configuration for Twilio API.
@@ -33,14 +35,6 @@ public class SmsServiceImpl implements SmsService {
      */
     private final FallbackEmailUtil fallbackEmailUtil;
 
-
-    public SmsServiceImpl(final TwilioConfig twilioConfig,
-                          final SmsMessageUtil smsMessageUtil,
-                          final FallbackEmailUtil fallbackEmailUtil) {
-        this.twilioConfig = twilioConfig;
-        this.smsMessageUtil = smsMessageUtil;
-        this.fallbackEmailUtil = fallbackEmailUtil;
-    }
 
     /**
      * Initializes Twilio SDK after bean creation.

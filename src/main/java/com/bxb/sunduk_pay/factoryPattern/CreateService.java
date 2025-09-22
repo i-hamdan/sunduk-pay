@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +23,12 @@ import java.util.stream.Collectors;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class CreateService implements WalletOperation {
     /** Dependencies for validations and main wallet repository. */
     private final Validations validations;
     /** Repository for MainWallet persistence. */
     private final MainWalletRepository mainWalletRepository;
-
-    public CreateService(final Validations validations,
-                         final MainWalletRepository mainWalletRepository) {
-        this.validations = validations;
-        this.mainWalletRepository = mainWalletRepository;
-    }
-
 
     /**
      * Returns the RequestType handled by this service.

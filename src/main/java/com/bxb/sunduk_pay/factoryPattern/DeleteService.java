@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -19,17 +20,13 @@ import org.springframework.stereotype.Service;
  */
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class DeleteService implements WalletOperation {
     /** Validations utility for checking user and wallet info. */
     private final Validations validations;
     /** Repository for accessing and modifying main wallet data. */
     private final MainWalletRepository mainWalletRepository;
 
-    public DeleteService(final Validations validations,
-                         final MainWalletRepository mainWalletRepository) {
-        this.validations = validations;
-        this.mainWalletRepository = mainWalletRepository;
-    }
 
     /**
      * Returns the RequestType handled by this service.
@@ -49,7 +46,8 @@ public class DeleteService implements WalletOperation {
      * @throws CannotDeleteWalletException if the sub-wallet balance is not zero
      */
     @Override
-    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
         log.info("Received request to delete SubWallet.");
 
         User user = validations.getUserInfo(mainWalletRequest.getUuid());
