@@ -21,9 +21,14 @@ import java.util.Map;
 public class CurrencyRatesItemProcessor implements
         ItemProcessor<CurrencyPair, CurrencyRates> {
 
+    /** Length of a currency code (e.g., "USD" is 3 characters). */
+    private static final int CURRENCY_CODE_LENGTH = 3;
+
+    /** Base URL for the exchange rate API, injected from application properties. */
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
 
+    /** RestTemplate for making HTTP requests to the exchange rate API. */
     private final RestTemplate restTemplate = new RestTemplate();
 
     /**
@@ -36,33 +41,25 @@ public class CurrencyRatesItemProcessor implements
      */
     @Override
     public CurrencyRates process(final CurrencyPair pair) throws Exception {
-        /** Extracts the 'from' currencies
-         * from the CurrencyPair enum name. */
-        String from = pair.name().substring(0, 3);
-        /** Extracts the 'to' currency from
-         * the CurrencyPair enum name. */
-        String to = pair.name().substring(3);
+        String from = pair.name().substring(0, CURRENCY_CODE_LENGTH);
+        String to = pair.name().substring(CURRENCY_CODE_LENGTH);
         log.info("Processing CurrencyPair: {} -> {}", from, to);
 
-
-        String url = exchangeApiUrl +
-                "/pair" + "/" + from + "/" + to;
+        String url = exchangeApiUrl
+                + "/pair"
+                + "/" + from
+                + "/" + to;
         log.debug("Calling API URL: {}", url);
 
-        /** Calls the external API to fetch the exchange rate. */
-        Map<String, Object> response = restTemplate.getForObject(
-                url, Map.class);
+        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
         if (response == null) {
             log.error("API response was null for pair {} -> {}", from, to);
             return null;
         }
-        /** Extracts the conversion rate from the API response. */
         Double rate = (Double) response.get("conversion_rate");
+
         log.info("Received conversion rate for {} -> {}: {}", from, to, rate);
-        /** Builds and returns a CurrencyRates object
-         * with the fetched exchange rate.
-         */
         CurrencyRates currencyRates = new CurrencyRates();
         currencyRates.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
         currencyRates.setRates(Map.of(pair.name(), rate));

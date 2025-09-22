@@ -45,7 +45,8 @@ public class BatchConfig {
     public Step fetchRatesStep(final JobRepository jobRepository) {
         log.info("Creating Step: fetchRatesStep");
         return new StepBuilder("fetchRatesStep", jobRepository)
-                .<CurrencyPair, CurrencyRates>chunk(CHUNK_SIZE, transactionManager) // Reader output, Processor output
+                .<CurrencyPair, CurrencyRates>chunk(
+                        CHUNK_SIZE, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)

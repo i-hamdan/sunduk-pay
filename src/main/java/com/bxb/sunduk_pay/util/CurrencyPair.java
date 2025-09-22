@@ -93,5 +93,5 @@ public enum CurrencyPair {
 //    INRUSD,
 //    AEDINR,
 //    SARUSD,
- //   CNYSAR;
+    CNYSAR;
 }

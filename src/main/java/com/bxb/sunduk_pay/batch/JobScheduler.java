@@ -40,22 +40,25 @@ public class JobScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     public void runJob() {
         try {
-            log.info(" Scheduler method triggered");
+            log.info("Scheduler method triggered");
 
             JobParameters params = new JobParametersBuilder()
                     .addLong("timestamp",System.currentTimeMillis())
                     .toJobParameters();
 
             log.info(
-                    " Starting job: importExchangeRatesJob with params {}"
-                    ,params);
+                    "Starting job: importExchangeRatesJob with params {}",
+                    params
+            );
             jobLauncher.run(importExchangeRatesJob,params);
 
             log.info(" Job execution triggered successfully.");
 
         } catch (Exception e) {
-            log.error(" Error while running scheduled job: {}"
-                    ,e.getMessage(),e);
+            log.error(" Error while running scheduled job: {}",
+                    e.getMessage(),
+                    e
+            );
         }
     }
 }
