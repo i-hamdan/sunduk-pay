@@ -9,32 +9,33 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-@Service
-@Log4j2
 
 /**
  * Service implementation for sending emails.
  * Handles user activity emails and goal completion notifications.
  */
-
+@Service
+@Log4j2
 public class EmailServiceImpl implements EmailService {
+    /** JavaMailSender for sending emails */
     private final JavaMailSender mailSender;
+    /** Utility for building email subjects and bodies */
     private final EmailMessageUtil emailMessageUtil;
 
-    public EmailServiceImpl(JavaMailSender mailSender, EmailMessageUtil emailMessageUtil) {
+    public EmailServiceImpl(final JavaMailSender mailSender , final EmailMessageUtil emailMessageUtil) {
         this.mailSender = mailSender;
         this.emailMessageUtil = emailMessageUtil;
     }
+
     /**
      * Processes a user-related Kafka event and sends an email notification.
      *
      * @param event the user Kafka event containing email and event details
      */
-
-    public void processEmailEvent(UserKafkaEvent event) {
+    public void processEmailEvent(final UserKafkaEvent event) {
         String subject = emailMessageUtil.buildSubject(event);
         String body = emailMessageUtil.buildBody(event);
-        sendEmail(event.getEmail(), subject, body);
+        sendEmail(event.getEmail() , subject , body);
     }
 
     /**
@@ -43,10 +44,10 @@ public class EmailServiceImpl implements EmailService {
      * @param event the goal completion event containing email and goal details
      */
     @Override
-    public void processGoalCompletionEvent(GoalCompletionEvent event) {
-    String subject= emailMessageUtil.buildGoalSubject(event);
-    String body= emailMessageUtil.buildGoalBody(event);
-    sendEmail(event.getEmail(),subject,body);
+    public void processGoalCompletionEvent(final GoalCompletionEvent event) {
+    String subject = emailMessageUtil.buildGoalSubject(event);
+    String body = emailMessageUtil.buildGoalBody(event);
+    sendEmail(event.getEmail() , subject , body);
     }
 
     /**
@@ -58,8 +59,9 @@ public class EmailServiceImpl implements EmailService {
      * @throws EmailSendingException if the email fails to send
      * @throws EmailSendingException if sending fails
      */
-
-    public void sendEmail(String to, String subject, String body) {
+    public void sendEmail(final String to ,
+                          final String subject ,
+                          final String body) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(to);
@@ -67,11 +69,8 @@ public class EmailServiceImpl implements EmailService {
             message.setText(body);
             mailSender.send(message);
         } catch (Exception e) {
-            log.error("Failed to send email to: {}", to);
+            log.error("Failed to send email to: {}" , to);
             throw new EmailSendingException("Failed to send email to: " + to);
         }
     }
-
-
-
 }

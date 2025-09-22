@@ -20,20 +20,31 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 public class SmsServiceImpl implements SmsService {
+    /**
+     * Configuration for Twilio API.
+     */
     private final TwilioConfig twilioConfig;
+    /**
+     * Utility for building SMS messages.
+     */
     private final SmsMessageUtil smsMessageUtil;
+    /**
+     * Utility for sending fallback emails.
+     */
     private final FallbackEmailUtil fallbackEmailUtil;
 
 
-    public SmsServiceImpl(TwilioConfig twilioConfig, SmsMessageUtil smsMessageUtil, FallbackEmailUtil fallbackEmailUtil) {
+    public SmsServiceImpl(final TwilioConfig twilioConfig ,
+                          final SmsMessageUtil smsMessageUtil ,
+                          final FallbackEmailUtil fallbackEmailUtil) {
         this.twilioConfig = twilioConfig;
         this.smsMessageUtil = smsMessageUtil;
         this.fallbackEmailUtil = fallbackEmailUtil;
     }
+
     /**
      * Initializes Twilio SDK after bean creation.
      */
-
     @PostConstruct
     public void initTwilio() {
         try {
@@ -52,15 +63,15 @@ public class SmsServiceImpl implements SmsService {
      *
      * @param event transaction event
      */
-
     @Override
-    public void processSmsEvent(TransactionEvent event) {
+    public void processSmsEvent(final TransactionEvent event) {
  String message = smsMessageUtil.buildTransactionSms(event);
  try {
      sendSms(event.getPhoneNumber(), message);
-     log.info("SMS sent for Txn ID: {}", event.getTransactionId());
+     log.info("SMS sent for Txn ID: {}" , event.getTransactionId());
  } catch (SmsServiceException e) {
-     log.error("SMS failed for Txn ID {}: {}", event.getTransactionId(), e.getMessage());
+     log.error("SMS failed for Txn ID {}: {}" , event.getTransactionId() ,
+             e.getMessage());
      fallbackEmailUtil.sendFallbackTransactionEmail(event);
  }
 
@@ -72,15 +83,15 @@ public class SmsServiceImpl implements SmsService {
      * @param message message content
      * @throws SmsServiceException if SMS sending fails
      */
-
-    public void sendSms(String to,String message){
+    public void sendSms(final String to,final String message){
         try {
-            Message.creator(new PhoneNumber(to), new PhoneNumber(twilioConfig.getFromNumber()), message).create();
+            Message.creator(new PhoneNumber(to) ,
+                    new PhoneNumber(twilioConfig.getFromNumber()) ,
+                    message).create();
         } catch (Exception e) {
-            log.error("Error while sending SMS to {}: {}", to, e.getMessage());
+            log.error("Error while sending SMS to {}: {}" ,
+                    to , e.getMessage());
             throw new SmsServiceException("Failed to send SMS to: " + to);
         }    }
-
-
 
 }

@@ -30,16 +30,34 @@ import java.util.UUID;
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
+    /**
+     * Repository for user data access.
+     */
     private final UserRepository userRepository;
+    /**
+     * Mapper for converting between User entities and DTOs.
+     */
     private final UserMapper userMapper;
+    /**
+     * Kafka template for sending user events.
+     */
     private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
-private final MainWalletRepository mainWalletRepository;
+    /**
+     * Repository for main wallet data access.
+     */
+    private final MainWalletRepository mainWalletRepository;
+    /**
+     * Repository for master wallet data access.
+     */
     private final MasterWalletRepository masterWalletRepository;
 
-    public UserServiceImpl(UserRepository repository, UserMapper userMapper, KafkaTemplate<String, UserKafkaEvent> kafkaTemplate, MainWalletRepository mainWalletRepository, MasterWalletRepository masterWalletRepository) {
+    public UserServiceImpl(final UserRepository repository ,
+                           final UserMapper userMapper,
+                           final KafkaTemplate <String , UserKafkaEvent> kafkaTemplate ,
+                           final MainWalletRepository mainWalletRepository ,
+                           final MasterWalletRepository masterWalletRepository) {
         this.userRepository = repository;
         this.userMapper = userMapper;
-
         this.kafkaTemplate = kafkaTemplate;
         this.mainWalletRepository = mainWalletRepository;
         this.masterWalletRepository = masterWalletRepository;
@@ -55,11 +73,13 @@ private final MainWalletRepository mainWalletRepository;
      * @return The User object after login or creation.
      */
     @Override
-    public User userLogin(UserLoginResponse response) {
-        Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(response.getEmail());
+    public User userLogin(final UserLoginResponse response) {
+        Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(
+                response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
-            log.info("User not found in DB. Creating new user for email: {}", response.getEmail());
+            log.info("User not found in DB. Creating new user for email: {}" ,
+                    response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
@@ -104,19 +124,21 @@ private final MainWalletRepository mainWalletRepository;
      * @return UserResponse containing updated user details and success message.
      * @throws UserNotFoundException If the userId does not exist in the database.
      */
-
     @Override
     public UserResponse uploadContacts(ContactRequest contactRequest) {
-        log.info("Upload contacts request received for userId: {}", contactRequest.getUserId());
+        log.info("Upload contacts request received for userId: {}" ,
+                contactRequest.getUserId());
 
-        User user = userRepository.findById(contactRequest.getUserId()).orElseThrow(() -> new RuntimeException("User not found for ID: " + contactRequest.getUserId()));
+        User user = userRepository.findById(contactRequest.getUserId()).orElseThrow(() -> new RuntimeException(
+                "User not found for ID: " + contactRequest.getUserId()));
         log.debug("User fetched: {}", user.getUuid());
 
         user.setContacts(contactRequest.getContacts());
-        log.info("Setting {} contacts for userId: {}", contactRequest.getContacts().size(), user.getUuid());
+        log.info("Setting {} contacts for userId: {}" ,
+                contactRequest.getContacts().size(), user.getUuid());
 
         userRepository.save(user);
-        log.info("User with ID: {} successfully updated with contacts", user.getUuid());
+        log.info("User with ID: {} successfully updated with contacts" , user.getUuid());
 
         return UserResponse.builder()
                 .uuid(user.getUuid())

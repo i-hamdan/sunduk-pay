@@ -21,10 +21,13 @@ import java.util.UUID;
 @Service
 @Log4j2
 public class ActivityLogServiceImpl implements ActivityLogService {
+    /** Utility for building activity log messages */
     private final ActivityLogMessageUtil activityLogMessageUtil;
+    /** Repository for persisting user activity logs */
     private final UserActivityLogRepository activityLogRepository;
 
-    public ActivityLogServiceImpl(ActivityLogMessageUtil activityLogMessageUtil, UserActivityLogRepository activityLogRepository) {
+    public ActivityLogServiceImpl(final ActivityLogMessageUtil activityLogMessageUtil ,
+                                  final UserActivityLogRepository activityLogRepository) {
         this.activityLogMessageUtil = activityLogMessageUtil;
         this.activityLogRepository = activityLogRepository;
     }
@@ -37,7 +40,7 @@ public class ActivityLogServiceImpl implements ActivityLogService {
      * @throws UserActivityLogException if saving the log entry fails
      */
     @Override
-    public void processUserActivity(UserKafkaEvent event) {
+    public void processUserActivity(final UserKafkaEvent event) {
         try {
             String description = activityLogMessageUtil.buildDescription(event);
 
@@ -55,8 +58,10 @@ public class ActivityLogServiceImpl implements ActivityLogService {
             log.info("Saved user activity log: {}", activityLog);
 
         } catch (Exception e) {
-            log.error("Error saving user activity log for email: {}", event.getEmail(), e);
-            throw new UserActivityLogException("Failed to process user activity log for: " + event.getEmail());
+            log.error("Error saving user activity log for email: {}" ,
+                    event.getEmail(), e);
+            throw new UserActivityLogException("Failed to process user activity log for: " +
+                    event.getEmail());
         }
     }
 
