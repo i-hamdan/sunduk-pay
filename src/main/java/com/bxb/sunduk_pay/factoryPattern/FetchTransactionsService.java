@@ -22,7 +22,9 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 public class FetchTransactionsService implements WalletOperation {
+    /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
+    /** Mapper to convert transaction entities to response DTOs. **/
     private final TransactionMapper transactionMapper;
 
     public FetchTransactionsService(final Validations validations,

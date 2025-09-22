@@ -21,7 +21,6 @@ import java.util.Map;
 public class CurrencyRatesItemProcessor implements
         ItemProcessor<CurrencyPair, CurrencyRates> {
 
-
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
 
@@ -36,7 +35,7 @@ public class CurrencyRatesItemProcessor implements
      * @throws Exception if an error occurs during processing
      */
     @Override
-    public CurrencyRates process(CurrencyPair pair) throws Exception {
+    public CurrencyRates process( final CurrencyPair pair) throws Exception {
         String from = pair.name().substring(0, 3);
         String to = pair.name().substring(3);
         log.info("Processing CurrencyPair: {} -> {}", from, to);
@@ -61,7 +60,5 @@ public class CurrencyRatesItemProcessor implements
         currencyRates.setRates(Map.of(pair.name(), rate));
         log.debug("Built ExchangeRate object: {}", currencyRates);
         return currencyRates;
-
-
     }
 }
