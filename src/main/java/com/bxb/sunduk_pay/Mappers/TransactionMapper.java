@@ -17,8 +17,7 @@ public interface TransactionMapper {
      * @param transaction the Transaction entity
      * @return the corresponding TransactionResponse
      */
-    TransactionResponse toTransactionResponse
-    (final Transaction transaction);
+    TransactionResponse toTransactionResponse(Transaction transaction);
 
     /**
      * Converts a list of Transaction entities to a list of TransactionResponse DTOs.
@@ -26,8 +25,7 @@ public interface TransactionMapper {
      * @param transactions the list of Transaction entities
      * @return the corresponding list of TransactionResponse DTOs
      */
-    List<TransactionResponse> toTransactionsResponse
-    (final List<Transaction> transactions);
+    List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions);
 
     /**
      * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
@@ -35,6 +33,5 @@ public interface TransactionMapper {
      * @param transaction the Transaction entity
      * @return the corresponding TransactionEvent
      */
-    TransactionEvent toTransactionEvent
-    ( final Transaction transaction);
+    TransactionEvent toTransactionEvent(Transaction transaction);
 }

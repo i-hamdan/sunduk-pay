@@ -1,10 +1,13 @@
 package com.bxb.sunduk_pay.Mappers;
 
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
 import org.springframework.stereotype.Component;
+
+import java.lang.module.ResolutionException;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
@@ -29,7 +32,7 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * @param yearlyRates list of yearly currency rates responses
      * @param monthlyRates list of monthly currency rates responses
      * @param weeklyRates list of weekly currency rates responses
-     * @return a populated CurrencyResponse object
+     * @return a populated CurrencyResponse object.
      */
 
     @Override
@@ -57,11 +60,12 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * @param currencyRates the list of CurrencyRates to convert
      * @param rateKey the key to extract the rate value
      * @param timeSeries the time series granularity (WEEK, MONTH, etc.)
-     * @return a list of CurrencyRatesResponse objects
+     * @return a list of CurrencyRatesResponse objects.
      */
-    public List<CurrencyRatesResponse> toCurrencyRatesResponses(final List<CurrencyRates> currencyRates,
-                                                                final String rateKey,
-                                                                final TimeSeries timeSeries) {
+    public List<CurrencyRatesResponse> toCurrencyRatesResponses(
+            final List<CurrencyRates> currencyRates,
+            final String rateKey,
+            final TimeSeries timeSeries) {
         List<CurrencyRatesResponse> list = new ArrayList<>();
         for (CurrencyRates rates : currencyRates) {
             list.add(toCurrencyRatesResponse(rates, rateKey, timeSeries));
@@ -75,47 +79,54 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * @param currencyRates the CurrencyRates object to convert
      * @param rateKey the key to extract the rate value
      * @param timeSeries the time series granularity
-     * @return a CurrencyRatesResponse object
+     * @return a CurrencyRatesResponse object.
      */
-    private CurrencyRatesResponse toCurrencyRatesResponse(final CurrencyRates currencyRates,
-                                                           final String rateKey,
-                                                          final TimeSeries timeSeries) {
+    private CurrencyRatesResponse
+    toCurrencyRatesResponse(
+    final CurrencyRates currencyRates,
+    final String rateKey,
+    final TimeSeries timeSeries) {
+
         CurrencyRatesResponse currencyRatesResponse = new CurrencyRatesResponse();
         currencyRatesResponse.setDate(currencyRates.getDate());
-        Double value = currencyRates.getRates().get(rateKey); // sirf ek key ka value nikalo
+        Double value = currencyRates.getRates().get(rateKey);
         currencyRatesResponse.setValue(value);
         switch (timeSeries) {
             case WEEK -> {
-                // Sirf day name (MONDAY, TUESDAY ...)
-                //String day = currencyRates.getDate().getDayOfWeek().toString().substring(0,3);
-                String day = currencyRates.getDate().format(DateTimeFormatter.ofPattern("dd MMM"));
-                currencyRatesResponse.setDay(day);
+             String day = currencyRates.getDate()
+            .format(DateTimeFormatter.ofPattern("dd MMM"));
+            currencyRatesResponse.setDay(day);
             }
             case MONTH -> {
-                // Format: 25.Aug
-                String formatted = currencyRates.getDate().format(DateTimeFormatter.ofPattern("dd MMM"));
+                String formatted = currencyRates.getDate()
+               .format(DateTimeFormatter.ofPattern("dd MMM"));
                 currencyRatesResponse.setDayMonth(formatted);
             }
+            default -> throw new ResourceNotFoundException
+                    ("Unsupported TimeSeries: " + timeSeries);
 
         }
         return currencyRatesResponse;
     }
     /**
-     * Calculates monthly average rates and maps them to CurrencyRatesResponse objects.
-     *
+     * Calculates monthly average rates and maps them.
+     * to CurrencyRatesResponse objects
      * @param currencyRates the list of CurrencyRates to process
      * @param rateKey the key to extract the rate value
-     * @return a list of CurrencyRatesResponse objects with monthly averages
+     * @return a list of CurrencyRatesResponse objects with monthly averages.
      */
 
-    public List<CurrencyRatesResponse> toMonthlyAverageResponses(final List<CurrencyRates> currencyRates,
-                                                                 final String rateKey) {
+    public List<CurrencyRatesResponse> toMonthlyAverageResponses(
+     final List<CurrencyRates> currencyRates,
+    final String rateKey) {
+
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
                 .filter(r -> r.getRates().get(rateKey) != null)
                 .collect(Collectors.groupingBy(
                         r -> YearMonth.from(r.getDate()),
                         TreeMap::new,
-                        Collectors.averagingDouble(r -> r.getRates().get(rateKey))
+                        Collectors.averagingDouble(
+                                r -> r.getRates().get(rateKey))
                 ));
 
         List<CurrencyRatesResponse> list = new ArrayList<>();

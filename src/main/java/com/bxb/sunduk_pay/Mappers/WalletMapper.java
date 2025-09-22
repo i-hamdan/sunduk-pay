@@ -22,7 +22,7 @@ public interface WalletMapper {
      * @return a MainWalletResponse representing the main wallet
      *         and its sub-wallets
      */
-     MainWalletResponse toWalletResponse( final MainWallet wallet,
-                                          final List<SubWallet> subWallets);
+     MainWalletResponse toWalletResponse(MainWallet wallet,
+                                         List<SubWallet> subWallets);
 }
 

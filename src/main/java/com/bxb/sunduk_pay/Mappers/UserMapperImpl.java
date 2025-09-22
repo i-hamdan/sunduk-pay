@@ -19,8 +19,8 @@ import java.util.List;
 public class UserMapperImpl implements UserMapper {
     /**
      *
-     * @param user the OidcUser object from OAuth2 authentication
-     * @return
+     * @param user the OidcUser object from OAuth2 authentication.
+     * @return a UserLoginResponse containing user info.
      */
     public UserLoginResponse getUser(final OidcUser user) {
 
@@ -57,18 +57,17 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         UserResponse response = new UserResponse();
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
-//        response.setPhoneNumber(user.getPhoneNumber());
         response.setUuid(user.getUuid());
-//        response.setGender(user.getGender());
         return response;
     }
+
 /**
      * Converts a list of User entities to a list of UserResponse DTOs.
      *
      * @param users the list of User entities to convert
      * @return the corresponding list of UserResponse DTOs
      */
-    public List<UserResponse> toUserResponseList( final List<User> users){
+    public List<UserResponse> toUserResponseList(final List<User> users){
         List<UserResponse> responses = new ArrayList<>(users.size());
         for (User user : users){
             responses.add(toUserResponse(user));
@@ -82,7 +81,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param eventType the type of event (e.g., "USER_CREATED", "USER_UPDATED")
      * @return the corresponding UserKafkaEvent
      */
-    public UserKafkaEvent toKafkaEvent( final User user, final String eventType){
+    public UserKafkaEvent toKafkaEvent(final User user, final String eventType){
         UserKafkaEvent kafkaEvent = new UserKafkaEvent();
         kafkaEvent.setEmail(user.getEmail());
         kafkaEvent.setUuid(user.getUuid());
