@@ -28,7 +28,10 @@ import java.net.URLEncoder;
 
 @Log4j2
 @RestController
+<<<<<<< Updated upstream
 @RequiredArgsConstructor
+=======
+>>>>>>> Stashed changes
 // this needs to remove once we moved to domain
 public class SundukController {
     /**
@@ -41,6 +44,22 @@ public class SundukController {
      */
     private final UserMapper userMapper;
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Constructor for SundukController.
+     *
+     * @param service UserService for user operations
+     * @param userMapper UserMapper for mapping user data
+     */
+    public SundukController(final UserService service,
+                            final UserMapper userMapper) {
+        this.service = service;
+
+        this.userMapper = userMapper;
+    }
+
+>>>>>>> Stashed changes
 
     /**
      * Handles custom login via OIDC.
@@ -50,6 +69,7 @@ public class SundukController {
      * @return user login response
      * @throws IOException if redirect fails
      */
+<<<<<<< Updated upstream
     @GetMapping(value = "/custom-login", produces = MediaType
             .APPLICATION_JSON_VALUE)
     public ResponseEntity<UserLoginResponse> login(final HttpSession session,
@@ -57,11 +77,19 @@ public class SundukController {
                                                    final OidcUser user, final
                                                    HttpServletResponse
                                 httpServletResponse) throws IOException {
+=======
+    @GetMapping(value = "/custom-login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserLoginResponse> login(final HttpSession session,
+                                                   @AuthenticationPrincipal final OidcUser user, final
+                                                   HttpServletResponse
+                                                               httpServletResponse) throws IOException {
+>>>>>>> Stashed changes
         UserLoginResponse response = userMapper.getUser(user);
         log.info("Session Id : " + session.getId() + " By: "
                 + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
+<<<<<<< Updated upstream
         String deepLink = "islamicbank://login-success?sessionId = "
                 + session.getId()
                 + "&email = " + URLEncoder.encode(user.getEmail(),
@@ -70,6 +98,12 @@ public class SundukController {
                 "UTF-8")
                 + "&uuid = " + URLEncoder.encode(dbUser.getUuid(),
                 "UTF-8");
+=======
+        String deepLink = "islamicbank://login-success?sessionId = " + session.getId()
+                + "&email = " + URLEncoder.encode(user.getEmail(), "UTF-8")
+                + "&fullName = " + URLEncoder.encode(user.getFullName(), "UTF-8")
+                + "&uuid = " + URLEncoder.encode(dbUser.getUuid(),"UTF-8");
+>>>>>>> Stashed changes
 
         log.info("Redirecting to deep link:{}", deepLink);
         httpServletResponse.sendRedirect(deepLink);
@@ -83,12 +117,19 @@ public class SundukController {
      * @param contactRequest contact request payload
      * @return user response after upload
      */
+<<<<<<< Updated upstream
     @PostMapping("/upload-contact")
     public UserResponse uploadContacts(@RequestBody final
                               ContactRequest contactRequest) {
         return service.uploadContacts(contactRequest);
     }
 
+=======
+@PostMapping("/upload-contact")
+public UserResponse uploadContacts(@RequestBody final ContactRequest contactRequest) {
+    return service.uploadContacts(contactRequest);
+}
+>>>>>>> Stashed changes
     /**
      * Logs out the current user by invalidating the session.
      *

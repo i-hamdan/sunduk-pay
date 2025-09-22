@@ -31,12 +31,20 @@ public class CurrencyController {
      */
     @PostMapping("/convert")
     public ResponseEntity<CurrencyResponse> convert(@RequestBody final
+<<<<<<< Updated upstream
                                     CurrencyRequest currencyRequest) {
         log.info("Currency conversion API called: " +
                         "from = {}, to = {}," +
                         " amount = {}",
                 currencyRequest.getFromCurrency(),
                 currencyRequest.getToCurrency(),
+=======
+                                                        CurrencyRequest
+                                                                currencyRequest) {
+        log.info("Currency conversion API called: from = {}, to = {}," +
+                        " amount = {}",
+                currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(),
+>>>>>>> Stashed changes
                 currencyRequest.getAmount());
         CurrencyResponse response = currencyService.convertCurrency
                 (currencyRequest);

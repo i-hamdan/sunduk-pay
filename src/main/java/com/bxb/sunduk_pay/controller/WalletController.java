@@ -41,6 +41,25 @@ public class WalletController {
      */
     private final WalletService walletService;
 
+<<<<<<< Updated upstream
+=======
+    /**
+     * Constructor for dependency injection.
+     *
+     * @param walletFactory factory for wallet operations
+     * @param walletService service for wallet business logic
+     */
+
+    /** Cookie max age for Stripe checkout URL in seconds (5 minutes).
+     */
+    private static final int STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS = 300;
+
+    public WalletController(final WalletOperationFactory walletFactory,
+                           final WalletService walletService) {
+        this.walletFactory = walletFactory;
+        this.walletService = walletService;
+    }
+>>>>>>> Stashed changes
 
     /** Cookie max age for Stripe checkout URL in seconds (5 minutes).
      */
@@ -92,11 +111,19 @@ public class WalletController {
      * @return main wallet response
      */
     @PostMapping("/wallet")
+<<<<<<< Updated upstream
     public ResponseEntity<MainWalletResponse> walletApi(
                                                 @RequestBody
                                                final MainWalletRequest
                                                mainWalletRequest,
                                       final HttpServletResponse response) {
+=======
+    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody
+                                                            final MainWalletRequest
+                                                                    mainWalletRequest,
+                                                        final
+                                                        HttpServletResponse response) {
+>>>>>>> Stashed changes
 
         MainWalletResponse walletResponse = walletService.walletCrud(
                                                         mainWalletRequest);

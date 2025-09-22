@@ -31,6 +31,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class StripeWebhookController {
 
+<<<<<<< Updated upstream
     /** Services for wallet operations and recording failed transactions. */
     private final WalletService walletService;
 
@@ -38,6 +39,22 @@ public class StripeWebhookController {
     private final FailedTxnRecorder failedTxnRecorder;
 
     /** Stripe webhook endpoint secret for signature verification. */
+=======
+    /** Services for wallet operations and recording failed transactions */
+    private final WalletService walletService;
+
+    /** Service to record failed transactions */
+    private final FailedTxnRecorder failedTxnRecorder;
+
+    /** Constructor for dependency injection */
+    public StripeWebhookController(final WalletService walletService,
+                                  final FailedTxnRecorder failedTxnRecorder) {
+        this.walletService = walletService;
+        this.failedTxnRecorder = failedTxnRecorder;
+    }
+
+    /** Stripe webhook endpoint secret for signature verification */
+>>>>>>> Stashed changes
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
@@ -49,8 +66,12 @@ public class StripeWebhookController {
      * @throws IOException if reading the request payload fails
      */
     @PostMapping("/webhook")
+<<<<<<< Updated upstream
     public MainWalletResponse handleStripeEvent(final
                             HttpServletRequest request) throws IOException {
+=======
+    public MainWalletResponse handleStripeEvent(final HttpServletRequest request) throws IOException {
+>>>>>>> Stashed changes
         // --- read payload ---
         String payload;
         String sigHeader = request.getHeader("Stripe-Signature");
@@ -95,6 +116,7 @@ public class StripeWebhookController {
                                 "sessionId={}", session.getId());
 
                         MainWalletRequest requestObj = new MainWalletRequest();
+<<<<<<< Updated upstream
                         requestObj.setUuid(
                                 session.getMetadata().get("userId"));
                         requestObj.setAmount(
@@ -105,6 +127,14 @@ public class StripeWebhookController {
                                 session.getMetadata().get("sourceWallet"));
                         requestObj.setTargetWalletId(
                                 session.getMetadata().get("targetWallet"));
+=======
+                        requestObj.setUuid(session.getMetadata().get("userId"));
+                        requestObj.setAmount(session.getAmountTotal() / 100.0);
+                        requestObj.setTransactionType(TransactionType.valueOf(
+                                session.getMetadata().get("type")));
+                        requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
+                        requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
+>>>>>>> Stashed changes
                         return failedTxnRecorder.recordFailedTxn(requestObj);
                     }
                     break;
@@ -130,8 +160,12 @@ public class StripeWebhookController {
      * @param session Stripe event object
      * @return response after processing payment
      */
+<<<<<<< Updated upstream
     private MainWalletResponse handleCompletedSession(
             final Session session) {
+=======
+    private MainWalletResponse handleCompletedSession(final Session session) {
+>>>>>>> Stashed changes
         String userId = session.getMetadata().get("userId");
         TransactionType transactionType = TransactionType.valueOf(
                 session.getMetadata().get("type").toUpperCase()
