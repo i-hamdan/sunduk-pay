@@ -9,7 +9,7 @@ package com.bxb.sunduk_pay.exception;
  * describing the cause of the failure.
  * </p>
  */
-public class CannotCreateWalletException extends RuntimeException{
+public class CannotCreateWalletException extends RuntimeException {
     /**
      * Constructs a new {@code CannotCreateWalletException} with the
      * specified detail message.

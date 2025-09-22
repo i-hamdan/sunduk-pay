@@ -13,7 +13,8 @@ public class CannotDeleteWalletException extends RuntimeException {
      * Constructs a new {@code CannotDeleteWalletException} with the specified
      * detail message.
      *
-     * @param message the detail message explaining why the wallet could not be deleted
+     * @param message the detail message explaining why the wallet could not
+     *               be deleted
      */
     public CannotDeleteWalletException(final String message) {
         super(message);

@@ -30,8 +30,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = CannotCreateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse
-    handleCannotCreateWalletException(final CannotCreateWalletException e,
-                                                           HttpServletRequest request) {
+    handleCannotCreateWalletException(final
+                                      CannotCreateWalletException e,
+                                      final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
@@ -47,11 +48,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = TransactionNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleTransactionNotFoundException(final TransactionNotFoundException e,
-                                                            final HttpServletRequest request) {
-        return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
-                e.getMessage(), request.getRequestURI());
+    public ErrorResponse handleTransactionNotFoundException(final
+                                        TransactionNotFoundException e,
+                                        final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                                    HttpStatus.NOT_FOUND.value(),
+                                     HttpStatus.NOT_FOUND.getReasonPhrase(),
+                                        e.getMessage(), request.getRequestURI());
     }
 
     /**
@@ -65,7 +68,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e,
                                                      final HttpServletRequest request) {
-        return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
     }
 
     /**
@@ -77,8 +82,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = WalletNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleWalletNotFoundException(final WalletNotFoundException e,
-                                                       final HttpServletRequest request) {
+    public ErrorResponse handleWalletNotFoundException(final
+                                               WalletNotFoundException e,
+                                               final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
@@ -93,8 +99,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = InsufficientBalanceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInsufficientBalanceException(final InsufficientBalanceException e,
-                                                           final HttpServletRequest request) {
+    public ErrorResponse handleInsufficientBalanceException(final
+                                                 InsufficientBalanceException e,
+                                                 final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
@@ -109,10 +116,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleResourceNotFoundException(final ResourceNotFoundException e
-            , final HttpServletRequest request){
+    public ErrorResponse handleResourceNotFoundException(final
+                                          ResourceNotFoundException e
+                                        , final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.NOT_FOUND.value(),HttpStatus.NOT_FOUND.getReasonPhrase(),
+                HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(),
                 e.getMessage(),request.getRequestURI());
     }
     /**
@@ -125,7 +133,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = InvalidSessionException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleInvalidSessionException(final InvalidSessionException e,
-                                                       final HttpServletRequest request){
+                                        final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
                 e.getMessage(),
@@ -141,8 +149,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomExchangeRateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse CustomExchangeRateException(final CustomExchangeRateException e,
-                                                    final HttpServletRequest request){
+    public ErrorResponse CustomExchangeRateException(final
+                                      CustomExchangeRateException e,
+                                      final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
@@ -157,9 +166,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NullAmountException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse invalidAmount(final NullAmountException e, final HttpServletRequest request){
+    public ErrorResponse invalidAmount(final NullAmountException e,
+                                       final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HttpStatus.BAD_REQUEST.getReasonPhrase(), e.getMessage(),
+                                                request.getRequestURI());
     }
 
     /**
@@ -171,10 +182,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MaxSubWalletsExceededException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMaxSubWalletsExceededException(final MaxSubWalletsExceededException e,
-                                                              final HttpServletRequest request){
+    public ErrorResponse handleMaxSubWalletsExceededException(final
+                                           MaxSubWalletsExceededException e,
+                                           final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 e.getMessage(),request.getRequestURI());
     }
 
@@ -203,9 +216,11 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(TransactionProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleTransactionProcessingException(final TransactionProcessingException e,
-                                                             final HttpServletRequest request){
-        return new ErrorResponse(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+    public ErrorResponse handleTransactionProcessingException(final
+                                          TransactionProcessingException e,
+                                          final HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 e.getMessage(),request.getRequestURI());
     }
@@ -219,8 +234,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(StripeSessionException.class)
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    public ErrorResponse handleStripeSessionException(final StripeSessionException e,
-                                                     final HttpServletRequest request){
+    public ErrorResponse handleStripeSessionException(final
+                                         StripeSessionException e,
+                                         final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.BAD_GATEWAY.value(),
                 HttpStatus.BAD_GATEWAY.getReasonPhrase(),
@@ -236,8 +252,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InvalidPayloadException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidPayloadException(final InvalidPayloadException e,
-                                                      final HttpServletRequest request){
+    public ErrorResponse handleInvalidPayloadException(final
+                                                  InvalidPayloadException e,
+                                                  final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
@@ -253,8 +270,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CannotUpdateWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleCannotUpdateWalletException(final CannotUpdateWalletException e,
-                                                          final HttpServletRequest request){
+    public ErrorResponse handleCannotUpdateWalletException(final
+                                           CannotUpdateWalletException e,
+                                           final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
@@ -271,10 +289,12 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CannotDeleteWalletException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleCannotDeleteWalletException(final CannotDeleteWalletException e,
-                                                          final HttpServletRequest request){
+    public ErrorResponse handleCannotDeleteWalletException(final
+                                          CannotDeleteWalletException e,
+                                         final HttpServletRequest request){
         return new ErrorResponse(LocalDateTime.now(), HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(), e.getMessage(), request.getRequestURI());
+                HttpStatus.FORBIDDEN.getReasonPhrase(), e.getMessage(),
+                                                        request.getRequestURI());
     }
 
     /**
@@ -286,8 +306,9 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleHttpMessageNotReadable(final HttpMessageNotReadableException ex,
-                                                     final HttpServletRequest request) {
+    public ErrorResponse handleHttpMessageNotReadable(final
+                                      HttpMessageNotReadableException ex,
+                                      final HttpServletRequest request) {
         Throwable cause = ex.getCause();
 
         String message = "Invalid request payload.";

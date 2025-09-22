@@ -31,13 +31,15 @@ public class CurrencyController {
      */
     @PostMapping("/convert")
     public ResponseEntity<CurrencyResponse> convert(@RequestBody final
-                                                        CurrencyRequest
-                                                                currencyRequest) {
-        log.info("Currency conversion API called: from = {}, to = {}," +
+                                    CurrencyRequest currencyRequest) {
+        log.info("Currency conversion API called: " +
+                        "from = {}, to = {}," +
                         " amount = {}",
-                currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(),
+                currencyRequest.getFromCurrency(),
+                currencyRequest.getToCurrency(),
                 currencyRequest.getAmount());
-        CurrencyResponse response = currencyService.convertCurrency(currencyRequest);
+        CurrencyResponse response = currencyService.convertCurrency
+                (currencyRequest);
         log.debug("Conversion successful. Response: {}", response);
         return ResponseEntity.ok(response);
     }
