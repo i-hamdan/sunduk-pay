@@ -47,7 +47,6 @@ public class TransferService implements WalletOperation {
 
     /**
      * Performs a money transfer based on source and target wallets.
-     *
      * @param mainWalletRequest request containing source
      *                          , target, amount, and method
      * @return MainWalletResponse with transfer result
@@ -59,7 +58,7 @@ public class TransferService implements WalletOperation {
             log.info("Performing transfer request for UUID: {}, Request: {}",
                     mainWalletRequest.getUuid(), mainWalletRequest);
 
-            User user = validations.getUserInfo (mainWalletRequest.getUuid());
+            User user = validations.getUserInfo(mainWalletRequest.getUuid());
             log.debug("Fetched user: {}", user);
 
             MainWallet mainWallet = validations.getMainWalletInfo(
@@ -95,8 +94,7 @@ public class TransferService implements WalletOperation {
                         targetWallet,
                         previousSourceWalletBalance,
                         previousTargetWalletBalance);
-            } else if (sourceExists && !targetExists)
-            {
+            } else if (sourceExists && !targetExists) {
                 log.info("Processing external outgoing transfer");
 
                 return handleExternalOutGoingTransfer(sourceWallet,
@@ -145,12 +143,13 @@ public class TransferService implements WalletOperation {
                 sourceWallet);
     }
 
-    /** Handle external outgoing transfer
+    /** Handle external outgoing transfer.
      @param sourceSubWallet the wallet from which funds are sent,
         @param targetWallet the wallet receiving the
         funds (can be null),
         @param amount the amount to be transferred,
         @param user the user initiating the transfer
+        @return MainWalletResponse with transfer result
      */
     private MainWalletResponse handleExternalOutGoingTransfer(
             final WalletWrapper sourceSubWallet,
@@ -197,8 +196,7 @@ public class TransferService implements WalletOperation {
                 previousTargetWalletBalance);
     }
 
-    /** Get WalletWrapper for mainWallet or
-     subWallet based on walletId.
+    /** Get WalletWrapper for mainWallet or subWallet based on walletId.
      @param mainWallet the main wallet containing sub-wallets,
         @param walletId the ID of the wallet to retrieve
      @return WalletWrapper for the specified walletId,
@@ -218,8 +216,8 @@ public class TransferService implements WalletOperation {
                     walletId);
             return new WalletWrapper(mainWallet);
         }
-        log.debug("Requested wallet ID {} does not match MainWallet. " +
-                        "Validating sub wallet.",
+        log.debug("Requested wallet ID {} does not match MainWallet. "
+                        + "Validating sub wallet.",
                 walletId);
 
         SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,
@@ -227,8 +225,8 @@ public class TransferService implements WalletOperation {
         log.debug("Returning sub wallet wrapper for wallet ID {}",
                 walletId);
         if (subWallet != null) {
-            log.debug("SubWallet found for wallet ID {}." +
-                    " Returning SubWallet wrapper.",
+            log.debug("SubWallet found for wallet ID {}."
+                            + " Returning SubWallet wrapper.",
                     walletId);
             return new WalletWrapper(subWallet);
         } else {
@@ -238,3 +236,4 @@ public class TransferService implements WalletOperation {
         }
     }
 }
+
