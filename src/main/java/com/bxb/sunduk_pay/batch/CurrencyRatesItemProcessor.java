@@ -32,29 +32,37 @@ public class CurrencyRatesItemProcessor implements
      *
      * @param pair the CurrencyPair to process
      * @return a CurrencyRates object containing the exchange rate
-     * @throws Exception if an error occurs during processing
+     * @throws Exception if an error occurs during processing.
      */
     @Override
-    public CurrencyRates process( final CurrencyPair pair) throws Exception {
+    public CurrencyRates process(final CurrencyPair pair) throws Exception {
+        /** Extracts the 'from' currencies
+         * from the CurrencyPair enum name. */
         String from = pair.name().substring(0, 3);
+        /** Extracts the 'to' currency from
+         * the CurrencyPair enum name. */
         String to = pair.name().substring(3);
         log.info("Processing CurrencyPair: {} -> {}", from, to);
 
 
-        String url = exchangeApiUrl + "/pair" + "/" + from + "/" + to;
-
+        String url = exchangeApiUrl +
+                "/pair" + "/" + from + "/" + to;
         log.debug("Calling API URL: {}", url);
 
-        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+        /** Calls the external API to fetch the exchange rate. */
+        Map<String, Object> response = restTemplate.getForObject(
+                url, Map.class);
 
         if (response == null) {
             log.error("API response was null for pair {} -> {}", from, to);
             return null;
         }
-
+        /** Extracts the conversion rate from the API response. */
         Double rate = (Double) response.get("conversion_rate");
         log.info("Received conversion rate for {} -> {}: {}", from, to, rate);
-
+        /** Builds and returns a CurrencyRates object
+         * with the fetched exchange rate.
+         */
         CurrencyRates currencyRates = new CurrencyRates();
         currencyRates.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
         currencyRates.setRates(Map.of(pair.name(), rate));

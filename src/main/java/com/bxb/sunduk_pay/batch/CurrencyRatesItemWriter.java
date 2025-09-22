@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.repository.CurrencyRateRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
@@ -19,14 +20,10 @@ import java.util.Map;
  */
 @Component
 @Log4j2
+@RequiredArgsConstructor
 public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
 /** Repository for saving CurrencyRates to MongoDB. */
     private final CurrencyRateRepository currencyRateRepository;
-
-    public CurrencyRatesItemWriter( final CurrencyRateRepository currencyRateRepository) {
-        this.currencyRateRepository = currencyRateRepository;
-    }
-
     /**
      * Writes a chunk of CurrencyRates
      * items by merging them into a
@@ -39,16 +36,15 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
         Map<String, Double> allRates = new HashMap<>();
         CurrencyRates merged = new CurrencyRates();
         merged.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
-        log.info("Merging {} ExchangeRate items into a single document."
-                , chunk.size());
+        log.info("Merging {} ExchangeRate items into a single document.",
+                chunk.size());
         for (CurrencyRates rate : chunk.getItems()) {
             allRates.putAll(rate.getRates());
         }
         merged.setRates(allRates);
         currencyRateRepository.save(merged); // ek hi document save hoga
         log.info(" Saved merged  rates to MongoDB. Total pairs: {} "
-                , allRates.size());
-
+                ,allRates.size());
     }
 }
 

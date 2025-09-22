@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.batch;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -13,18 +14,12 @@ import org.springframework.stereotype.Component;
  */
 @Log4j2
 @Component
-
+@RequiredArgsConstructor
 public class JobScheduler {
-    /** Job launcher to run batch jobs */
+    /** Job launcher to run batch jobs. */
     private final JobLauncher jobLauncher;
-    /** Job to import exchange rates */
+    /** Job to import exchange rates. */
     private final Job importExchangeRatesJob;
-
-    public JobScheduler( final JobLauncher jobLauncher, final Job importExchangeRatesJob) {
-        this.jobLauncher = jobLauncher;
-        this.importExchangeRatesJob = importExchangeRatesJob;
-    }
-
     /**
      * Executes the scheduled job.
      * <p>
@@ -48,19 +43,20 @@ public class JobScheduler {
             log.info(" Scheduler method triggered");
 
             JobParameters params = new JobParametersBuilder()
-                    .addLong("timestamp", System.currentTimeMillis())
+                    .addLong("timestamp",System.currentTimeMillis())
                     .toJobParameters();
 
             log.info(
                     " Starting job: importExchangeRatesJob with params {}"
-                    , params);
-            jobLauncher.run(importExchangeRatesJob, params);
+                    ,params);
+            jobLauncher.run(importExchangeRatesJob,params);
 
             log.info(" Job execution triggered successfully.");
 
         } catch (Exception e) {
             log.error(" Error while running scheduled job: {}"
-                    , e.getMessage(), e);
+                    ,e.getMessage(),e);
         }
     }
 }
+
