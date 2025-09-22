@@ -8,14 +8,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class NullAmountException extends RuntimeException {
-
-    /**
-     * Constructs a new {@code NullAmountException} with the specified
-     * detail message.
-     *
-     * @param message the detail message explaining why the amount is null
-     */
-    public NullAmountException(final String message) {
+    public NullAmountException(String message) {
         super(message);
     }
 }

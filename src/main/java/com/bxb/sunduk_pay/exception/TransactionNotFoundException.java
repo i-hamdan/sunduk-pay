@@ -8,13 +8,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class TransactionNotFoundException extends RuntimeException {
-
-    /**
-     * Constructs a new TransactionNotFoundException with the specified detail message.
-     *
-     * @param message the detail message explaining the reason for the exception
-     */
-    public TransactionNotFoundException(final String message) {
+    public TransactionNotFoundException(String message) {
         super(message);
     }
 }

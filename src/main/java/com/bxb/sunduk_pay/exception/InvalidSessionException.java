@@ -8,13 +8,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class InvalidSessionException extends RuntimeException {
-    /**
-     * Constructs a new {@code InvalidSessionException} with the specified
-     * detail message.
-     *
-     * @param message the detail message explaining why the session is invalid
-     */
-    public InvalidSessionException(final String message) {
+    public InvalidSessionException(String message) {
         super(message);
     }
 }

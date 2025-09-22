@@ -6,7 +6,6 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,6 @@ import java.io.IOException;
 
 @Log4j2
 @RestController
-@RequiredArgsConstructor
 public class WalletController {
 
     /**
@@ -41,8 +39,6 @@ public class WalletController {
      */
     private final WalletService walletService;
 
-<<<<<<< Updated upstream
-=======
     /**
      * Constructor for dependency injection.
      *
@@ -59,12 +55,7 @@ public class WalletController {
         this.walletFactory = walletFactory;
         this.walletService = walletService;
     }
->>>>>>> Stashed changes
 
-    /** Cookie max age for Stripe checkout URL in seconds (5 minutes).
-     */
-    private static final int
-            STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS = 300;
 
     /**
      * Returns the current balance of the specified wallet.
@@ -111,22 +102,13 @@ public class WalletController {
      * @return main wallet response
      */
     @PostMapping("/wallet")
-<<<<<<< Updated upstream
-    public ResponseEntity<MainWalletResponse> walletApi(
-                                                @RequestBody
-                                               final MainWalletRequest
-                                               mainWalletRequest,
-                                      final HttpServletResponse response) {
-=======
     public ResponseEntity<MainWalletResponse> walletApi(@RequestBody
                                                             final MainWalletRequest
                                                                     mainWalletRequest,
                                                         final
                                                         HttpServletResponse response) {
->>>>>>> Stashed changes
 
-        MainWalletResponse walletResponse = walletService.walletCrud(
-                                                        mainWalletRequest);
+        MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
 
         // Create cookie with checkout URL from response
         if (walletResponse.getCheckoutUrl() != null) {  // only set cookie if URL exists

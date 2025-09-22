@@ -25,7 +25,7 @@ public class StripeServiceImpl implements StripeService {
     /**
      * Initializes the Stripe API with the secret key from application properties.
      *
-     * @param secretKey the Stripe secret key.
+     * @param secretKey the Stripe secret key
      */
     @Autowired
     public StripeServiceImpl(@Value("${stripe.key.secret}") final String secretKey) {
@@ -45,14 +45,14 @@ public class StripeServiceImpl implements StripeService {
      * @throws StripeSessionException if session creation fails
      */
     @Override
-    public Session createCheckoutSession(final String userId,
-                                         final Double amount,
-                                         final TransactionType transactionType,
-                                         final WalletWrapper targetWallet,
+    public Session createCheckoutSession(final String userId ,
+                                         final Double amount ,
+                                         final TransactionType transactionType ,
+                                         final WalletWrapper targetWallet ,
                                          final WalletWrapper sourceWallet) throws Exception {
         log.info(
-                "Creating Stripe checkout session for userId={}, amount={}, type={}",
-                userId, amount, transactionType);
+                "Creating Stripe checkout session for userId={}, amount={}, type={}"
+                , userId, amount, transactionType);
 
         String productName;
         String successUrl;
@@ -72,18 +72,17 @@ public class StripeServiceImpl implements StripeService {
                 break;
 
             default:
-                log.error("Invalid transaction type: {}",
+                log.error("Invalid transaction type: {}" ,
                         transactionType);
-                throw new StripeSessionException("Invalid session type: " + transactionType);
-        }
+                throw new StripeSessionException("Invalid session type: " + transactionType);        }
 try {
-        return createSession(userId,
-                amount,
-                productName,
-                transactionType,
-                successUrl,
-                cancelUrl,
-                sourceWallet,
+        return createSession(userId ,
+                amount ,
+                productName ,
+                transactionType ,
+                successUrl ,
+                cancelUrl ,
+                sourceWallet ,
                 targetWallet);
     }catch (StripeException e) {
     log.error(
@@ -101,14 +100,14 @@ try {
     /**
      * Internal method to build and create a Stripe session.
      */
-    private Session createSession(final String userId,
-                                  final Double amount,
-                                  final String productName,
-                                  final TransactionType transactionType,
-                                  final String successUrl,
-                                  final String cancelUrl,
-                                  final WalletWrapper sourceWallet,
-                                  final WalletWrapper targetWallet) throws StripeSessionException, StripeException {
+    private Session createSession(final String userId ,
+                                  final Double amount ,
+                                  final String productName ,
+                                  final TransactionType transactionType ,
+                                  final String successUrl ,
+                                  final String cancelUrl ,
+                                  final WalletWrapper sourceWallet ,
+                                  final WalletWrapper targetWallet) throws StripeSessionException , StripeException {
         long amountInCents = (long) (amount * 100);
         log.debug(
                 "Creating Stripe session: productName={}, amountInCents={}, userId={}",

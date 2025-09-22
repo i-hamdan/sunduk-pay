@@ -9,13 +9,11 @@ package com.bxb.sunduk_pay.exception;
  */
 public class EmailSendingException extends RuntimeException {
     /**
-     * Constructs a new {@code EmailSendingException} with the specified
-     * detail message.
+     * Constructs a new {@code EmailSendingException} with the specified detail message.
      *
-     * @param message the detail message explaining why the email could
-     *                not be sent
+     * @param message the detail message explaining why the email could not be sent
      */
-    public EmailSendingException(final String message) {
+    public EmailSendingException(String message) {
         super(message);
     }
 }

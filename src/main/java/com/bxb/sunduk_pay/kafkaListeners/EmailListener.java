@@ -12,16 +12,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EmailListener {
-
-    /** Service for handling email operations */
     private final EmailService emailService;
 
-    /**
-     * Constructor for EmailListener.
-     *
-     * @param emailService the email service to process email events
-     */
-    public EmailListener(final EmailService emailService) {
+    public EmailListener(EmailService emailService) {
         this.emailService = emailService;
     }
 
@@ -34,7 +27,7 @@ public class EmailListener {
     @KafkaListener(topics = "user-topic",
             groupId = "email-service-group",
             concurrency = "3")
-    public void consumeEmailEvent(final UserKafkaEvent userKafkaEvent) {
+    public void consumeEmailEvent(UserKafkaEvent userKafkaEvent) {
         emailService.processEmailEvent(userKafkaEvent);
     }
 }

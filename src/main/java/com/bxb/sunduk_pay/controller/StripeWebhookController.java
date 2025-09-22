@@ -11,7 +11,6 @@ import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,18 +27,8 @@ import java.io.IOException;
  */
 @Log4j2
 @RestController
-@RequiredArgsConstructor
 public class StripeWebhookController {
 
-<<<<<<< Updated upstream
-    /** Services for wallet operations and recording failed transactions. */
-    private final WalletService walletService;
-
-    /** Service to record failed transactions. */
-    private final FailedTxnRecorder failedTxnRecorder;
-
-    /** Stripe webhook endpoint secret for signature verification. */
-=======
     /** Services for wallet operations and recording failed transactions */
     private final WalletService walletService;
 
@@ -54,7 +43,6 @@ public class StripeWebhookController {
     }
 
     /** Stripe webhook endpoint secret for signature verification */
->>>>>>> Stashed changes
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
@@ -66,18 +54,12 @@ public class StripeWebhookController {
      * @throws IOException if reading the request payload fails
      */
     @PostMapping("/webhook")
-<<<<<<< Updated upstream
-    public MainWalletResponse handleStripeEvent(final
-                            HttpServletRequest request) throws IOException {
-=======
     public MainWalletResponse handleStripeEvent(final HttpServletRequest request) throws IOException {
->>>>>>> Stashed changes
         // --- read payload ---
         String payload;
         String sigHeader = request.getHeader("Stripe-Signature");
         try {
-            payload = IOUtils.toString(request.getInputStream(),
-                    "UTF-8");
+            payload = IOUtils.toString(request.getInputStream(), "UTF-8");
         } catch (IOException e) {
             log.error("Failed to read Stripe webhook payload");
             throw new InvalidPayloadException("Invalid Stripe payload");
@@ -112,42 +94,25 @@ public class StripeWebhookController {
                             .getObject()
                             .orElse(null);
                     if (session != null) {
-                        log.warn("Payment failed for " +
-                                "sessionId={}", session.getId());
+                        log.warn("Payment failed for sessionId={}", session.getId());
 
                         MainWalletRequest requestObj = new MainWalletRequest();
-<<<<<<< Updated upstream
-                        requestObj.setUuid(
-                                session.getMetadata().get("userId"));
-                        requestObj.setAmount(
-                                session.getAmountTotal() / 100.0);
-                        requestObj.setTransactionType(TransactionType.valueOf(
-                                session.getMetadata().get("type")));
-                        requestObj.setSourceWalletId(
-                                session.getMetadata().get("sourceWallet"));
-                        requestObj.setTargetWalletId(
-                                session.getMetadata().get("targetWallet"));
-=======
                         requestObj.setUuid(session.getMetadata().get("userId"));
                         requestObj.setAmount(session.getAmountTotal() / 100.0);
                         requestObj.setTransactionType(TransactionType.valueOf(
                                 session.getMetadata().get("type")));
                         requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
                         requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
->>>>>>> Stashed changes
                         return failedTxnRecorder.recordFailedTxn(requestObj);
                     }
                     break;
 
                 default:
-                    log.info("Unhandled Stripe event " +
-                            "type: {}", event.getType());
+                    log.info("Unhandled Stripe event type: {}", event.getType());
             }
         } catch (Exception e) {
-            log.error("Unexpected error handling " +
-                    "Stripe webhook. Event={}", event);
-            throw new StripeSessionException("Failed to " +
-                    "process Stripe webhook");
+            log.error("Unexpected error handling Stripe webhook. Event={}", event);
+            throw new StripeSessionException("Failed to process Stripe webhook");
         }
 
         return MainWalletResponse.builder().message("Success").build();
@@ -160,12 +125,7 @@ public class StripeWebhookController {
      * @param session Stripe event object
      * @return response after processing payment
      */
-<<<<<<< Updated upstream
-    private MainWalletResponse handleCompletedSession(
-            final Session session) {
-=======
     private MainWalletResponse handleCompletedSession(final Session session) {
->>>>>>> Stashed changes
         String userId = session.getMetadata().get("userId");
         TransactionType transactionType = TransactionType.valueOf(
                 session.getMetadata().get("type").toUpperCase()

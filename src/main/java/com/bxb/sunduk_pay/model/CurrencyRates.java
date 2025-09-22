@@ -13,12 +13,6 @@ import java.util.Map;
 @Document(collection = "currency_rates")
 @Data
 public class CurrencyRates {
-    /**
-     * The date for which the currency rates are applicable.
-     */
     private LocalDate date;
-    /**
-     * A map of currency codes to their respective exchange rates.
-     */
     private Map<String, Double> rates = new HashMap<>();
 }

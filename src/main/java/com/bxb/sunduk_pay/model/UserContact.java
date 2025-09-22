@@ -12,13 +12,6 @@ import lombok.NoArgsConstructor;
  */
 public class UserContact {
 
-    /**
-     * The name of the user.
-     */
     private String name;
-
-    /**
-     * The phone number of the user.
-     */
     private String phone;
 }

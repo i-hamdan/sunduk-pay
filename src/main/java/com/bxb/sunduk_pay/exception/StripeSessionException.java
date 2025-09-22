@@ -9,12 +9,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class StripeSessionException extends RuntimeException {
-    /**
-     * Constructs a new StripeSessionException with the specified detail message.
-     *
-     * @param message the detail message explaining the reason for the exception
-     */
-    public StripeSessionException(final String message) {
+    public StripeSessionException(String message) {
         super(message);
     }
 }

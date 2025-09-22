@@ -7,20 +7,18 @@ import com.bxb.sunduk_pay.service.CurrencyService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@Log4j2
+@CrossOrigin(origins = "http://localhost:5174",allowCredentials = "true")
+
 
 /**
  * Controller for currency conversion operations.
  */
-@RestController
-@Log4j2
 public class CurrencyController {
 
-    /**
-     * Service to handle currency conversion logic.
-     */
     @Autowired
     private CurrencyService currencyService;
     /**
@@ -30,21 +28,11 @@ public class CurrencyController {
      * @return the conversion response wrapped in ResponseEntity
      */
     @PostMapping("/convert")
-    public ResponseEntity<CurrencyResponse> convert(@RequestBody final
-<<<<<<< Updated upstream
-                                    CurrencyRequest currencyRequest) {
-        log.info("Currency conversion API called: " +
-                        "from = {}, to = {}," +
-                        " amount = {}",
-                currencyRequest.getFromCurrency(),
-                currencyRequest.getToCurrency(),
-=======
-                                                        CurrencyRequest
+    
+    public ResponseEntity<CurrencyResponse> convert(@RequestBody CurrencyRequest
                                                                 currencyRequest) {
-        log.info("Currency conversion API called: from = {}, to = {}," +
-                        " amount = {}",
+        log.info("Currency conversion API called: from = {}, to = {}, amount = {}",
                 currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(),
->>>>>>> Stashed changes
                 currencyRequest.getAmount());
         CurrencyResponse response = currencyService.convertCurrency
                 (currencyRequest);

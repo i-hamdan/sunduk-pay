@@ -8,12 +8,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class TransactionProcessingException extends RuntimeException {
-    /**
-     * Constructs a new TransactionProcessingException with the specified detail message.
-     *
-     * @param message the detail message explaining the reason for the exception
-     */
-    public TransactionProcessingException(final String message) {
+    public TransactionProcessingException(String message) {
         super(message);
     }
 }

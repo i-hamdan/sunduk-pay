@@ -10,12 +10,11 @@ package com.bxb.sunduk_pay.exception;
  */
 public class CustomExchangeRateException extends RuntimeException {
     /**
-     * Constructs a new {@code CustomExchangeRateException} with the specified
-     * detail message.
+     * Constructs a new {@code CustomExchangeRateException} with the specified detail message.
      *
      * @param message the detail message explaining the reason for the failure
      */
-    public CustomExchangeRateException(final String message) {
+    public CustomExchangeRateException(String message) {
         super(message);
     }
 }

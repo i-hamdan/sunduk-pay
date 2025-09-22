@@ -8,18 +8,13 @@ package com.bxb.sunduk_pay.exception;
  * describing the reason for the failure.
  * </p>
  */
-public class InvalidUserException extends RuntimeException {
+public class InvalidUserException extends RuntimeException{
 
     /**
      * Constructs a new {@code InvalidUserException} with the specified
      * detail message.
      *
-<<<<<<< Updated upstream
-     * @param msg the detail message explaining why the user is
-     *            considered invalid
-=======
      * @param msg the detail message explaining why the user is considered invalid
->>>>>>> Stashed changes
      */
     public InvalidUserException(final String msg) {
         super(msg);

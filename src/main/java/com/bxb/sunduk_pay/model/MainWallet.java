@@ -22,43 +22,16 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class MainWallet {
-    /**
-     * Unique identifier for the main wallet.
-     */
     @Id
     private String mainWalletId;
-
-    /**
-     * Current balance of the main wallet.
-     */
     private Double balance;
-
-    /**
-     * Timestamp when the main wallet was created.
-     */
     @Timestamp
     private LocalDateTime createdAt;
-
-    /**
-     * Timestamp when the main wallet was last updated.
-     */
     @Timestamp
     private LocalDateTime updatedAt;
-
-    /**
-     * Reference to the user who owns the main wallet.
-     */
     @DBRef
     private User user;
-
-    /**
-     * List of transactions associated with the main wallet.
-     */
     @DBRef
-    private List<Transaction> transactionHistory = new ArrayList<>();
-
-    /**
-     * List of sub-wallets under the main wallet.
-     */
-    private List<SubWallet> subWallets = new ArrayList<>();
+    private List<Transaction> transactionHistory=new ArrayList<>();
+    private List<SubWallet> subWallets=new ArrayList<>();
 }

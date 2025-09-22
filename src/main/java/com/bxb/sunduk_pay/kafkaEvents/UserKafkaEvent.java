@@ -12,23 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserKafkaEvent {
-    /**
-     * Unique identifier for the user.
-     */
     private String uuid;
-
-    /**
-     * Full name of the user.
-     */
     private String fullName;
-
-    /**
-     * Email address of the user.
-     */
     private String email;
-
-    /**
-     * Type of event, e.g., "LOGIN" or "SIGNUP".
-     */
-    private String eventType;
+    private String eventType; // "LOGIN" or "SIGNUP"
 }

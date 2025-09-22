@@ -9,13 +9,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class ResourceNotFoundException extends RuntimeException {
-    /**
-     * Constructs a new {@code ResourceNotFoundException} with the specified
-     * detail message.
-     *
-     * @param message the detail message explaining why the resource could not be found
-     */
-    public ResourceNotFoundException(final String message) {
+    public ResourceNotFoundException(String message) {
         super(message);
     }
 }

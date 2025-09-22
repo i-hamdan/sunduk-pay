@@ -9,13 +9,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class InvalidCurrencyType extends RuntimeException {
-
-    /**
-     * Constructs a new InvalidCurrencyType exception with the specified detail message.
-     *
-     * @param message the detail message explaining the reason for the exception
-     */
-    public InvalidCurrencyType(final String message) {
+    public InvalidCurrencyType(String message) {
         super(message);
     }
 }

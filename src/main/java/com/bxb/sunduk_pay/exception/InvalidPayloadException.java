@@ -8,13 +8,7 @@ package com.bxb.sunduk_pay.exception;
  * </p>
  */
 public class InvalidPayloadException extends RuntimeException {
-    /**
-     * Constructs a new {@code InvalidPayloadException} with the specified
-     * detail message.
-     *
-     * @param message the detail message explaining why the payload is invalid
-     */
-    public InvalidPayloadException(final String message) {
+    public InvalidPayloadException(String message) {
         super(message);
     }
 }

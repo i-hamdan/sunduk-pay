@@ -15,45 +15,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
     @Builder
     public class GoalCompletionEvent {
-
-        /**
-         * The ID of the user who achieved the milestone.
-         */
         private String userId;
-
-        /**
-         * The email of the user who achieved the milestone.
-         */
         private String email;
-
-        /**
-         * The ID of the wallet associated with the milestone.
-         */
         private String walletId;
-
-        /**
-         * The name of the wallet associated with the milestone.
-         */
         private String walletName;
-
-        /**
-         * The milestone percentage achieved (e.g., 50, 75, 100).
-         */
-        private int milestone;
-
-        /**
-         * The current balance of the wallet at the time of milestone achievement.
-         */
+        private int milestone; // 50, 75, 100
         private Double currentBalance;
-
-        /**
-         * The goal amount set for the wallet.
-         */
         private Double goalAmount;
-
-        /**
-         * The timestamp when the milestone was achieved.
-         */
         private LocalDateTime timestamp;
     }
 
