@@ -42,10 +42,13 @@ public class SmsServiceImpl implements SmsService {
     @PostConstruct
     public void initTwilio() {
         try {
-            Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuthToken());
+            Twilio.init(
+            twilioConfig.getAccountSid(),
+           twilioConfig.getAuthToken());
             log.info("Twilio initialized successfully.");
         } catch (Exception e) {
-            log.error("Error initializing Twilio: {}", e.getMessage());
+            log.error(
+           "Error initializing Twilio: {}", e.getMessage());
             throw new SmsServiceException("Twilio initialization failed.");
         }
     }
@@ -77,15 +80,15 @@ public class SmsServiceImpl implements SmsService {
      * @param message message content
      * @throws SmsServiceException if SMS sending fails.
      */
-    public void sendSms(final String to,final String message){
+    public void sendSms(final String to,final String message) {
         try {
             Message.creator(new PhoneNumber(to),
                     new PhoneNumber(twilioConfig.getFromNumber()),
                     message).create();
         } catch (Exception e) {
             log.error("Error while sending SMS to {}: {}",
-                    to , e.getMessage());
+                    to, e.getMessage());
             throw new SmsServiceException("Failed to send SMS to: " + to);
-        }    }
-
+        }
+    }
 }

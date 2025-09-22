@@ -68,7 +68,7 @@ public class EmailServiceImpl implements EmailService {
             message.setText(body);
             mailSender.send(message);
         } catch (Exception e) {
-            log.error("Failed to send email to: {}" , to);
+            log.error("Failed to send email to: {}", to);
             throw new EmailSendingException("Failed to send email to: " + to);
         }
     }

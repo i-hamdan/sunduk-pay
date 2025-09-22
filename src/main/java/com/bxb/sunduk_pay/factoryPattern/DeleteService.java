@@ -82,8 +82,8 @@ public class DeleteService implements WalletOperation {
                     subWallet.getSubWalletName());
 
             return MainWalletResponse.builder().message("SubWallet named ["
-                            + subWallet.getSubWalletName()
-                            + "] was deleted successfully as its balance was 0.")
+                       + subWallet.getSubWalletName()
+                       + "] was deleted successfully as its balance was 0.")
                     .build();
         } else {
             log.error(
