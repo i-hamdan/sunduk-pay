@@ -24,7 +24,8 @@ public class CurrencyRatesItemProcessor implements
     /** Length of a currency code (e.g., "USD" is 3 characters). */
     private static final int CURRENCY_CODE_LENGTH = 3;
 
-    /** Base URL for the exchange rate API, injected from application properties. */
+    /** Base URL for the exchange rate API,
+     * injected from application properties. */
     @Value("${exchange.api.url}")
     private String exchangeApiUrl;
 
@@ -51,7 +52,8 @@ public class CurrencyRatesItemProcessor implements
                 + "/" + to;
         log.debug("Calling API URL: {}", url);
 
-        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+        Map<String, Object> response = restTemplate.
+                getForObject(url, Map.class);
 
         if (response == null) {
             log.error("API response was null for pair {} -> {}", from, to);

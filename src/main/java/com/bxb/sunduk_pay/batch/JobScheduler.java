@@ -43,7 +43,8 @@ public class JobScheduler {
             log.info("Scheduler method triggered");
 
             JobParameters params = new JobParametersBuilder()
-                    .addLong("timestamp",System.currentTimeMillis())
+                    .addLong("timestamp",
+                            System.currentTimeMillis())
                     .toJobParameters();
 
             log.info(
@@ -62,4 +63,5 @@ public class JobScheduler {
         }
     }
 }
+
 

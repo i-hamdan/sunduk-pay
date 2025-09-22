@@ -31,7 +31,9 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
      * @throws Exception If an error occurs during writing.
      */
     @Override
-    public void write(final Chunk<? extends CurrencyRates> chunk) throws Exception {
+    public void write(
+            final Chunk<? extends CurrencyRates> chunk
+            ) throws Exception {
         Map<String, Double> allRates = new HashMap<>();
         CurrencyRates merged = new CurrencyRates();
         merged.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
