@@ -12,15 +12,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Service to fetch main wallet and its active sub-wallets for a user.
- * Service to fetch the main wallet and active sub-wallets for a user.
+ * Service to fetch main wallet and
+ * its active sub-wallets for a user.
  */
 @Service
-public class FetchWalletService implements WalletOperation{
+public class FetchWalletService implements WalletOperation {
+    /** Validations utility for input validation and data retrieval.**/
     private final Validations validations;
+    /** Mapper to convert wallet entities to response DTOs.**/
     private final WalletMapper walletMapper;
 
-    public FetchWalletService(Validations validations, WalletMapper walletMapper) {
+    public FetchWalletService(final Validations validations,
+                              final WalletMapper walletMapper) {
         this.validations = validations;
         this.walletMapper = walletMapper;
     }
@@ -44,10 +47,10 @@ public class FetchWalletService implements WalletOperation{
      * @return response containing wallet and sub-wallet details
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
-        List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter
-                (sw -> !sw.getIsDeleted()).toList();
-        return walletMapper.toWalletResponse(mainWallet,subWallets);
+        List<SubWallet> subWallets = mainWallet.getSubWallets().stream().filter(
+                sw -> !sw.getIsDeleted()).toList();
+        return walletMapper.toWalletResponse(mainWallet , subWallets);
     }
 }

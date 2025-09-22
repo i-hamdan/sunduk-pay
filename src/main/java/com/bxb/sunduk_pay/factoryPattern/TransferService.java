@@ -1,13 +1,9 @@
 package com.bxb.sunduk_pay.factoryPattern;
 
-import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.InternalTransferService;
@@ -18,7 +14,6 @@ import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,29 +24,21 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class TransferService implements WalletOperation {
 
+    /**internal transfer service for handling internal wallet transfers*/
     private final InternalTransferService internalTransferService;
-    private final Validations validations;
-    private final TransactionRepository transactionRepository;
-    private final PaymentService paymentService;
-    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-    private final MainWalletRepository mainWalletRepository;
-    private final TransactionMapper transactionMapper;
 
-    public TransferService(InternalTransferService internalTransferService,
-                           Validations validations,
-                           TransactionRepository transactionRepository,
-                           PaymentService paymentService,
-                           KafkaTemplate<String, TransactionEvent> kafkaTemplate,
-                           MainWalletRepository mainWalletRepository,
-                           TransactionMapper transactionMapper) {
+    /** Validations utility for user and wallet validations */
+    private final Validations validations;
+
+    /** Payment service for handling external payments */
+    private final PaymentService paymentService;
+
+
+    public TransferService(final InternalTransferService internalTransferService , final Validations validations , final PaymentService paymentService) {
         this.internalTransferService = internalTransferService;
         this.validations = validations;
-        this.transactionRepository = transactionRepository;
-        this.kafkaTemplate = kafkaTemplate;
         this.paymentService = paymentService;
 
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionMapper = transactionMapper;
     }
 
     /**
@@ -71,106 +58,119 @@ public class TransferService implements WalletOperation {
      * @return MainWalletResponse with transfer result
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
         try {
             log.info("Performing transfer request for UUID: {}, Request: {}",
                     mainWalletRequest.getUuid(), mainWalletRequest);
 
-            User user = validations.getUserInfo(mainWalletRequest.getUuid());
-            log.debug("Fetched user: {}", user);
+            User user = validations.getUserInfo (mainWalletRequest.getUuid());
+            log.debug("Fetched user: {}" , user);
 
             MainWallet mainWallet = validations.getMainWalletInfo(user.getUuid());
-            log.debug("Fetched main wallet: {}", mainWallet.getMainWalletId());
+            log.debug("Fetched main wallet: {}" , mainWallet.getMainWalletId());
 
 
-            WalletWrapper sourceWallet = getWallet(mainWallet,
-                    mainWalletRequest.getSourceWalletId());
-            Double previousSourceWalletBalance = (sourceWallet == null) ?
-                    null : sourceWallet.getBalance();
-            log.debug("Source wallet: {}, Previous balance: {}",
-                    sourceWallet, previousSourceWalletBalance);
+            WalletWrapper sourceWallet = getWallet(mainWallet , mainWalletRequest.getSourceWalletId());
+            Double previousSourceWalletBalance = (sourceWallet == null) ? null : sourceWallet.getBalance();
+            log.debug("Source wallet: {}, Previous balance: {}", sourceWallet , previousSourceWalletBalance);
 
-            WalletWrapper targetWallet = getWallet(mainWallet,
-                    mainWalletRequest.getTargetWalletId());
-            Double previousTargetWalletBalance = (targetWallet == null) ?
-                    null : targetWallet.getBalance();
-            log.debug("Target wallet: {}, Previous balance: {}",
-                    targetWallet, previousTargetWalletBalance);
+            WalletWrapper targetWallet = getWallet(mainWallet, mainWalletRequest.getTargetWalletId());
+            Double previousTargetWalletBalance = (targetWallet == null) ? null : targetWallet.getBalance();
+            log.debug("Target wallet: {} , Previous balance: {}" , targetWallet , previousTargetWalletBalance);
 
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
 
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");
-                return handleInternalTransfer(user, mainWallet, mainWalletRequest.getAmount(),
-                        sourceWallet, targetWallet, previousSourceWalletBalance,
+
+                /** Both source and target wallets exist - internal transfer */
+                return handleInternalTransfer(user ,
+                        mainWallet ,
+                        mainWalletRequest.getAmount() ,
+                        sourceWallet ,
+                        targetWallet ,
+                        previousSourceWalletBalance,
                         previousTargetWalletBalance);
-            } else if (sourceExists && !targetExists || sourceExists &&
-                    mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI ||
+            } else if (sourceExists && !targetExists ||
+                    sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI ||
                     sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
                 log.info("Processing external outgoing transfer");
-                return handleExternalOutGoingTransfer(sourceWallet, targetWallet,
-                        mainWalletRequest.getAmount(), user);
-            } else if (!sourceExists && targetExists || !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
-                return handleExternalOutGoingTransfer(sourceWallet, targetWallet, mainWalletRequest.getAmount(), user);
-            } else if (!sourceExists && targetExists || targetExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI || targetExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
+                /** Source wallet exists but target does not - external outgoing transfer */
+                return handleExternalOutGoingTransfer(sourceWallet ,
+                        targetWallet ,
+                        mainWalletRequest.getAmount() ,
+                        user);
+            } else if (!sourceExists && targetExists ||
+                    !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.UPI ||
+                    !sourceExists && mainWalletRequest.getPaymentMethod() == PaymentMethod.BANK) {
                 log.info("Processing external incoming transfer");
-                return handleExternalIncomingTransfer(user, mainWalletRequest.getAmount(), targetWallet, sourceWallet);
+                /** Target wallet exists but source does not - external incoming transfer */
+                return handleExternalIncomingTransfer(user ,
+                        mainWalletRequest.getAmount() ,
+                        targetWallet ,
+                        sourceWallet);
             } else {
-                log.error("Both source and target wallets are invalid for UUID: {}", user.getUuid());
-                throw new InvalidPayloadException("both sourceId and targetId is invalid for this user");
+                log.error("Both source and target wallets are invalid for UUID: {}" ,
+                        user.getUuid());
+                throw new InvalidPayloadException(
+                        "both sourceId and targetId is invalid for this user");
             }
         } catch (Exception e) {
-            log.error("message : {}", e.getMessage());
+            log.error("message : {}" , e.getMessage());
             throw e;
         }
     }
 
     /** Handle external incoming transfer */
-    private MainWalletResponse handleExternalIncomingTransfer(User user, Double amount, WalletWrapper targetWallet, WalletWrapper sourceWallet) {
-        log.info("Creating checkout session for incoming transfer, Amount: {}", amount);
-        return paymentService.createCheckoutSession(user.getUuid(), amount, TransactionType.CREDIT, targetWallet, sourceWallet);
+    private MainWalletResponse handleExternalIncomingTransfer(final User user,
+                                                              final Double amount,
+                                                              final WalletWrapper targetWallet,
+                                                              final WalletWrapper sourceWallet) {
+        log.info("Creating checkout session for incoming transfer, Amount: {}" ,
+                amount);
+        return paymentService.createCheckoutSession(user.getUuid() ,
+                amount ,
+                TransactionType.CREDIT ,
+                targetWallet ,
+                sourceWallet);
     }
 
     /** Handle external outgoing transfer */
-    private MainWalletResponse handleExternalOutGoingTransfer(WalletWrapper sourceSubWallet, WalletWrapper targetWallet, Double amount, User user) {
-        log.info("Processing outgoing transfer, Amount: {}", amount);
-        validations.validateBalance(sourceSubWallet.getBalance(), amount);
-        return paymentService.createCheckoutSession(user.getUuid(), amount, TransactionType.DEBIT, targetWallet, sourceSubWallet);
+    private MainWalletResponse handleExternalOutGoingTransfer(final WalletWrapper sourceSubWallet ,
+                                                              final WalletWrapper targetWallet ,
+                                                              final Double amount ,
+                                                              final User user) {
+        log.info("Processing outgoing transfer, Amount: {}" ,
+                amount);
+        validations.validateBalance(sourceSubWallet.getBalance() , amount);
+        return paymentService.createCheckoutSession(user.getUuid() ,
+                amount ,
+                TransactionType.DEBIT ,
+                targetWallet ,
+                sourceSubWallet);
     }
 
     /** Handle internal transfer between main<->subWallet subWallet<->subWallet*/
-    public MainWalletResponse handleInternalTransfer(User user, MainWallet mainWallet, Double amount,
-                                                     WalletWrapper sourceWallet, WalletWrapper targetWallet,
-                                                     Double previousSourceWalletBalance, Double previousTargetWalletBalance) {
-     return internalTransferService.doInternalTransfer(user,mainWallet,amount,sourceWallet,targetWallet,previousSourceWalletBalance,previousTargetWalletBalance);
+    public MainWalletResponse handleInternalTransfer(final User user ,
+                                                     final MainWallet mainWallet ,
+                                                     final Double amount ,
+                                                     final WalletWrapper sourceWallet ,
+                                                     final WalletWrapper targetWallet ,
+                                                     final Double previousSourceWalletBalance ,
+                                                     final Double previousTargetWalletBalance) {
+        return internalTransferService.doInternalTransfer(user ,
+                mainWallet ,
+                amount ,
+                sourceWallet ,
+                targetWallet ,
+                previousSourceWalletBalance ,
+                previousTargetWalletBalance);
     }
 
     /** Get WalletWrapper for mainWallet or subWallet based on walletId */
-//    private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
-//
-//        if (walletId.equals(mainWallet.getMainWalletId())) {
-//            log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
-//            return new WalletWrapper(mainWallet);
-//        }
-//        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.", walletId);
-//
-//        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, walletId);
-//        log.debug("Returning sub wallet wrapper for wallet ID {}", walletId);
-//        if (subWallet != null) {
-//            log.debug("SubWallet found for wallet ID {}. Returning SubWallet wrapper.", walletId);
-//            return new WalletWrapper(subWallet);
-//        } else {
-//            log.warn("No Wallet found for wallet ID {} in MainWalletId {}.", walletId, mainWallet.getMainWalletId());
-//            return null;
-//        }
-//    }
-
-    private WalletWrapper getWallet(MainWallet mainWallet, String walletId) {
-        if (walletId == null) {
-            log.warn("walletId is null, returning null");
-            return null;
-        }
+    private WalletWrapper getWallet(final MainWallet mainWallet ,
+                                    final String walletId) {
 
         if (walletId == null) {
             log.warn("walletId is null, returning null");
@@ -178,22 +178,23 @@ public class TransferService implements WalletOperation {
         }
 
         if (walletId.equals(mainWallet.getMainWalletId())) {
-            log.debug("Returning main wallet wrapper for wallet ID {}", walletId);
+            log.debug("Returning main wallet wrapper for wallet ID {}"
+                    , walletId);
             return new WalletWrapper(mainWallet);
         }
+        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet." , walletId);
 
-        log.debug("Requested wallet ID {} does not match MainWallet. Validating sub wallet.", walletId);
-        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, walletId);
-
+        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet , walletId);
+        log.debug("Returning sub wallet wrapper for wallet ID {}",
+                walletId);
         if (subWallet != null) {
-            log.debug("SubWallet found for wallet ID {}. Returning SubWallet wrapper.", walletId);
+            log.debug("SubWallet found for wallet ID {}." +
+                    " Returning SubWallet wrapper." , walletId);
             return new WalletWrapper(subWallet);
         } else {
-            log.warn("No Wallet found for wallet ID {} in MainWalletId {}.", walletId, mainWallet.getMainWalletId());
+            log.warn("No Wallet found for wallet ID {} in MainWalletId {}." ,
+                    walletId , mainWallet.getMainWalletId());
             return null;
         }
     }
-
-
-
 }

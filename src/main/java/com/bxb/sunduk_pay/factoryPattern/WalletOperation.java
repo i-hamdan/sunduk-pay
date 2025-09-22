@@ -20,8 +20,9 @@ RequestType getRequestType();
 /**
      * Performs the wallet operation based on the provided request.
      *
-     * @param mainWalletRequest the request containing necessary data for the operation.
+     * @param mainWalletRequest the request containing
+ *                          necessary data for the operation.
      * @return MainWalletResponse containing the result of the operation.
      */
-MainWalletResponse perform(MainWalletRequest mainWalletRequest);
+MainWalletResponse perform(final MainWalletRequest mainWalletRequest);
 }

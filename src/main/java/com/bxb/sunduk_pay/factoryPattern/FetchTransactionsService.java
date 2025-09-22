@@ -25,8 +25,8 @@ public class FetchTransactionsService implements WalletOperation {
     private final Validations validations;
     private final TransactionMapper transactionMapper;
 
-    public FetchTransactionsService(Validations validations,
-                                    TransactionMapper transactionMapper) {
+    public FetchTransactionsService(final Validations validations,
+                                    final TransactionMapper transactionMapper) {
         this.validations = validations;
         this.transactionMapper = transactionMapper;
     }
@@ -48,16 +48,16 @@ public class FetchTransactionsService implements WalletOperation {
      * sub-wallet with pagination and sorting.
      *
      * @param mainWalletRequest request containing user UUID,
-     *                         wallet ID, paging, sorting info
+     *                          wallet ID, paging, sorting info
      * @param mainWalletRequest request containing UUID, wallet ID,
-     *                         paging, and sorting info
+     *                          paging, and sorting info
      * @return MainWalletResponse containing the transaction history
-     * @throws TransactionNotFoundException if transactions are not found
-     * @throws WalletNotFoundException if wallet does not exist
+     * @throws TransactionNotFoundException   if transactions are not found
+     * @throws WalletNotFoundException        if wallet does not exist
      * @throws TransactionProcessingException for other processing failures
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
         log.info("Fetching transactions for user : {}", mainWalletRequest.getUuid());
         try {
             Sort.Direction direction;
@@ -68,17 +68,17 @@ public class FetchTransactionsService implements WalletOperation {
             }
 
             Pageable pageable = PageRequest.of(mainWalletRequest.getPage(),
-                            mainWalletRequest.getSize(),
-                            Sort.by(direction,
+                    mainWalletRequest.getSize(),
+                    Sort.by(direction,
                             mainWalletRequest.getSortBy()));
 
             Page<Transaction> transactions = validations.validateTransactionsByUuidAndSubWalletId
                     (mainWalletRequest.getUuid(),
                             mainWalletRequest.getWalletId(),
-                    mainWalletRequest.getTransactionGroupId(),
-                    mainWalletRequest.getPaymentMethod(),
-                    mainWalletRequest.getTransactionType(),
-                    pageable);
+                            mainWalletRequest.getTransactionGroupId(),
+                            mainWalletRequest.getPaymentMethod(),
+                            mainWalletRequest.getTransactionType(),
+                            pageable);
 
             log.info("Returning {} transactions for uuid ID:{} And SubWallet ID: {}",
                     transactions.getNumberOfElements(),
@@ -94,10 +94,10 @@ public class FetchTransactionsService implements WalletOperation {
             throw e;
         } catch (Exception e) {
             log.error("Cannot retrieve transactions for UUID : {}," +
-                    " error {}", mainWalletRequest.getUuid(),e.getMessage());
+                    " error {}", mainWalletRequest.getUuid(), e.getMessage());
             throw new TransactionProcessingException(
                     "Unable to fetch transactions for UUID: "
-                    + mainWalletRequest.getUuid() + ". Please try again later."
+                            + mainWalletRequest.getUuid() + ". Please try again later."
             );
         }
     }

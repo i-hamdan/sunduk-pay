@@ -23,7 +23,9 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class CreateService implements WalletOperation {
+    /** Dependencies for validations and main wallet repository */
     private final Validations validations;
+    /** Repository for MainWallet persistence */
     private final MainWalletRepository mainWalletRepository;
 
     public CreateService(Validations validations,
@@ -50,16 +52,16 @@ public class CreateService implements WalletOperation {
      * @return response indicating success
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(final MainWalletRequest mainWalletRequest) {
         log.info("Starting SubWallet creation for User UUID: {}",
                 mainWalletRequest.getUuid());
 try {
         validations.getUserInfo(mainWalletRequest.getUuid());
-        log.debug("User validation successful for UUID: {}",
+        log.debug("User validation successful for UUID: {}" ,
                 mainWalletRequest.getUuid());
 
         MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
-        log.debug("MainWallet fetched successfully for UUID: {}",
+        log.debug("MainWallet fetched successfully for UUID: {}" ,
                 mainWalletRequest.getUuid());
 
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
@@ -67,7 +69,8 @@ try {
                 collect(Collectors.toList());
         int size = subWallets.size();
         validations.validateNumberOfSubWallets(size);
-        log.debug("SubWallet count validation passed. Current size: {}", size);
+        log.debug("SubWallet count validation passed. Current size: {}"
+                , size);
 
         SubWallet subWallet = SubWallet.builder()
                 .subWalletId(UUID.randomUUID().toString())
@@ -79,13 +82,13 @@ try {
                 .icon(mainWalletRequest.getIcon())
                 .createdAt(LocalDateTime.now())
                 .build();
-        log.info("New SubWallet built with name={} and targetBalance={}",
-                subWallet.getSubWalletName(), subWallet.getTargetBalance());
+        log.info("New SubWallet built with name={} and targetBalance={}" ,
+                subWallet.getSubWalletName() , subWallet.getTargetBalance());
 
 
         mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);
-        log.info("SubWallet saved successfully for User UUID: {}",
+        log.info("SubWallet saved successfully for User UUID: {}" ,
                 mainWalletRequest.getUuid());
 
         return MainWalletResponse.builder()
