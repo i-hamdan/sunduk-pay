@@ -43,13 +43,15 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+
+            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            #redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            redirect-uri: "https://21a6a1b33ea7.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -89,12 +91,12 @@ sunduk:
 
 exchange:
   api:
-    url: ${EXCHANGE_API_URL}
 stripe:
   key:
     secret: ${STRIPE_SECRET_KEY}
   webhook:
     secret: ${STRIPE_WEBHOOK_SECRET}
+    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
 
 resilience4j:
   circuitbreaker:

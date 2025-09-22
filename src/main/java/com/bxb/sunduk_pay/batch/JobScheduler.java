@@ -22,6 +22,9 @@ public class JobScheduler {
     private final Job importExchangeRatesJob;
     @Scheduled(cron = "0 0 0 * * *")
 
+    /**
+     * Runs the scheduled job to import exchange rates.
+     */
     public void runJob() {
         try {
             log.info(" Scheduler method triggered");
