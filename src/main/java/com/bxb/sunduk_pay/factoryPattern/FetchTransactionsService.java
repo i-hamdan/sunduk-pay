@@ -87,8 +87,8 @@ public class FetchTransactionsService implements WalletOperation {
                     mainWalletRequest.getWalletId());
 
             return MainWalletResponse.builder().transactionHistory(
-                    transactionMapper.toTransactionsResponse
-                            (transactions.getContent())).build();
+                    transactionMapper.toTransactionsResponse(
+                            transactions.getContent())).build();
 
         } catch (TransactionNotFoundException | WalletNotFoundException e) {
             log.error(

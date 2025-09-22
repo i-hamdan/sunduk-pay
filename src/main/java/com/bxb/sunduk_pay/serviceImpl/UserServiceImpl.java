@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
-
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
@@ -56,16 +55,17 @@ public class UserServiceImpl implements UserService {
 
 
     /**
-     * Handles OAuth login for a user. If the user does not exist in the database,
+     * Handles OAuth login for a user.
+     * If the user does not exist in the database,
      * a new user is created along with main and master wallets.
-     *
      * @param response The user login response containing user details.
      * @return The User object after login or creation.
      */
     @Override
     public User userLogin(final UserLoginResponse response) {
-        Optional<User> userOptional = userRepository.findByEmailAndIsDeletedFalse(
-                response.getEmail());
+        Optional<User> userOptional
+            = userRepository.findByEmailAndIsDeletedFalse(
+            response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
             log.info("User not found in DB. Creating new user for email: {}",
@@ -74,14 +74,14 @@ public class UserServiceImpl implements UserService {
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
 
-            MainWallet mainWallet= MainWallet.builder()
+            MainWallet mainWallet = MainWallet.builder()
                     .mainWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
                     .build();
             mainWalletRepository.save(mainWallet);
 
-            MasterWallet masterWallet= MasterWallet.builder()
+            MasterWallet masterWallet = MasterWallet.builder()
                     .masterWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
@@ -110,22 +110,27 @@ public class UserServiceImpl implements UserService {
     /**
      * Uploads contacts for a user.
      *
-     * @param contactRequest The contact request containing userId and contacts list.
-     * @return UserResponse containing updated user details and success message.
-     * @throws UserNotFoundException If the userId does not exist in the database.
+     * @param contactRequest The contact request
+     * containing userId and contacts list.
+     * @return UserResponse containing updated
+     * user details and success message.
+     * @throws UserNotFoundException If the userId
+     * does not exist in the database.
      */
     @Override
-    public UserResponse uploadContacts(ContactRequest contactRequest) {
-        log.info("Upload contacts request received for userId: {}",
-                contactRequest.getUserId());
+    public UserResponse uploadContacts(final ContactRequest contactRequest) {
+        log.info(
+          "Upload contacts request received for userId: {}",
+          contactRequest.getUserId());
 
-        User user = userRepository.findById(contactRequest.getUserId()).orElseThrow(() -> new RuntimeException(
-                "User not found for ID: " + contactRequest.getUserId()));
+        User user = userRepository.findById(contactRequest.getUserId())
+                .orElseThrow(() -> new RuntimeException(
+         "User not found for ID: " + contactRequest.getUserId()));
         log.debug("User fetched: {}", user.getUuid());
 
         user.setContacts(contactRequest.getContacts());
         log.info("Setting {} contacts for userId: {}",
-                contactRequest.getContacts().size(), user.getUuid());
+       contactRequest.getContacts().size(), user.getUuid());
 
         userRepository.save(user);
         log.info("User with ID: {} successfully updated with contacts", user.getUuid());
