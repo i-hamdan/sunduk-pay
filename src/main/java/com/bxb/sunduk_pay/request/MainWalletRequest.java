@@ -15,6 +15,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class MainWalletRequest {
+
+/** Default pagination values. */
+private static final int DEFAULT_PAGE = 0;
+/** Default number of records per page. */
+private static final int DEFAULT_SIZE = 10;
+
+
+
     /** Unique identifier for the request. */
     @NonNull
     private String uuid;
@@ -52,9 +60,9 @@ public class MainWalletRequest {
     /** Description or note for the transaction. */
     private String transactionGroupId;
     /** Page number for pagination. */
-    private int page = 0;
+    private int page = DEFAULT_PAGE;
     /** Number of records per page for pagination. */
-    private int size = 10;
+    private int size = DEFAULT_SIZE;
     /** Field to sort by (e.g., "dateTime", "amount"). */
     private String sortBy = "dateTime";
     /** Sort direction: ASC or DESC. */

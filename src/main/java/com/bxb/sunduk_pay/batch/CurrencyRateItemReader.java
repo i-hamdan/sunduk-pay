@@ -14,7 +14,7 @@ import java.util.Iterator;
 @Log4j2
 @Component
 public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {
-/** Iterator over all CurrencyPair enum values */
+/** Iterator over all CurrencyPair enum values. */
     private final Iterator<CurrencyPair> currencyPairs =
             Arrays.asList(CurrencyPair.values()).iterator();
     /**
@@ -24,15 +24,14 @@ public class CurrencyRateItemReader implements ItemReader<CurrencyPair> {
      * @throws Exception if an error occurs during reading
      */
     @Override
-    public CurrencyPair read() throws Exception{
+    public CurrencyPair read() throws Exception {
         if (currencyPairs.hasNext()) {
             CurrencyPair nextPair = currencyPairs.next();
-            log.info( "Reading CurrencyPair: {}" , nextPair);
+            log.info("Reading CurrencyPair: {}", nextPair);
             return nextPair;
         }
         log.info("No more CurrencyPairs to read. Returning null.");
         return null;
     }
     }
-
 

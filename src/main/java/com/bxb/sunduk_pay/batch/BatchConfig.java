@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.util.CurrencyPair;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,6 +20,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @Log4j2
+@RequiredArgsConstructor
 public class BatchConfig {
 /** Transaction manager for managing transactions in batch jobs.*/
     private final PlatformTransactionManager transactionManager;
@@ -29,12 +31,8 @@ public class BatchConfig {
   /** Writer to write currency rates in database.*/
     private final CurrencyRatesItemWriter writer;
 
-    public BatchConfig(final PlatformTransactionManager transactionManager, final CurrencyRateItemReader reader, final CurrencyRatesItemProcessor processor, final CurrencyRatesItemWriter writer) {
-        this.transactionManager = transactionManager;
-        this.reader = reader;
-        this.processor = processor;
-        this.writer = writer;
-    }
+    /** Default chunk size for step processing. */
+    private static final int CHUNK_SIZE = 100;
 
     /**
      * Defines a step to fetch currency rates.
@@ -43,12 +41,11 @@ public class BatchConfig {
      * @return the configured step
      */
 
-
     @Bean
-    public Step fetchRatesStep( final JobRepository jobRepository) {
+    public Step fetchRatesStep(final JobRepository jobRepository) {
         log.info("Creating Step: fetchRatesStep");
         return new StepBuilder("fetchRatesStep", jobRepository)
-                .<CurrencyPair, CurrencyRates>chunk(100, transactionManager) // Reader output, Processor output
+                .<CurrencyPair, CurrencyRates>chunk(CHUNK_SIZE, transactionManager) // Reader output, Processor output
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
@@ -63,10 +60,13 @@ public class BatchConfig {
      * @return the configured job
      */
     @Bean
-    public Job importExchangeRatesJob ( final Step fetchRatesStep, final JobRepository jobRepository) {
+    public Job importExchangeRatesJob(
+            final Step fetchRatesStep,
+            final JobRepository jobRepository) {
         log.info("Creating Job: ExchangeRatesJob");
 
-        return new JobBuilder("ExchangeRatesJob", jobRepository)
+        return new JobBuilder("ExchangeRatesJob",
+                jobRepository)
                 .start(fetchRatesStep)
                 .build();
     }

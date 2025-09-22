@@ -39,8 +39,6 @@ public class SundukController {
 
         this.userMapper = userMapper;
     }
-
-
     /**
      * Handles custom login via OIDC.
      *
