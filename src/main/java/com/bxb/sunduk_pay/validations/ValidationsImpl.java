@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  */
 @Log4j2
 @Component
+@RequiredArgsConstructor
 public class ValidationsImpl implements Validations {
     private final UserRepository userRepository;
     private final MainWalletRepository mainWalletRepository;
@@ -25,21 +27,17 @@ public class ValidationsImpl implements Validations {
     private final MasterWalletRepository masterWalletRepository;
 
 
-    public ValidationsImpl(UserRepository userRepository, MainWalletRepository mainWalletRepository, TransactionRepository transactionRepository, MasterWalletRepository masterWalletRepository) {
-        this.userRepository = userRepository;
-        this.mainWalletRepository = mainWalletRepository;
-        this.transactionRepository = transactionRepository;
-        this.masterWalletRepository = masterWalletRepository;
-    }
 
 
     /** {@inheritDoc} */
-    public User getUserInfo(String uuid) {
+    public User getUserInfo(
+            final String uuid) {
         log.info("Fetching user with UUID: {}", uuid);
         return userRepository.findById(uuid)
                 .orElseThrow(() -> {
                     log.error("User not found with UUID: {}", uuid);
-                    return new UserNotFoundException("User not found with UUID: " + uuid);
+                    return new UserNotFoundException(
+                            "User not found with UUID: " + uuid);
                 });
     }
 
@@ -47,32 +45,44 @@ public class ValidationsImpl implements Validations {
     /** {@inheritDoc} */
 
     @Override
-    public MainWallet getMainWalletByWalletId(String walletId) {
-      return mainWalletRepository.findById(walletId).orElseThrow(()->new ResourceNotFoundException("Cannot find mainWallet By Id : "+walletId));
+    public MainWallet getMainWalletByWalletId(
+            final String walletId) {
+      return mainWalletRepository.
+              findById(walletId)
+              .orElseThrow(()->new ResourceNotFoundException(
+                      "Cannot find mainWallet By Id : "+walletId));
     }
 
 
     /** {@inheritDoc} */
 
-    public MainWallet getMainWalletInfo(String uuid) {
-        log.info("Fetching mainWallet with UUID : {}", uuid);
+    public MainWallet getMainWalletInfo(
+            final String uuid) {
+        log.info("Fetching mainWallet with UUID : {}"
+                , uuid);
         return mainWalletRepository.findByUser_Uuid(uuid)
                 .orElseThrow(() -> {
                     log.error("User not found with UUID: {}", uuid);
-                    return new WalletNotFoundException("Wallet not found for user: " + uuid);
+                    return new WalletNotFoundException(
+                            "Wallet not found for user: " + uuid);
                 });
     }
 
     /** {@inheritDoc} */
 
     @Override
-    public void validateNumberOfSubWallets(int size) {
+    public void validateNumberOfSubWallets(final int size) {
         log.info("Validating number of SubWallets: {}", size);
         if (size <= 19) {
-            log.info("Validation passed. Current subwallet count: {}", size);
+            log.info(
+                    "Validation passed. Current subwallet count: {}"
+                    , size);
         } else {
-            log.error("Validation failed. Maximum allowed subwallets: 19, provided: {}", size);
-            throw new MaxSubWalletsExceededException("Maximum 19 sub wallets are allowed.");
+            log.error(
+                    "Validation failed. Maximum allowed subwallets: 19,"
+                            +" provided: {}", size);
+            throw new MaxSubWalletsExceededException(
+                    "Maximum 19 sub wallets are allowed.");
         }
     }
 
@@ -88,7 +98,9 @@ public class ValidationsImpl implements Validations {
             Pageable pageable) {
 
         if (transactionGroupId != null) {
-            return transactionRepository.findByUser_UuidAndGroupId(uuid, transactionGroupId, pageable);
+            return transactionRepository
+                    .findByUser_UuidAndGroupId(
+                            uuid, transactionGroupId, pageable);
         }
 
         Page<Transaction> transactions;
@@ -97,51 +109,65 @@ public class ValidationsImpl implements Validations {
             if (transactionType == TransactionType.DEBIT) {
                 // Only those where subWalletId is the FROM wallet
                 if (method != null) {
-                    transactions = transactionRepository.findByUser_UuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-                            uuid, walletId, TransactionType.DEBIT, method, pageable);
+                    transactions = transactionRepository
+.findByUser_UuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+uuid, walletId, TransactionType.DEBIT, method, pageable);
                 } else {
-                    transactions = transactionRepository.findByUser_UuidAndFromWalletIdAndTransactionType(
+                    transactions = transactionRepository
+                            .findByUser_UuidAndFromWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.DEBIT, pageable);
                 }
             } else if (transactionType == TransactionType.CREDIT) {
                 // Only those where subWalletId is the TO wallet
                 if (method != null) {
-                    transactions = transactionRepository.findByUser_UuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-                            uuid, walletId, TransactionType.CREDIT, method, pageable);
+                    transactions = transactionRepository
+.findByUser_UuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
-                    transactions = transactionRepository.findByUser_UuidAndToWalletIdAndTransactionType(
+                    transactions = transactionRepository
+                            .findByUser_UuidAndToWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             } else {
                 if (method != null) {
-                    transactions = transactionRepository.findByUser_UuidAndWalletIdAndPaymentMethod(
+                    transactions = transactionRepository.
+                            findByUser_UuidAndWalletIdAndPaymentMethod(
                             uuid, walletId, method, pageable);
                 } else {
-                    transactions = transactionRepository.findAllByUserAndWallet(uuid, walletId, pageable);
+                    transactions = transactionRepository
+                            .findAllByUserAndWallet(
+                                    uuid, walletId, pageable);
                 }
             }
         } else {
             // No subwallet filter
             if (transactionType != null) {
                 if (method != null) {
-                    transactions = transactionRepository.findByUser_UuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+                    transactions = transactionRepository
+   .findByUser_UuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
                             uuid, transactionType, method, pageable);
                 } else {
-                    transactions = transactionRepository.findByUser_UuidAndTransactionTypeAndIsMasterFalse(
+                    transactions = transactionRepository
+                            .findByUser_UuidAndTransactionTypeAndIsMasterFalse(
                             uuid, transactionType, pageable);
                 }
             } else {
                 if (method != null) {
-                    transactions = transactionRepository.findByUser_UuidAndPaymentMethodAndIsMasterFalse(
+                    transactions = transactionRepository
+                            .findByUser_UuidAndPaymentMethodAndIsMasterFalse(
                             uuid, method, pageable);
                 } else {
-                    transactions = transactionRepository.findByUser_UuidAndIsMasterFalse(uuid, pageable);
+                    transactions = transactionRepository
+                            .findByUser_UuidAndIsMasterFalse(
+                                    uuid, pageable);
                 }
             }
         }
 
         if (transactions.isEmpty()) {
-            throw new TransactionNotFoundException("No transactions found for User UUID: " + uuid);
+            throw new TransactionNotFoundException(
+                    "No transactions found for User UUID: "
+                            + uuid);
         }
 
         return transactions;
@@ -150,86 +176,128 @@ public class ValidationsImpl implements Validations {
 
     /** {@inheritDoc} */
     @Override
-    public void validateBalance(Double balance, Double amount) {
-        log.info("Validating transaction with balance: {} and amount: {}", balance, amount);
+    public void validateBalance(
+          final Double balance,
+          final Double amount) {
+        log.info(
+                "Validating transaction with balance: "
+                        +"{} and amount: {}", balance, amount);
         if (balance == null || amount == null) {
-            log.error("Validation failed: Balance or amount is null. Balance={}, Amount={}", balance, amount);
-            throw new NullAmountException("Balance and amount must not be null. Provided balance=" + balance + ", amount=" + amount);
+            log.error(
+                    "Validation failed: Balance or amount is null. Balance={},"
+                            +" Amount={}", balance, amount);
+            throw new NullAmountException(
+                    "Balance and amount must not be null. Provided balance="
+                            + balance + ", amount=" + amount);
         }
         if (balance < amount) {
-            log.error("Validation failed: Insufficient balance. Available={}, Required={}", balance, amount);
-            throw new InsufficientBalanceException("Insufficient funds: required=" + amount + ", available=" + balance);
+            log.error(
+                    "Validation failed: Insufficient balance."
+                            +" Available={}, Required={}",
+                    balance, amount);
+            throw new InsufficientBalanceException(
+                    "Insufficient funds: required="
+                            + amount + ", available="
+                            + balance);
         }
-        log.debug("Validation successful: Transaction can proceed. Balance={}, Amount={}", balance, amount);
+        log.debug(
+                "Validation successful: "
+                        +"Transaction can proceed. Balance={}, Amount={}",
+                balance, amount);
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId) {
+    public SubWallet findSubWalletIfExists(
+            final MainWallet wallet,
+           final String subWalletId) {
         if (wallet == null || subWalletId == null) {
-            log.error("Validation failed: wallet or subWalletId is null. Wallet={}, SubWalletId={}", wallet.getMainWalletId(), subWalletId);
-            throw new NullValueException("wallet or subWalletId must not be null.");
+            log.error(
+                    "Validation failed: wallet or "
+                            +" subWalletId is null. Wallet={}, SubWalletId={}",
+                    wallet.getMainWalletId(), subWalletId);
+            throw new NullValueException(
+                    "wallet or subWalletId must not be null.");
         }
-        log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
+        log.info(
+                "Searching for SubWallet with ID: {} in MainWallet: {}",
+                subWalletId, wallet.getMainWalletId());
         return wallet.getSubWallets().stream()
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))
                 .findFirst()
                 .orElseGet(() -> {
-                    log.warn("SubWallet not found. SubWalletId={} under MainWallet={}", subWalletId, wallet.getMainWalletId());
+                    log.warn(
+                   "SubWallet not found. SubWalletId={} under MainWallet={}",
+                   subWalletId, wallet.getMainWalletId());
                     return null;
                 });
     }
 
     /** {@inheritDoc} */
     @Override
-    public SubWallet getSubWalletIfExists(MainWallet wallet, String subWalletId) {
-        log.info("Searching for SubWallet with ID: {} in MainWallet: {}", subWalletId, wallet.getMainWalletId());
+    public SubWallet getSubWalletIfExists(final MainWallet wallet,
+                                          final String subWalletId) {
+        log.info(
+                "Searching for SubWallet with ID: {} in MainWallet: {}",
+                subWalletId, wallet
+                        .getMainWalletId());
         return wallet.getSubWallets().stream()
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))
                 .findFirst()
                 .orElseGet(() -> {
-                    log.warn("SubWallet not found. SubWalletId={} under MainWallet={}", subWalletId, wallet.getMainWalletId());
+                    log.warn("SubWallet not found. SubWalletId={} under MainWallet={}",
+                            subWalletId, wallet.getMainWalletId());
                     return null;
                 });
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getFromIconOfTxn(String mainWalletId, String fromWalletId) {
+    public String getFromIconOfTxn(
+            final String mainWalletId, final String fromWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
-        SubWallet subWallet = mainWallet.getSubWallets().stream().filter(pot -> pot.getSubWalletId().equals(fromWalletId)).findFirst().orElse(null);
-       if (subWallet!=null){
+        SubWallet subWallet = mainWallet.getSubWallets()
+                .stream().filter(pot -> pot.getSubWalletId()
+                        .equals(fromWalletId)).findFirst().orElse(null);
+       if (subWallet != null) {
            return subWallet.getIcon();
        } else if (mainWallet.getMainWalletId().equals(fromWalletId)) {
            return "mainWallet";
-       }else {
+       } else {
            return "external";
        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getToIconOfTxn(String mainWalletId, String toWalletId) {
+    public String getToIconOfTxn(
+            final String mainWalletId, final String toWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
-        SubWallet subWallet = mainWallet.getSubWallets().stream().filter(pot -> pot.getSubWalletId().equals(toWalletId)).findFirst().orElse(null);
-        if (subWallet!=null){
+        SubWallet subWallet = mainWallet
+                .getSubWallets().stream()
+                .filter(pot -> pot.getSubWalletId()
+                        .equals(toWalletId)).findFirst()
+                .orElse(null);
+        if (subWallet != null) {
             return subWallet.getIcon();
         } else if (mainWallet.getMainWalletId().equals(toWalletId)) {
             return "mainWallet";
-        }else {
+        } else {
             return "external";
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public Boolean removeSubwallet(MainWallet wallet, String subWalletId) {
-        return wallet.getSubWallets().removeIf(subwallet->subwallet.getSubWalletId().equals(subWalletId));
+    public Boolean removeSubwallet(
+            final MainWallet wallet, final String subWalletId) {
+        return wallet.getSubWallets().removeIf(subwallet ->
+                subwallet.getSubWalletId().equals(subWalletId));
     }
 
     /** {@inheritDoc} */
     @Override
-    public MasterWallet getMasterWalletInfo(String uuid) {
+    public MasterWallet getMasterWalletInfo(final String uuid) {
         log.info("Fetching MasterWallet for User UUID: {}", uuid);
         return masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
             log.error("User not found with ID: {}", uuid);
