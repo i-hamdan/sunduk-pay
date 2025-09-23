@@ -25,7 +25,8 @@ public class WebConfig implements WebMvcConfigurer {
             final CorsRegistry registry) {
         registry.addMapping("/")
                 .allowedOrigins(
-                        "http://192.168.29.112:19006", "http://192.168.29.112:8081",
+                        "http://192.168.29.112:19006",
+                        "http://192.168.29.112:8081",
                         "https://1a617a399309.ngrok-free.app")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowCredentials(true);

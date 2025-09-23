@@ -10,7 +10,8 @@ import com.stripe.model.checkout.Session;
 public interface StripeService {
 
     /**
-     * Creates a Stripe checkout session for a given user and transaction details.
+     * Creates a Stripe checkout session
+     * for a given user and transaction details.
      *
      * @param userId        The ID of the user initiating the checkout session.
      * @param amount        The amount for the transaction.
@@ -20,6 +21,7 @@ public interface StripeService {
      * @param sourceWallet The wallet from which funds will be debited
      *                     (if applicable).
      * @throws Exception If an error occurs during session creation.
+     * @return The created Stripe Session object.
      */
     Session createCheckoutSession(String userId, Double amount,
                                   TransactionType transactionType,

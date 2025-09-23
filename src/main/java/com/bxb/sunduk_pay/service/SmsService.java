@@ -13,12 +13,14 @@ public interface SmsService {
      * @param to The recipient's phone number.
      * @param message The message content to be sent.
      */
-    void sendSms(String to,String message);
+    void sendSms(String to, String message);
 
     /**
-     * Processes a transaction event and sends an SMS notification based on the event details.
+     * Processes a transaction event and sends an
+     * SMS notification based on the event details.
      *
-     * @param event The transaction event containing details for the SMS notification.
+     * @param event The transaction event
+     *containing details for the SMS notification.
      */
     void processSmsEvent(TransactionEvent event);
 }

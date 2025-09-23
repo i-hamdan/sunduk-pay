@@ -23,7 +23,8 @@ public interface UserService {
      * Uploads contacts for the user.
      *
      * @param contactRequest The request object containing contact details.
-     * @return The response object containing the result of the upload operation.
+     * @return The response object containing
+     * the result of the upload operation.
      */
     UserResponse uploadContacts(ContactRequest contactRequest);
 }
