@@ -6,6 +6,8 @@ package com.bxb.sunduk_pay.util;
  * or with an external party such as a bank or another user.</p>
  */
 public enum TransactionLevel {
+  /** Transaction occurring within the user's own accounts or pots. */
     INTERNAL,
+/** Transaction involving an external party, such as a bank or another user. */
     EXTERNAL
 }
