@@ -93,7 +93,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.debug(
     "Validating source wallet balance: currentBalance="
             + sourceWallet.getBalance()
-            + ", transferAmount="+amount);
+            + ", transferAmount=" + amount);
 
             validations.validateBalance(sourceWallet.getBalance(), amount);
             log.info("Balance validation successful");
@@ -196,8 +196,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Main wallet updated successfully");
 
             log.info(
-         "Publishing transaction event to Kafka topic " +
-                 "'transaction-topic'");
+         "Publishing transaction event to Kafka topic "
+                 + "'transaction-topic'");
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTransaction);
             kafkaTemplate.send("transaction-topic", transactionEvent);

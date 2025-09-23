@@ -22,6 +22,7 @@ import java.util.Map;
 @Log4j2
 @Service
 public class StripeServiceImpl implements StripeService {
+    /** Constant to convert dollars to cents. */
     private static final int VALUE = 100;
 
     /**

@@ -13,6 +13,9 @@ public interface MasterWalletRepository extends MongoRepository<MasterWallet,Str
     * Finds a MasterWallet by the associated user's UUID.
     * @param uuid the UUID of the user
     */
-   @SuppressWarnings("checkstyle:MethodName")
-   Optional<MasterWallet> findByUser_Uuid(String uuid);
+// CHECKSTYLE:OFF
+   Optional<MasterWallet> findByUser_Uuid(
+            String uuid);
+   // CHECKSTYLE:ON
+
 }
