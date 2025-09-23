@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.exception.StripeSessionException;
+import com.bxb.sunduk_pay.request.StripeSessionRequest;
 import com.bxb.sunduk_pay.service.StripeService;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
@@ -57,7 +58,7 @@ public class StripeServiceImpl implements StripeService {
             final WalletWrapper targetWallet,
             final WalletWrapper sourceWallet) throws Exception {
         log.info(
-          "Creating Stripe checkout session for userId={}, amount={}, type={}",
+ "Creating Stripe checkout session for userId={}, amount={}, type={}",
           userId, amount, transactionType);
 
         String productName;
@@ -85,17 +86,22 @@ public class StripeServiceImpl implements StripeService {
         }
 try {
 
-        return createSession(userId,
-                amount,
-                productName,
-                transactionType,
-                successUrl,
-                cancelUrl,
-                sourceWallet,
-                targetWallet);
+    StripeSessionRequest stripeSessionRequest = StripeSessionRequest
+            .builder()
+            .userId(userId)
+            .amount(amount)
+            .productName(productName)
+            .transactionType(transactionType)
+            .successUrl(successUrl)
+            .cancelUrl(cancelUrl)
+            .sourceWallet(sourceWallet)
+            .targetWallet(targetWallet)
+            .build();
+
+    return createSession(stripeSessionRequest);
     } catch (StripeException e) {
     log.error(
-     "Error creating checkout session. userId={}, amount={}, type={}, error={}",
+"Error creating checkout session. userId={}, amount={}, type={}, error={}",
      userId, amount, transactionType, e.getMessage());
     throw new StripeSessionException(
     "Stripe session creation failed. Please try again later.");
@@ -110,53 +116,43 @@ try {
 
     /**
      * Internal method to build and create a Stripe session.
-     * @param userId  the user ID
-     * @param amount   the transaction amount
-     * @param productName  the product name for the session
-     * @param transactionType CREDIT or DEBIT
-     * @param successUrl URL to redirect on success
-     * @param cancelUrl  URL to redirect on cancellation
-     * @param sourceWallet the source wallet
-     * @param targetWallet  the target wallet
+     * @param request the Stripe session request details
      * @return the created Stripe Session
      * @throws StripeSessionException if session creation fails
      * @throws StripeException if Stripe API call fails
      */
     private Session createSession(
-            final String userId,
-            final Double amount,
-            final String productName,
-            final TransactionType transactionType,
-            final String successUrl,
-            final String cancelUrl,
-            final WalletWrapper sourceWallet,
-            final WalletWrapper targetWallet)
+            StripeSessionRequest request)
             throws StripeSessionException, StripeException {
-        long amountInCents = (long) (amount * VALUE);
+        long amountInCents = (long) (request.getAmount() * VALUE);
         log.debug(
-      "Creating Stripe session: productName={}, amountInCents={}, userId={}",
-                productName, amountInCents, userId);
+"Creating Stripe session: productName={}, amountInCents={}, userId={}",
+                request.getProductName(),
+                amountInCents,
+                request.getUserId());
 
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("userId", userId);
-        metadata.put("type", transactionType.toString());
-        metadata.put("amount", amount.toString());
-        if (sourceWallet != null) {
-            metadata.put("sourceWallet", sourceWallet.getId());
+        metadata.put("userId", request.getUserId());
+        metadata.put("type", request.getTransactionType().toString());
+        metadata.put("amount", request.getAmount().toString());
+        if (request.getSourceWallet() != null) {
+            metadata.put("sourceWallet",
+                    request.getSourceWallet().getId());
         } else {
             metadata.put("sourceWallet", null);
         }
-        if (targetWallet != null) {
-            metadata.put("targetWallet", targetWallet.getId());
+        if (request.getTargetWallet() != null) {
+            metadata.put("targetWallet",
+                    request.getTargetWallet().getId());
         } else {
             metadata.put("targetWallet", null);
         }
 
         SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl(successUrl)
-                .setCancelUrl(cancelUrl)
+                .setSuccessUrl(request.getSuccessUrl())
+                .setCancelUrl(request.getCancelUrl())
                 .addPaymentMethodType(
                   SessionCreateParams.PaymentMethodType.CARD)
                 .addLineItem(
@@ -169,7 +165,7 @@ try {
                           .setProductData(
                            SessionCreateParams.LineItem.PriceData
                                .ProductData.builder()
-                            .setName(productName)
+                            .setName(request.getProductName())
                              .build())
                                .build())
                                 .build())
@@ -177,8 +173,8 @@ try {
                 .build();
 
         log.debug(
-         "Stripe session params built successfully for userId={}",
-                userId);
+"Stripe session params built successfully for userId={}",
+                request.getUserId());
 
         return Session.create(params);
     }
