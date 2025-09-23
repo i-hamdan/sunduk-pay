@@ -7,17 +7,20 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 /**
  * Repository interface for User entity.
- * Extends MongoRepository to provide CRUD operations on User documents in MongoDB.
+ * Extends MongoRepository to provide CRUD
+ * operations on User documents in MongoDB.
  */
 @Repository
-public interface UserRepository extends MongoRepository<User,String>{
+public interface UserRepository extends MongoRepository<User, String> {
     /**
      * Finds a user by email who is not marked as deleted.
      *
      * @param email the email of the user
      * @return an Optional containing the User if found, or empty if not found
      */
-    @SuppressWarnings("checkstyle:MethodName")
+// CHECKSTYLE:OFF
     Optional<User> findByEmailAndIsDeletedFalse(String email);
+    // CHECKSTYLE:OFF
+
 
 }
