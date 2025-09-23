@@ -16,7 +16,10 @@ import org.springframework.stereotype.Component;
 @Data
 @ConfigurationProperties(prefix = "twilio")
 public class TwilioConfig {
+    /** Twilio Account SID */
     private String accountSid;
+  /** Twilio Auth Token */
     private String authToken;
+ /** Twilio From Phone Number */
     private String fromNumber;
 }

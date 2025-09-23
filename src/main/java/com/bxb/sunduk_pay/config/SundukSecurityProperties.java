@@ -20,6 +20,8 @@ import java.util.List;
     @Component
     @ConfigurationProperties(prefix = "sunduk.security")
     public class SundukSecurityProperties {
+        /** List of
+         *  paths to exclude from authentication. */
         private List<String> excludePaths;
 
     }

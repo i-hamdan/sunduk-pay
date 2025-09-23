@@ -1,7 +1,10 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.model.*;
+
+import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
@@ -13,7 +16,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-
+import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
+import com.bxb.sunduk_pay.exception.NullAmountException;
+import com.bxb.sunduk_pay.exception.NullValueException;
+import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.User;
 /**
  * Implements validation logic for users, wallets, and transactions.
  */
@@ -21,12 +32,16 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ValidationsImpl implements Validations {
+    /** Repository for accessing user data. */
     private final UserRepository userRepository;
+    /** Repository for accessing main wallet data. */
     private final MainWalletRepository mainWalletRepository;
+    /** Repository for accessing transaction data. */
     private final TransactionRepository transactionRepository;
+    /** Repository for accessing master wallet data. */
     private final MasterWalletRepository masterWalletRepository;
-
-
+    /** Maximum allowed number of sub-wallets. */
+private static final int Wallet_Size = 19;
 
 
     /** {@inheritDoc} */
@@ -49,8 +64,8 @@ public class ValidationsImpl implements Validations {
             final String walletId) {
       return mainWalletRepository.
               findById(walletId)
-              .orElseThrow(()->new ResourceNotFoundException(
-                      "Cannot find mainWallet By Id : "+walletId));
+              .orElseThrow(() -> new ResourceNotFoundException(
+                      "Cannot find mainWallet By Id : " + walletId));
     }
 
 
@@ -58,8 +73,8 @@ public class ValidationsImpl implements Validations {
 
     public MainWallet getMainWalletInfo(
             final String uuid) {
-        log.info("Fetching mainWallet with UUID : {}"
-                , uuid);
+        log.info("Fetching mainWallet with UUID : {}",
+                uuid);
         return mainWalletRepository.findByUser_Uuid(uuid)
                 .orElseThrow(() -> {
                     log.error("User not found with UUID: {}", uuid);
@@ -73,14 +88,14 @@ public class ValidationsImpl implements Validations {
     @Override
     public void validateNumberOfSubWallets(final int size) {
         log.info("Validating number of SubWallets: {}", size);
-        if (size <= 19) {
+        if (size <= Wallet_Size) {
             log.info(
-                    "Validation passed. Current subwallet count: {}"
-                    , size);
+                    "Validation passed. Current subwallet count: {}",
+                    size);
         } else {
             log.error(
-                    "Validation failed. Maximum allowed subwallets: 19,"
-                            +" provided: {}", size);
+"Validation failed. Maximum allowed subwallets: 19, provided: {}",
+                    size);
             throw new MaxSubWalletsExceededException(
                     "Maximum 19 sub wallets are allowed.");
         }
@@ -90,12 +105,12 @@ public class ValidationsImpl implements Validations {
 
     @Override
     public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-            String uuid,
-            String walletId,
-            String transactionGroupId,
-            PaymentMethod method,
-            TransactionType transactionType,
-            Pageable pageable) {
+       final String uuid,
+       final String walletId,
+       final String transactionGroupId,
+       final PaymentMethod method,
+       final TransactionType transactionType,
+       final  Pageable pageable) {
 
         if (transactionGroupId != null) {
             return transactionRepository
@@ -180,12 +195,12 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
           final Double balance,
           final Double amount) {
         log.info(
-                "Validating transaction with balance: "
-                        +"{} and amount: {}", balance, amount);
+      "Validating transaction with balance: {} and amount: {}",
+      balance, amount);
         if (balance == null || amount == null) {
             log.error(
-                    "Validation failed: Balance or amount is null. Balance={},"
-                            +" Amount={}", balance, amount);
+  "Validation failed: Balance or amount is null. Balance={},Amount={}",
+  balance, amount);
             throw new NullAmountException(
                     "Balance and amount must not be null. Provided balance="
                             + balance + ", amount=" + amount);
@@ -193,7 +208,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
         if (balance < amount) {
             log.error(
                     "Validation failed: Insufficient balance."
-                            +" Available={}, Required={}",
+                            + " Available={}, Required={}",
                     balance, amount);
             throw new InsufficientBalanceException(
                     "Insufficient funds: required="
@@ -201,9 +216,8 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
                             + balance);
         }
         log.debug(
-                "Validation successful: "
-                        +"Transaction can proceed. Balance={}, Amount={}",
-                balance, amount);
+ "Validation successful:  Balance={}, Amount={}",
+ balance, amount);
     }
 
     /** {@inheritDoc} */
@@ -213,22 +227,24 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
            final String subWalletId) {
         if (wallet == null || subWalletId == null) {
             log.error(
-                    "Validation failed: wallet or "
-                            +" subWalletId is null. Wallet={}, SubWalletId={}",
-                    wallet.getMainWalletId(), subWalletId);
+ "Validation failed: wallet or  subWalletId is null."
+         + " Wallet = "
+         + wallet.getMainWalletId()
+         + " SubWalletId = "
+         + subWalletId);
             throw new NullValueException(
                     "wallet or subWalletId must not be null.");
         }
         log.info(
-                "Searching for SubWallet with ID: {} in MainWallet: {}",
-                subWalletId, wallet.getMainWalletId());
+  "Searching for SubWallet with ID: {} in MainWallet: {}",
+  subWalletId, wallet.getMainWalletId());
         return wallet.getSubWallets().stream()
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))
                 .findFirst()
                 .orElseGet(() -> {
                     log.warn(
-                   "SubWallet not found. SubWalletId={} under MainWallet={}",
-                   subWalletId, wallet.getMainWalletId());
+  "SubWallet not found. SubWalletId={} under MainWallet={}",
+  subWalletId, wallet.getMainWalletId());
                     return null;
                 });
     }
@@ -245,7 +261,8 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
                 .filter(sw -> sw.getSubWalletId().equals(subWalletId))
                 .findFirst()
                 .orElseGet(() -> {
-                    log.warn("SubWallet not found. SubWalletId={} under MainWallet={}",
+                    log.warn("SubWallet not found."
+                       +" SubWalletId={} under MainWallet={}",
                             subWalletId, wallet.getMainWalletId());
                     return null;
                 });
