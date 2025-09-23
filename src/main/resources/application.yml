@@ -49,7 +49,12 @@ spring:
               - openid
               - profile
               - email
+<<<<<<< Updated upstream
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
+=======
+            #            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            redirect-uri: "https://e81c7a1cbe7a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+>>>>>>> Stashed changes
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
