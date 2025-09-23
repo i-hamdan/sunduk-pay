@@ -42,7 +42,8 @@ import java.time.LocalDateTime;
         private int milestone;
 
         /**
-         * The current balance of the wallet at the time of milestone achievement.
+         * The current balance of the wallet
+         * at the time of milestone achievement.
          */
         private Double currentBalance;
 

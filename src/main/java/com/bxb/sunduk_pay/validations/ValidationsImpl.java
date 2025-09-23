@@ -262,7 +262,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
                 .findFirst()
                 .orElseGet(() -> {
                     log.warn("SubWallet not found."
-                       +" SubWalletId={} under MainWallet={}",
+                       + " SubWalletId={} under MainWallet={}",
                             subWalletId, wallet.getMainWalletId());
                     return null;
                 });

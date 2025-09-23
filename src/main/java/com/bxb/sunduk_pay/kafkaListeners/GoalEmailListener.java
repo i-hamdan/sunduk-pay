@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.service.EmailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -10,22 +11,13 @@ import org.springframework.stereotype.Component;
  * sending notification emails.
  */
 @Component
+@RequiredArgsConstructor
 public class GoalEmailListener {
 
     /**
      * Service for handling email operations.
      */
     private final EmailService emailService;
-
-    /**
-     * Constructs a GoalEmailListener with the specified EmailService.
-     *
-     * @param emailService the email service to be used for sending emails
-     */
-    public GoalEmailListener(final EmailService emailService) {
-        this.emailService = emailService;
-    }
-
     /**
      * Listens to the "goal-completion-topic" Kafka topic for
      * goal completion events.

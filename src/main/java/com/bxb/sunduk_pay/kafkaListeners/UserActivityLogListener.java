@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.ActivityLogService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -11,21 +12,10 @@ import org.springframework.stereotype.Component;
  * user activity events.
  */
 @Component
+@RequiredArgsConstructor
 public class UserActivityLogListener {
-
-    /** Service to handle activity log processing */
+    /** Service to handle activity log processing. */
     private final ActivityLogService activityLogService;
-
-    /**
-     * Constructs a UserActivityLogListener with the specified ActivityLogService.
-     *
-     * @param activityLogService the service to process user activity logs
-     */
-    public UserActivityLogListener(final ActivityLogService
-                                           activityLogService) {
-        this.activityLogService = activityLogService;
-    }
-
     /**
      * Consumes user activity log events from the Kafka topic
      * and processes them.
