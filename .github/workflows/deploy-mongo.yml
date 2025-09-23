@@ -33,17 +33,44 @@ jobs:
             if [ -d ".git" ]; then
               echo "Repository exists. Resetting and cleaning..."
               git fetch origin
-              git reset --hard origin/master   # or origin/master
-              git clean -fd
+              git reset --hard origin/Integration/1.10.2025.09.40
+              # Skip git clean to preserve untracked files if needed
+              # git clean -fd
             else
               echo "Cloning repository..."
-              git clone https://github.com/i-hamdan/sunduk-pay.git .
+              git clone https://github.com/i-hamdan/***-pay.git .
+              git checkout Integration/1.10.2025.09.40
             fi
 
-            # Make sure docker-compose.yml exists
+            # Debug: Show branch, commit, and files
+            echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+            echo "Current commit: $(git rev-parse HEAD)"
+            echo "Files in $DEPLOY_DIR:"
+            ls -la
+
+            # Make sure docker-compose.yml exists, create if missing
             if [ ! -f "docker-compose.yml" ]; then
-              echo "ERROR: docker-compose.yml not found!"
-              exit 1
+              echo "Creating default docker-compose.yml..."
+              cat <<EOF > docker-compose.yml
+            version: '3.8'
+            services:
+              mongodb:
+                image: mongo:latest
+                container_name: mongodb
+                ports:
+                  - "27017:27017"
+                volumes:
+                  - mongodb_data:/data/db
+            volumes:
+              mongodb_data:
+            EOF
+            fi
+
+            # Check if docker-compose is installed
+            if ! command -v docker-compose &> /dev/null; then
+              echo "Installing docker-compose..."
+              sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
             fi
 
             # Pull latest Docker images and start MongoDB container

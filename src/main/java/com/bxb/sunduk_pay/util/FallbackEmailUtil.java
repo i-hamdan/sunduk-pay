@@ -113,7 +113,7 @@ public class FallbackEmailUtil {
                     + "successfully processed in"
                     + "our system.\n\n"
                     + "Note: This email is being sent as"
-                    +"a fallback because the SMS"
+                    + "a fallback because the SMS"
                     + "alert could not be delivered."
                     + "You can safely rely on this email "
                     + "for your transaction record.\n\n"

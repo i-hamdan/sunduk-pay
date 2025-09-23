@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.EmailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -11,25 +12,16 @@ import org.springframework.stereotype.Component;
  * email event processing to the EmailService.
  */
 @Component
+@RequiredArgsConstructor
 public class EmailListener {
-
-    /** Service for handling email operations */
+    /** Service for handling email operations. */
     private final EmailService emailService;
-
-    /**
-     * Constructor for EmailListener.
-     *
-     * @param emailService the email service to process email events
-     */
-    public EmailListener(final EmailService emailService) {
-        this.emailService = emailService;
-    }
-
     /**
      * Consumes user-related Kafka events and processes them
      * for email notifications.
      *
-     * @param userKafkaEvent the user Kafka event containing email details
+     * @param userKafkaEvent the user Kafka
+     *event containing email details
      */
     @KafkaListener(topics = "user-topic",
             groupId = "email-service-group",
