@@ -24,7 +24,8 @@ public interface WalletService {
      * writes it to the HTTP response.
      *
      * @param walletId the ID of the wallet
-     * @param response the HttpServletResponse to write the transaction history to
+     * @param response the
+     *HttpServletResponse to write the transaction history to
      * @throws IOException if an I/O error occurs
      */
     void downloadTransactions(String walletId,
@@ -34,7 +35,8 @@ public interface WalletService {
      * Processes a payment transaction.
      *
      * @param mainWalletRequest the request object containing payment details
-     * @return the response object containing the result of the payment transaction
+     * @return the response object
+     * containing the result of the payment transaction
      */
     MainWalletResponse payMoney(MainWalletRequest mainWalletRequest);
 

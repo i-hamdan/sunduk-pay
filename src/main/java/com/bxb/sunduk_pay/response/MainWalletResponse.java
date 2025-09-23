@@ -122,9 +122,9 @@ public class MainWalletResponse {
      * information about the operation.
      */
     private String message;
-    /** Checkout session id for payment processing */
+    /** Checkout session id for payment processing. */
     private String session;
-    /** URL to redirect the user for completing payment */
+    /** URL to redirect the user for completing payment. */
     private String checkoutUrl;
 }
 

@@ -12,7 +12,8 @@ public interface FailedTxnRecorder {
      * Records a failed transaction based on the provided request object.
      *
      * @param requestObj The request object containing transaction details.
-     * @return A response object indicating the result of the recording operation.
+     * @return A response object
+     * indicating the result of the recording operation.
      */
     MainWalletResponse recordFailedTxn(MainWalletRequest requestObj);
 }

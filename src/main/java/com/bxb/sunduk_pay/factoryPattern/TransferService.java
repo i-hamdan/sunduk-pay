@@ -146,8 +146,7 @@ public class TransferService implements WalletOperation {
 
     /** Handle external outgoing transfer.
      @param sourceSubWallet the wallet from which funds are sent,
-        @param targetWallet the wallet receiving the
-        funds (can be null),
+        @param targetWallet the wallet receiving the funds,
         @param amount the amount to be transferred,
         @param user the user initiating the transfer
         @return MainWalletResponse with transfer result
@@ -188,7 +187,8 @@ public class TransferService implements WalletOperation {
             final WalletWrapper targetWallet,
             final Double previousSourceWalletBalance,
             final Double previousTargetWalletBalance) {
-        return internalTransferService.doInternalTransfer(user,
+        return internalTransferService
+                .doInternalTransfer(user,
                 mainWallet,
                 amount,
                 sourceWallet,

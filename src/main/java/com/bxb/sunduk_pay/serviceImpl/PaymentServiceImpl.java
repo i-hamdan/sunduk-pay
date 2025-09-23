@@ -42,18 +42,19 @@ public class PaymentServiceImpl implements PaymentService {
      */
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
-    public MainWalletResponse createCheckoutSession(final String userId,
-                                                    final Double amount,
-                                                    final TransactionType transactionType,
-                                                    final WalletWrapper targetWallet,
-                                                    final WalletWrapper sourceWallet) {
+    public MainWalletResponse createCheckoutSession(
+            final String userId,
+            final Double amount,
+            final TransactionType transactionType,
+            final WalletWrapper targetWallet,
+            final WalletWrapper sourceWallet) {
         try {
             Session session = stripeService.createCheckoutSession(userId,
                     amount, transactionType, targetWallet, sourceWallet);
             log.info(String.valueOf(session));
 
             return MainWalletResponse.builder()
-                    .message("Session Creating Successful For User: " + userId )
+                    .message("Session Creating Successful For User: " + userId)
                     .checkoutUrl(session.getUrl())
                     .build();
         } catch (Exception e) {
@@ -74,24 +75,28 @@ public class PaymentServiceImpl implements PaymentService {
      * @param t               the exception that caused the fallback
      * @return MainWalletResponse indicating failure.
      */
-    public MainWalletResponse paymentFallback(final String userId,
-                                              final Double amount,
-                                              final TransactionType transactionType,
-                                              final WalletWrapper targetWallet,
-                                              final WalletWrapper sourceWallet,
-                                              final Throwable t) {
+    public MainWalletResponse paymentFallback(
+            final String userId,
+            final Double amount,
+            final TransactionType transactionType,
+            final WalletWrapper targetWallet,
+            final WalletWrapper sourceWallet,
+            final Throwable t) {
 
         log.info("Transfer failed ! Failed transaction will be recorded.");
-        MainWalletRequest request=new MainWalletRequest();
+        MainWalletRequest request = new MainWalletRequest();
         request.setUuid(userId);
         request.setAmount(amount);
         request.setTransactionType(transactionType);
-        request.setSourceWalletId((sourceWallet!=null)?sourceWallet.getId():null);
-        request.setTargetWalletId((targetWallet!=null)?targetWallet.getId():null);
+        request.setSourceWalletId((sourceWallet != null)
+                ? sourceWallet.getId() : null);
+        request.setTargetWalletId((targetWallet != null)
+                ? targetWallet.getId() : null);
 
         failedTxnRecorder.recordFailedTxn(request);
         log.info("failed transaction saved successfully.");
-        return MainWalletResponse.builder().message("Payment provider unavailable: "
+        return MainWalletResponse.builder()
+                .message("Payment provider unavailable: "
                         + t.getMessage())
                 .checkoutUrl(null)
                 .build();

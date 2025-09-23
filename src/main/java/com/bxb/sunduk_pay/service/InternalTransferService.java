@@ -31,3 +31,4 @@ public interface InternalTransferService {
                                           Double previousSourceWalletBalance,
                                           Double previousTargetWalletBalance);
 }
+
