@@ -16,8 +16,10 @@ import java.util.List;
  */
 @Repository
 
-public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, String> {
+public interface CurrencyRateRepository
+        extends MongoRepository<CurrencyRates, String> {
     /**
+     * Finds currency rates within a specified date range.
      * Finds currency rates within a specified date
      * range and retrieves only the specified rate key.
      *
@@ -28,14 +30,14 @@ public interface CurrencyRateRepository extends MongoRepository<CurrencyRates, S
      * @return a list of CurrencyRates objects
      * containing only the date and specified rate
      */
-    @SuppressWarnings("checkstyle:MethodName")
     @Query(
             value = "{ 'date': { $gte: ?0, $lte: ?1 } }",
             fields = "{ 'date': 1, 'rates.?2': 1 }"
     )
-    List<CurrencyRates> findSpecificRate(LocalDate startDate,
-                                         LocalDate endDate,
-                                         String rateKey);
+    List<CurrencyRates> findSpecificRate(
+            LocalDate startDate,
+            LocalDate endDate,
+            String rateKey);
 }
 
 

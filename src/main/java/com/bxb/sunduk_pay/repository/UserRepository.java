@@ -16,10 +16,12 @@ public interface UserRepository extends MongoRepository<User, String> {
      * Finds a user by email who is not marked as deleted.
      *
      * @param email the email of the user
-     * @return an Optional containing the User if found, or empty if not found
+     * @return an Optional containing the User if found,
+     * or empty if not found
      */
 // CHECKSTYLE:OFF
-    Optional<User> findByEmailAndIsDeletedFalse(String email);
+    Optional<User> findByEmailAndIsDeletedFalse(
+            String email);
     // CHECKSTYLE:OFF
 
 

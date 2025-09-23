@@ -18,9 +18,7 @@ public interface MainWalletRepository
   * @return An Optional containing the MainWallet if found,
   * or empty if not found.
   */
-// CHECKSTYLE:OFF
- Optional<MainWallet> findByUser_Uuid(
+ Optional<MainWallet> findByUserUuid(
          String uuid);
-// CHECKSTYLE:ON
 
 }
