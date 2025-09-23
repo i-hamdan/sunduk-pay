@@ -36,12 +36,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
+    /** Fixed fee deducted from converted amount. */
     private static final double FEE = 0.10;
+    /** Start year for historical data retrieval. */
     private static final int YEAR_START = 2024;
+    /** End year for historical data retrieval. */
     private static final int YEAR_END = 2025;
+    /** Month constant for August. */
     private static final int MONTH_AUGUST = 8;
+    /** Month constant for July. */
     private static final int MONTH_JULY = 7;
+    /** Day constant for 19th. */
     private static final int DAY_19 = 19;
+    /** Day constant for 13th. */
     private static final int DAY_13 = 13;
 
     /** CurrencyMapper for mapping entities to DTOs. */
@@ -69,9 +76,11 @@ public class CurrencyServiceImpl implements CurrencyService {
      * @throws CustomExchangeRateException if API response is invalid
      */
     @Override
-    public CurrencyResponse convertCurrency(final CurrencyRequest currencyRequest) {
+    public CurrencyResponse convertCurrency(
+            final CurrencyRequest currencyRequest) {
 
-        double exchangeRate = fetchExchangeRate(currencyRequest.getFromCurrency(),
+        double exchangeRate = fetchExchangeRate(
+                currencyRequest.getFromCurrency(),
                 currencyRequest.getToCurrency());
         log.debug("Exchange rate fetched successfully: {}",
                 exchangeRate);
@@ -79,7 +88,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (currencyRequest.getAmount() == null) {
             log.error("Invalid amount received in request: {}",
                     currencyRequest.getAmount());
-            throw new NullAmountException("Amount Cannot Be null !" + currencyRequest.getAmount());
+            throw new NullAmountException(
+             "Amount Cannot Be null !" + currencyRequest.getAmount());
         }
 
         log.debug("Converting amount {} with exchange rate {}",
@@ -141,7 +151,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         String url = exchangeApiUrl + "/latest" + "/" + from;
         log.debug(
             "Preparing to fetch exchange rate from API for {} to {}",
-                from , to);
+                from, to);
         ResponseEntity<Map> response;
         try {
             response = restTemplate.getForEntity(url, Map.class);
@@ -231,8 +241,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         String currencyPair = from.concat(to);
         LocalDate oneMonth = LocalDate.of(
                 YEAR_END, MONTH_JULY, DAY_19);
-        LocalDate endDate = LocalDate.of
-                (YEAR_END, MONTH_AUGUST, DAY_19);
+        LocalDate endDate = LocalDate.of(
+                YEAR_END, MONTH_AUGUST, DAY_19);
 
         log.info(
                 "Fetching monthly rates for currencyPair={} from date={}",

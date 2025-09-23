@@ -44,9 +44,13 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
+    /**Transaction type column index in Excel sheet.*/
     private static final int TRANSACTION_TYPE_COLUMN = 1;
+    /**Amount column index in Excel sheet.*/
     private static final int AMOUNT_COLUMN = 2;
+    /**Description column index in Excel sheet.*/
     private static final int DESCRIPTION_COLUMN = 3;
+    /**Date column index in Excel sheet.*/
     private static final int DATE_COLUMN = 4;
 
     /**MasterWalletRepository for database operations on MasterWallets.*/
@@ -75,7 +79,7 @@ public class WalletServiceImpl implements WalletService {
      */
     @Override
     @Transactional
-    public MainWalletResponse payMoney(MainWalletRequest request) {
+    public MainWalletResponse payMoney(final MainWalletRequest request) {
         log.info("=== Deduct Money Request Started ===");
         log.debug("Request: {}", request);
         validations.getUserInfo(request.getUuid());
@@ -244,7 +248,7 @@ public class WalletServiceImpl implements WalletService {
 
         Double previousTargetWalletBalance;
         if (subWallet != null) {
-            log.info("Target SubWallet [{}] balance before: {}" ,
+            log.info("Target SubWallet [{}] balance before: {}",
                     subWallet.getSubWalletName(),
                     subWallet.getBalance());
             previousTargetWalletBalance = subWallet.getBalance();
@@ -253,8 +257,8 @@ public class WalletServiceImpl implements WalletService {
         }
 
         // adding amount on master wallet
-        masterWallet.setBalance(masterWallet.getBalance() +
-                mainWalletRequest.getAmount());
+        masterWallet.setBalance(masterWallet.getBalance()
+                + mainWalletRequest.getAmount());
         log.info("Added {} to MasterWallet. New balance: {}",
                 mainWalletRequest.getAmount(),
                 masterWallet.getBalance());
@@ -380,6 +384,13 @@ public class WalletServiceImpl implements WalletService {
         return walletService.perform(mainWalletRequest);
     }
 
+    /**
+     * Records a failed transaction in the database.
+     * @param request The request containing
+     *        transaction details such as source ,
+     *         target , amount , and type.
+     * @return a MainWalletResponse indicating transaction failure.
+     */
     @Override
         public MainWalletResponse recordFailedTxn(
                 final MainWalletRequest request) {
@@ -396,19 +407,19 @@ public class WalletServiceImpl implements WalletService {
 
         String fromWallet = null;
         if (mainWallet.getMainWalletId().
-                equals(request.getSourceWalletId())){
+                equals(request.getSourceWalletId())) {
             fromWallet = "Main wallet";
         } else if (sourceSubWallet != null
                 && sourceSubWallet.getSubWalletId()
                 .equals(request.getSourceWalletId())) {
             fromWallet = sourceSubWallet.getSubWalletName();
         } else {
-            fromWallet="Some external source";
+            fromWallet = "Some external source";
         }
 
         String toWallet = null;
         if (mainWallet.getMainWalletId()
-                .equals(request.getTargetWalletId())){
+                .equals(request.getTargetWalletId())) {
             toWallet = "Main wallet";
         } else if (targetSubwallet != null
                 && targetSubwallet.getSubWalletId()
@@ -472,9 +483,12 @@ public class WalletServiceImpl implements WalletService {
     /**
      * Returns the current balance of a wallet.
      *
-     * @param walletId The ID of the wallet to fetch balance for.
-     * @return String A message containing the wallet ID and its current balance.
-     * @throws WalletNotFoundException If the wallet with given ID does not exist.
+     * @param walletId The ID of the wallet
+     *                 to fetch balance for.
+     * @return String A message containing
+     * the wallet ID and its current balance.
+     * @throws WalletNotFoundException If
+     * the wallet with given ID does not exist.
      */
     //This will simply return the current balance of a wallet.
     public String showBalance(final String walletId) {
@@ -498,9 +512,21 @@ public class WalletServiceImpl implements WalletService {
 
 
 
+    /**
+     * Exports the transaction history of a wallet to an Excel file
+     * and sends it in the HTTP response.
+     * @param walletId The ID of the wallet whose
+      transactions are to be exported.
+     * @param response The HttpServletResponse
+     to write the Excel file to.
+     * @throws IOException If an I/O error occurs
+     *during file writing.
+     * @throws WalletNotFoundException If the wallet
+     *with given ID does not exist.
+     */
     @Override
     public void downloadTransactions(
-            final String walletId ,
+            final String walletId,
             final HttpServletResponse response)
             throws IOException {
         log.info(
@@ -528,10 +554,10 @@ public class WalletServiceImpl implements WalletService {
 
         XSSFRow row = sheet.createRow(0);
         row.createCell(0).setCellValue("S.No");
-        row.createCell(1).setCellValue("Type");
-        row.createCell(2).setCellValue("Amount");
-        row.createCell(3).setCellValue("Description");
-        row.createCell(4).setCellValue("Date&Time");
+        row.createCell(TRANSACTION_TYPE_COLUMN).setCellValue("Type");
+        row.createCell(AMOUNT_COLUMN).setCellValue("Amount");
+        row.createCell(DESCRIPTION_COLUMN).setCellValue("Description");
+        row.createCell(DATE_COLUMN).setCellValue("Date&Time");
 
         int rowNum = 1;
         int count = 1;
