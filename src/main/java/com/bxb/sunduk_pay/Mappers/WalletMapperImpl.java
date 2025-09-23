@@ -15,7 +15,7 @@ import java.util.List;
  * into corresponding response DTOs.
  */
 @Component
-public class WalletMapperImpl implements WalletMapper{
+public class WalletMapperImpl implements WalletMapper {
 
     /**
      * Converts a MainWallet entity and its associated SubWallets into
@@ -39,18 +39,21 @@ public class WalletMapperImpl implements WalletMapper{
 
    /** Supporting method for converting
     * list of subWallets into list of subWalletResponses.
+    * @return list of subWalletResponses
     * */
     private List<SubWalletResponse> toSubWalletResponseList(
-            final List<SubWallet> subWallet){
+            final List<SubWallet> subWallet) {
        List<SubWalletResponse> list = new ArrayList<>();
-       for (SubWallet subWallet1 : subWallet){
+       for (SubWallet subWallet1 : subWallet) {
            list.add(toSubWalletResponse(subWallet1));
        }
        return list;
    }
-    /** Supporting method for converting subWallet into subWalletResponse*/
+    /** Supporting method for converting subWallet.
+     * @Param subWallet.
+     * into subWalletResponse.*/
    private SubWalletResponse toSubWalletResponse(
-           final SubWallet subWallet){
+           final SubWallet subWallet) {
        SubWalletResponse subWalletResponse = new SubWalletResponse();
        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());

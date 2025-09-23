@@ -63,13 +63,13 @@ public class EmailMessageUtil {
                     + "• Make safe payments and monitor all wallet activity in "
                     + "real-time\n\n"
                     + "Start exploring today and "
-                    +"take control of your finances like "
+                    + "take control of your finances like "
                     + "never before!\n\n"
                     + "If you ever need assistance "
                     + "our support team is always ready "
                     + "to help.\n\n"
                     + "Thank you for choosing SundukPay "
-                    +"– we’re excited to see you "
+                    + "– we’re excited to see you "
                     + "achieve your financial goals with us!\n\n"
                     + "Warm regards,\n"
                     + "SundukPay Team";
@@ -104,7 +104,7 @@ public class EmailMessageUtil {
         return switch (event.getMilestone()) {
             case MILESTONE_50 -> "Hello,\n\n"
                     + "Great progress! You’ve reached"
-                    +" **50% of your savings goal** in *"
+                    + " **50% of your savings goal** in *"
                     + event.getWalletName() + "*.\n\n"
                     + "You’re halfway there — stay consistent,"
                     + "and you’ll achieve your "
@@ -113,7 +113,7 @@ public class EmailMessageUtil {
                     + "Best wishes,\nTeam Sunduk";
             case MILESTONE_75 -> "Hello,\n\n"
                     + "Amazing work! You’ve now reached"
-                    +"**75% of your goal** in *"
+                    + "**75% of your goal** in *"
                     + event.getWalletName() + "*.\n\n"
                     + "You’re so close — just a little"
                     + "more effort and you’ll get "
@@ -125,7 +125,7 @@ public class EmailMessageUtil {
                     + "You’ve successfully achieved **100% of your "
                     + "savings goal** in *" + event.getWalletName() + "*.\n\n"
                     + "This is a fantastic accomplishment,"
-                    +" and we’re proud to see your "
+                    + " and we’re proud to see your "
                     + "dedication paying off.\n\n"
                     + "Here’s to even bigger goals ahead!\n\n"
                     + "With warm regards,\nTeam Sunduk";

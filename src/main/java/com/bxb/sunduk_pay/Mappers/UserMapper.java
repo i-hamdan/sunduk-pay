@@ -6,7 +6,8 @@ import com.bxb.sunduk_pay.response.UserResponse;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 /**
- * Mapper interface for converting User entities and external authentication objects
+ * Mapper interface for converting User entities and external
+ * authentication objects
  * into various response or event objects.
  */
 public interface UserMapper {
@@ -36,12 +37,13 @@ public interface UserMapper {
     UserResponse toUserResponse(User user);
 
     /**
-     * Converts a User entity into a Kafka event object for publishing user-related events.
+     * Converts a User entity into a Kafka event object for
+     * publishing user-related events.
      *
      * @param user      the User entity
      * @param eventType the type of event (e.g., CREATED, UPDATED)
      * @return a UserKafkaEvent object.
      */
-    UserKafkaEvent toKafkaEvent(User user,String eventType);
+    UserKafkaEvent toKafkaEvent(User user, String eventType);
 }
 

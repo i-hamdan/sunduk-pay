@@ -164,7 +164,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
 
         Map<String, Object> rates = (Map<String, Object>) body.get("conversion_rates");
-        log.debug("Extracted conversion_rates: {}", rates);
+        log.debug("Extracted conversion_rates: {}",from,to);
 
         if (!rates.containsKey(to)) {
             log.error("Currency {} not found in conversion rates", to);
