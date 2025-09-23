@@ -14,13 +14,18 @@ public class WalletWrapper {
     /** The SubWallet instance, if applicable. */
     private final SubWallet subWallet;
 
-    public WalletWrapper(MainWallet mainWalletParam) {
+    /** Constructor to create a WalletWrapper for a MainWallet.
+     * @param mainWalletParam the MainWallet instance to wrap
+     */
+    public WalletWrapper(final MainWallet mainWalletParam) {
         this.mainWallet = mainWalletParam;
         this.subWallet = null;
     }
 
-
-    public WalletWrapper(SubWallet subWalletParam) {
+    /** Constructor to create a WalletWrapper for a SubWallet.
+     * @param subWalletParam the SubWallet instance to wrap
+     */
+    public WalletWrapper(final SubWallet subWalletParam) {
         this.subWallet = subWalletParam;
         this.mainWallet = null;
     }

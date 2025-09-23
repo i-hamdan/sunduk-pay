@@ -34,7 +34,7 @@ public class CurrencyController {
             @RequestBody final CurrencyRequest currencyRequest) {
         log.info("Currency conversion API called: from = "
                 + currencyRequest.getFromCurrency()
-                + "to = "+currencyRequest.getToCurrency()
+                + "to = " + currencyRequest.getToCurrency()
                 + " amount = "
                 + currencyRequest.getAmount());
         CurrencyResponse response = currencyService

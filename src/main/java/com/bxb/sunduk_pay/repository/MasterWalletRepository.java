@@ -9,12 +9,12 @@ import java.util.Optional;
  * Extends MongoRepository to provide CRUD operations.
  */
 public interface MasterWalletRepository
-        extends MongoRepository<MasterWallet,String> {
+        extends MongoRepository<MasterWallet, String> {
    /**
     * Finds a MasterWallet by the associated user's UUID.
     * @param uuid the UUID of the user
+    * @return an Optional containing the MasterWallet if found, or empty if not found
     */
-
    Optional<MasterWallet> findByUserUuid(
             String uuid);
 

@@ -32,6 +32,7 @@ public interface TransactionRepository
     /*** Finds transactions by user UUID.
  * And isMaster flag set to false.
      * @param uuid the user UUID
+     * @param pageable pagination information
      * @return list of transactions
      */
     Page<Transaction> findByUserUuidAndIsMasterFalse(
@@ -43,6 +44,7 @@ public interface TransactionRepository
      * @param uuid the user UUID
      * @param fromWalletId from wallet id
      * @param transactionType the type of transaction
+     * @param pageable pagination information
      * @return list of transactions
      */
     Page<Transaction>
@@ -60,6 +62,7 @@ public interface TransactionRepository
      * @param fromWalletId from wallet id
      * @param  transactionType the type of transaction
      * @param paymentMethod the method of payment
+     * @param pageable pagination information
      * @return list of transactions
      */
     Page<Transaction>
@@ -74,6 +77,7 @@ public interface TransactionRepository
      * @param uuid the user UUID
      * @param toWalletId to wallet id
      * @param  transactionType the type of transaction
+     * @param pageable pagination information
      * @return list of transactions
      */
     Page<Transaction>
@@ -89,6 +93,7 @@ public interface TransactionRepository
      * @param toWalletId to wallet id
      * @param  transactionType the type of transaction
      * @param paymentMethod the method of payment
+     * @param pageable pagination information
      * @return list of transactions
      */
     Page<Transaction>
@@ -107,10 +112,10 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-            + "] }")
+    @Query("{ 'user.uuid': ?0, $or: [ "
+      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+      + "] }")
     Page<Transaction> findAllByUserAndWallet(
             String uuid,
             String walletId,
@@ -126,10 +131,10 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-            + "], 'paymentMethod': ?2 }")
+    @Query("{ 'user.uuid': ?0, $or: [ "
+      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+      + "], 'paymentMethod': ?2 }")
     Page<Transaction> findByUserUuidAndWalletIdAndPaymentMethod(
             String uuid,
             String walletId,
@@ -143,10 +148,10 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ " +
-            "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-            + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-            + "] }")
+    @Query("{ 'user.uuid': ?0, $or: [ "
+      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
+      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
+      + "] }")
     List<Transaction> findAllByUserAndWallet(
             String uuid,
             String walletId);

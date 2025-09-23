@@ -44,6 +44,7 @@ public class SundukController {
      *
      * @param session current HTTP session
      * @param httpServletResponse HTTP response to send redirect
+     * @param user authenticated OIDC user
      * @return user login response
      * @throws IOException if redirect fails
      */

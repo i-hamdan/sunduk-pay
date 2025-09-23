@@ -30,7 +30,6 @@ public class TransactionResponse {
     private TransactionLevel transactionLevel;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
-
     /** Amount involved in the transaction. */
     private Double amount;
     /** Description or note about the transaction. */

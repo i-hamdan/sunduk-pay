@@ -2,7 +2,6 @@ package com.bxb.sunduk_pay.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 

@@ -16,6 +16,7 @@ import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
@@ -123,6 +124,7 @@ public class WalletServiceImpl implements WalletService {
                 .amount(request.getAmount())
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
+                .paymentMethod(PaymentMethod.CARD)
                 .status("SUCCESS")
                 .description("Deducted from master wallet")
                 .dateTime(LocalDateTime.now())
@@ -153,6 +155,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .paymentMethod(PaymentMethod.CARD)
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
@@ -182,6 +185,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .paymentMethod(PaymentMethod.CARD)
                     .status("SUCCESS")
                     .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
@@ -274,6 +278,7 @@ public class WalletServiceImpl implements WalletService {
                 .user(user)
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
+                .paymentMethod(PaymentMethod.CARD)
                 .status("SUCCESS")
                 .description("Credited to master wallet.")
                 .dateTime(LocalDateTime.now())
@@ -305,6 +310,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .paymentMethod(PaymentMethod.CARD)
                     .status("SUCCESS")
                     .description("Credited to sub wallet : "
                             + subWallet.getSubWalletName())
@@ -336,6 +342,7 @@ public class WalletServiceImpl implements WalletService {
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
+                    .paymentMethod(PaymentMethod.CARD)
                     .status("SUCCESS")
                     .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
