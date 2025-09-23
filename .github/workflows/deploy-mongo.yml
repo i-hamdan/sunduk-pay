@@ -20,22 +20,34 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # Use home directory to avoid permission issues
-            rm -rf ~/mongodb-deploy
-            mkdir -p ~/mongodb-deploy
-            cd ~/mongodb-deploy
-            
-            # Pull latest repo
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/i-hamdan/sunduk-pay.git .
-            else
-              git reset --hard
+            #!/bin/bash
+
+            # Set deploy directory in home to avoid permission issues
+            DEPLOY_DIR=~/mongodb-deploy
+
+            # Create folder if it doesn't exist
+            mkdir -p $DEPLOY_DIR
+            cd $DEPLOY_DIR || exit 1
+
+            # If repo exists, reset and clean; otherwise clone
+            if [ -d ".git" ]; then
+              echo "Repository exists. Resetting and cleaning..."
+              git fetch origin
+              git reset --hard origin/master   # or origin/master
               git clean -fd
-              git pull
+            else
+              echo "Cloning repository..."
+              git clone https://github.com/i-hamdan/mongodb-deploy.git .
             fi
-            
+
             # Make sure docker-compose.yml exists
-            ls -l
-            
-            # Start MongoDB container
+            if [ ! -f "docker-compose.yml" ]; then
+              echo "ERROR: docker-compose.yml not found!"
+              exit 1
+            fi
+
+            # Pull latest Docker images and start MongoDB container
+            docker-compose pull
             docker-compose up -d
+
+            echo "MongoDB deployment completed successfully!"
