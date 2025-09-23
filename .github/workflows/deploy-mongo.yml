@@ -37,7 +37,7 @@ jobs:
               git clean -fd
             else
               echo "Cloning repository..."
-              git clone https://github.com/i-hamdan/mongodb-deploy.git .
+              git clone https://github.com/i-hamdan/sunduk-pay.git .
             fi
 
             # Make sure docker-compose.yml exists
