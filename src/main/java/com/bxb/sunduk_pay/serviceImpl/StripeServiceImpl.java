@@ -22,6 +22,8 @@ import java.util.Map;
 @Log4j2
 @Service
 public class StripeServiceImpl implements StripeService {
+    private static final int VALUE = 100;
+
     /**
      * Initializes the Stripe API with the
      secret key from application properties.
@@ -81,6 +83,7 @@ public class StripeServiceImpl implements StripeService {
                     "Invalid session type: " + transactionType);
         }
 try {
+
         return createSession(userId,
                 amount,
                 productName,
@@ -128,7 +131,7 @@ try {
             final WalletWrapper sourceWallet,
             final WalletWrapper targetWallet)
             throws StripeSessionException, StripeException {
-        long amountInCents = (long) (amount * 100);
+        long amountInCents = (long) (amount * VALUE);
         log.debug(
       "Creating Stripe session: productName={}, amountInCents={}, userId={}",
                 productName, amountInCents, userId);
@@ -153,7 +156,8 @@ try {
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
-                .addPaymentMethodType(SessionCreateParams.PaymentMethodType.CARD)
+                .addPaymentMethodType(
+                  SessionCreateParams.PaymentMethodType.CARD)
                 .addLineItem(
                         SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
@@ -162,7 +166,8 @@ try {
                          .setCurrency("usd")
                           .setUnitAmount(amountInCents)
                           .setProductData(
-                           SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                           SessionCreateParams.LineItem.PriceData
+                               .ProductData.builder()
                             .setName(productName)
                              .build())
                                .build())

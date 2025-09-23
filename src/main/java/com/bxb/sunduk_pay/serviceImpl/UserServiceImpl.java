@@ -68,8 +68,9 @@ public class UserServiceImpl implements UserService {
             response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
-            log.info("User not found in DB. Creating new user for email: {}",
-                    response.getEmail());
+            log.info(
+             "User not found in DB. Creating new user for email: {}",
+             response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
@@ -94,12 +95,14 @@ public class UserServiceImpl implements UserService {
             user.setMainWallet(mainWallet);
             userRepository.save(user);
 
-            UserKafkaEvent userEvent = userMapper.toKafkaEvent(user, "SIGNUP");
+            UserKafkaEvent userEvent = userMapper
+                    .toKafkaEvent(user, "SIGNUP");
             kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
-            UserKafkaEvent userEvent = userMapper.toKafkaEvent(user,  "LOGIN");
+            UserKafkaEvent userEvent = userMapper
+                    .toKafkaEvent(user,  "LOGIN");
             kafkaTemplate.send("user-topic", userEvent);
             log.info("Login successful");
         }
@@ -124,7 +127,7 @@ public class UserServiceImpl implements UserService {
           contactRequest.getUserId());
 
         User user = userRepository.findById(contactRequest.getUserId())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new UserNotFoundException(
          "User not found for ID: " + contactRequest.getUserId()));
         log.debug("User fetched: {}", user.getUuid());
 
@@ -133,7 +136,9 @@ public class UserServiceImpl implements UserService {
        contactRequest.getContacts().size(), user.getUuid());
 
         userRepository.save(user);
-        log.info("User with ID: {} successfully updated with contacts", user.getUuid());
+        log.info(
+          "User with ID: {} successfully updated with contacts",
+                user.getUuid());
 
         return UserResponse.builder()
                 .uuid(user.getUuid())

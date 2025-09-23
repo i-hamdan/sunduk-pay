@@ -80,7 +80,7 @@ public class SmsServiceImpl implements SmsService {
      * @param message message content
      * @throws SmsServiceException if SMS sending fails.
      */
-    public void sendSms(final String to,final String message) {
+    public void sendSms(final String to, final String message) {
         try {
             Message.creator(new PhoneNumber(to),
                     new PhoneNumber(twilioConfig.getFromNumber()),

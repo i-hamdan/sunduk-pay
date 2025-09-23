@@ -29,40 +29,47 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
 
     /**
      * Records a failed transaction based on the given MainWalletRequest.
-     * Determines the source and target wallets, builds a failed transaction object,
-     * saves it to the database, and returns a response indicating failure.
-     *
+     * Determines the source and target wallets,
+     * builds a failed transaction object,
+     * saves it to the database,
+     * and returns a response indicating failure.
      * @param request the request containing transaction details
      * @return a MainWalletResponse indicating transaction failure.
      */
     @Override
     public MainWalletResponse recordFailedTxn(final MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
-        SubWallet sourceSubWallet = validations.getSubWalletIfExists(mainWallet,
+        MainWallet mainWallet = validations
+                .getMainWalletInfo(request.getUuid());
+        SubWallet sourceSubWallet = validations
+                .getSubWalletIfExists(mainWallet,
                 request.getSourceWalletId());
-        SubWallet targetSubwallet = validations.getSubWalletIfExists(mainWallet,
+        SubWallet targetSubwallet = validations
+                .getSubWalletIfExists(mainWallet,
                 request.getTargetWalletId());
 
-        String fromWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())){
-            fromWallet="Main wallet";
+        String fromWallet = null;
+        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())) {
+            fromWallet = "Main wallet";
         } else if (
                 sourceSubWallet != null
-                        && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
-            fromWallet= sourceSubWallet.getSubWalletName();
-        }else{
-            fromWallet="Some external source";
+                  && sourceSubWallet.getSubWalletId()
+                 .equals(request.getSourceWalletId())) {
+            fromWallet = sourceSubWallet.getSubWalletName();
+        } else {
+            fromWallet = "Some external source";
         }
 
-        String toWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())){
-            toWallet="Main wallet";
-        } else if (targetSubwallet!=null
-                && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
-            toWallet= targetSubwallet.getSubWalletName();
-        }else{
-            toWallet="Some external target";
+        String toWallet = null;
+        if (mainWallet.getMainWalletId().equals(
+                request.getTargetWalletId())) {
+            toWallet = "Main wallet";
+        } else if (targetSubwallet != null
+                && targetSubwallet.getSubWalletId()
+                .equals(request.getTargetWalletId())) {
+            toWallet = targetSubwallet.getSubWalletName();
+        } else {
+            toWallet = "Some external target";
         }
 
 

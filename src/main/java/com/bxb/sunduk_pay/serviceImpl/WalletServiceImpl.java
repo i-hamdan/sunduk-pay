@@ -35,34 +35,43 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Service implementation for wallet operations such as adding money, paying money,
- * handling failed transactions, wallet CRUD operations, and exporting transactions.
+ * Service implementation for wallet operations.
+ * Such as adding money, paying money,
+ * handling failed transactions, wallet CRUD operations,
+ * and exporting transactions.
  */
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-    /**MasterWalletRepository instance for database operations on MasterWallets.*/
+    private static final int TRANSACTION_TYPE_COLUMN = 1;
+    private static final int AMOUNT_COLUMN = 2;
+    private static final int DESCRIPTION_COLUMN = 3;
+    private static final int DATE_COLUMN = 4;
+
+    /**MasterWalletRepository for database operations on MasterWallets.*/
     private final MasterWalletRepository masterWalletRepository;
-    /**MainWalletRepository instance for database operations on MainWallets.*/
+    /**MainWalletRepository for database operations on MainWallets.*/
     private final MainWalletRepository mainWalletRepository;
-    /**TransactionRepository instance for database operations on Transactions.*/
+    /**TransactionRepository for database operations on Transactions.*/
     private final TransactionRepository transactionRepository;
-    /**TransactionMapper instance for mapping Transaction entities to DTOs.*/
+    /**TransactionMapper for mapping Transaction entities to DTOs.*/
     private final TransactionMapper transactionMapper;
     /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-    /**Factory for obtaining wallet operation implementations based on request type.*/
+    /**Wallet operation implementations based on request type.*/
     private final WalletOperationFactory walletOperationFactory;
-    /**Validations instance for performing various validation checks.*/
+    /**Validations for performing various validation checks.*/
     private final Validations validations;
 
 
     /**
      * Deducts money from the user's wallet(s) and records the transaction.
      *
-     * @param request The request containing amount, source wallet, target wallet, and user UUID.
-     * @return MainWalletResponse containing transaction details and updated balances.
+     * @param request The request containing amount,
+     *  source wallet, target wallet, and user UUID.
+     * @return MainWalletResponse containing
+     * transaction details and updated balances.
      */
     @Override
     @Transactional
@@ -70,27 +79,35 @@ public class WalletServiceImpl implements WalletService {
         log.info("=== Deduct Money Request Started ===");
         log.debug("Request: {}", request);
         validations.getUserInfo(request.getUuid());
-        MasterWallet masterWallet = validations.getMasterWalletInfo(request.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
-        SubWallet sourcesubWallet = validations.findSubWalletIfExists(mainWallet,
+        MasterWallet masterWallet = validations
+                .getMasterWalletInfo(request.getUuid());
+        MainWallet mainWallet = validations
+                .getMainWalletInfo(request.getUuid());
+        SubWallet sourcesubWallet = validations
+                .findSubWalletIfExists(mainWallet,
                 request.getSourceWalletId());
 
-        log.info("MasterWallet balance before: {}", masterWallet.getBalance());
-        log.info("MainWallet balance before: {}", mainWallet.getBalance());
+        log.info("MasterWallet balance before: {}",
+                masterWallet.getBalance());
+        log.info("MainWallet balance before: {}",
+                mainWallet.getBalance());
 
         Double previousSourceWalletBalance;
         if (sourcesubWallet != null) {
             log.info("Source SubWallet [{}] balance before: {}",
-                    sourcesubWallet.getSubWalletName(), sourcesubWallet.getBalance());
+                    sourcesubWallet.getSubWalletName(),
+                    sourcesubWallet.getBalance());
             previousSourceWalletBalance = sourcesubWallet.getBalance();
         } else {
             previousSourceWalletBalance = mainWallet.getBalance();
         }
 
         // deduct balance from master wallet
-        masterWallet.setBalance(masterWallet.getBalance() - request.getAmount());
+        masterWallet.setBalance(
+                masterWallet.getBalance() - request.getAmount());
         log.info("Deducted {} from MasterWallet. New balance: {}",
-                request.getAmount(), masterWallet.getBalance());
+                request.getAmount(),
+                masterWallet.getBalance());
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
@@ -116,13 +133,15 @@ public class WalletServiceImpl implements WalletService {
         if (sourcesubWallet != null) {
             validations.validateBalance(sourcesubWallet.getBalance(),
                     request.getAmount());
-            sourcesubWallet.setBalance(sourcesubWallet.getBalance() - request.getAmount());
+            sourcesubWallet.setBalance(
+                    sourcesubWallet.getBalance() - request.getAmount());
             log.info(
                     "Deducted {} from SubWallet [{}]. New balance: {}",
                     request.getAmount(), sourcesubWallet.getSubWalletName(),
                     sourcesubWallet.getBalance());
 
-            debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+            debitTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -136,16 +155,22 @@ public class WalletServiceImpl implements WalletService {
                     .toWallet("some external source")
                     .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(debitTxn);
-            kafkaTemplate.send("transaction-topic", transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(debitTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         } else {
-            validations.validateBalance(mainWallet.getBalance(), request.getAmount());
-            mainWallet.setBalance(mainWallet.getBalance() - request.getAmount());
+            validations.validateBalance(mainWallet.getBalance(),
+                    request.getAmount());
+            mainWallet.setBalance(
+                    mainWallet.getBalance() - request.getAmount());
             log.info("Deducted {} from MainWallet. New balance: {}",
-                    request.getAmount(), mainWallet.getBalance());
+                    request.getAmount(),
+                    mainWallet.getBalance());
 
-            debitTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+            debitTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -160,7 +185,8 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
 
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(debitTxn);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(debitTxn);
             kafkaTemplate.send("transaction-topic", transactionEvent);
         }
 
@@ -171,41 +197,56 @@ public class WalletServiceImpl implements WalletService {
 
         MainWalletResponse response = MainWalletResponse.builder()
                 .status("SUCCESS")
-                .sourceTransactionId(debitTxn.getTransactionId())
-                .previousSourceWalletBalance(previousSourceWalletBalance)
-                .newSourceWalletBalance(mainWallet.getBalance())
+                .sourceTransactionId(
+                        debitTxn.getTransactionId())
+                .previousSourceWalletBalance(
+                        previousSourceWalletBalance)
+                .newSourceWalletBalance(
+                        mainWallet.getBalance())
                 .message("Transfer Successful")
                 .build();
 
-        log.info("=== Deduct Money Request Completed Successfully ===");
+        log.info(" === Deduct Money Request Completed Successfully === ");
         log.debug("Response: {}", response);
         return response;
     }
     /**
      * Adds money to the user's wallet(s) and records the transaction.
      *
-     * @param mainWalletRequest The request containing amount , source wallet ,
-     *                          target wallet , and user UUID.
-     * @return MainWalletResponse containing transaction details and updated balances.
+     * @param mainWalletRequest The request containing amount ,
+     *                          source wallet ,
+     *                          target wallet ,
+     *                          and user UUID.
+     * @return MainWalletResponse containing
+     * transaction details and updated balances.
      */
     @Transactional
     @Override
-    public MainWalletResponse addMoney(final MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse addMoney(
+            final MainWalletRequest mainWalletRequest) {
         log.info("=== Add Money Request Started ===");
         log.debug("Request: {}", mainWalletRequest);
 
-        User user = validations.getUserInfo(mainWalletRequest.getUuid());
-        MasterWallet masterWallet = validations.getMasterWalletInfo(mainWalletRequest.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(mainWalletRequest.getUuid());
-        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet, mainWalletRequest.getTargetWalletId());
+        User user = validations
+                .getUserInfo(mainWalletRequest.getUuid());
+        MasterWallet masterWallet = validations
+                .getMasterWalletInfo(mainWalletRequest.getUuid());
+        MainWallet mainWallet = validations
+                .getMainWalletInfo(mainWalletRequest.getUuid());
+        SubWallet subWallet = validations
+                .findSubWalletIfExists(mainWallet,
+                        mainWalletRequest.getTargetWalletId());
 
-        log.info("MasterWallet balance before: {}", masterWallet.getBalance());
-        log.info("MainWallet balance before: {}", mainWallet.getBalance());
+        log.info("MasterWallet balance before: {}",
+                masterWallet.getBalance());
+        log.info("MainWallet balance before: {}",
+                mainWallet.getBalance());
 
         Double previousTargetWalletBalance;
         if (subWallet != null) {
             log.info("Target SubWallet [{}] balance before: {}" ,
-                    subWallet.getSubWalletName(), subWallet.getBalance());
+                    subWallet.getSubWalletName(),
+                    subWallet.getBalance());
             previousTargetWalletBalance = subWallet.getBalance();
         } else {
             previousTargetWalletBalance = mainWallet.getBalance();
@@ -215,7 +256,8 @@ public class WalletServiceImpl implements WalletService {
         masterWallet.setBalance(masterWallet.getBalance() +
                 mainWalletRequest.getAmount());
         log.info("Added {} to MasterWallet. New balance: {}",
-                mainWalletRequest.getAmount(), masterWallet.getBalance());
+                mainWalletRequest.getAmount(),
+                masterWallet.getBalance());
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
@@ -241,18 +283,23 @@ public class WalletServiceImpl implements WalletService {
         Double newTargetWalletBalance = null;
         if (subWallet != null) {
 
-            subWallet.setBalance(subWallet.getBalance() + mainWalletRequest.getAmount());
+            subWallet.setBalance(subWallet.getBalance()
+                    + mainWalletRequest.getAmount());
             newTargetWalletBalance = subWallet.getBalance();
             log.info("Added {} to SubWallet [{}]. New balance: {}",
-                    mainWalletRequest.getAmount(), subWallet.getSubWalletName(), subWallet.getBalance());
+                    mainWalletRequest.getAmount(),
+                    subWallet.getSubWalletName(),
+                    subWallet.getBalance());
 
-            creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+            creditTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .status("SUCCESS")
-                    .description("Credited to sub wallet : " + subWallet.getSubWalletName())
+                    .description("Credited to sub wallet : "
+                            + subWallet.getSubWalletName())
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
                     .user(mainWallet.getUser())
@@ -262,16 +309,21 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(subWallet.getSubWalletId()).build();
 
             transactions.add(creditTxn);
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTxn);
-            kafkaTemplate.send("transaction-topic", transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         } else {
-            mainWallet.setBalance(mainWallet.getBalance() + mainWalletRequest.getAmount());
+            mainWallet.setBalance(mainWallet.getBalance()
+                    + mainWalletRequest.getAmount());
             newTargetWalletBalance = mainWallet.getBalance();
             log.info("Added {} to MainWallet. New balance: {}",
-                    mainWalletRequest.getAmount(), mainWallet.getBalance());
+                    mainWalletRequest.getAmount(),
+                    mainWallet.getBalance());
 
-            creditTxn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+            creditTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
@@ -286,68 +338,84 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
             transactions.add(creditTxn);
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTxn);
-            kafkaTemplate.send("transaction-topic", transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         }
 
         transactionRepository.saveAll(transactions);
-        mainWallet.getTransactionHistory().addAll(transactions);
+        mainWallet.getTransactionHistory()
+                .addAll(transactions);
         masterWalletRepository.save(masterWallet);
         mainWalletRepository.save(mainWallet);
 
-        MainWalletResponse response = MainWalletResponse.builder()
+        MainWalletResponse response = MainWalletResponse
+                .builder()
                 .status("SUCCESS")
-                .targetTransactionId(transactions.get(1).getTransactionId())
+                .targetTransactionId(transactions.get(1)
+                        .getTransactionId())
                 .previousTargetWalletBalance(previousTargetWalletBalance)
                 .newTargetWalletBalance(newTargetWalletBalance)
                 .message("amount recived successfull")
                 .build();
 
-        log.info("=== Add Money Request Completed Successfully ===");
+        log.info(" === Add Money Request Completed Successfully === ");
         log.debug("Response: {}", response);
         return response;
     }
     /**
-     * Provides wallet-related operations such as CRUD operations, recording failed transactions,
-     * adding dummy transactions, checking balances, and downloading transaction history.
+     * Provides wallet-related operations such as CRUD operations.
+     * And recording failed transactions,
+     * adding dummy transactions, checking balances,
+     * and downloading transaction history.
      */
 
     @Override
-    public MainWalletResponse walletCrud(final MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse walletCrud(
+            final MainWalletRequest mainWalletRequest) {
         WalletOperation walletService = walletOperationFactory.
                 getWalletService(mainWalletRequest.getRequestType());
         return walletService.perform(mainWalletRequest);
     }
 
     @Override
-        public MainWalletResponse recordFailedTxn(final MainWalletRequest request) {
+        public MainWalletResponse recordFailedTxn(
+                final MainWalletRequest request) {
 
         User user = validations.getUserInfo(request.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(request.getUuid());
-        SubWallet sourceSubWallet = validations.findSubWalletIfExists(mainWallet,
+        MainWallet mainWallet = validations
+                .getMainWalletInfo(request.getUuid());
+        SubWallet sourceSubWallet = validations
+                .findSubWalletIfExists(mainWallet,
                 request.getSourceWalletId());
-        SubWallet targetSubwallet = validations.findSubWalletIfExists(mainWallet,
+        SubWallet targetSubwallet = validations
+                .findSubWalletIfExists(mainWallet,
                 request.getTargetWalletId());
 
-        String fromWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())){
-            fromWallet="Main wallet";
-        } else if (sourceSubWallet!=null
-                && sourceSubWallet.getSubWalletId().equals(request.getSourceWalletId())) {
-            fromWallet= sourceSubWallet.getSubWalletName();
-        }else{
+        String fromWallet = null;
+        if (mainWallet.getMainWalletId().
+                equals(request.getSourceWalletId())){
+            fromWallet = "Main wallet";
+        } else if (sourceSubWallet != null
+                && sourceSubWallet.getSubWalletId()
+                .equals(request.getSourceWalletId())) {
+            fromWallet = sourceSubWallet.getSubWalletName();
+        } else {
             fromWallet="Some external source";
         }
 
-        String toWallet=null;
-        if (mainWallet.getMainWalletId().equals(request.getTargetWalletId())){
-            toWallet="Main wallet";
-        } else if (targetSubwallet!=null
-                && targetSubwallet.getSubWalletId().equals(request.getTargetWalletId())) {
-            toWallet= targetSubwallet.getSubWalletName();
-        }else{
-            toWallet="Some external target";
+        String toWallet = null;
+        if (mainWallet.getMainWalletId()
+                .equals(request.getTargetWalletId())){
+            toWallet = "Main wallet";
+        } else if (targetSubwallet != null
+                && targetSubwallet.getSubWalletId()
+                .equals(request.getTargetWalletId())) {
+            toWallet = targetSubwallet.getSubWalletName();
+        } else {
+            toWallet = "Some external target";
         }
 
 
@@ -375,15 +443,18 @@ public class WalletServiceImpl implements WalletService {
     /**
      * Records a failed transaction in the database.
      *
-     * @param request The request containing transaction details such as source ,
-     *                target , amount , and type.
-     * @return MainWalletResponse Response indicating that the transaction failed.
+     * @param request The request containing
+     *        transaction details such as source ,
+     *         target , amount , and type.
      */
     @Override
     public void addDummy(final MainWalletRequest request) {
         User user = validations.getUserInfo(request.getUuid());
-        MainWallet mainWallet = validations.getMainWalletInfo(user.getUuid());
-        Transaction txn = Transaction.builder().transactionId(UUID.randomUUID().toString())
+        MainWallet mainWallet = validations
+                .getMainWalletInfo(user.getUuid());
+
+        Transaction txn = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .mainWallet(mainWallet)
                 .amount(request.getAmount())
@@ -405,39 +476,46 @@ public class WalletServiceImpl implements WalletService {
      * @return String A message containing the wallet ID and its current balance.
      * @throws WalletNotFoundException If the wallet with given ID does not exist.
      */
-
     //This will simply return the current balance of a wallet.
     public String showBalance(final String walletId) {
-        log.info("Fetching balance for walletId: {}", walletId);
+        log.info("Fetching balance for walletId: {}",
+                walletId);
 
         MainWallet wallet = mainWalletRepository.findById(walletId)
                 .orElseThrow(() -> {
-                    log.error("Invalid wallet ID: {}", walletId);
-                    return new WalletNotFoundException("Wallet Id is not valid!");
+                    log.error("Invalid wallet ID: {}",
+                            walletId);
+                    return new WalletNotFoundException(
+                            "Wallet Id is not valid!");
                 });
 
-        String balanceMsg = "Current balance in wallet " + wallet.getMainWalletId() +
-                " is " + wallet.getBalance() + ".";
+        String balanceMsg = "Current balance in wallet "
+                + wallet.getMainWalletId()
+                + " is " + wallet.getBalance() + ".";
         log.info(balanceMsg);
         return balanceMsg;
     }
 
 
-    //method for downloading transactions in Excel file format
+
     @Override
-    public void downloadTransactions(final String walletId ,
-                                     final HttpServletResponse response) throws IOException {
-        log.info("Starting to download transactions for walletId: {}", walletId);
+    public void downloadTransactions(
+            final String walletId ,
+            final HttpServletResponse response)
+            throws IOException {
+        log.info(
+             "Starting to download transactions for walletId: {}",
+                walletId);
 
         MainWallet wallet = mainWalletRepository.findById(walletId)
-                .orElseThrow(() -> {
-                    log.error("Wallet not found with ID: {}", walletId);
-                    return new WalletNotFoundException("invalid wallet id");
+             .orElseThrow(() -> {
+            log.error("Wallet not found with ID: {}", walletId);
+           return new WalletNotFoundException("invalid wallet id");
                 });
         response.setContentType(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader(
-                "Content-Disposition", "attachment; filename=transactions.xlsx");
+        "Content-Disposition", "attachment; filename=transactions.xlsx");
 
         log.info("Generating Excel sheet for walletId: {}", walletId);
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -468,14 +546,13 @@ public class WalletServiceImpl implements WalletService {
             XSSFRow row1 = sheet.createRow(rowNum++);
             row1.createCell(0).setCellValue(
                     count++);
-            row1.createCell(1).setCellValue(
+            row1.createCell(TRANSACTION_TYPE_COLUMN).setCellValue(
                     transaction.getTransactionType().toString());
-            row1.createCell(2).setCellValue(
+            row1.createCell(AMOUNT_COLUMN).setCellValue(
                     transaction.getAmount());
-            row1.createCell(3).setCellValue(
+            row1.createCell(DESCRIPTION_COLUMN).setCellValue(
                     transaction.getDescription());
-
-            Cell dateCell = row1.createCell(4);
+            Cell dateCell = row1.createCell(DATE_COLUMN);
             dateCell.setCellValue(java.sql.Timestamp.valueOf(
                     transaction.getDateTime()));
             dateCell.setCellStyle(dateStyle);
@@ -483,7 +560,8 @@ public class WalletServiceImpl implements WalletService {
 
         workbook.write(response.getOutputStream());
         workbook.close();
-        log.info("Excel file successfully written and sent in response for walletId: {}",
+        log.info(
+       "Excel file successfully written and sent in response for walletId: {}",
                 walletId);
     }
 }
