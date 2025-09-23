@@ -13,7 +13,8 @@ public class NullValueException extends RuntimeException {
      * Constructs a new {@code NullValueException} with the specified
      * detail message.
      *
-     * @param message the detail message explaining why the value is null or missing
+     * @param message the detail message
+     *                explaining why the value is null or missing
      */
     public NullValueException(final String message) {
         super(message);

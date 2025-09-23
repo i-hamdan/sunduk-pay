@@ -13,7 +13,8 @@ public class CannotUpdateWalletException extends RuntimeException {
      * Constructs a new {@code CannotUpdateWalletException} with the specified
      * detail message.
      *
-     * @param message the detail message explaining why the wallet could not be updated
+     * @param message the detail message
+     * explaining why the wallet could not be updated
      */
     public CannotUpdateWalletException(final String message) {
         super(message);

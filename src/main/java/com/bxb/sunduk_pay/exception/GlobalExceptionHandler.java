@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleCannotCreateWalletException(
             final CannotCreateWalletException e,
-            HttpServletRequest request) {
+            final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
@@ -157,7 +157,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(CustomExchangeRateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse CustomExchangeRateException(
+    public ErrorResponse customExchangeRateException(
             final CustomExchangeRateException e,
             final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
@@ -231,7 +231,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleTransactionProcessingException(
             final TransactionProcessingException e,
-            final HttpServletRequest request){
+            final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
@@ -336,15 +336,15 @@ public class GlobalExceptionHandler {
                         .time.format
                         .DateTimeParseException) {
             // Wrong date format
-            message = "Invalid date format! " +
-                    "Please use yyyy-MM-dd format.";
+            message = "Invalid date format! "
+                    + "Please use yyyy-MM-dd format.";
         } else if (
                 cause instanceof com.fasterxml
                         .jackson.databind.exc
                         .InvalidFormatException) {
             // Wrong enum or wrong type
-        message = "Invalid value provided for " +
-                "one of the fields (e.g., ActionType).";
+        message = "Invalid value provided for "
+                + "one of the fields (e.g., ActionType).";
         }
 
         return new ErrorResponse(

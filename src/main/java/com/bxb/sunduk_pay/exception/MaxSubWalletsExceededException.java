@@ -11,7 +11,8 @@ package com.bxb.sunduk_pay.exception;
 public class MaxSubWalletsExceededException extends RuntimeException {
 
     /**
-     * Constructs a new {@code MaxSubWalletsExceededException} with the specified
+     * Constructs a new {@code MaxSubWalletsExceededException}
+     * with the specified
      * detail message.
      *
      * @param message the detail message explaining why the maximum number

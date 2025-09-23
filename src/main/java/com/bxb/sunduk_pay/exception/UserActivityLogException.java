@@ -11,7 +11,8 @@ package com.bxb.sunduk_pay.exception;
 public class UserActivityLogException extends RuntimeException {
 
     /**
-     * Constructs a new UserActivityLogException with the specified detail message.
+     * Constructs a new UserActivityLogException
+     * with the specified detail message.
      *
      * @param message the detail message explaining the reason for the exception
      */

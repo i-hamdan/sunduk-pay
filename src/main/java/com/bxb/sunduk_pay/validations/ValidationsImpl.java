@@ -41,7 +41,7 @@ public class ValidationsImpl implements Validations {
     /** Repository for accessing master wallet data. */
     private final MasterWalletRepository masterWalletRepository;
     /** Maximum allowed number of sub-wallets. */
-private static final int Wallet_Size = 19;
+private static final int wallet_Size = 19;
 
 
     /** {@inheritDoc} */
@@ -88,7 +88,7 @@ private static final int Wallet_Size = 19;
     @Override
     public void validateNumberOfSubWallets(final int size) {
         log.info("Validating number of SubWallets: {}", size);
-        if (size <= Wallet_Size) {
+        if (size <= wallet_Size) {
             log.info(
                     "Validation passed. Current subwallet count: {}",
                     size);
