@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.service.SmsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
  * sending SMS notifications.
  */
 @Component
+@RequiredArgsConstructor
 public class SmsListener {
 
     /**
@@ -17,14 +19,6 @@ public class SmsListener {
      */
     private final SmsService smsService;
 
-    /**
-     * Constructs the SmsListener with the given SmsService.
-     *
-     * @param smsService the SMS service to process events
-     */
-    public SmsListener(final SmsService smsService) {
-        this.smsService = smsService;
-    }
 
     /**
      * Listens to the "transaction-topic" Kafka topic for
@@ -37,7 +31,8 @@ public class SmsListener {
     @KafkaListener(topics = "transaction-topic",
             groupId = "sms-service-group",
             concurrency = "3")
-    public void consumeTransactionEvent(final TransactionEvent transactionEvent) {
+    public void consumeTransactionEvent(
+            final TransactionEvent transactionEvent) {
         smsService.processSmsEvent(transactionEvent);
     }
 
