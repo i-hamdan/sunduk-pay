@@ -20,15 +20,21 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            mkdir -p /opt/mongodb-deploy
-            cd /opt/mongodb-deploy
-
-            # Clone repo if not exists, otherwise pull latest
+            # Use home directory to avoid permission issues
+            mkdir -p ~/mongodb-deploy
+            cd ~/mongodb-deploy
+            
+            # Pull latest repo
             if [ ! -d ".git" ]; then
-              git clone https://github.com/i-hamdan/sunduk-pay.git .
+              git clone https://github.com/i-hamdan/***-pay.git .
             else
+              git reset --hard
+              git clean -fd
               git pull
             fi
-
-            # Pull MongoDB image and start container
+            
+            # Make sure docker-compose.yml exists
+            ls -l
+            
+            # Start MongoDB container
             docker-compose up -d
