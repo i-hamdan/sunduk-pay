@@ -1,7 +1,11 @@
 package com.bxb.sunduk_pay.validations;
 
 
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
@@ -59,7 +63,13 @@ public interface Validations {
      * @param pageable   pagination information
      * @return paginated list of {@link Transaction}
      */
-    Page<Transaction> validateTransactionsByUuidAndSubWalletId(String uuid, String walletId, String transactionGroupId, PaymentMethod paymentMethod, TransactionType transactionType, Pageable pageable);
+    Page<Transaction> validateTransactionsByUuidAndSubWalletId(
+            String uuid,
+            String walletId,
+            String transactionGroupId,
+            PaymentMethod paymentMethod,
+            TransactionType transactionType,
+            Pageable pageable);
 
     /**
      * Finds a sub-wallet by its ID within a main wallet.
@@ -72,7 +82,6 @@ public interface Validations {
     /**
      * Finds a sub-wallet if it exists in a main wallet.
      *
-     * @param wallet      main wallet
      * @param wallet main wallet
      * @param subWalletId sub-wallet ID
      * @return {@link SubWallet} or null
@@ -86,7 +95,7 @@ public interface Validations {
      * @param fromWalletId source wallet ID
      * @return icon string
      */
-    String getFromIconOfTxn(String mainWalletId,String fromWalletId);
+    String getFromIconOfTxn(String mainWalletId, String fromWalletId);
 
     /**
      * Retrieves the icon for the destination wallet in a transaction.
@@ -95,11 +104,10 @@ public interface Validations {
      * @param toWalletId   destination wallet ID
      * @return icon string
      */
-    String getToIconOfTxn(String mainWalletId,String toWalletId);
+    String getToIconOfTxn(String mainWalletId, String toWalletId);
     /**
      * Removes a sub-wallet from a main wallet.
      *
-     * @param wallet      main wallet
      * @param wallet main wallet
      * @param subWalletId sub-wallet ID
      * @return true if removed successfully
