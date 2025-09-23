@@ -122,7 +122,7 @@ try {
      * @throws StripeException if Stripe API call fails
      */
     private Session createSession(
-            StripeSessionRequest request)
+            final StripeSessionRequest request)
             throws StripeSessionException, StripeException {
         long amountInCents = (long) (request.getAmount() * VALUE);
         log.debug(

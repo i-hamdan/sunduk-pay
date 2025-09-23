@@ -106,14 +106,14 @@ public class UpdateService implements WalletOperation {
             if (subWallet != null) {
                 log.info(
           "Attempting to rename SubWallet [{}] under MainWallet [{}]",
-                        subWallet.getSubWalletId(), mainWallet.getMainWalletId());
+             subWallet.getSubWalletId(), mainWallet.getMainWalletId());
 
                 List<Transaction> allSubWalletTransactions
                         = transactionRepository.findAllByUserAndWallet(
                                 user.getUuid(), subWallet.getSubWalletId());
                 log.debug(
-                        "Found [{}] transactions for SubWallet [{}]",
-                        allSubWalletTransactions.size(), subWallet.getSubWalletId());
+              "Found [{}] transactions for SubWallet [{}]",
+             allSubWalletTransactions.size(), subWallet.getSubWalletId());
                 if (allSubWalletTransactions.isEmpty()) {
                     subWallet.setSubWalletName(
                             mainWalletRequest.getSubWalletName());
@@ -130,8 +130,7 @@ public class UpdateService implements WalletOperation {
                                     "SubWallet previously named as : " + oldName
                                             + " was successfully renamed to "
                                             + subWallet.getSubWalletName()
-                            )
-                            .build();
+                            ).build();
                 } else {
                     log.error(
        "Rename failed! SubWallet [{}] has existing [{}] transactions",
