@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
  * </p>
  */
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class ErrorResponse {
 
     /** Timestamp when the error occurred. */

@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import java.io.IOException;
 
 @Log4j2
 @RestController
+@RequiredArgsConstructor
 public class WalletController {
 
     /**
@@ -39,22 +41,9 @@ public class WalletController {
      */
     private final WalletService walletService;
 
-    /**
-     * Constructor for dependency injection.
-     *
-     * @param walletFactory factory for wallet operations
-     * @param walletService service for wallet business logic
-     */
-
     /** Cookie max age for Stripe checkout URL in seconds (5 minutes).
      */
     private static final int STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS = 300;
-
-    public WalletController(final WalletOperationFactory walletFactory,
-                           final WalletService walletService) {
-        this.walletFactory = walletFactory;
-        this.walletService = walletService;
-    }
 
 
     /**
@@ -64,8 +53,10 @@ public class WalletController {
      * @return wallet balance as a string
      */
     @GetMapping("/wallet-showBalance/{walletId}")
-    public ResponseEntity<String> showBalance(@PathVariable String walletId) {
-        return new ResponseEntity<>(walletService.showBalance(walletId),
+    public ResponseEntity<String> showBalance(
+            @PathVariable String walletId) {
+        return new ResponseEntity<>(
+                walletService.showBalance(walletId),
                 HttpStatus.OK);
     }
 
@@ -75,7 +66,9 @@ public class WalletController {
      * @param request request containing wallet ID and dummy data details
      */
     @PostMapping("/addTxns")
-    public void addDummyData(@RequestBody final MainWalletRequest request) {
+    public void addDummyData(
+            @RequestBody
+            final MainWalletRequest request) {
         walletService.addDummy(request);
     }
 
@@ -102,16 +95,16 @@ public class WalletController {
      * @return main wallet response
      */
     @PostMapping("/wallet")
-    public ResponseEntity<MainWalletResponse> walletApi(@RequestBody
-                                                            final MainWalletRequest
-                                                                    mainWalletRequest,
-                                                        final
-                                                        HttpServletResponse response) {
+    public ResponseEntity<MainWalletResponse> walletApi(
+            @RequestBody
+            final MainWalletRequest mainWalletRequest,
+            final HttpServletResponse response) {
 
-        MainWalletResponse walletResponse = walletService.walletCrud(mainWalletRequest);
+        MainWalletResponse walletResponse = walletService
+                .walletCrud(mainWalletRequest);
 
         // Create cookie with checkout URL from response
-        if (walletResponse.getCheckoutUrl() != null) {  // only set cookie if URL exists
+        if (walletResponse.getCheckoutUrl() != null) {
             Cookie urlCookie = new Cookie("stripe_checkout_url",
                     walletResponse.getCheckoutUrl());
             urlCookie.setPath("/");
@@ -123,6 +116,4 @@ public class WalletController {
 
         return new ResponseEntity<>(walletResponse, HttpStatus.OK);
     }
-
-
 }

@@ -30,14 +30,15 @@ public class CurrencyController {
      * @return the conversion response wrapped in ResponseEntity
      */
     @PostMapping("/convert")
-    public ResponseEntity<CurrencyResponse> convert(@RequestBody final
-                                                        CurrencyRequest
-                                                                currencyRequest) {
-        log.info("Currency conversion API called: from = {}, to = {}," +
-                        " amount = {}",
-                currencyRequest.getFromCurrency(), currencyRequest.getToCurrency(),
-                currencyRequest.getAmount());
-        CurrencyResponse response = currencyService.convertCurrency(currencyRequest);
+    public ResponseEntity<CurrencyResponse> convert(
+            @RequestBody final CurrencyRequest currencyRequest) {
+        log.info("Currency conversion API called: from = "
+                + currencyRequest.getFromCurrency()
+                + "to = "+currencyRequest.getToCurrency()
+                + " amount = "
+                + currencyRequest.getAmount());
+        CurrencyResponse response = currencyService
+                .convertCurrency(currencyRequest);
         log.debug("Conversion successful. Response: {}", response);
         return ResponseEntity.ok(response);
     }

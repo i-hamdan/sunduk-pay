@@ -48,11 +48,16 @@ public class SundukController {
      * @throws IOException if redirect fails
      */
     @GetMapping(value = "/custom-login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserLoginResponse> login(HttpSession session,
-                                                   @AuthenticationPrincipal OidcUser user,
-                                                   HttpServletResponse httpServletResponse) throws IOException {
+    public ResponseEntity<UserLoginResponse> login(
+            final HttpSession session,
+            @AuthenticationPrincipal final OidcUser user,
+            final HttpServletResponse httpServletResponse)
+            throws IOException {
         UserLoginResponse response = userMapper.getUser(user);
-        log.info ("Session Id : " + session.getId() + " By: " + user.getFullName());
+        log.info("Session Id : "
+                + session.getId()
+                + " By: "
+                + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
         String deepLink = "islamicbank://login-success?sessionId=" + session.getId()
@@ -60,7 +65,7 @@ public class SundukController {
                 + "&fullName=" + URLEncoder.encode(user.getFullName(), "UTF-8")
                 +"&uuid="+URLEncoder.encode(dbUser.getUuid(),"UTF-8");
 
-        log.info("Redirecting to deep link:{}",deepLink);
+        log.info("Redirecting to deep link:{}", deepLink);
         httpServletResponse.sendRedirect(deepLink);
         return ResponseEntity.ok().body(response);
 
@@ -73,7 +78,9 @@ public class SundukController {
      * @return user response after upload
      */
     @PostMapping("/upload-contact")
-    public UserResponse uploadContacts(@RequestBody ContactRequest contactRequest) {
+    public UserResponse uploadContacts(
+            @RequestBody
+           final ContactRequest contactRequest) {
         return service.uploadContacts(contactRequest);
     }
     /**
@@ -83,7 +90,7 @@ public class SundukController {
      * @return logout confirmation message
      */
     @GetMapping("/custom-logout")
-    public String logout(HttpSession session) {
+    public String logout(final HttpSession session) {
         session.invalidate();
         return "You have been logged out";
     }
