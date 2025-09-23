@@ -29,7 +29,8 @@ public class ActivityLogServiceImpl implements ActivityLogService {
     private final UserActivityLogRepository activityLogRepository;
 
     /**
-     * Processes a user activity event and saves the corresponding log entry in the database.
+     * Processes a user activity event.
+     * And saves the corresponding log entry in the database.
      * Builds a descriptive message based on the event type.
      * @param event the user Kafka event containing activity details
      * @throws UserActivityLogException if saving the log entry fails
@@ -55,8 +56,9 @@ public class ActivityLogServiceImpl implements ActivityLogService {
         } catch (Exception e) {
             log.error("Error saving user activity log for email: {}",
                     event.getEmail(), e);
-            throw new UserActivityLogException("Failed to process user activity log for: " +
-                    event.getEmail());
+            throw new UserActivityLogException(
+                    "Failed to process user activity log for: "
+                    + event.getEmail());
         }
     }
 

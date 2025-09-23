@@ -22,7 +22,8 @@ import java.util.Map;
 @Log4j2
 @Service
 public class StripeServiceImpl implements StripeService {
-    private static final int VALUE = 100;
+    /** Constant to convert dollars to cents. */
+ private static final int VALUE = 100;
 
     /**
      * Initializes the Stripe API with the

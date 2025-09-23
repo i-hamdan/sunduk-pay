@@ -36,9 +36,21 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class InternalTransferServiceImpl implements InternalTransferService {
+
+    /**50% as a decimal for calculations.*/
+    private static final double FIFTY_PERCENT = 0.5;
+    /**Seveny-five percent as a decimal for calculations.*/
+    private static final double SEVENTY_FIVE_PERCENT = 0.75;
+    /** 50% goal completion threshold. */
+    private static final int GOAL_50_PERCENT = 50;
+    /** 75% goal completion threshold. */
+    private static final int GOAL_75_PERCENT = 75;
+    /** 100% goal completion threshold. */
+    private static final int GOAL_100_PERCENT = 100;
+
     /** Validations utility for business rule enforcement. */
     private final Validations validations;
- /** Repository for transaction persistence. */
+    /** Repository for transaction persistence. */
     private final TransactionRepository transactionRepository;
     /** Repository for main wallet persistence. */
     private final MainWalletRepository mainWalletRepository;
@@ -51,7 +63,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
 
 
     /**
-     * Performs an internal transfer between wallets or sub-wallets for a user.
+     * Performs an internal transfers.
+     * Between wallets or sub-wallets for a user.
      *
      * @param user                        the user performing transfer
      * @param mainWallet                  user's main wallet
@@ -63,13 +76,14 @@ public class InternalTransferServiceImpl implements InternalTransferService {
      * @return MainWalletResponse with transaction details
      */
     @Transactional
-    public MainWalletResponse doInternalTransfer(final User user,
-                                                 final MainWallet mainWallet,
-                                                 final Double amount,
-                                                 final WalletWrapper sourceWallet,
-                                                 final WalletWrapper targetWallet,
-                                                 final Double previousSourceWalletBalance,
-                                                 final Double previousTargetWalletBalance) {
+    public MainWalletResponse doInternalTransfer(
+            final User user,
+            final MainWallet mainWallet,
+            final Double amount,
+            final WalletWrapper sourceWallet,
+            final WalletWrapper targetWallet,
+            final Double previousSourceWalletBalance,
+            final Double previousTargetWalletBalance) {
         try {
             log.info("Starting internal transfer of amount {} from {} to {}",
                     amount, sourceWallet.getId(), targetWallet.getId());
@@ -77,7 +91,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             List<Transaction> transactions = new ArrayList<>();
 
             log.debug(
-                    "Validating source wallet balance: currentBalance={}, transferAmount={}",
+           "Validating source wallet balance: currentBalance={}, transferAmount={}",
                     sourceWallet.getBalance(), amount);
 
             validations.validateBalance(sourceWallet.getBalance(), amount);
@@ -118,7 +132,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     debitTransaction.getTransactionId());
 
             log.info("Adding {} to target wallet {}",
-                    amount , targetWallet.getId());
+                    amount, targetWallet.getId());
             targetWallet.setBalance(targetWallet.getBalance() + amount);
             Double newTargetWalletBalance = targetWallet.getBalance();
             log.info("Updated target wallet balance: {}",
@@ -128,17 +142,19 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Double goalAmount = targetWallet.getGoalAmount();
             if (goalAmount != null && goalAmount > 0) {
                 double completionPercent = (targetWallet.getBalance() / goalAmount) * 100;
-                if (completionPercent >= 50 && previousTargetWalletBalance < goalAmount * 0.5) {
-                    sendGoalCompletionEvent(user, targetWallet, 50);
+                if (completionPercent >= GOAL_50_PERCENT
+                && previousTargetWalletBalance < goalAmount * FIFTY_PERCENT) {
+               sendGoalCompletionEvent(user, targetWallet, GOAL_50_PERCENT);
                 }
-                if (completionPercent >= 75 && previousTargetWalletBalance < goalAmount * 0.75) {
-                    sendGoalCompletionEvent(user, targetWallet, 75);
+                if (completionPercent >= GOAL_75_PERCENT
+                && previousTargetWalletBalance < goalAmount * SEVENTY_FIVE_PERCENT) {
+                  sendGoalCompletionEvent(user, targetWallet, GOAL_75_PERCENT);
                 }
-                if (completionPercent >= 100 && previousTargetWalletBalance < goalAmount) {
-                    sendGoalCompletionEvent(user, targetWallet, 100);
+                if (completionPercent >= GOAL_100_PERCENT
+                 && previousTargetWalletBalance < goalAmount) {
+                 sendGoalCompletionEvent(user, targetWallet, GOAL_100_PERCENT);
                 }
             }
-
 
             log.info("Creating credit transaction for targetWallet={}",
                     targetWallet.getId());
@@ -171,8 +187,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             mainWalletRepository.save(mainWallet);
             log.info("Main wallet updated successfully");
 
-            log.info("Publishing transaction event to Kafka topic 'transaction-topic'");
-            TransactionEvent transactionEvent = transactionMapper.toTransactionEvent(creditTransaction);
+            log.info(
+               "Publishing transaction event to Kafka topic 'transaction-topic'");
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTransaction);
             kafkaTemplate.send("transaction-topic", transactionEvent);
             log.info("Transaction event published to Kafka successfully");
 
@@ -191,7 +209,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .message("Transfer successful")
                     .build();
         } catch (Exception e) {
-            log.error("Internal transfer failed for user {}, amount {}, error: {}",
+            log.error(
+           "Internal transfer failed for user {}, amount {}, error: {}",
                     user.getUuid(), amount, e.getMessage(), e);
             throw e;
         }
