@@ -1,4 +1,4 @@
-name: Build & Deploy MongoDB
+name: Deploy MongoDB
 
 on:
   pull_request:
@@ -6,44 +6,35 @@ on:
       - master
 
 jobs:
-  build-and-deploy:
+  deploy-mongodb:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # (Optional) Build & push image to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and push Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/custom-mongo:latest .
-          docker push ${{ secrets.DOCKER_USERNAME }}/custom-mongo:latest
-
-      # Deploy to VPS
-      - name: Deploy via SSH
+      - name: Deploy MongoDB via SSH
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            # create directory if it doesn't exist
-            mkdir -p /opt/mongodb-deploy
-            cd /opt/mongodb-deploy
+            # Use home directory to avoid permission issues
+            mkdir -p ~/mongodb-deploy
+            cd ~/mongodb-deploy
             
-            # if .git folder missing (first deployment), clone the repo
+            # Pull latest repo
             if [ ! -d ".git" ]; then
-              git clone https://github.com/i-hamdan/sunduk-pay.git .
+              git clone https://github.com/i-hamdan/***-pay.git .
             else
+              git reset --hard
+              git clean -fd
               git pull
             fi
             
-            # now pull images and bring up containers
-            docker-compose pull
+            # Make sure docker-compose.yml exists
+            ls -l
+            
+            # Start MongoDB container
             docker-compose up -d
