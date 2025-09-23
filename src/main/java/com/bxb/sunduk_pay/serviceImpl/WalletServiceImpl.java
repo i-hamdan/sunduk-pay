@@ -567,7 +567,7 @@ public class WalletServiceImpl implements WalletService {
         int count = 1;
 
         List<Transaction> list = transactionRepository.
-                findByMainWallet_mainWalletIdAndUser_Uuid(walletId,
+                findByMainWalletMainWalletIdAndUserUuid(walletId,
                         wallet.getUser().getUuid());
         log.info("Writing {} transactions into Excel for walletId: {}",
                 list.size(), walletId);

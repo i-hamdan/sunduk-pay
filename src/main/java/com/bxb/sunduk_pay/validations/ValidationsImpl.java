@@ -75,7 +75,7 @@ private static final int wallet_Size = 19;
             final String uuid) {
         log.info("Fetching mainWallet with UUID : {}",
                 uuid);
-        return mainWalletRepository.findByUser_Uuid(uuid)
+        return mainWalletRepository.findByUserUuid(uuid)
                 .orElseThrow(() -> {
                     log.error("User not found with UUID: {}", uuid);
                     return new WalletNotFoundException(
@@ -114,7 +114,7 @@ private static final int wallet_Size = 19;
 
         if (transactionGroupId != null) {
             return transactionRepository
-                    .findByUser_UuidAndGroupId(
+                    .findByUserUuidAndGroupId(
                             uuid, transactionGroupId, pageable);
         }
 
@@ -125,28 +125,28 @@ private static final int wallet_Size = 19;
                 // Only those where subWalletId is the FROM wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUser_UuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.DEBIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUser_UuidAndFromWalletIdAndTransactionType(
+                            .findByUserUuidAndFromWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.DEBIT, pageable);
                 }
             } else if (transactionType == TransactionType.CREDIT) {
                 // Only those where subWalletId is the TO wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUser_UuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUser_UuidAndToWalletIdAndTransactionType(
+                            .findByUserUuidAndToWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             } else {
                 if (method != null) {
                     transactions = transactionRepository.
-                            findByUser_UuidAndWalletIdAndPaymentMethod(
+                            findByUserUuidAndWalletIdAndPaymentMethod(
                             uuid, walletId, method, pageable);
                 } else {
                     transactions = transactionRepository
@@ -159,21 +159,21 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
             if (transactionType != null) {
                 if (method != null) {
                     transactions = transactionRepository
-   .findByUser_UuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+   .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
                             uuid, transactionType, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUser_UuidAndTransactionTypeAndIsMasterFalse(
+                            .findByUserUuidAndTransactionTypeAndIsMasterFalse(
                             uuid, transactionType, pageable);
                 }
             } else {
                 if (method != null) {
                     transactions = transactionRepository
-                            .findByUser_UuidAndPaymentMethodAndIsMasterFalse(
+                            .findByUserUuidAndPaymentMethodAndIsMasterFalse(
                             uuid, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUser_UuidAndIsMasterFalse(
+                            .findByUserUuidAndIsMasterFalse(
                                     uuid, pageable);
                 }
             }
@@ -316,7 +316,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     public MasterWallet getMasterWalletInfo(final String uuid) {
         log.info("Fetching MasterWallet for User UUID: {}", uuid);
-        return masterWalletRepository.findByUser_Uuid(uuid).orElseThrow(() -> {
+        return masterWalletRepository.findByUserUuid(uuid).orElseThrow(() -> {
             log.error("User not found with ID: {}", uuid);
             return new UserNotFoundException("User not found with ID: " + uuid);
         });

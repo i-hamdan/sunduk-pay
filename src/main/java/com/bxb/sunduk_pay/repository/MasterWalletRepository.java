@@ -8,14 +8,14 @@ import java.util.Optional;
  * Repository interface for MasterWallet entity.
  * Extends MongoRepository to provide CRUD operations.
  */
-public interface MasterWalletRepository extends MongoRepository<MasterWallet,String> {
+public interface MasterWalletRepository
+        extends MongoRepository<MasterWallet,String> {
    /**
     * Finds a MasterWallet by the associated user's UUID.
     * @param uuid the UUID of the user
     */
-// CHECKSTYLE:OFF
-   Optional<MasterWallet> findByUser_Uuid(
+
+   Optional<MasterWallet> findByUserUuid(
             String uuid);
-   // CHECKSTYLE:ON
 
 }
