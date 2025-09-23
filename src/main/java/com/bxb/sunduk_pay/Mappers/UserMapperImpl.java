@@ -53,7 +53,7 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param user the User entity to convert
      * @return the corresponding UserResponse DTO
      */
-    public UserResponse toUserResponse(final User user){
+    public UserResponse toUserResponse(final User user) {
         UserResponse response = new UserResponse();
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
@@ -67,9 +67,9 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param users the list of User entities to convert
      * @return the corresponding list of UserResponse DTOs
      */
-    public List<UserResponse> toUserResponseList(final List<User> users){
+    public List<UserResponse> toUserResponseList(final List<User> users) {
         List<UserResponse> responses = new ArrayList<>(users.size());
-        for (User user : users){
+        for (User user : users) {
             responses.add(toUserResponse(user));
         }
         return responses;
@@ -81,7 +81,8 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param eventType the type of event (e.g., "USER_CREATED", "USER_UPDATED")
      * @return the corresponding UserKafkaEvent
      */
-    public UserKafkaEvent toKafkaEvent(final User user, final String eventType){
+    public UserKafkaEvent toKafkaEvent(
+            final User user, final String eventType) {
         UserKafkaEvent kafkaEvent = new UserKafkaEvent();
         kafkaEvent.setEmail(user.getEmail());
         kafkaEvent.setUuid(user.getUuid());

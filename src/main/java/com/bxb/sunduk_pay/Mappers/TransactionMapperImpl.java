@@ -27,7 +27,8 @@ public class TransactionMapperImpl implements TransactionMapper {
 /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
     /** {@inheritDoc} */
-    public TransactionResponse toTransactionResponse(final Transaction transaction) {
+    public TransactionResponse toTransactionResponse(
+            final Transaction transaction) {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(
                 transaction.getTransactionId());
@@ -50,7 +51,8 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getStatus());
         transactionResponse.setFullName(
                 transaction.getUser().getFullName());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy")
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd MMMM yyyy")
                 .withLocale(Locale.ENGLISH);
         transactionResponse.setDate(
                 transaction.getDateTime().format(formatter));
@@ -60,14 +62,14 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getFromWallet());
         transactionResponse.setFromWalletId(
                 transaction.getFromWalletId());
-        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn
-                (transaction.getMainWallet().getMainWalletId(),
+        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
+                transaction.getMainWallet().getMainWalletId(),
                         transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
         transactionResponse.setToWalletIcon(validations.
                 getToIconOfTxn(transaction.getMainWallet()
-                .getMainWalletId(),transaction.getToWalletId()));
+                .getMainWalletId(), transaction.getToWalletId()));
         return transactionResponse;
     }
 
@@ -75,7 +77,8 @@ public class TransactionMapperImpl implements TransactionMapper {
     @Override
     public List<TransactionResponse> toTransactionsResponse(
             final List<Transaction> transactions) {
-        List<TransactionResponse> responses = new ArrayList<>(transactions.size());
+        List<TransactionResponse>
+                responses = new ArrayList<>(transactions.size());
         for (Transaction transaction : transactions) {
             responses.add(toTransactionResponse(transaction));
         }
@@ -118,21 +121,24 @@ public class TransactionMapperImpl implements TransactionMapper {
 
         try {
             if (transaction.getTransactionType() == TransactionType.CREDIT) {
-                if (transaction.getToWalletId() != null &&
-                        transaction.getToWalletId()
-                                .equals(transaction.getMainWallet().getMainWalletId())) {
+                if (transaction.getToWalletId() != null
+                        && transaction.getToWalletId()
+            .equals(transaction.getMainWallet().getMainWalletId())) {
                     balance = transaction.getMainWallet().getBalance();
                 } else if (transaction.getToWalletId() != null) {
                     SubWallet subWallet = validations.findSubWalletIfExists(
                             transaction.getMainWallet(),
                             transaction.getToWalletId()
                     );
-                    if (subWallet != null) balance = subWallet.getBalance();
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
+                    }
                 }
 
-            } else if (transaction.getTransactionType() == TransactionType.DEBIT) {
-                if (transaction.getFromWalletId() != null &&
-                        transaction.getFromWalletId().equals(transaction
+            } else if (transaction
+                    .getTransactionType() == TransactionType.DEBIT) {
+                if (transaction.getFromWalletId() != null
+                        && transaction.getFromWalletId().equals(transaction
                                 .getMainWallet().getMainWalletId())) {
                     balance = transaction.getMainWallet().getBalance();
                 } else if (transaction.getFromWalletId() != null) {
@@ -140,13 +146,18 @@ public class TransactionMapperImpl implements TransactionMapper {
                             transaction.getMainWallet(),
                             transaction.getFromWalletId()
                     );
-                    if (subWallet != null) balance = subWallet.getBalance();
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
+                    }
                 }
             }
         } catch (Exception e) {
             // fallback if something goes wrong
             balance = transaction.getMainWallet().getBalance();
-            log.warn("Balance resolution failed for txn={}, falling back to mainWallet balance", transaction.getTransactionId(), e);
+            log.warn(
+                    "Balance resolution failed for txn={}"
+                            + ", falling back to mainWallet balance",
+                    transaction.getTransactionId(), e);
         }
 
         transactionEvent.setRemainingBalance(balance);

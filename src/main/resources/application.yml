@@ -1,14 +1,13 @@
 twilio:
-  account-sid: ACdf2676753d81814c50b7115c5617a9a4
-  auth-token: b94932d45ef4af3f720d5096a94f9f19
-  from-number: "+19136751850"
-
+  account-sid: ${TWILIO_ACCOUNT_SID}
+  auth-token: ${TWILIO_AUTH_TOKEN}
+  from-number: ${TWILIO_FROM_NUMBER}
 spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: playzzzaid@gmail.com
-    password: edse cxrp xysc nfhz
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -16,6 +15,11 @@ spring:
           starttls:
             enable: true
 
+            logging:
+              level:
+                com:
+                  bxb:
+                    sunduk_pay: DEBUG
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -39,14 +43,13 @@ spring:
       client:
         registration:
           google:
-            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - openid
               - profile
               - email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
-#            redirect-uri: "https://1e0a0a6457d4.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -77,6 +80,7 @@ sunduk:
     exclude-paths:
       - /api/sunduk-service/oauth2/authorization
       - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
       - /api/sunduk-service/webhook
@@ -85,13 +89,12 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
-
+    url: ${EXCHANGE_API_URL}
 stripe:
   key:
-    secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR
+    secret: ${STRIPE_SECRET_KEY}
   webhook:
-    secret: whsec_3e927c453a257e87bdd1e7955b41653afb52feec4282321a0235ecb5c8dde6a6
+    secret: ${STRIPE_WEBHOOK_SECRET}
 
 resilience4j:
   circuitbreaker:
@@ -114,6 +117,3 @@ management:
   endpoint:
     health:
       show-details: always
-logging:
-  level:
-    com.bxb.sunduk_pay: DEBUG

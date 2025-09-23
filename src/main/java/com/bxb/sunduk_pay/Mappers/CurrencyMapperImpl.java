@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
     /**
-     * Maps currency conversion details and rate lists to a CurrencyResponse object.
-     *
+     * Maps currency conversion details and rate
+     * lists to a CurrencyResponse object.
      * @param exchangeRate the exchange rate used for conversion
      * @param converted the converted amount
      * @param fee the conversion fee
@@ -36,13 +36,14 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      */
 
     @Override
-    public CurrencyResponse currencyResponse(final double exchangeRate,
-                                             final double converted,
-                                             final double fee,
-                                             final double finalAmount,
-                                             final List<CurrencyRatesResponse> yearlyRates,
-                                             final List<CurrencyRatesResponse> monthlyRates,
-                                              final List<CurrencyRatesResponse> weeklyRates) {
+    public CurrencyResponse currencyResponse(
+            final double exchangeRate,
+            final double converted,
+            final double fee,
+            final double finalAmount,
+            final List<CurrencyRatesResponse> yearlyRates,
+            final List<CurrencyRatesResponse> monthlyRates,
+            final List<CurrencyRatesResponse> weeklyRates) {
         CurrencyResponse response = new CurrencyResponse();
         response.setExchangeRate(exchangeRate);
         response.setConvertedAmount(converted);
@@ -55,7 +56,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
     }
 
     /**
-     * Converts a list of CurrencyRates to a list of CurrencyRatesResponse objects.
+     * Converts a list of CurrencyRates to
+     * a list of CurrencyRatesResponse objects.
      *
      * @param currencyRates the list of CurrencyRates to convert
      * @param rateKey the key to extract the rate value
@@ -87,7 +89,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
     final String rateKey,
     final TimeSeries timeSeries) {
 
-        CurrencyRatesResponse currencyRatesResponse = new CurrencyRatesResponse();
+        CurrencyRatesResponse currencyRatesResponse =
+                new CurrencyRatesResponse();
         currencyRatesResponse.setDate(currencyRates.getDate());
         Double value = currencyRates.getRates().get(rateKey);
         currencyRatesResponse.setValue(value);
@@ -102,8 +105,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                .format(DateTimeFormatter.ofPattern("dd MMM"));
                 currencyRatesResponse.setDayMonth(formatted);
             }
-            default -> throw new ResourceNotFoundException
-                    ("Unsupported TimeSeries: " + timeSeries);
+            default -> throw new ResourceNotFoundException(
+                    "Unsupported TimeSeries: " + timeSeries);
 
         }
         return currencyRatesResponse;
@@ -115,9 +118,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * @param rateKey the key to extract the rate value
      * @return a list of CurrencyRatesResponse objects with monthly averages.
      */
-
     public List<CurrencyRatesResponse> toMonthlyAverageResponses(
-     final List<CurrencyRates> currencyRates,
+            final List<CurrencyRates> currencyRates,
     final String rateKey) {
 
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
@@ -130,10 +132,12 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                 ));
 
         List<CurrencyRatesResponse> list = new ArrayList<>();
-        monthlyAverages.forEach((yearMonth, avgValue) -> {
-            CurrencyRatesResponse res = new CurrencyRatesResponse();
-            res.setMonth(yearMonth.format(DateTimeFormatter.ofPattern("MMM yyyy")));
-            res.setValue(avgValue);
+        monthlyAverages.forEach(
+                (yearMonth, avgValue) -> {
+       CurrencyRatesResponse res = new CurrencyRatesResponse();
+       res.setMonth(
+       yearMonth.format(DateTimeFormatter.ofPattern("MMM yyyy")));
+       res.setValue(avgValue);
             list.add(res);
         });
         return list;

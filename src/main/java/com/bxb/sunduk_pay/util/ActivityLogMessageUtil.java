@@ -25,7 +25,8 @@ public class ActivityLogMessageUtil {
             return "New user registration completed for '"
                     + event.getFullName() + "'.";
         } else {
-            return "User event received for '" + event.getFullName() + "' with unknown action.";
+            return "User event received for '"
+                    + event.getFullName() + "' with unknown action.";
         }
     }
 }

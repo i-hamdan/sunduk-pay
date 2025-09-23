@@ -8,7 +8,8 @@ import com.bxb.sunduk_pay.response.TransactionResponse;
 import java.util.List;
 
 /**
- * Mapper interface for converting Transaction entities to DTOs and Kafka events.
+ * Mapper interface for converting
+ * Transaction entities to DTOs and Kafka events.
  */
 public interface TransactionMapper {
     /**
@@ -20,12 +21,14 @@ public interface TransactionMapper {
     TransactionResponse toTransactionResponse(Transaction transaction);
 
     /**
-     * Converts a list of Transaction entities to a list of TransactionResponse DTOs.
+     * Converts a list of Transaction entities
+     * to a list of TransactionResponse DTOs.
      *
      * @param transactions the list of Transaction entities
      * @return the corresponding list of TransactionResponse DTOs
      */
-    List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions);
+    List<TransactionResponse> toTransactionsResponse(
+            List<Transaction> transactions);
 
     /**
      * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
