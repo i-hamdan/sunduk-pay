@@ -81,7 +81,8 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param eventType the type of event (e.g., "USER_CREATED", "USER_UPDATED")
      * @return the corresponding UserKafkaEvent
      */
-    public UserKafkaEvent toKafkaEvent(final User user, final String eventType) {
+    public UserKafkaEvent toKafkaEvent(
+            final User user, final String eventType) {
         UserKafkaEvent kafkaEvent = new UserKafkaEvent();
         kafkaEvent.setEmail(user.getEmail());
         kafkaEvent.setUuid(user.getUuid());

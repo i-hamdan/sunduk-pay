@@ -37,10 +37,12 @@ public class WalletMapperImpl implements WalletMapper {
     }
 
 
-   /** Supporting method for converting
-    * list of subWallets into list of subWalletResponses.
-    * @return list of subWalletResponses
-    * */
+    /**
+     * Converts a list of SubWallet entities into
+     * a list of SubWalletResponse DTOs.
+     * @param subWallet the list of SubWallet entities
+     * @return list of SubWalletResponse DTOs
+     */
     private List<SubWalletResponse> toSubWalletResponseList(
             final List<SubWallet> subWallet) {
        List<SubWalletResponse> list = new ArrayList<>();
@@ -49,9 +51,12 @@ public class WalletMapperImpl implements WalletMapper {
        }
        return list;
    }
-    /** Supporting method for converting subWallet.
-     * @Param subWallet.
-     * into subWalletResponse.*/
+    /**
+     * Converts a SubWallet entity into a SubWalletResponse DTO.
+     *
+     * @param subWallet the SubWallet entity
+     * @return a SubWalletResponse containing the mapped fields
+     */
    private SubWalletResponse toSubWalletResponse(
            final SubWallet subWallet) {
        SubWalletResponse subWalletResponse = new SubWalletResponse();

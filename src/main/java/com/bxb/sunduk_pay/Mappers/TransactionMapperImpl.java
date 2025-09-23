@@ -27,8 +27,8 @@ public class TransactionMapperImpl implements TransactionMapper {
 /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
     /** {@inheritDoc} */
-    public TransactionResponse toTransactionResponse
-    (final Transaction transaction) {
+    public TransactionResponse toTransactionResponse(
+            final Transaction transaction) {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(
                 transaction.getTransactionId());
@@ -130,7 +130,9 @@ public class TransactionMapperImpl implements TransactionMapper {
                             transaction.getMainWallet(),
                             transaction.getToWalletId()
                     );
-                    if (subWallet != null) {balance = subWallet.getBalance();}
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
+                    }
                 }
 
             } else if (transaction
@@ -144,15 +146,17 @@ public class TransactionMapperImpl implements TransactionMapper {
                             transaction.getMainWallet(),
                             transaction.getFromWalletId()
                     );
-                    if (subWallet != null) {balance = subWallet.getBalance();}
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
+                    }
                 }
             }
         } catch (Exception e) {
             // fallback if something goes wrong
             balance = transaction.getMainWallet().getBalance();
             log.warn(
-                    "Balance resolution failed for txn={}" +
-                            ", falling back to mainWallet balance",
+                    "Balance resolution failed for txn={}"
+                            + ", falling back to mainWallet balance",
                     transaction.getTransactionId(), e);
         }
 

@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
     /**
-     /////* Maps currency conversion details and rate lists to a CurrencyResponse object.
-     *
+     * Maps currency conversion details and rate
+     * lists to a CurrencyResponse object.
      * @param exchangeRate the exchange rate used for conversion
      * @param converted the converted amount
      * @param fee the conversion fee
@@ -105,8 +105,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                .format(DateTimeFormatter.ofPattern("dd MMM"));
                 currencyRatesResponse.setDayMonth(formatted);
             }
-            default -> throw new ResourceNotFoundException
-                    ("Unsupported TimeSeries: " + timeSeries);
+            default -> throw new ResourceNotFoundException(
+                    "Unsupported TimeSeries: " + timeSeries);
 
         }
         return currencyRatesResponse;
@@ -118,9 +118,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * @param rateKey the key to extract the rate value
      * @return a list of CurrencyRatesResponse objects with monthly averages.
      */
-
-    public List<CurrencyRatesResponse> toMonthlyAverageResponses
-    (final List<CurrencyRates> currencyRates,
+    public List<CurrencyRatesResponse> toMonthlyAverageResponses(
+            final List<CurrencyRates> currencyRates,
     final String rateKey) {
 
         Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
@@ -133,8 +132,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                 ));
 
         List<CurrencyRatesResponse> list = new ArrayList<>();
-        monthlyAverages.forEach((yearMonth, avgValue) ->
-        {
+        monthlyAverages.forEach(
+                (yearMonth, avgValue) -> {
        CurrencyRatesResponse res = new CurrencyRatesResponse();
        res.setMonth(
        yearMonth.format(DateTimeFormatter.ofPattern("MMM yyyy")));
