@@ -59,7 +59,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     /** Kafka template for publishing transaction events. */
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
     /** Kafka template for publishing goal completion events. */
-    private final KafkaTemplate<String, GoalCompletionEvent>kafkaGoalTemplate;
+    private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
 
 
     /**
@@ -91,8 +91,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             List<Transaction> transactions = new ArrayList<>();
 
             log.debug(
-           "Validating source wallet balance: currentBalance={}, transferAmount={}",
-                    sourceWallet.getBalance(), amount);
+    "Validating source wallet balance: currentBalance="
+            + sourceWallet.getBalance()
+            + ", transferAmount="+amount);
 
             validations.validateBalance(sourceWallet.getBalance(), amount);
             log.info("Balance validation successful");
@@ -141,14 +142,21 @@ public class InternalTransferServiceImpl implements InternalTransferService {
 
             Double goalAmount = targetWallet.getGoalAmount();
             if (goalAmount != null && goalAmount > 0) {
-                double completionPercent = (targetWallet.getBalance() / goalAmount) * 100;
+                double completionPercent = (targetWallet.getBalance()
+                        / goalAmount) * GOAL_100_PERCENT;
                 if (completionPercent >= GOAL_50_PERCENT
-                && previousTargetWalletBalance < goalAmount * FIFTY_PERCENT) {
-               sendGoalCompletionEvent(user, targetWallet, GOAL_50_PERCENT);
+                && previousTargetWalletBalance < goalAmount
+                        * FIFTY_PERCENT) {
+               sendGoalCompletionEvent(user,
+                       targetWallet,
+                       GOAL_50_PERCENT);
                 }
                 if (completionPercent >= GOAL_75_PERCENT
-                && previousTargetWalletBalance < goalAmount * SEVENTY_FIVE_PERCENT) {
-                  sendGoalCompletionEvent(user, targetWallet, GOAL_75_PERCENT);
+                && previousTargetWalletBalance < goalAmount
+                        * SEVENTY_FIVE_PERCENT) {
+                  sendGoalCompletionEvent(user,
+                          targetWallet,
+                          GOAL_75_PERCENT);
                 }
                 if (completionPercent >= GOAL_100_PERCENT
                  && previousTargetWalletBalance < goalAmount) {
@@ -188,7 +196,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Main wallet updated successfully");
 
             log.info(
-               "Publishing transaction event to Kafka topic 'transaction-topic'");
+         "Publishing transaction event to Kafka topic " +
+                 "'transaction-topic'");
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTransaction);
             kafkaTemplate.send("transaction-topic", transactionEvent);
