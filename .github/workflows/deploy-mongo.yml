@@ -26,7 +26,7 @@ jobs:
             
             # Pull latest repo
             if [ ! -d ".git" ]; then
-              git clone https://github.com/i-hamdan/***-pay.git .
+              git clone https://github.com/i-hamdan/sunduk-pay.git .
             else
               git reset --hard
               git clean -fd
