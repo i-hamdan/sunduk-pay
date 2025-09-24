@@ -18,8 +18,11 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.DateFormatter;
+import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -196,6 +199,7 @@ public class UpdateService implements WalletOperation {
                         subWallet.getSubWalletId(),
                         mainWallet.getMainWalletId());
 
+//                DateTimeFormatter.ofPattern("");
                 subWallet.setTargetDate(mainWalletRequest.getTargetDate());
                 subWallet.setUpdatedAt(LocalDateTime.now());
                 mainWalletRepository.save(mainWallet);

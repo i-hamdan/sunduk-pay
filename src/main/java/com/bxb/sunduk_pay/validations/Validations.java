@@ -10,6 +10,9 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.Optional;
+
 /**
  * Defines validation operations for wallets, users, and transactions.
  */
@@ -121,5 +124,25 @@ public interface Validations {
      */
 
     MasterWallet getMasterWalletInfo(String uuid);
+
+    /**
+     * Finds a sub-wallet by its name within a main wallet.
+     * @param mainWallet   main wallet
+     * @param subWalletName sub-wallet name
+     * @return Optional containing {@link SubWallet}
+     * if found,
+     * otherwise empty
+     */
+    void findSubWalletByName(MainWallet mainWallet,
+                                            String subWalletName);
+
+    /**
+     * Validates that the target balance is
+     * sufficient for a transaction.
+     * @param balance current target balance
+     * @param amount  amount to be transacted
+     */
+    void validateTargetBalance(Double balance, Double amount);
+
 
 }
