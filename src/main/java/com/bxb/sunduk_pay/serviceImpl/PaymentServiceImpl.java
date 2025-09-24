@@ -67,12 +67,12 @@ public class PaymentServiceImpl implements PaymentService {
      * Fallback method invoked when Stripe service is unavailable.
      * Records the failed transaction for future processing.
      *
-     * @param userId          the user initiating the payment
-     * @param amount          the payment amount
+     * @param userId the user initiating the payment
+     * @param amount the payment amount
      * @param transactionType type of transaction (DEBIT/CREDIT)
-     * @param targetWallet    target wallet for credit
-     * @param sourceWallet    source wallet for debit
-     * @param t               the exception that caused the fallback
+     * @param targetWallet target wallet for credit
+     * @param sourceWallet source wallet for debit
+     * @param t the exception that caused the fallback
      * @return MainWalletResponse indicating failure.
      */
     public MainWalletResponse paymentFallback(

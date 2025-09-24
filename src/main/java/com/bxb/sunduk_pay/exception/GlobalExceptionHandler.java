@@ -238,6 +238,25 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+
+    /**
+     * Handles {@link SubWalletAlreadyExistsException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
+    @ExceptionHandler(value = SubWalletAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleSubWalletAlreadyExistsException(
+            final SubWalletAlreadyExistsException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
     /**
      * Handles {@link StripeSessionException}.
      *

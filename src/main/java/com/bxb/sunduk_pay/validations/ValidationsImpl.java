@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
+import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
@@ -25,6 +26,9 @@ import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;
+
+import java.util.Optional;
+
 /**
  * Implements validation logic for users, wallets, and transactions.
  */
@@ -322,5 +326,57 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
         });
     }
 
+    /**method to find subwallet by name.
+     * {@inheritDoc} */
+    @Override
+    public void findSubWalletByName(
+            final MainWallet mainWallet,
+            final String subWalletName) {
+        Optional<SubWallet> subWallet = mainWallet
+                .getSubWallets().stream()
+                .filter(sw -> sw.getSubWalletName()
+                        .equalsIgnoreCase(subWalletName))
+                .findFirst();
+        if (subWallet.isPresent()){
+            throw new SubWalletAlreadyExistsException(
+                    "SubWallet with name "
+                            + subWalletName
+                            + " already exists.");
+        }
+    }
 
+    /**This method validates the target balance.
+     * {@inheritDoc} */
+    @Override
+    public void validateTargetBalance(
+            final Double balance,
+            final Double amount) {
+        log.info(
+                "Validating targetBalance of subWallet"
+                        + " targetBalance=" + balance
+                        + " and amount=" + amount);
+        if (balance == null || amount == null) {
+            log.error(
+"Validation failed: Balance or amount is null. Balance={},Amount={}",
+                    balance, amount);
+            throw new NullAmountException(
+                    "Balance and amount must not be null. Provided balance="
+                            + balance + ", amount=" + amount);
+        }
+        if (balance < amount) {
+            log.error(
+                    "Validation failed: Amount is greater than "
+                            + "targetBalance. targetBalance="
+                            + balance + " amount=" + amount);
+
+            throw new InsufficientBalanceException(
+                    "Amount is greater than "
+                    + "targetBalance. targetBalance="
+                    + balance + " amount=" + amount);
+        }
+        log.debug(
+"Validation successful:  targetBalance={}, Amount={}",
+                balance, amount);
+
+    }
 }

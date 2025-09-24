@@ -61,6 +61,11 @@ try {
         log.debug("MainWallet fetched successfully for UUID: {}",
                 mainWalletRequest.getUuid());
 
+        validations.findSubWalletByName(mainWallet,
+                mainWalletRequest.getSubWalletName());
+        log.debug("SubWallet name validation passed for name: {}",
+                mainWalletRequest.getSubWalletName());
+
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
                 .filter(sw -> !sw.getIsDeleted()).
                 collect(Collectors.toList());
