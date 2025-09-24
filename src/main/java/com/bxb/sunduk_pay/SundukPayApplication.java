@@ -12,8 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class SundukPayApplication {
 
-/** Non-static field to avoid checkstyle error.*/
-private final String appName = "SundukPay";
 /**
 * Main method to start the Spring Boot application.
 * @param args command-line arguments passed to the application
