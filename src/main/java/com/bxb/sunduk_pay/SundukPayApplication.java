@@ -17,7 +17,7 @@ private final String appName = "Sunduk Pay Application";
 * Main method to start the Spring Boot application.
 * @param args command-line arguments passed to the application
 */
-	public static void main(final String[] args) {
-	SpringApplication.run(SundukPayApplication.class, args);
-	}
+public static void main(final String[] args) {
+SpringApplication.run(SundukPayApplication.class, args);
+}
 }
