@@ -1,9 +1,14 @@
-twilio:
-  account-sid: ACdf2676753d81814c50b7115c5617a9a4
-  auth-token: b94932d45ef4af3f720d5096a94f9f19
-  from-number: "+19136751850"
-
 spring:
+  data:
+    mongodb:
+      host: 147.93.28.239
+      port: 27017
+      database: MyDb
+  logging:
+    level:
+      org.springframework: DEBUG
+      org.mongodb.driver: DEBUG
+      com.bxb.sunduk_pay: DEBUG
   mail:
     host: smtp.gmail.com
     port: 587
@@ -15,8 +20,6 @@ spring:
           auth: true
           starttls:
             enable: true
-
-
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -31,35 +34,28 @@ spring:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: '*'
-
-
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
-            #            redirect-uri: "{baseUrl}/login/oauth2/code/google"
-            redirect-uri: "https://e81c7a1cbe7a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "http://srv1005736.hstgr.cloud:8080/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
-
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: MyDB
-
+twilio:
+  account-sid: ACdf2676753d81814c50b7115c5617a9a4
+  auth-token: b94932d45ef4af3f720d5096a94f9f19
+  from-number: "+19136751850"
 server:
   port: 8080
   servlet:
@@ -67,32 +63,29 @@ server:
     session:
       timeout: 60m
       cookie:
+        name: JSESSIONID
+        http-only: true
         same-site: none
         secure: true
   tomcat:
     background-processor-delay: 60
-
 sunduk:
   security:
     exclude-paths:
       - /api/sunduk-service/oauth2/authorization
       - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
       - /api/sunduk-service/webhook
-
-
-
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/b4373c5a26b8292e2e1cbd8b
-
+    url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
 stripe:
   key:
-    secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
   webhook:
-    secret: whsec_3e927c453a257e87bdd1e7955b41653afb52feec4282321a0235ecb5c8dde6a6
-
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
 resilience4j:
   circuitbreaker:
     instances:
@@ -105,7 +98,6 @@ resilience4j:
         waitDurationInOpenState: 5s
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
-
 management:
   endpoints:
     web:
@@ -114,6 +106,3 @@ management:
   endpoint:
     health:
       show-details: always
-logging:
-  level:
-    com.bxb.sunduk_pay: DEBUG
