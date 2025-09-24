@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * Main entry point for the SundukPay Spring Boot application.
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @SpringBootApplication
 @EnableScheduling
 public class SundukPayApplication {
