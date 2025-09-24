@@ -7,16 +7,16 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 /**
  * Main entry point for the SundukPay Spring Boot application.
  */
-@SuppressWarnings("checkstyle:HideUtilityClassConstructor")
 @SpringBootApplication
 @EnableScheduling
 public class SundukPayApplication {
 
-/**
-* Main method to start the Spring Boot application.
-* @param args command-line arguments passed to the application
-*/
-	public static void main(final String[] args) {
-	SpringApplication.run(SundukPayApplication.class, args);
-	}
+    /**
+     * Main method to start the Spring Boot application.
+     * @param args command-line arguments passed to the application
+     */
+    public static void main(final String[] args) {
+        SpringApplication.run(SundukPayApplication.class, args);
+    }
 }
+
