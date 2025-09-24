@@ -10,7 +10,7 @@ services:
       - ./mongo-data:/data/db
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:8.9.3
+    image: confluentinc/cp-zookeeper:7.6.0
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -19,7 +19,7 @@ services:
       - "2181:2181"
 
   kafka:
-    image: confluentinc/cp-kafka:8.9.3
+    image: public.ecr.aws/i1i0w6p5/confluentinc/cp-zookeeper:7.4.4
     container_name: kafka
     depends_on:
       - zookeeper
