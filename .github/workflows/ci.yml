@@ -1,96 +1,88 @@
-  name: Deploy Kafka to Remote Server
+name: Deploy Kafka to Remote Server
 
-  on:
-    pull_request:
-      branches:
-        - master
+on:
+  pull_request:
+    branches:
+      - master
 
-  jobs:
-    deploy-kafka:
-      runs-on: ubuntu-latest
+jobs:
+  deploy-kafka:
+    runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Verify Docker and Docker Compose on Remote Server
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SERVER_HOST }}
-            username: ${{ secrets.SERVER_USER }}
-            key: ${{ secrets.SERVER_SSH_KEY }}
-            script: |
-              command -v docker >/dev/null 2>&1 || { echo "Docker not installed"; exit 1; }
-              command -v docker-compose >/dev/null 2>&1 || { echo "Docker Compose not installed"; exit 1; }
-              echo "Docker and Docker Compose are installed"
+      - name: Verify Docker and Docker Compose on Remote Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            command -v docker >/dev/null 2>&1 || { echo "Docker not installed"; exit 1; }
+            command -v docker-compose >/dev/null 2>&1 || { echo "Docker Compose not installed"; exit 1; }
+            echo "Docker and Docker Compose are installed"
 
-        - name: Deploy Kafka via Docker Compose
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SERVER_HOST }}
-            username: ${{ secrets.SERVER_USER }}
-            key: ${{ secrets.SERVER_SSH_KEY }}
-            script: |
-              mkdir -p ~/kafka-docker
-              cd ~/kafka-docker
-              
-              cat << 'EOF' > docker-compose.yml
-              version: '3.9'
-              services:
-                zookeeper:
-                  image: confluentinc/cp-zookeeper:7.6.0
-                  container_name: zookeeper
-                  restart: always
-                  environment:
-                    ZOOKEEPER_CLIENT_PORT: 2181
-                    ZOOKEEPER_TICK_TIME: 2000
-                  ports:
-                    - "2181:2181"
-                  volumes:
-                    - zookeeper-data:/var/lib/zookeeper
-                  healthcheck:
-                    test: ["CMD", "bash", "-c", "echo 'ruok' | nc -w 2 localhost 2181 | grep imok"]
-                    interval: 10s
-                    timeout: 5s
-                    retries: 3
-                  networks:
-                    - app-network
-              
-                kafka:
-                  image: confluentinc/cp-kafka:7.6.0
-                  container_name: kafka
-                  restart: always
-                  depends_on:
-                    - zookeeper
-                  environment:
-                    KAFKA_BROKER_ID: 1
-                    KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-                    KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-                    KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-                    KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-                    KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-                  ports:
-                    - "9092:9092"
-                  volumes:
-                    - kafka-data:/var/lib/kafka/data
-                  healthcheck:
-                    test: ["CMD", "kafka-topics.sh", "--bootstrap-server", "localhost:9092", "--list"]
-                    interval: 10s
-                    timeout: 5s
-                    retries: 3
-                  networks:
-                    - app-network
-              
-              volumes:
-                zookeeper-data:
-                kafka-data:
-              
-              networks:
-                app-network:
-                  driver: bridge
-              EOF
-              
-              docker-compose down
-              docker-compose up -d || { echo "Docker Compose failed to start"; exit 1; }
-              docker ps
-              docker system prune -f
+      - name: Deploy Kafka via Docker Compose
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            mkdir -p ~/kafka-docker
+            cd ~/kafka-docker
+
+            cat << 'EOF' > docker-compose.yml
+            version: '3.9'
+            services:
+              zookeeper:
+                image: confluentinc/cp-zookeeper:7.6.0
+                container_name: zookeeper
+                restart: always
+                environment:
+                  ZOOKEEPER_CLIENT_PORT: 2181
+                  ZOOKEEPER_TICK_TIME: 2000
+                ports:
+                  - "2181:2181"
+                volumes:
+                  - zookeeper-data:/var/lib/zookeeper
+                networks:
+                  - app-network
+
+              kafka:
+                image: confluentinc/cp-kafka:7.6.0
+                container_name: kafka
+                restart: always
+                depends_on:
+                  - zookeeper
+                environment:
+                  KAFKA_BROKER_ID: 1
+                  KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+                  KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+                  KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+                  KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+                  KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+                ports:
+                  - "9092:9092"
+                volumes:
+                  - kafka-data:/var/lib/kafka/data
+                networks:
+                  - app-network
+
+            volumes:
+              zookeeper-data:
+              kafka-data:
+
+            networks:
+              app-network:
+                driver: bridge
+            EOF
+
+            docker-compose down
+            COMPOSE_PROJECT_NAME=$(basename $(pwd))
+            docker volume rm -f ${COMPOSE_PROJECT_NAME}_kafka-data ${COMPOSE_PROJECT_NAME}_zookeeper-data || true
+            docker-compose up -d || { echo "Docker Compose failed to start"; exit 1; }
+            docker ps
+            docker system prune -f
