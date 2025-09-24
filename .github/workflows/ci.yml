@@ -3,7 +3,7 @@ name: Build & Deploy Preview
 on:
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build-jar:
