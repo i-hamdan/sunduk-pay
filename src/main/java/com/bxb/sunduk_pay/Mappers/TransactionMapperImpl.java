@@ -56,6 +56,11 @@ public class TransactionMapperImpl implements TransactionMapper {
                 .withLocale(Locale.ENGLISH);
         transactionResponse.setDate(
                 transaction.getDateTime().format(formatter));
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter
+                .ofPattern("dd MMMM yyyy hh:mm a")
+                .withLocale(Locale.ENGLISH);
+        transactionResponse.setDateTime(
+              transaction.getDateTime().format(dateTimeFormatter));
         transactionResponse.setTransactionLevel(
                 transaction.getTransactionLevel());
         transactionResponse.setFromWallet(

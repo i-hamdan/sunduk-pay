@@ -1,17 +1,11 @@
 package com.bxb.sunduk_pay.validations;
 
 
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 /**
  * Defines validation operations for wallets, users, and transactions.
@@ -129,7 +123,6 @@ public interface Validations {
      * Finds a sub-wallet by its name within a main wallet.
      * @param mainWallet   main wallet
      * @param subWalletName sub-wallet name
-     * @return Optional containing {@link SubWallet}
      * if found,
      * otherwise empty
      */

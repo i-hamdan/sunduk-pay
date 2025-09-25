@@ -337,7 +337,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
                 .filter(sw -> sw.getSubWalletName()
                         .equalsIgnoreCase(subWalletName))
                 .findFirst();
-        if (subWallet.isPresent()){
+        if (subWallet.isPresent()) {
             throw new SubWalletAlreadyExistsException(
                     "SubWallet with name "
                             + subWalletName

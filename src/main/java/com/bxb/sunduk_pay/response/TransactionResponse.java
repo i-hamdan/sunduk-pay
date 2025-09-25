@@ -36,6 +36,8 @@ public class TransactionResponse {
     private String description;
     /** Date and time when the transaction occurred. */
     private String date;
+    /** Time when the transaction occurred. */
+    private String dateTime;
   /** Status of the transaction (e.g., Success, failure). */
     private String status;
     /** Full name of the user associated
