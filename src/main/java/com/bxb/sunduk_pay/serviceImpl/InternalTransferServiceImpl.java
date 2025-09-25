@@ -16,7 +16,7 @@ import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,10 +56,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     private final MainWalletRepository mainWalletRepository;
     /** Mapper for converting transactions to events. */
     private final TransactionMapper transactionMapper;
-//    /** Kafka template for publishing transaction events. */
-//    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-//    /** Kafka template for publishing goal completion events. */
-//    private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
+//   /** Kafka template for publishing transaction events. */
+//   private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+//   /** Kafka template for publishing goal completion events. */
+//  private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
 
 
     /**

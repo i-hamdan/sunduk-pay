@@ -38,7 +38,7 @@
 //    @Override
 //    public void processUserActivity(final UserKafkaEvent event) {
 //        try {
-//            String description = activityLogMessageUtil.buildDescription(event);
+//       String description = activityLogMessageUtil.buildDescription(event);
 //
 //            UserActivityLog activityLog = UserActivityLog.builder()
 //                    .logId(UUID.randomUUID().toString())

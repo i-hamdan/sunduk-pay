@@ -31,7 +31,7 @@ public interface TransactionMapper {
             List<Transaction> transactions);
 
 //    /**
-//     * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
+// * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
 //     *
 //     * @param transaction the Transaction entity
 //     * @return the corresponding TransactionEvent

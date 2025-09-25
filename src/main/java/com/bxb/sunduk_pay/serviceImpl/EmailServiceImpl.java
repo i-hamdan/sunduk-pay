@@ -38,9 +38,9 @@
 //    }
 //
 //    /**
-//     * Processes a goal completion event and sends an email notification.
-//     *
-//     * @param event the goal completion event containing email and goal details.
+// * Processes a goal completion event and sends an email notification.
+//
+//* @param event the goal completion event containing email and goal details.
 //     */
 //    @Override
 //    public void processGoalCompletionEvent(final GoalCompletionEvent event) {

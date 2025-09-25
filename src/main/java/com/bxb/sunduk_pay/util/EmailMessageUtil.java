@@ -60,7 +60,7 @@
 //                    + "• Deposit or withdraw money from your pots anytime\n"
 //                    + "• Transfer funds flexibly:"
 //                    + "pot ↔ wallet, and even pot ↔ pot\n"
-//                    + "• Make safe payments and monitor all wallet activity in "
+//             + "• Make safe payments and monitor all wallet activity in "
 //                    + "real-time\n\n"
 //                    + "Start exploring today and "
 //                    + "take control of your finances like "

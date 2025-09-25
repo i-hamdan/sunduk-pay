@@ -91,36 +91,37 @@ public class TransactionMapperImpl implements TransactionMapper {
     }
 
    // /** {@inheritDoc} */
-////    public TransactionEvent toTransactionEvent(final Transaction transaction) {
-////        TransactionEvent transactionEvent = new TransactionEvent();
-////        transactionEvent.setWalletId(
-////                transaction.getMainWallet().getMainWalletId());
-////        transactionEvent.setTransactionId(
-////                transaction.getTransactionId());
-////        transactionEvent.setTransactionType(
-////                transaction.getTransactionType());
-////        transactionEvent.setTransactionLevel(
-////                transaction.getTransactionLevel());
-////        transactionEvent.setFromWallet(
-////                transaction.getFromWallet());
-////        transactionEvent.setFromWalletId(
-////                transaction.getFromWalletId());
-////        transactionEvent.setToWallet(
-////                transaction.getToWallet());
-////        transactionEvent.setToWalletId(
-////                transaction.getToWalletId());
-////        transactionEvent.setAmount(
-////                transaction.getAmount());
-////        transactionEvent.setDateTime(
-////                transaction.getDateTime());
-////        transactionEvent.setEmail(
-////                transaction.getUser().getEmail());
-////        transactionEvent.setUuid(
-////                transaction.getUser().getUuid());
-////        transactionEvent.setFullName(
-////                transaction.getUser().getFullName());
-////        transactionEvent.setPhoneNumber(
-////                transaction.getUser().getPhoneNumber());
+//    public TransactionEvent toTransactionEvent(
+//    final Transaction transaction) {
+//        TransactionEvent transactionEvent = new TransactionEvent();
+//        transactionEvent.setWalletId(
+//                transaction.getMainWallet().getMainWalletId());
+//        transactionEvent.setTransactionId(
+//                transaction.getTransactionId());
+//        transactionEvent.setTransactionType(
+//                transaction.getTransactionType());
+//        transactionEvent.setTransactionLevel(
+//                transaction.getTransactionLevel());
+//        transactionEvent.setFromWallet(
+//                transaction.getFromWallet());
+//        transactionEvent.setFromWalletId(
+//                transaction.getFromWalletId());
+//        transactionEvent.setToWallet(
+//                transaction.getToWallet());
+//        transactionEvent.setToWalletId(
+//                transaction.getToWalletId());
+//        transactionEvent.setAmount(
+//                transaction.getAmount());
+//        transactionEvent.setDateTime(
+//                transaction.getDateTime());
+//        transactionEvent.setEmail(
+//                transaction.getUser().getEmail());
+//        transactionEvent.setUuid(
+//                transaction.getUser().getUuid());
+//        transactionEvent.setFullName(
+//                transaction.getUser().getFullName());
+//        transactionEvent.setPhoneNumber(
+//                transaction.getUser().getPhoneNumber());
 //
 //        Double balance = null;
 //

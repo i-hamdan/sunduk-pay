@@ -36,14 +36,14 @@ public interface UserMapper {
      */
     UserResponse toUserResponse(User user);
 
-    /**
-     * Converts a User entity into a Kafka event object for
-     * publishing user-related events.
-     *
-     * @param user      the User entity
-     * @param eventType the type of event (e.g., CREATED, UPDATED)
-     * @return a UserKafkaEvent object.
-     */
+//   /**
+//   * Converts a User entity into a Kafka event object for
+//   * publishing user-related events.
+//     *
+//     * @param user      the User entity
+// * @param eventType the type of event (e.g., CREATED, UPDATED)
+//     * @return a UserKafkaEvent object.
+//     */
    // UserKafkaEvent toKafkaEvent(User user, String eventType);
 }
 

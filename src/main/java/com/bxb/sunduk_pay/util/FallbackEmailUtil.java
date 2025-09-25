@@ -27,11 +27,11 @@
 //    private static final int ID_TRIM_LENGTH = 6;
 //
 //    /**
-//     * Sends a detailed fallback email to the user with transaction information
+// * Sends a detailed fallback email to the user with transaction information
 //     * when the SMS notification fails.
 //     *
-//     * @param event the {@link TransactionEvent} containing transaction details
-//     *              such as type, amount, wallet IDs, and user information.
+// * @param event the {@link TransactionEvent} containing transaction details
+//     * such as type, amount, wallet IDs, and user information.
 //     * @throws SmsServiceException if there is an error sending the email.
 //     */
 //    public void sendFallbackTransactionEmail(final TransactionEvent event) {

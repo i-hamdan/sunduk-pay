@@ -15,7 +15,7 @@ import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,9 +39,9 @@ public class UserServiceImpl implements UserService {
      * Mapper for converting between User entities and DTOs.
      */
     private final UserMapper userMapper;
-    /**
-     * Kafka template for sending user events.
-     */
+//    /**
+//     * Kafka template for sending user events.
+//     */
     //private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
     /**
      * Repository for main wallet data access.
