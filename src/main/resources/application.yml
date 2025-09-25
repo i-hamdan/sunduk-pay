@@ -78,7 +78,6 @@ sunduk:
       - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
-      - /api/sunduk-service/login
       - /api/sunduk-service/webhook
 exchange:
   api:
