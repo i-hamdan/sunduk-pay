@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+//import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Kafka template for sending user events.
      */
-    private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
+    //private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
     /**
      * Repository for main wallet data access.
      */
@@ -95,16 +95,16 @@ public class UserServiceImpl implements UserService {
             user.setMainWallet(mainWallet);
             userRepository.save(user);
 
-            UserKafkaEvent userEvent = userMapper
-                    .toKafkaEvent(user, "SIGNUP");
-            kafkaTemplate.send("user-topic", userEvent);
+//            UserKafkaEvent userEvent = userMapper
+//                    .toKafkaEvent(user, "SIGNUP");
+//            kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
-            UserKafkaEvent userEvent = userMapper
-                    .toKafkaEvent(user,  "LOGIN");
-            kafkaTemplate.send("user-topic", userEvent);
-            log.info("Login successful");
+//            UserKafkaEvent userEvent = userMapper
+//                    .toKafkaEvent(user,  "LOGIN");
+//            kafkaTemplate.send("user-topic", userEvent);
+//            log.info("Login successful");
         }
         return user;
     }

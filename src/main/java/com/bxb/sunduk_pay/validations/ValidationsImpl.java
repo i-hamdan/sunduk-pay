@@ -45,7 +45,7 @@ public class ValidationsImpl implements Validations {
     /** Repository for accessing master wallet data. */
     private final MasterWalletRepository masterWalletRepository;
     /** Maximum allowed number of sub-wallets. */
-private static final int WALLET_SIZE = 19;
+private static final int WALLET_SIZE = 20;
 
 
     /** {@inheritDoc} */

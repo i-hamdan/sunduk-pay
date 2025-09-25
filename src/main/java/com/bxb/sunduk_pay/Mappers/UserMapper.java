@@ -1,5 +1,5 @@
 package com.bxb.sunduk_pay.Mappers;
-import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+//import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -44,6 +44,6 @@ public interface UserMapper {
      * @param eventType the type of event (e.g., CREATED, UPDATED)
      * @return a UserKafkaEvent object.
      */
-    UserKafkaEvent toKafkaEvent(User user, String eventType);
+   // UserKafkaEvent toKafkaEvent(User user, String eventType);
 }
 

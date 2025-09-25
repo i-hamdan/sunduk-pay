@@ -4,7 +4,7 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+//import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -66,8 +66,8 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionRepository transactionRepository;
     /**TransactionMapper for mapping Transaction entities to DTOs.*/
     private final TransactionMapper transactionMapper;
-    /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
-    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+//    /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
+//    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
     /**Wallet operation implementations based on request type.*/
     private final WalletOperationFactory walletOperationFactory;
     /**Validations for performing various validation checks.*/
@@ -166,10 +166,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWallet("some external source")
                     .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
-            TransactionEvent transactionEvent = transactionMapper
-                    .toTransactionEvent(debitTxn);
-            kafkaTemplate.send("transaction-topic",
-                    transactionEvent);
+////            TransactionEvent transactionEvent = transactionMapper
+////                    .toTransactionEvent(debitTxn);
+////            kafkaTemplate.send("transaction-topic",
+//                    transactionEvent);
 
         } else {
             validations.validateBalance(mainWallet.getBalance(),
@@ -197,9 +197,9 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(request.getTargetWalletId()).build();
             transactions.add(debitTxn);
 
-            TransactionEvent transactionEvent = transactionMapper
-                    .toTransactionEvent(debitTxn);
-            kafkaTemplate.send("transaction-topic", transactionEvent);
+//            TransactionEvent transactionEvent = transactionMapper
+//                    .toTransactionEvent(debitTxn);
+//            kafkaTemplate.send("transaction-topic", transactionEvent);
         }
 
         transactionRepository.saveAll(transactions);
@@ -323,10 +323,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(subWallet.getSubWalletId()).build();
 
             transactions.add(creditTxn);
-            TransactionEvent transactionEvent = transactionMapper
-                    .toTransactionEvent(creditTxn);
-            kafkaTemplate.send("transaction-topic",
-                    transactionEvent);
+//            TransactionEvent transactionEvent = transactionMapper
+//                    .toTransactionEvent(creditTxn);
+//            kafkaTemplate.send("transaction-topic",
+//                    transactionEvent);
 
         } else {
             mainWallet.setBalance(mainWallet.getBalance()
@@ -353,10 +353,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
             transactions.add(creditTxn);
-            TransactionEvent transactionEvent = transactionMapper
-                    .toTransactionEvent(creditTxn);
-            kafkaTemplate.send("transaction-topic",
-                    transactionEvent);
+//            TransactionEvent transactionEvent = transactionMapper
+//                    .toTransactionEvent(creditTxn);
+//            kafkaTemplate.send("transaction-topic",
+          //          transactionEvent);
 
         }
 

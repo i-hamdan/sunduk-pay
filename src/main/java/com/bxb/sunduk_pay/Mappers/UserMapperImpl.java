@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+//import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -81,14 +81,14 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
      * @param eventType the type of event (e.g., "USER_CREATED", "USER_UPDATED")
      * @return the corresponding UserKafkaEvent
      */
-    public UserKafkaEvent toKafkaEvent(
-            final User user, final String eventType) {
-        UserKafkaEvent kafkaEvent = new UserKafkaEvent();
-        kafkaEvent.setEmail(user.getEmail());
-        kafkaEvent.setUuid(user.getUuid());
-        kafkaEvent.setFullName(user.getFullName());
-        kafkaEvent.setEventType(eventType);
-        return kafkaEvent;
-    }
+//    public UserKafkaEvent toKafkaEvent(
+//            final User user, final String eventType) {
+//        UserKafkaEvent kafkaEvent = new UserKafkaEvent();
+//        kafkaEvent.setEmail(user.getEmail());
+//        kafkaEvent.setUuid(user.getUuid());
+//        kafkaEvent.setFullName(user.getFullName());
+//        kafkaEvent.setEventType(eventType);
+//        return kafkaEvent;
+//    }
 }
 
