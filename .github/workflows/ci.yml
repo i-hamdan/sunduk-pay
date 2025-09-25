@@ -127,7 +127,7 @@ jobs:
             docker stop walletapp-pr-${PR_ID} || true
             docker rm walletapp-pr-${PR_ID} || true
             echo "Starting new container..."
-            docker run -d -p 8080:8080 --name walletapp-pr-${PR_ID} \
+            docker run -d -p 127.0.0.1:8080:8080 --name walletapp-pr-${PR_ID} \
               -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
               -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
               $IMAGE
