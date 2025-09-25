@@ -3,13 +3,11 @@ package com.bxb.sunduk_pay.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -28,39 +26,14 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    /** Custom authentication
-     *  filter for processing authentication logic. */
-    private final AuthenticationFilter filter;
-
-    /**
-     * Defines the Spring Security filter chain.
-     *
-     * @param http the {@link HttpSecurity} to modify
-     * @return configured {@link SecurityFilterChain}
-     * @throws Exception if an error occurs during configuration
-     */
-
 
     @Bean
     public SecurityFilterChain filterChain(
             final HttpSecurity http) throws Exception {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/custom-login").authenticated()
-                        .anyRequest().permitAll())
-                .oauth2Login(auth -> auth.defaultSuccessUrl("/custom-login"))
-                //.oauth2Login(Customizer.withDefaults())
-                .sessionManagement(session -> session
-                        .maximumSessions(1)
-                        .maxSessionsPreventsLogin(true))
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .invalidateHttpSession(true))
-                .addFilterBefore(filter,
-                        UsernamePasswordAuthenticationFilter.class);
-
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+                .oauth2Login(AbstractHttpConfigurer::disable);
         return http.build();
     }
 
