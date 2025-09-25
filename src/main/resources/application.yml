@@ -34,31 +34,31 @@ spring:
 #        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
 #        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
 #        spring.json.trusted.packages: '*'
-#  security:
-#    oauth2:
-#      client:
-#        registration:
-#          google:
-#            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
-#            client-secret: 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
-#            scope:
-#              - openid
-#              - profile
-#              - email
-#            redirect-uri: "http://srv1005736.hstgr.cloud:8080/api/sunduk-service/login/oauth2/code/google"
-#        provider:
-#          google:
-#            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-#            token-uri: https://oauth2.googleapis.com/token
-#            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-#            user-name-attribute: sub
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "http://srv1005736.hstgr.cloud:8080/api/sunduk-service/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 twilio:
   account-sid: ACdf2676753d81814c50b7115c5617a9a4
   auth-token: b94932d45ef4af3f720d5096a94f9f19
   from-number: "+19136751850"
 server:
-  port: 8080
-  address: 0.0.0.0
+  forward-headers-strategy: framework
+
   servlet:
     context-path: /api/sunduk-service
     session:
