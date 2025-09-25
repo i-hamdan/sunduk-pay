@@ -67,21 +67,17 @@ public class UpdateService implements WalletOperation {
      * @return response indicating success or failure of the update
      * @throws ResourceNotFoundException if user or wallet is not found
      * @throws CannotUpdateWalletException if the
-     *  update cannot be performed due to existing transactions
      * @throws InvalidPayloadException if the request payload is invalid
      */
     @Override
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
-
         log.info("Performing action [{}]",
                 mainWalletRequest.getActionType());
-
         User user = validations.getUserInfo(
                 mainWalletRequest.getUuid());
         log.debug("Fetched user details for UUID: {}",
                 user.getUuid());
-
         validations.getMainWalletInfo(user.getUuid());
         log.debug("Validated main wallet info for user UUID: {}",
                 user.getUuid());
@@ -152,7 +148,6 @@ public class UpdateService implements WalletOperation {
                 );
             }
         }
-
         if (mainWalletRequest.getActionType() == ActionType.GOAL_AMOUNT) {
             if (subWallet != null) {
                 log.info(
