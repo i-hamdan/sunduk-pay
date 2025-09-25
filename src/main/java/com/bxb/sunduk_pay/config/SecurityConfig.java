@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/custom-login").authenticated()
+                        .requestMatchers("/login").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(auth -> auth.defaultSuccessUrl("/custom-login"))
                 //.oauth2Login(Customizer.withDefaults())
