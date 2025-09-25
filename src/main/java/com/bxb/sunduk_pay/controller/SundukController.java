@@ -48,7 +48,7 @@ public class SundukController {
      * @return user login response
      * @throws IOException if redirect fails
      */
-    @GetMapping(value = "/custom-login",
+    @GetMapping(value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserLoginResponse> login(
             final HttpSession session,
