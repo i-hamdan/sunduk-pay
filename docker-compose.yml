@@ -1,9 +1,9 @@
 version: '3.9'
 services:
   app:
-    image: ${DOCKER_USERNAME_LOWER}/walletapp:preview
+    image: ${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_NUMBER}
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/walletapp-preview
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
@@ -15,7 +15,7 @@ services:
     volumes:
       - mongo-data:/data/db
     environment:
-      - MONGO_INITDB_DATABASE=walletapp-preview
+      - MONGO_INITDB_DATABASE=sunduk-pay
     networks:
       - app-network
     # removed ports for safety, still reachable from app
