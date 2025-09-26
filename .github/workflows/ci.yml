@@ -116,74 +116,7 @@ jobs:
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      - name: Create Docker Compose and Nginx config
-        run: |
-          DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          if [ -z "$DOCKER_USERNAME_LOWER" ]; then
-            echo "Error: DOCKER_USERNAME_LOWER is not set"
-            exit 1
-          fi
-          mkdir -p nginx
-          cat > nginx/nginx.conf << 'EOF'
-          events {}
-          http {
-              upstream springboot {
-                  server app:8080;
-              }
-              server {
-                  listen 80;
-                  server_name srv1005736.hstgr.cloud;
-                  location /api/sunduk-service {
-                      proxy_pass http://springboot/api/sunduk-service;
-                      proxy_set_header Host $host;
-                      proxy_set_header X-Real-IP $remote_addr;
-                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                      proxy_set_header X-Forwarded-Proto $scheme;
-                  }
-                  location /health {
-                      proxy_pass http://springboot/health;
-                  }
-              }
-          }
-          EOF
-          cat > docker-compose.yml << EOF
-          version: '3.9'
-          services:
-            app:
-              image: \${DOCKER_USERNAME_LOWER}/walletapp:preview
-              environment:
-                - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/walletapp-preview
-                - GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-                - GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-                - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
-              networks:
-                - app-network
-            mongodb:
-              image: mongo:6.0
-              volumes:
-                - mongo-data:/data/db
-              environment:
-                - MONGO_INITDB_DATABASE=walletapp-preview
-              networks:
-                - app-network
-            nginx:
-              image: nginx:latest
-              ports:
-                - "8080:80"
-              volumes:
-                - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-              depends_on:
-                - app
-              networks:
-                - app-network
-          networks:
-            app-network:
-              driver: bridge
-          volumes:
-            mongo-data:
-          EOF
-
-      - name: Deploy preview on VPS
+      - name: Deploy walletapp on VPS
         uses: appleboy/ssh-action@v1.0.3
         env:
           DOCKER_USERNAME_LOWER: ${{ secrets.DOCKER_USERNAME }}
@@ -194,115 +127,27 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: DOCKER_USERNAME_LOWER,SERVER_USER
           script: |
-            if [ -z "$SERVER_USER" ]; then
-              echo "Error: SERVER_USER is not set"
+            if [ -z "$SERVER_USER" ] || [ -z "$DOCKER_USERNAME_LOWER" ]; then
+              echo "Error: Required environment variables not set"
               exit 1
             fi
-            if [ -z "$DOCKER_USERNAME_LOWER" ]; then
-              echo "Error: DOCKER_USERNAME_LOWER is not set"
-              exit 1
-            fi
-            echo "Checking Docker and Docker Compose..."
+            echo "Checking Docker..."
             if ! command -v docker >/dev/null 2>&1; then
               echo "Error: Docker is not installed"
               exit 1
             fi
-            if ! command -v docker-compose >/dev/null 2>&1; then
-              echo "Error: Docker Compose is not installed"
-              exit 1
-            fi
             DOCKER_USERNAME_LOWER=$(echo "$DOCKER_USERNAME_LOWER" | tr '[:upper:]' '[:lower:]')
             IMAGE=$DOCKER_USERNAME_LOWER/walletapp:preview
-            PREVIEW_DIR=/home/$SERVER_USER/preview
-            echo "DOCKER_USERNAME_LOWER is set to: $DOCKER_USERNAME_LOWER"
-            echo "IMAGE is set to: $IMAGE"
-            echo "PREVIEW_DIR is set to: $PREVIEW_DIR"
-            mkdir -p $PREVIEW_DIR/nginx
-            chown $SERVER_USER:$SERVER_USER $PREVIEW_DIR
-            chmod u+rwx $PREVIEW_DIR
-            echo "Copying Docker Compose and Nginx config..."
-            cat > $PREVIEW_DIR/docker-compose.yml << EOF
-            version: '3.9'
-            services:
-              app:
-                image: $IMAGE
-                environment:
-                  - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/walletapp-preview
-                  - GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-                  - GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-                  - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
-                networks:
-                  - app-network
-              mongodb:
-                image: mongo:6.0
-                volumes:
-                  - mongo-data:/data/db
-                environment:
-                  - MONGO_INITDB_DATABASE=walletapp-preview
-                networks:
-                  - app-network
-              nginx:
-                image: nginx:latest
-                ports:
-                  - "8080:80"
-                volumes:
-                  - $PREVIEW_DIR/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-                depends_on:
-                  - app
-                networks:
-                  - app-network
-            networks:
-              app-network:
-                driver: bridge
-            volumes:
-              mongo-data:
-            EOF
-            cat > $PREVIEW_DIR/nginx/nginx.conf << 'EOF'
-            events {}
-            http {
-                upstream springboot {
-                    server app:8080;
-                }
-                server {
-                    listen 80;
-                    server_name srv1005736.hstgr.cloud;
-                    location /api/sunduk-service {
-                        proxy_pass http://springboot/api/sunduk-service;
-                        proxy_set_header Host $host;
-                        proxy_set_header X-Real-IP $remote_addr;
-                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                        proxy_set_header X-Forwarded-Proto $scheme;
-                    }
-                    location /health {
-                        proxy_pass http://springboot/health;
-                    }
-                }
-            }
-            EOF
-            echo "Verifying docker-compose.yml exists..."
-            if [ ! -f "$PREVIEW_DIR/docker-compose.yml" ]; then
-              echo "Error: Failed to create $PREVIEW_DIR/docker-compose.yml"
-              ls -la $PREVIEW_DIR
-              exit 1
-            fi
-            echo "Verifying nginx.conf exists..."
-            if [ ! -f "$PREVIEW_DIR/nginx/nginx.conf" ]; then
-              echo "Error: Failed to create $PREVIEW_DIR/nginx/nginx.conf"
-              ls -la $PREVIEW_DIR/nginx
-              exit 1
-            fi
+            CONTAINER_NAME=walletapp-preview
             echo "Pulling Docker image: $IMAGE"
             docker pull $IMAGE
+            echo "Stopping old container if exists..."
+            docker stop $CONTAINER_NAME || true
+            docker rm $CONTAINER_NAME || true
+            echo "Starting new container..."
+            docker run -d --name $CONTAINER_NAME -p 8080:8080 $IMAGE
             if [ $? -ne 0 ]; then
-              echo "Error: Failed to pull Docker image $IMAGE"
-              exit 1
-            fi
-            echo "Stopping and removing old stack if exists..."
-            docker-compose -f $PREVIEW_DIR/docker-compose.yml down || true
-            echo "Starting new stack..."
-            docker-compose -f $PREVIEW_DIR/docker-compose.yml up -d
-            if [ $? -ne 0 ]; then
-              echo "Error: Failed to start Docker Compose stack"
-              docker-compose -f $PREVIEW_DIR/docker-compose.yml logs
+              echo "Error: Failed to start walletapp container"
+              docker logs $CONTAINER_NAME
               exit 1
             fi

@@ -43,7 +43,7 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: "http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI}
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
