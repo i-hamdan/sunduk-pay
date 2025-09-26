@@ -101,33 +101,153 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push PR Docker image
+      - name: Build & Push Preview Docker image
         run: |
-          PR_ID=${{ github.event.pull_request.number }}
-          # Convert DOCKER_USERNAME to lowercase
           DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_ID}
+          IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:preview
           echo "Building Docker image: $IMAGE"
           docker build -t $IMAGE .
           docker push $IMAGE
 
-      - name: Deploy preview on Server
+      - name: Create Docker Compose and Nginx config
+        run: |
+          DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
+          mkdir -p nginx
+          cat > nginx/nginx.conf << 'EOF'
+          events {}
+          http {
+              upstream springboot {
+                  server app:8080;
+              }
+              server {
+                  listen 80;
+                  server_name srv1005736.hstgr.cloud;  
+                  location /api/sunduk-service {
+                      proxy_pass http://springboot/api/sunduk-service;
+                      proxy_set_header Host $host;
+                      proxy_set_header X-Real-IP $remote_addr;
+                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                      proxy_set_header X-Forwarded-Proto $scheme;
+                  }
+                  location /health {
+                      proxy_pass http://springboot/health;
+                  }
+              }
+          }
+          EOF
+          cat > docker-compose.yml << EOF
+          version: '3.9'
+          services:
+            app:
+              image: \${DOCKER_USERNAME_LOWER}/walletapp:preview
+              environment:
+                - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/walletapp-preview
+                - GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+                - GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+                - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
+              networks:
+                - app-network
+            mongodb:
+              image: mongo:6.0
+              volumes:
+                - mongo-data:/data/db
+              environment:
+                - MONGO_INITDB_DATABASE=walletapp-preview
+              networks:
+                - app-network
+            nginx:
+              image: nginx:latest
+              ports:
+                - "8080:80"
+              volumes:
+                - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+              depends_on:
+                - app
+              networks:
+                - app-network
+          networks:
+            app-network:
+              driver: bridge
+          volumes:
+            mongo-data:
+          EOF
+
+      - name: Deploy preview on VPS
         uses: appleboy/ssh-action@v1.0.3
+        env:
+          DOCKER_USERNAME_LOWER: ${{ secrets.DOCKER_USERNAME }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: DOCKER_USERNAME_LOWER
           script: |
-            PR_ID=${{ github.event.pull_request.number }}
-            DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-            IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_ID}
+            DOCKER_USERNAME_LOWER=$(echo "$DOCKER_USERNAME_LOWER" | tr '[:upper:]' '[:lower:]')
+            IMAGE=$DOCKER_USERNAME_LOWER/walletapp:preview
+            PREVIEW_DIR=/home/$SERVER_USER/preview
+            mkdir -p $PREVIEW_DIR/nginx
+            echo "Copying Docker Compose and Nginx config..."
+            cat > $PREVIEW_DIR/docker-compose.yml << EOF
+            version: '3.9'
+            services:
+              app:
+                image: \$IMAGE
+                environment:
+                  - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/walletapp-preview
+                  - GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+                  - GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+                  - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
+                networks:
+                  - app-network
+              mongodb:
+                image: mongo:6.0
+                volumes:
+                  - mongo-data:/data/db
+                environment:
+                  - MONGO_INITDB_DATABASE=walletapp-preview
+                networks:
+                  - app-network
+              nginx:
+                image: nginx:latest
+                ports:
+                  - "8080:80"
+                volumes:
+                  - \$PREVIEW_DIR/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+                depends_on:
+                  - app
+                networks:
+                  - app-network
+            networks:
+              app-network:
+                driver: bridge
+            volumes:
+              mongo-data:
+            EOF
+            cat > $PREVIEW_DIR/nginx/nginx.conf << 'EOF'
+            events {}
+            http {
+                upstream springboot {
+                    server app:8080;
+                }
+                server {
+                    listen 80;
+                    server_name srv1005736.hstgr.cloud;
+                    location /api/sunduk-service {
+                        proxy_pass http://springboot/api/sunduk-service;
+                        proxy_set_header Host $host;
+                        proxy_set_header X-Real-IP $remote_addr;
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header X-Forwarded-Proto $scheme;
+                    }
+                    location /health {
+                        proxy_pass http://springboot/health;
+                    }
+                }
+            }
+            EOF
             echo "Pulling Docker image: $IMAGE"
             docker pull $IMAGE
-            echo "Stopping and removing old container if exists..."
-            docker stop walletapp-pr-${PR_ID} || true
-            docker rm walletapp-pr-${PR_ID} || true
-            echo "Starting new container..."
-            docker run -d -p 127.0.0.1:8080:8080 --name walletapp-pr-${PR_ID} \
-              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-              $IMAGE
+            echo "Stopping and removing old stack if exists..."
+            docker-compose -f $PREVIEW_DIR/docker-compose.yml down || true
+            echo "Starting new stack..."
+            docker-compose -f $PREVIEW_DIR/docker-compose.yml up -d

@@ -1,9 +1,7 @@
 spring:
   data:
     mongodb:
-      host: 147.93.28.239
-      port: 27017
-      database: MyDB
+      uri: ${SPRING_DATA_MONGODB_URI}
   logging:
     level:
       org.springframework: DEBUG
