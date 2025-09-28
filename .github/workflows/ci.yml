@@ -1,13 +1,13 @@
-name: PR-Build-and-Deploy-Preview
+name: PR-Build-and-Deploy
 
 on:
   pull_request:
     branches:
       - master
-
 jobs:
+
+  # 1️⃣ Lint code
   lint:
-    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,14 +24,12 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Run Checkstyle
         run: mvn checkstyle:check
 
+  # 2️⃣ Build JAR
   build-jar:
-    name: Build JAR
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -44,31 +42,43 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+
       - name: Build JAR
         run: mvn clean package -DskipTests
+
+      - name: Verify JAR exists
+        run: |
+          JAR_FILE=$(ls target/*.jar | head -n1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: JAR not found"
+            exit 1
+          fi
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: walletApp-jar
-          path: target/*.jar
+          path: ${{ env.JAR_FILE }}
 
+  # 3️⃣ Deploy on VPS
   deploy:
-    name: Deploy on VPS
     runs-on: ubuntu-latest
     needs: build-jar
-    env:
-      PR_NUMBER: ${{ github.event.number }}
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SERVER_HOST: ${{ secrets.SERVER_HOST }}
-      SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download JAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: walletApp-jar
+          path: target/
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -78,39 +88,26 @@ jobs:
 
       - name: Build & Push Docker image
         run: |
-          IMAGE=${DOCKER_USERNAME,,}/walletapp:pr-${PR_NUMBER}
-          echo "Building Docker image $IMAGE"
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp:pr-${{ github.event.number }}
+          echo "Building Docker image: $IMAGE"
           docker build -t $IMAGE .
           docker push $IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy to VPS
+      - name: Deploy container on VPS
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          IMAGE: ${{ env.IMAGE }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,SERVER_USER
+          envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            if [ -z "$IMAGE" ]; then
-              echo "Error: IMAGE not set"
-              exit 1
-            fi
-            echo "Pulling Docker image: $IMAGE"
             docker pull $IMAGE
-            echo "Stopping old container..."
             docker stop walletapp-preview || true
             docker rm walletapp-preview || true
-            echo "Running new container..."
             docker run -d --name walletapp-preview -p 8080:8080 \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
               $IMAGE
             sleep 5
             docker ps | grep walletapp-preview || { echo "Error: container not running"; docker logs walletapp-preview; exit 1; }
-            echo "Container running successfully"
