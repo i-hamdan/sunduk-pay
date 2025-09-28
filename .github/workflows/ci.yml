@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+
 jobs:
 
   # 1️⃣ Lint code
@@ -94,7 +95,7 @@ jobs:
           docker push $IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy container on VPS
+      - name: Deploy container on VPS (linked to MongoDB)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -102,12 +103,27 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
+            # Pull latest image
             docker pull $IMAGE
+
+            # Stop and remove old container
             docker stop walletapp-preview || true
             docker rm walletapp-preview || true
+
+            # Ensure MongoDB container is running
+            if ! docker ps | grep preview_mongodb_1; then
+              echo "MongoDB container preview_mongodb_1 not running. Starting..."
+              docker start preview_mongodb_1 || true
+            fi
+
+            # Run new Spring Boot container linking to MongoDB
             docker run -d --name walletapp-preview -p 8080:8080 \
+              -e SPRING_DATA_MONGODB_URI=mongodb://preview_mongodb_1:27017/sunduk-pay \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
+              --link preview_mongodb_1:mongo \
               $IMAGE
+
             sleep 5
             docker ps | grep walletapp-preview || { echo "Error: container not running"; docker logs walletapp-preview; exit 1; }
+
