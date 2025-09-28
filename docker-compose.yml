@@ -9,6 +9,8 @@ services:
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
     networks:
       - app-network
+    ports:
+      - "8080:8080"
 
   mongodb:
     image: mongo:6.0
@@ -18,7 +20,19 @@ services:
       - app-network
     ports:
       - 27017:27017  # for local testing
-    # removed ports for safety, still reachable from app
+
+  nginx:
+    image: nginx:1.24
+    container_name: walletapp-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/walletapp.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - app-network
+    depends_on:
+      - app
+    restart: always
 
 networks:
   app-network:

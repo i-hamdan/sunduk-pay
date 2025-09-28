@@ -6,7 +6,6 @@ on:
       - master
 
 jobs:
-
   # 1️⃣ Lint code
   lint:
     runs-on: ubuntu-latest
@@ -67,8 +66,8 @@ jobs:
           name: walletApp-jar
           path: ${{ env.JAR_FILE }}
 
-  # 3️⃣ Deploy on VPS
-  deploy:
+  # 3️⃣ Build & push Docker image
+  docker-build:
     runs-on: ubuntu-latest
     needs: build-jar
     steps:
@@ -87,7 +86,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Docker image
+      - name: Build & push Docker image
         run: |
           IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp:pr-${{ github.event.number }}
           echo "Building Docker image: $IMAGE"
@@ -95,7 +94,15 @@ jobs:
           docker push $IMAGE
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy container on VPS (linked to MongoDB)
+  # 4️⃣ Deploy Docker Compose stack on VPS
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -103,27 +110,18 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            # Pull latest image
+            echo "Stopping existing stack if any..."
+            docker-compose -f ~/walletapp/docker-compose.yml down || true
+
+            echo "Updating .env for walletapp image..."
+            echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" > ~/walletapp/.env
+            echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> ~/walletapp/.env
+            echo "IMAGE=${IMAGE}" >> ~/walletapp/.env
+
+            echo "Pulling latest image..."
             docker pull $IMAGE
 
-            # Stop and remove old container
-            docker stop walletapp-preview || true
-            docker rm walletapp-preview || true
+            echo "Starting Docker Compose stack..."
+            docker-compose -f ~/walletapp/docker-compose.yml up -d --build
 
-            # Ensure MongoDB container is running
-            if ! docker ps | grep preview_mongodb_1; then
-              echo "MongoDB container preview_mongodb_1 not running. Starting..."
-              docker start preview_mongodb_1 || true
-            fi
-
-            # Run new Spring Boot container linking to MongoDB
-            docker run -d --name walletapp-preview -p 8080:8080 \
-              --network walletapp-network \
-              -e SPRING_DATA_MONGODB_URI=mongodb://preview_mongodb_1:27017/sunduk-pay \
-              -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
-              -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
-              $IMAGE
-
-            sleep 5
-            docker ps | grep walletapp-preview || { echo "Error: container not running"; docker logs walletapp-preview; exit 1; }
-
+            echo "Stack deployed successfully"
