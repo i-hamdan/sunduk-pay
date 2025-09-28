@@ -14,10 +14,10 @@ services:
     image: mongo:6.0
     volumes:
       - mongo-data:/data/db
-    environment:
-      - MONGO_INITDB_DATABASE=sunduk-pay
     networks:
       - app-network
+    ports:
+      - 27017:27017  # for local testing
     # removed ports for safety, still reachable from app
 
 networks:

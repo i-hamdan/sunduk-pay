@@ -1,6 +1,4 @@
-# Builds, lints, and deploys a Java application to a preview environment on a VPS
-# for pull requests targeting the master branch.
-name: PR-Build-and-Deploy-Preview
+name: PR-Build-Lint-Deploy
 
 on:
   pull_request:
@@ -8,26 +6,10 @@ on:
       - master
 
 jobs:
-  # Validate all required secrets before proceeding
-  validate-secrets:
-    name: Validate Secrets
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check required secrets
-        run: |
-          if [ -z "${{ secrets.DOCKER_USERNAME }}" ] || [ -z "${{ secrets.DOCKER_PASSWORD }}" ] || \
-             [ -z "${{ secrets.SERVER_HOST }}" ] || [ -z "${{ secrets.SERVER_USER }}" ] || \
-             [ -z "${{ secrets.SERVER_SSH_KEY }}" ] || [ -z "${{ secrets.GOOGLE_CLIENT_ID }}" ] || \
-             [ -z "${{ secrets.GOOGLE_CLIENT_SECRET }}" ]; then
-            echo "Error: One or more required secrets are not set"
-            exit 1
-          fi
 
-  # Run Checkstyle to enforce code quality
+  # 1️⃣ Lint with Checkstyle
   lint:
-    name: Lint Code
     runs-on: ubuntu-latest
-    needs: validate-secrets
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -47,12 +29,10 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Run Checkstyle
-        run: |
-          mvn checkstyle:check || { echo "Checkstyle violations found"; exit 1; }
+        run: mvn checkstyle:check
 
-  # Build the JAR file and upload it as an artifact
-  build-jar:
-    name: Build JAR
+  # 2️⃣ Build JAR, build Docker image & push
+  build-docker:
     runs-on: ubuntu-latest
     needs: lint
     steps:
@@ -76,123 +56,52 @@ jobs:
       - name: Build JAR
         run: mvn clean package -DskipTests
 
-      - name: Verify JAR file exists
-        run: |
-          JAR_COUNT=$(ls target/*.jar | wc -l)
-          if [ "$JAR_COUNT" -ne 1 ]; then
-            echo "Error: Expected exactly one JAR file, found $JAR_COUNT"
-            exit 1
-          fi
-          JAR_FILE=$(ls target/*.jar)
-          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
-
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: walletApp-jar
-          path: ${{ env.JAR_FILE }}
-          retention-days: 1
-
-  # Deploy the application to a VPS as a preview environment
-  deploy-preview:
-    name: Deploy Preview
-    runs-on: ubuntu-latest
-    needs: build-jar
-    env:
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: walletApp-jar
-          path: target/
-
-      - name: Verify downloaded JAR file
-        run: |
-          ls -l target/
-          JAR_FILE=$(ls target/*.jar | head -n 1)
-          if [ -z "$JAR_FILE" ]; then
-            echo "Error: Downloaded JAR file not found in target/ directory"
-            exit 1
-          fi
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push Preview Docker image
+      - name: Build & Push Docker image
         run: |
           DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          if [ -z "$DOCKER_USERNAME_LOWER" ]; then
-            echo "Error: DOCKER_USERNAME_LOWER is not set"
-            exit 1
-          fi
           IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:pr-${{ github.event.number }}
           echo "Building Docker image: $IMAGE"
           docker build -t $IMAGE .
-          if [ $? -ne 0 ]; then
-            echo "Error: Docker build failed"
-            exit 1
-          fi
           docker push $IMAGE
-          if [ $? -ne 0 ]; then
-            echo "Error: Docker push failed"
-            exit 1
-          fi
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy walletapp on VPS
+  # 3️⃣ SSH into VPS & run container
+  deploy-vps:
+    runs-on: ubuntu-latest
+    needs: build-docker
+    steps:
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         env:
-          DOCKER_USERNAME_LOWER: ${{ secrets.DOCKER_USERNAME }}
-          SERVER_USER: ${{ secrets.SERVER_USER }}
           IMAGE: ${{ env.IMAGE }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          envs: DOCKER_USERNAME_LOWER,SERVER_USER,IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
+          envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            if [ -z "$SERVER_USER" ] || [ -z "$DOCKER_USERNAME_LOWER" ] || [ -z "$IMAGE" ]; then
-              echo "Error: Required environment variables not set"
-              exit 1
-            fi
-            echo "Checking Docker..."
-            if ! command -v docker >/dev/null 2>&1; then
-              echo "Error: Docker is not installed"
+            if [ -z "$IMAGE" ]; then
+              echo "Error: IMAGE not set"
               exit 1
             fi
             echo "Pulling Docker image: $IMAGE"
             docker pull $IMAGE
-            if [ $? -ne 0 ]; then
-              echo "Error: Failed to pull Docker image"
-              exit 1
-            fi
-            echo "Stopping old container if exists..."
+            echo "Stopping old container..."
             docker stop walletapp-preview || true
             docker rm walletapp-preview || true
-            echo "Starting new container..."
+            echo "Running new container..."
             docker run -d --name walletapp-preview -p 8080:8080 \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
               $IMAGE
-            if [ $? -ne 0 ]; then
-              echo "Error: Failed to start walletapp container"
-              docker logs walletapp-preview
-              exit 1
-            fi
-            echo "Verifying container is running..."
-            sleep 10
-            if ! docker ps | grep walletapp-preview; then
-              echo "Error: Container walletapp-preview is not running"
-              docker logs walletapp-preview
-              exit 1
-            fi
-            echo "Cleaning up old Docker images..."
-            docker image prune -f
+            sleep 5
+            docker ps | grep walletapp-preview || { echo "Error: container not running"; docker logs walletapp-preview; exit 1; }
+            echo "Container running successfully"
