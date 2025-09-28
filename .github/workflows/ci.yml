@@ -118,6 +118,7 @@ jobs:
 
             # Run new Spring Boot container linking to MongoDB
             docker run -d --name walletapp-preview -p 8080:8080 \
+              --network walletapp-network \
               -e SPRING_DATA_MONGODB_URI=mongodb://preview_mongodb_1:27017/sunduk-pay \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
