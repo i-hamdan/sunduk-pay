@@ -121,7 +121,6 @@ jobs:
               -e SPRING_DATA_MONGODB_URI=mongodb://preview_mongodb_1:27017/sunduk-pay \
               -e GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID" \
               -e GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET" \
-              --link preview_mongodb_1:mongo \
               $IMAGE
 
             sleep 5
