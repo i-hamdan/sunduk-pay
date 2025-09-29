@@ -110,7 +110,7 @@ jobs:
             cd /home/sunduk
 
             echo "Stopping existing stack if any..."
-            docker compose down || true
+            docker-compose down || true
 
             echo "Writing .env file..."
             cat <<EOF > .env
@@ -123,7 +123,7 @@ jobs:
             docker pull $IMAGE
 
             echo "Starting Docker Compose stack..."
-            docker compose up -d --build
+            docker-compose up -d --build
 
             echo "Stack deployed successfully!"
             docker ps
