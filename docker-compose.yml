@@ -1,24 +1,27 @@
 services:
   app:
-    image: ${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_NUMBER}
+    image: tayyabk/walletapp:latest
+    container_name: walletapp
+    depends_on:
+      - mongodb
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
     networks:
       - app-network
     ports:
       - "8080:8080"
+    restart: always
 
   mongodb:
     image: mongo:6.0
+    container_name: wallet-mongo
     volumes:
       - mongo-data:/data/db
     networks:
       - app-network
     ports:
-      - 27017:27017  # for local testing
+      - "27017:27017"
+    restart: always
 
   nginx:
     image: nginx:1.24
