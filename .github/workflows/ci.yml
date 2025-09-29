@@ -107,7 +107,7 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            cd /home/sunduk/walletapp
+            cd /home/sunduk
 
             echo "Stopping existing stack if any..."
             docker compose down || true
