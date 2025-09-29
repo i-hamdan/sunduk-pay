@@ -1,11 +1,8 @@
-version: '3.9'
 services:
   app:
     image: ${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_NUMBER}
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google
     networks:
       - app-network

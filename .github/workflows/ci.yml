@@ -115,9 +115,6 @@ jobs:
             cd ~/walletapp
             export DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')
             export PR_NUMBER=latest
-            export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
-            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-            docker compose pull
-            docker compose down
-            docker compose up -d --remove-orphans
+            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER") pull
+            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER") down
+            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER") up -d --remove-orphans
