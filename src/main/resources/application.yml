@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI}
+      uri: mongodb://mongodb:27017/sunduk-pay
   logging:
     level:
       org.springframework: DEBUG
@@ -51,7 +51,6 @@ server:
       cookie:
         name: JSESSIONID
         http-only: true
-        same-site: lax       # changed from none to lax for HTTP
         secure: false        # changed from true to false for HTTP
   tomcat:
     background-processor-delay: 60

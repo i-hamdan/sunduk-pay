@@ -1,44 +1,44 @@
-services:
-  app:
-    image: tayyabk/walletapp:latest
-    container_name: walletapp
-    depends_on:
-      - mongodb
-    environment:
-      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
-    networks:
-      - app-network
-    ports:
-      - "8080:8080"
-    restart: always
-
-  mongodb:
-    image: mongo:6.0
-    container_name: wallet-mongo
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - app-network
-    ports:
-      - "27017:27017"
-    restart: always
-
-  nginx:
-    image: nginx:1.24
-    container_name: walletapp-nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/walletapp.conf:/etc/nginx/conf.d/default.conf:ro
-    networks:
-      - app-network
-    depends_on:
-      - app
-    restart: always
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  mongo-data:
+#services:
+#  app:
+#    image: tayyabk/walletapp:latest
+#    container_name: walletapp
+#    depends_on:
+#      - mongodb
+#    environment:
+#      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
+#    networks:
+#      - app-network
+#    ports:
+#      - "8080:8080"
+#    restart: always
+#
+#  mongodb:
+#    image: mongo:6.0
+#    container_name: wallet-mongo
+#    volumes:
+#      - mongo-data:/data/db
+#    networks:
+#      - app-network
+#    ports:
+#      - "27017:27017"
+#    restart: always
+#
+#  nginx:
+#    image: nginx:1.24
+#    container_name: walletapp-nginx
+#    ports:
+#      - "80:80"
+#    volumes:
+#      - ./nginx/walletapp.conf:/etc/nginx/conf.d/default.conf:ro
+#    networks:
+#      - app-network
+#    depends_on:
+#      - app
+#    restart: always
+#
+#networks:
+#  app-network:
+#    driver: bridge
+#
+#volumes:
+#  mongo-data:
