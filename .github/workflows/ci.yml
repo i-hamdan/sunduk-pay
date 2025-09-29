@@ -57,6 +57,6 @@ jobs:
           script: |
             mkdir -p ~/walletapp
             cd ~/walletapp
-            docker compose pull
-            docker compose down
-            docker compose up -d --remove-orphans
+            docker-compose pull
+            docker-compose down
+            docker-compose up -d --remove-orphans
