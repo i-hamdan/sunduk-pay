@@ -17,8 +17,10 @@ public class SubWalletResponse {
     /** The target balance for the sub-wallet. */
     private Double targetBalance;
     /**The date by which the target balance should be achieved.*/
-    private LocalDate targetDate;
+    private String targetDate;
     /** The icon associated with the sub-wallet. */
     private String icon;
+    /** The creation timestamp of the sub-wallet. */
+    private String createdAt;
 }
 
