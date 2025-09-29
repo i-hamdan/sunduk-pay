@@ -112,13 +112,6 @@ jobs:
             echo "Stopping existing stack if any..."
             docker-compose down || true
 
-            echo "Writing .env file..."
-            cat <<EOF > .env
-            GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-            GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-            IMAGE=${IMAGE}
-            EOF
-
             echo "Pulling latest image..."
             docker pull $IMAGE
 
