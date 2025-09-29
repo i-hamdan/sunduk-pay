@@ -55,6 +55,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            mkdir -p ~/walletapp
             cd ~/walletapp
             docker compose pull
             docker compose down
