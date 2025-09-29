@@ -99,6 +99,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker-build
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -107,16 +110,18 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            cd /home/sunduk
-
             echo "Stopping existing stack if any..."
-            docker-compose down || true
+            docker-compose -f ~/walletapp/docker-compose.yml down || true
+
+            echo "Updating .env for walletapp image..."
+            echo "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" > ~/walletapp/.env
+            echo "GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}" >> ~/walletapp/.env
+            echo "IMAGE=${IMAGE}" >> ~/walletapp/.env
 
             echo "Pulling latest image..."
             docker pull $IMAGE
 
             echo "Starting Docker Compose stack..."
-            docker-compose up -d --build
+            docker-compose -f ~/walletapp/docker-compose.yml up -d --build
 
-            echo "Stack deployed successfully!"
-            docker ps
+            echo "Stack deployed successfully"
