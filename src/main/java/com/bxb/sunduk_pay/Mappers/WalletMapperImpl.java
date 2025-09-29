@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.SubWalletResponse;
 import org.springframework.stereotype.Component;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,13 +60,18 @@ public class WalletMapperImpl implements WalletMapper {
      */
    private SubWalletResponse toSubWalletResponse(
            final SubWallet subWallet) {
+       DateTimeFormatter formatter = DateTimeFormatter
+               .ofPattern("dd MMM yyyy");
        SubWalletResponse subWalletResponse = new SubWalletResponse();
        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
        subWalletResponse.setBalance(subWallet.getBalance());
        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
-       subWalletResponse.setTargetDate(subWallet.getTargetDate());
+       subWalletResponse.setTargetDate(subWallet.getTargetDate()
+               .format(formatter));
        subWalletResponse.setIcon(subWallet.getIcon());
+       subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
+               .format(formatter));
        return subWalletResponse;
    }
 }
