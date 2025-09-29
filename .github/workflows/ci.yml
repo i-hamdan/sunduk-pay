@@ -1,124 +1,114 @@
-name: PR-Build-and-Deploy
+name: CI Pipeline
 
 on:
-  pull_request:
-    branches:
-      - master
+    pull_request:
+      branches:
+        - master
 
 jobs:
-  # 1️⃣ Lint code
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    build-and-push:
+      runs-on: ubuntu-latest
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+      steps:
+        # Checkout the repository code
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        # Set up JDK for building the Java application
+        - name: Set up JDK 21
+          uses: actions/setup-java@v4
+          with:
+            java-version: '21'
+            distribution: 'temurin'
+            cache: 'maven'
 
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
+        # Build the JAR file with Maven
+        - name: Build JAR with Maven
+          run: mvn clean package -DskipTests
 
-  # 2️⃣ Build JAR
-  build-jar:
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        # Upload the JAR file as an artifact
+        - name: Upload JAR artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: walletapp-jar
+            path: target/*.jar
+            retention-days: 7
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+        # Set up Docker Buildx for multi-platform builds
+        - name: Set up Docker Buildx
+          uses: docker/setup-buildx-action@v3
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        # Log in to Docker Hub
+        - name: Log in to Docker Hub
+          uses: docker/login-action@v3
+          with:
+            username: ${{ secrets.DOCKER_USERNAME }}
+            password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build JAR
-        run: mvn clean package -DskipTests
+        # Extract PR number for tagging (or use commit SHA for non-PR pushes)
+        - name: Extract PR number
+          id: pr-number
+          run: |
+            if [ "${{ github.event_name }}" == "pull_request" ]; then
+              echo "pr_number=PR-${{ github.event.number }}" >> $GITHUB_OUTPUT
+            else
+              echo "pr_number=latest" >> $GITHUB_OUTPUT
+            fi
 
-      - name: Verify JAR exists
-        run: |
-          JAR_FILE=$(ls target/*.jar | head -n1)
-          if [ -z "$JAR_FILE" ]; then
-            echo "Error: JAR not found"
-            exit 1
-          fi
-          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
+        # Build and push the app Docker image
+        - name: Build and push Docker image
+          uses: docker/build-push-action@v6
+          with:
+            context: .
+            file: ./Dockerfile
+            push: true
+            tags: ${{ secrets.DOCKER_USERNAME_LOWER }}/walletapp:${{ steps.pr-number.outputs.pr_number }}
+            build-args: |
+              DOCKER_USERNAME_LOWER=${{ secrets.DOCKER_USERNAME_LOWER }}
 
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: walletApp-jar
-          path: ${{ env.JAR_FILE }}
+        # Run tests using Docker Compose
+        - name: Run tests with Docker Compose
+          env:
+            SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
+            GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+            GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+            DOCKER_USERNAME_LOWER: ${{ secrets.DOCKER_USERNAME_LOWER }}
+            PR_NUMBER: ${{ steps.pr-number.outputs.pr_number }}
+          run: |
+            # Start services
+            docker-compose -f docker-compose.yml up -d
+            # Run tests (replace with your actual test command)
+            docker-compose exec -T app mvn test || exit 1
+            docker-compose down
 
-  # 3️⃣ Build & push Docker image
-  docker-build:
-    runs-on: ubuntu-latest
-    needs: build-jar
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        # Clean up Docker images
+        - name: Clean up
+          if: always()
+          run: |
+            docker system prune -f
 
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: walletApp-jar
-          path: target/
+    deploy:
+      runs-on: ubuntu-latest
+      needs: build-and-push  # Run after build-and-push job
+      steps:
+        # Checkout code to access docker-compose.yml
+        - name: Checkout code
+          uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build & push Docker image
-        run: |
-          IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp:pr-${{ github.event.number }}
-          echo "Building Docker image: $IMAGE"
-          docker build -t $IMAGE .
-          docker push $IMAGE
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-
-  deploy:
-    name: Deploy to VPS
-    runs-on: ubuntu-latest
-    needs: docker
-
-    steps:
-      - name: Download Image Name
-        uses: actions/download-artifact@v4
-        with:
-          name: image-name
-          path: ./image
-
-      - name: Get Image Name
-        run: echo "IMAGE=$(cat ./image/*)" >> $GITHUB_ENV
-
-      - name: SSH & Deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            echo "Pulling new image..."
-            docker pull $IMAGE
-            echo "Stopping old containers..."
-            docker-compose -f /home/${{ secrets.SERVER_USER }}/walletapp/docker-compose.yml down || true
-            echo "Starting new containers..."
-            IMAGE=$IMAGE docker-compose -f /home/${{ secrets.SERVER_USER }}/walletapp/docker-compose.yml up -d --build
+        # Deploy to VPS via SSH
+        - name: Deploy to VPS
+          uses: appleboy/ssh-action@v1.0.3
+          with:
+            host: ${{ secrets.SERVER_HOST }}
+            username: ${{ secrets.SERVER_USER }}
+            key: ${{ secrets.SERVER_SSH_KEY }}
+            script: |
+              cd ~/walletapp
+              export DOCKER_USERNAME_LOWER=${{ secrets.DOCKER_USERNAME_LOWER }}
+              export PR_NUMBER=latest
+              export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
+              export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+              export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+              docker-compose pull
+              docker-compose down
+              docker-compose up -d --remove-orphans
