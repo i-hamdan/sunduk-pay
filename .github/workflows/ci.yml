@@ -1,128 +1,125 @@
-name: CI Pipeline
+name: WalletApp CI Pipeline
+
 on:
-    pull_request:
-      branches:
-        - master
+  pull_request:
+    branches:
+      - master        # build job will run on PRs to master
 
 jobs:
-    build-and-push:
-      runs-on: ubuntu-latest
+  build-and-push:
+    runs-on: ubuntu-latest
 
-      steps:
-        # Checkout the repository code
-        - name: Checkout code
-          uses: actions/checkout@v4
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        # Set up JDK for building the Java application
-        - name: Set up JDK 21
-          uses: actions/setup-java@v4
-          with:
-            java-version: '21'
-            distribution: 'temurin'
-            cache: 'maven'
+      # Set up JDK for building the Java application
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
 
-        # Run linting with Checkstyle
-        - name: Run Checkstyle linting
-          run: mvn checkstyle:check
-          continue-on-error: false
+      # Run linting with Checkstyle (optional)
+      - name: Run Checkstyle linting
+        run: mvn checkstyle:check
+        continue-on-error: false
 
-        # Build the JAR file with Maven
-        - name: Build JAR with Maven
-          run: mvn clean package -DskipTests
+      # Build the JAR file with Maven
+      - name: Build JAR with Maven
+        run: mvn clean package -DskipTests
 
-        # Upload the JAR file as an artifact
-        - name: Upload JAR artifact
-          uses: actions/upload-artifact@v4
-          with:
-            name: walletapp-jar
-            path: target/*.jar
+      # Upload the JAR file as an artifact
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: walletapp-jar
+          path: target/*.jar
 
-        # Validate Docker secrets and set lowercase username
-        - name: Validate Docker secrets
-          id: validate-secrets
-          run: |
-            if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
-              echo "Error: DOCKER_USERNAME is not set in GitHub Secrets"
-              exit 1
-            fi
-            echo "DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-            echo "Docker username: ${{ secrets.DOCKER_USERNAME }}"
-            echo "Lowercase Docker username: $(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')"
+      # Validate Docker secrets and set lowercase username
+      - name: Validate Docker secrets
+        id: validate-secrets
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "Error: DOCKER_USERNAME is not set in GitHub Secrets"
+            exit 1
+          fi
+          echo "DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
-        # Set up Docker Buildx for multi-platform builds
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v3
+      # Set up Docker Buildx for multi-platform builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-        # Log in to Docker Hub
-        - name: Log in to Docker Hub
-          uses: docker/login-action@v3
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-        # Extract PR number for tagging
-        - name: Extract PR number
-          id: pr-number
-          run: |
-            if [ "${{ github.event_name }}" == "pull_request" ]; then
-              echo "pr_number=PR-${{ github.event.number }}" >> $GITHUB_OUTPUT
-            else
-              echo "pr_number=latest" >> $GITHUB_OUTPUT
-            fi
+      # Extract PR number for tagging
+      - name: Extract PR number
+        id: pr-number
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "pr_number=PR-${{ github.event.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "pr_number=latest" >> $GITHUB_OUTPUT
+          fi
 
-        # Build and push the app Docker image
-        - name: Build and push Docker image
-          uses: docker/build-push-action@v6
-          with:
-            context: .
-            file: ./Dockerfile
-            push: true
-            tags: ${{ steps.validate-secrets.outputs.DOCKER_USERNAME_LOWER }}/walletapp:${{ steps.pr-number.outputs.pr_number }}
+      # Build and push the app Docker image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.validate-secrets.outputs.DOCKER_USERNAME_LOWER }}/walletapp:${{ steps.pr-number.outputs.pr_number }}
 
-        # Run tests using Docker Compose
-        - name: Run tests with Docker Compose
-          env:
-            SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
-            GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-            GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-            DOCKER_USERNAME_LOWER: ${{ steps.validate-secrets.outputs.DOCKER_USERNAME_LOWER }}
-            PR_NUMBER: ${{ steps.pr-number.outputs.pr_number }}
-          run: |
-            # Start services
-            docker-compose -f docker-compose.yml up -d
-            # Run tests (replace with your actual test command)
-            docker compose exec -T app mvn test || exit 1
+      # Run tests using Docker Compose
+      - name: Run tests with Docker Compose
+        env:
+          SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        run: |
+          # Start services
+          docker compose -f docker-compose.yml up -d
+          # Run tests (replace with your actual test command)
+          docker compose exec -T app mvn test || exit 1
+          docker compose down
+
+      # Clean up Docker images
+      - name: Clean up
+        if: always()
+        run: docker system prune -f
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' # Only deploy on main branch
+
+    steps:
+      # Checkout code to access docker-compose.yml
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Deploy to VPS via SSH
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd ~/walletapp
+            export DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')
+            export PR_NUMBER=latest
+            export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
+            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+            export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+            docker compose pull
             docker compose down
-
-        # Clean up Docker images
-        - name: Clean up
-          if: always()
-          run: |
-            docker system prune -f
-
-    deploy:
-      runs-on: ubuntu-latest
-      needs: build-and-push  # Run after build-and-push job
-      if: github.ref == 'refs/heads/main'  # Only deploy on main branch
-      steps:
-        # Checkout code to access docker-compose.yml
-        - name: Checkout code
-          uses: actions/checkout@v4
-
-        # Deploy to VPS via SSH
-        - name: Deploy to VPS
-          uses: appleboy/ssh-action@v1.0.3
-          with:
-            host: ${{ secrets.SERVER_HOST }}
-            username: ${{ secrets.SERVER_USER }}
-            key: ${{ secrets.SERVER_SSH_KEY }}
-            script: |
-              cd ~/walletapp
-              export DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')
-              export PR_NUMBER=latest
-              export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
-              export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-              export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-              docker compose pull
-              docker compose down
-              docker compose up -d --remove-orphans
+            docker compose up -d --remove-orphans
