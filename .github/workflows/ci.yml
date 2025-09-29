@@ -1,5 +1,4 @@
 name: CI Pipeline
-
 on:
     pull_request:
       branches:
@@ -22,6 +21,11 @@ jobs:
             distribution: 'temurin'
             cache: 'maven'
 
+        # Run linting with Checkstyle
+        - name: Run Checkstyle linting
+          run: mvn checkstyle:check
+          continue-on-error: false
+
         # Build the JAR file with Maven
         - name: Build JAR with Maven
           run: mvn clean package -DskipTests
@@ -32,7 +36,18 @@ jobs:
           with:
             name: walletapp-jar
             path: target/*.jar
-            retention-days: 7
+
+        # Validate Docker secrets and set lowercase username
+        - name: Validate Docker secrets
+          id: validate-secrets
+          run: |
+            if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+              echo "Error: DOCKER_USERNAME is not set in GitHub Secrets"
+              exit 1
+            fi
+            echo "DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+            echo "Docker username: ${{ secrets.DOCKER_USERNAME }}"
+            echo "Lowercase Docker username: $(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')"
 
         # Set up Docker Buildx for multi-platform builds
         - name: Set up Docker Buildx
@@ -45,7 +60,7 @@ jobs:
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
 
-        # Extract PR number for tagging (or use commit SHA for non-PR pushes)
+        # Extract PR number for tagging
         - name: Extract PR number
           id: pr-number
           run: |
@@ -62,9 +77,7 @@ jobs:
             context: .
             file: ./Dockerfile
             push: true
-            tags: ${{ secrets.DOCKER_USERNAME_LOWER }}/walletapp:${{ steps.pr-number.outputs.pr_number }}
-            build-args: |
-              DOCKER_USERNAME_LOWER=${{ secrets.DOCKER_USERNAME_LOWER }}
+            tags: ${{ steps.validate-secrets.outputs.DOCKER_USERNAME_LOWER }}/walletapp:${{ steps.pr-number.outputs.pr_number }}
 
         # Run tests using Docker Compose
         - name: Run tests with Docker Compose
@@ -72,7 +85,7 @@ jobs:
             SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/sunduk-pay
             GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
             GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-            DOCKER_USERNAME_LOWER: ${{ secrets.DOCKER_USERNAME_LOWER }}
+            DOCKER_USERNAME_LOWER: ${{ steps.validate-secrets.outputs.DOCKER_USERNAME_LOWER }}
             PR_NUMBER: ${{ steps.pr-number.outputs.pr_number }}
           run: |
             # Start services
@@ -90,6 +103,7 @@ jobs:
     deploy:
       runs-on: ubuntu-latest
       needs: build-and-push  # Run after build-and-push job
+      if: github.ref == 'refs/heads/main'  # Only deploy on main branch
       steps:
         # Checkout code to access docker-compose.yml
         - name: Checkout code
@@ -104,7 +118,7 @@ jobs:
             key: ${{ secrets.SERVER_SSH_KEY }}
             script: |
               cd ~/walletapp
-              export DOCKER_USERNAME_LOWER=${{ secrets.DOCKER_USERNAME_LOWER }}
+              export DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')
               export PR_NUMBER=latest
               export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
               export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
