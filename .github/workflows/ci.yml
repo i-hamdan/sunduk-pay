@@ -113,23 +113,6 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd ~/walletapp
-
-            # Set environment variables for docker compose
-            export DOCKER_USERNAME_LOWER=$(echo ${{ secrets.DOCKER_USERNAME }} | tr '[:upper:]' '[:lower:]')
-            export PR_NUMBER=latest
-            export SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/sunduk-pay
-            export GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
-            export GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
-
-            # Pull latest image and restart containers
-            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER"; \
-            echo "SPRING_DATA_MONGODB_URI=$SPRING_DATA_MONGODB_URI"; echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID"; \
-            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET") pull
-
-            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER"; \
-            echo "SPRING_DATA_MONGODB_URI=$SPRING_DATA_MONGODB_URI"; echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID"; \
-            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET") down
-
-            docker compose --env-file <(echo "DOCKER_USERNAME_LOWER=$DOCKER_USERNAME_LOWER"; echo "PR_NUMBER=$PR_NUMBER"; \
-            echo "SPRING_DATA_MONGODB_URI=$SPRING_DATA_MONGODB_URI"; echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID"; \
-            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET") up -d --remove-orphans
+            echo "PR_NUMBER=PR-${{ github.event.number }}" > .env
+            docker compose pull
+            docker compose up -d --remove-orphans
