@@ -1,4 +1,4 @@
-name: Build & Deploy Preview
+name: PR-Build-and-Deploy
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
       - master
 
 jobs:
+  # 1️⃣ Lint code
   lint:
-    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -24,19 +24,14 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Run Checkstyle
         run: mvn checkstyle:check
 
+  # 2️⃣ Build JAR
   build-jar:
-    name: Build JAR
     runs-on: ubuntu-latest
     needs: lint
-    env:
-      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -52,29 +47,27 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
 
       - name: Build JAR
         run: mvn clean package -DskipTests
 
-      - name: Verify JAR file exists
+      - name: Verify JAR exists
         run: |
-          ls -l target/
-          if [ ! -f target/walletApp-0.0.1-SNAPSHOT.jar ]; then
-            echo "Error: No JAR file found in target/ directory"
+          JAR_FILE=$(ls target/*.jar | head -n1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: JAR not found"
             exit 1
           fi
+          echo "JAR_FILE=$JAR_FILE" >> $GITHUB_ENV
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: walletApp-jar
-          path: target/walletApp-0.0.1-SNAPSHOT.jar
-          retention-days: 1
+          path: ${{ env.JAR_FILE }}
 
-  deploy-preview:
-    name: Deploy Preview
+  # 3️⃣ Build & push Docker image
+  docker-build:
     runs-on: ubuntu-latest
     needs: build-jar
     steps:
@@ -87,47 +80,50 @@ jobs:
           name: walletApp-jar
           path: target/
 
-      - name: Verify downloaded JAR file
-        run: |
-          ls -l target/
-          if [ ! -f target/walletApp-0.0.1-SNAPSHOT.jar ]; then
-            echo "Error: Downloaded JAR file not found in target/ directory"
-            exit 1
-          fi
-
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build & Push PR Docker image
+      - name: Build & push Docker image
         run: |
-          PR_ID=${{ github.event.pull_request.number }}
-          # Convert DOCKER_USERNAME to lowercase
-          DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_ID}
+          IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp:pr-${{ github.event.number }}
           echo "Building Docker image: $IMAGE"
           docker build -t $IMAGE .
           docker push $IMAGE
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
-      - name: Deploy preview on Server
+  # 4️⃣ Deploy Docker Compose stack on VPS
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          envs: IMAGE,GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET
           script: |
-            PR_ID=${{ github.event.pull_request.number }}
-            DOCKER_USERNAME_LOWER=$(echo "${{ secrets.DOCKER_USERNAME }}" | tr '[:upper:]' '[:lower:]')
-            IMAGE=${DOCKER_USERNAME_LOWER}/walletapp:pr-${PR_ID}
-            echo "Pulling Docker image: $IMAGE"
+            cd /home/sunduk/walletapp
+
+            echo "Stopping existing stack if any..."
+            docker compose down || true
+
+            echo "Writing .env file..."
+            cat <<EOF > .env
+            GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+            GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+            IMAGE=${IMAGE}
+            EOF
+
+            echo "Pulling latest image..."
             docker pull $IMAGE
-            echo "Stopping and removing old container if exists..."
-            docker stop walletapp-pr-${PR_ID} || true
-            docker rm walletapp-pr-${PR_ID} || true
-            echo "Starting new container..."
-            docker run -d -p 127.0.0.1:8080:8080 --name walletapp-pr-${PR_ID} \
-              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-              $IMAGE
+
+            echo "Starting Docker Compose stack..."
+            docker compose up -d --build
+
+            echo "Stack deployed successfully!"
+            docker ps
