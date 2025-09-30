@@ -105,6 +105,7 @@ jobs:
               --name walletapp-nginx \
               --network walletapp-network \
               -p 80:80 \
+              -p 443:443
               -v ~/walletapp/nginx/walletapp.conf:/etc/nginx/conf.d/default.conf:ro \
               --restart unless-stopped \
               nginx:1.24
