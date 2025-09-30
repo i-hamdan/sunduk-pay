@@ -62,13 +62,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            mkdir -p ~/walletapp/nginx
             cd ~/walletapp
 
-            # Copy nginx config from repo
-            echo "${{ steps.download-nginx.outputs.nginx_config }}" > ~/walletapp/nginx/walletapp.conf
-
-            IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp:latest
+            IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp
 
             # Create custom network if not exists
             docker network inspect walletapp-network >/dev/null 2>&1 || \
@@ -95,8 +91,6 @@ jobs:
               --network walletapp-network \
               -p 8080:8080 \
               -e SPRING_DATA_MONGODB_URI=mongodb://wallet-mongo:27017/sunduk-pay \
-              -e GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-              -e GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
               --restart unless-stopped \
               $IMAGE
 
