@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.response;
-import lombok.Data;
 
-import java.time.LocalDate;
+import lombok.Data;
 
 /**
  * Response object representing a sub-wallet with its details.

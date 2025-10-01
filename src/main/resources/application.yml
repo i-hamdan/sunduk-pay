@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: ${SPRING_DATA_MONGODB_URI}
+      uri: mongodb://mongodb:27017/sunduk-pay
   logging:
     level:
       org.springframework: DEBUG
@@ -18,20 +18,6 @@ spring:
           auth: true
           starttls:
             enable: true
-#  kafka:
-#    bootstrap-servers: 147.93.28.239:9092
-#    producer:
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-#    consumer:
-#      group-id: email-group
-#      auto-offset-reset: earliest
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-#      properties:
-#        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-#        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-#        spring.json.trusted.packages: '*'
   security:
     oauth2:
       client:
@@ -50,13 +36,17 @@ spring:
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+
 twilio:
   account-sid: ACdf2676753d81814c50b7115c5617a9a4
   auth-token: b94932d45ef4af3f720d5096a94f9f19
   from-number: "+19136751850"
-server:
-  forward-headers-strategy: framework
 
+server:
+  use-forward-headers: true
+  address: 0.0.0.0
+  port: 8080
+  forward-headers-strategy: framework
   servlet:
     context-path: /api/sunduk-service
     session:
@@ -64,10 +54,10 @@ server:
       cookie:
         name: JSESSIONID
         http-only: true
-        same-site: none
-        secure: true
+        secure: true        # changed from true to false for HTTP
   tomcat:
     background-processor-delay: 60
+
 sunduk:
   security:
     exclude-paths:
@@ -77,14 +67,17 @@ sunduk:
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
       - /api/sunduk-service/webhook
+
 exchange:
   api:
     url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
+
 stripe:
   key:
     secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
   webhook:
     secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+
 resilience4j:
   circuitbreaker:
     instances:
@@ -97,6 +90,7 @@ resilience4j:
         waitDurationInOpenState: 5s
         permittedNumberOfCallsInHalfOpenState: 3
         automaticTransitionFromOpenToHalfOpenEnabled: true
+
 management:
   endpoints:
     web:
