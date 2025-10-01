@@ -164,7 +164,7 @@ public class WalletServiceImpl implements WalletService {
                     .fromWallet(sourcesubWallet.getSubWalletName())
                     .fromWalletId(sourcesubWallet.getSubWalletId())
                     .toWallet("some external source")
-                    .toWalletId(request.getTargetWalletId()).build();
+                    .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
 ////            TransactionEvent transactionEvent = transactionMapper
 ////                    .toTransactionEvent(debitTxn);
@@ -194,7 +194,7 @@ public class WalletServiceImpl implements WalletService {
                     .fromWallet("Main Wallet")
                     .fromWalletId(mainWallet.getMainWalletId())
                     .toWallet("some external target")
-                    .toWalletId(request.getTargetWalletId()).build();
+                    .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
 
 //            TransactionEvent transactionEvent = transactionMapper
@@ -318,7 +318,7 @@ public class WalletServiceImpl implements WalletService {
                     .mainWallet(mainWallet)
                     .user(mainWallet.getUser())
                     .fromWallet("Some external source.")
-                    .fromWalletId(mainWalletRequest.getSourceWalletId())
+                    .fromWalletId(UUID.randomUUID().toString())
                     .toWallet(subWallet.getSubWalletName())
                     .toWalletId(subWallet.getSubWalletId()).build();
 
@@ -348,7 +348,7 @@ public class WalletServiceImpl implements WalletService {
                     .dateTime(LocalDateTime.now())
                     .mainWallet(mainWallet)
                     .fromWallet("Some external source.")
-                    .fromWalletId(mainWalletRequest.getSourceWalletId())
+                    .fromWalletId(UUID.randomUUID().toString())
                     .toWallet("Main wallet")
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
