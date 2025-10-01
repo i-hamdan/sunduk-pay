@@ -26,7 +26,7 @@ public class CurrencyRateItemReader implements ItemReader<CurrencyPair>,
      * @param stepExecution the current step execution context
  **/
     @Override
-    public void beforeStep(StepExecution stepExecution) {
+    public void beforeStep(final StepExecution stepExecution) {
         this.currencyPairs = Arrays.asList(CurrencyPair
                 .values()).iterator();
         log.info("Initialized CurrencyPairs for new step execution");
