@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
@@ -57,9 +56,9 @@ public class SecurityConfig {
                         .maxSessionsPreventsLogin(true))
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .invalidateHttpSession(true))
-                .addFilterBefore(filter,
-                        UsernamePasswordAuthenticationFilter.class);
+                        .invalidateHttpSession(true));
+//                .addFilterBefore(filter,
+//                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
