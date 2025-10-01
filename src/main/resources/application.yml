@@ -2,11 +2,13 @@ spring:
   data:
     mongodb:
       uri: mongodb://mongodb:27017/sunduk-pay
+
   logging:
     level:
       org.springframework: DEBUG
       org.mongodb.driver: DEBUG
       com.bxb.sunduk_pay: DEBUG
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -19,24 +21,20 @@ spring:
           starttls:
             enable: true
 
-            spring:
-              batch:
-                jdbc:
-                  initialize-schema: always
-                job:
-                  enabled: false
-              jackson:
-                time-zone: Asia/Kolkata
-              jpa:
-                properties:
-                  hibernate:
-                    jdbc:
-                      time_zone: Asia/Kolkata
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
 
+  jackson:
+    time-zone: Asia/Kolkata
 
-
-
-
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
 
   security:
     oauth2:
@@ -74,7 +72,7 @@ server:
       cookie:
         name: JSESSIONID
         http-only: true
-        secure: true        # changed from true to false for HTTP
+        secure: true
   tomcat:
     background-processor-delay: 60
 
