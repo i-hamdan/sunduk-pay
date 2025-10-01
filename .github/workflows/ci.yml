@@ -49,12 +49,6 @@ jobs:
     needs: build-and-push
 
     steps:
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: walletapp-jar
-          path: ~/walletapp
-
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -66,24 +60,11 @@ jobs:
 
             IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp
 
-            # Create custom network if not exists
-            docker network inspect walletapp-network >/dev/null 2>&1 || \
-              docker network create walletapp-network
-
-            # Stop and remove old containers
-            for c in walletapp wallet-mongo walletapp-nginx; do
-              docker stop $c || true
-              docker rm $c || true
-            done
-
-            # Start MongoDB
-            docker run -d \
-              --name wallet-mongo \
-              --network walletapp-network \
-              -p 27017:27017 \
-              -v ~/walletapp/mongo-data:/data/db \
-              --restart unless-stopped \
-              mongo:6.0
+            # Stop and remove existing WalletApp container if it exists 
+            if [ "$(docker ps -q -f name=walletapp)" ]; then
+              docker stop walletapp
+              docker rm walletapp
+            fi
 
             # Start WalletApp container
             docker run -d \
@@ -93,12 +74,3 @@ jobs:
               -e SPRING_DATA_MONGODB_URI=mongodb://wallet-mongo:27017/sunduk-pay \
               --restart unless-stopped \
               $IMAGE
-
-            # Start Nginx container
-            docker run -d \
-              --name walletapp-nginx \
-              --network walletapp-network \
-              -p 80:80 \
-              -p 443:443 \
-              --restart unless-stopped \
-              nginx:1.24
