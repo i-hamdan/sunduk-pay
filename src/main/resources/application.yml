@@ -18,6 +18,26 @@ spring:
           auth: true
           starttls:
             enable: true
+
+            spring:
+              batch:
+                jdbc:
+                  initialize-schema: always
+                job:
+                  enabled: false
+              jackson:
+                time-zone: Asia/Kolkata
+              jpa:
+                properties:
+                  hibernate:
+                    jdbc:
+                      time_zone: Asia/Kolkata
+
+
+
+
+
+
   security:
     oauth2:
       client:
@@ -70,7 +90,7 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
+    url: https://v6.exchangerate-api.com/v6/e5dbb5bdbd08bd08bbe5597d
 
 stripe:
   key:

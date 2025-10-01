@@ -134,8 +134,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
 
             log.info("Adding {} to target wallet {}",
                     amount, targetWallet.getId());
-            validations.validateTargetBalance(targetWallet.getGoalAmount(),
-                    amount);
+
             targetWallet.setBalance(targetWallet.getBalance() + amount);
             Double newTargetWalletBalance = targetWallet.getBalance();
             log.info("Updated target wallet balance: {}",

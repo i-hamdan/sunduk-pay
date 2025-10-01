@@ -45,7 +45,7 @@ public class ValidationsImpl implements Validations {
     /** Repository for accessing master wallet data. */
     private final MasterWalletRepository masterWalletRepository;
     /** Maximum allowed number of sub-wallets. */
-private static final int WALLET_SIZE = 20;
+private static final int WALLET_SIZE = 19;
 
 
     /** {@inheritDoc} */
@@ -98,10 +98,10 @@ private static final int WALLET_SIZE = 20;
                     size);
         } else {
             log.error(
-"Validation failed. Maximum allowed subwallets: 19, provided: {}",
+"Validation failed. Maximum allowed subwallets: 20, provided: {}",
                     size);
             throw new MaxSubWalletsExceededException(
-                    "Maximum 19 sub wallets are allowed.");
+                    "Maximum 20 sub wallets are allowed.");
         }
     }
 
