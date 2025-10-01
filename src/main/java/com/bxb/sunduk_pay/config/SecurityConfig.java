@@ -27,10 +27,10 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    /** Custom authentication
-     *  filter for processing authentication logic. */
-    private final AuthenticationFilter filter;
-
+//    /** Custom authentication
+//     *  filter for processing authentication logic. */
+//    private final AuthenticationFilter filter;
+//
     /**
      * Defines the Spring Security filter chain.
      *
