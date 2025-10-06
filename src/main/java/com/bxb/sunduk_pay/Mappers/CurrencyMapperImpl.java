@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
@@ -21,6 +22,12 @@ import java.util.stream.Collectors;
  */
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
+
+    private static final DecimalFormat formatter =
+            new DecimalFormat("#,##0.00");
+
+
+
     /**
      * Maps currency conversion details and rate
      * lists to a CurrencyResponse object.
@@ -47,7 +54,9 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         response.setExchangeRate(exchangeRate);
         response.setConvertedAmount(converted);
         response.setConversionFee(fee);
-        response.setFinalAmount(finalAmount);
+
+        response.setFinalAmount(formatter
+                .format(finalAmount));
         response.setYearlyRates(yearlyRates);
         response.setMonthlyRates(monthlyRates);
         response.setWeeklyRates(weeklyRates);

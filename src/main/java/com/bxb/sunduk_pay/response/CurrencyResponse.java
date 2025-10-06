@@ -24,7 +24,7 @@ public class CurrencyResponse {
     /** The fee applied for the conversion. */
     private double conversionFee;
     /** The final amount after conversion and fees. */
-    private double finalAmount;
+    private String finalAmount;
     /** List of daily currency rates.*/
     private List<CurrencyRatesResponse> weeklyRates;
     /** List of monthly currency rates.*/

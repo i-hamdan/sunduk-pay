@@ -37,7 +37,7 @@ import java.util.Map;
 public class CurrencyServiceImpl implements CurrencyService {
 
     /** Fixed fee deducted from converted amount. */
-    private static final double FEE = 0.10;
+    private static final double FEE = 0;
     /** Start year for historical data retrieval. */
     private static final int YEAR_START = 2024;
     /** End year for historical data retrieval. */
