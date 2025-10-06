@@ -22,7 +22,10 @@ import java.util.stream.Collectors;
  */
 @Component
 public class CurrencyMapperImpl implements CurrencyMapper {
-
+    /**
+     * Decimal formatter for formatting final amounts with
+     * two decimal places.
+     */
     private static final DecimalFormat formatter =
             new DecimalFormat("#,##0.00");
 
