@@ -1,9 +1,14 @@
-twilio:
-  account-sid: ACdf2676753d81814c50b7115c5617a9a4
-  auth-token: b94932d45ef4af3f720d5096a94f9f19
-  from-number: "+19136751850"
-
 spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/sunduk-pay
+
+  logging:
+    level:
+      org.springframework: DEBUG
+      org.mongodb.driver: DEBUG
+      com.bxb.sunduk_pay: DEBUG
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -15,53 +20,34 @@ spring:
           auth: true
           starttls:
             enable: true
-
-
   spring:
   batch:
     jdbc:
       initialize-schema: always
     job:
       enabled: false
+
   jackson:
     time-zone: Asia/Kolkata
+
   jpa:
     properties:
       hibernate:
         jdbc:
           time_zone: Asia/Kolkata
 
-
-  #  kafka:
-  #    bootstrap-servers: localhost:9092
-  #    producer:
-  #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  #    consumer:
-  #      group-id: email-group
-  #      auto-offset-reset: earliest
-  #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-  #      properties:
-  #        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-  #        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-  #        spring.json.trusted.packages: '*'
-
-
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
-            #redirect-uri: "https://1ade22207b22.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -69,20 +55,23 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: MyDB
+twilio:
+  account-sid: ACdf2676753d81814c50b7115c5617a9a4
+  auth-token: b94932d45ef4af3f720d5096a94f9f19
+  from-number: "+19136751850"
 
 server:
+  use-forward-headers: true
+  address: 0.0.0.0
   port: 8080
+  forward-headers-strategy: framework
   servlet:
     context-path: /api/sunduk-service
     session:
       timeout: 60m
       cookie:
-        same-site: none
+        name: JSESSIONID
+        http-only: true
         secure: true
   tomcat:
     background-processor-delay: 60
@@ -92,21 +81,20 @@ sunduk:
     exclude-paths:
       - /api/sunduk-service/oauth2/authorization
       - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
-      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/webhook
-
-
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca
+    url: https://v6.exchangerate-api.com/v6/9778648bf4d8db8412125b38
+
 stripe:
   key:
-    secret: sk_test_51RohZUFjIPvwIVrLyRAcI7OWRbYVmEZ976vhMmJDyYyXeCDkpxE0ZPA5XUr7xxqw168zJTtU9S8S5YFFNHoKyYPR00MaFmFn8l
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
   webhook:
-    secret: whsec_ada8e07c83edd36fb4e5110e64dd53607228345dd6520476ab01dd208701e6b5
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
 
 resilience4j:
   circuitbreaker:
@@ -129,8 +117,3 @@ management:
   endpoint:
     health:
       show-details: always
-
-logging:
-  level:
-    com.bxb.sunduk_pay: DEBUG
-
