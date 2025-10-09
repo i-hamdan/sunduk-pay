@@ -16,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -152,12 +155,30 @@ public class CurrencyServiceImpl implements CurrencyService {
         String url =  "https://v6.exchangerate-api.com/v6/"
                 +"136cca7e5f6ec25648bc5eca/latest/"
                 + from;
+        log.info("Fetching exchange rate for {} → {}", from, to);
         log.debug(
             "Preparing to fetch exchange rate from API for {} to {}",
                 from, to);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("User-Agent",
+                "Mozilla/5.0 (compatible; "
+                        + "SundukPay/1.0; +https://sundukpay.com)");
+        headers.add("Accept", "application/json");
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+
+
         ResponseEntity<Map> response;
         try {
-            response = restTemplate.getForEntity(url, Map.class);
+            response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    entity,
+                    Map.class
+            );
+
             log.debug("API call successful, response received");
         } catch (Exception e) {
             log.error("API call failed for fromCurrency={} with error: {}",
