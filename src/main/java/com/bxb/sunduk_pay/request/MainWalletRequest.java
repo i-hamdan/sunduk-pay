@@ -55,9 +55,9 @@ private static final int DEFAULT_SIZE = 10;
     private ActionType actionType;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
-   /** Start date for filtering transactions. */
+    /** ID of the wallet involved in the transaction. */
     private String walletId;
-    /** Description or note for the transaction. */
+    /** Group ID for batch transactions. */
     private String transactionGroupId;
     /** Page number for pagination. */
     private int page = DEFAULT_PAGE;
