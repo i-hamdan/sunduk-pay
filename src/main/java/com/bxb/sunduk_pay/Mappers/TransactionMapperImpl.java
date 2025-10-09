@@ -26,6 +26,18 @@ import java.util.Locale;
 public class TransactionMapperImpl implements TransactionMapper {
 /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
+
+    /** Date formatter for "dd MMMM yyyy" pattern in English locale. */
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("dd MMMM yyyy")
+                    .withLocale(Locale.ENGLISH);
+    /** DateTime formatter for "dd MMMM yyyy hh:mm a"
+     *  pattern in English locale. */
+    private static final DateTimeFormatter DATETIME_FORMATTER =
+            DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mm a")
+                    .withLocale(Locale.ENGLISH);
+
+
     /** {@inheritDoc} */
     public TransactionResponse toTransactionResponse(
             final Transaction transaction) {
@@ -35,7 +47,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setGroupId(
                 transaction.getGroupId());
         transactionResponse.setUuid(
-                transaction.getUser().getUuid());
+                transaction.getUuid());
         transactionResponse.setTransactionType(
                 transaction.getTransactionType());
         transactionResponse.setPaymentMethod(
@@ -46,21 +58,13 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getAmount());
         transactionResponse.setMainWalletId(
                 transaction
-                .getMainWallet().getMainWalletId());
+                .getMainWalletId());
         transactionResponse.setStatus(
                 transaction.getStatus());
-        transactionResponse.setFullName(
-                transaction.getUser().getFullName());
-        DateTimeFormatter formatter = DateTimeFormatter
-                .ofPattern("dd MMMM yyyy")
-                .withLocale(Locale.ENGLISH);
         transactionResponse.setDate(
-                transaction.getDateTime().format(formatter));
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter
-                .ofPattern("dd MMMM yyyy hh:mm a")
-                .withLocale(Locale.ENGLISH);
+                transaction.getDateTime().format(DATE_FORMATTER));
         transactionResponse.setDateTime(
-              transaction.getDateTime().format(dateTimeFormatter));
+              transaction.getDateTime().format(DATETIME_FORMATTER));
         transactionResponse.setTransactionLevel(
                 transaction.getTransactionLevel());
         transactionResponse.setFromWallet(
@@ -68,13 +72,13 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setFromWalletId(
                 transaction.getFromWalletId());
         transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
-                transaction.getMainWallet().getMainWalletId(),
+                transaction.getMainWalletId(),
                         transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
         transactionResponse.setToWalletIcon(validations.
-                getToIconOfTxn(transaction.getMainWallet()
-                .getMainWalletId(), transaction.getToWalletId()));
+                getToIconOfTxn(transaction.getMainWalletId()
+                , transaction.getToWalletId()));
         return transactionResponse;
     }
 

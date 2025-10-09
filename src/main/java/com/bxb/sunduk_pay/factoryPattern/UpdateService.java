@@ -105,7 +105,7 @@ public class UpdateService implements WalletOperation {
              subWallet.getSubWalletId(), mainWallet.getMainWalletId());
 
                 List<Transaction> allSubWalletTransactions
-                        = transactionRepository.findAllByUserAndWallet(
+                        = transactionRepository.findAllByUuidAndWallet(
                                 user.getUuid(), subWallet.getSubWalletId());
                 log.debug(
               "Found [{}] transactions for SubWallet [{}]",

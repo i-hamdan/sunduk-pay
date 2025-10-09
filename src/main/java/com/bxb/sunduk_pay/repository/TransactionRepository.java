@@ -25,7 +25,7 @@ public interface TransactionRepository
      * @param uuid     the user UUID
      * @return list of transactions
      */
-    List<Transaction> findByMainWalletMainWalletIdAndUserUuid(
+    List<Transaction> findByMainWalletIdAndUuid(
             String walletId,
             String uuid);
 
@@ -35,7 +35,7 @@ public interface TransactionRepository
      * @param pageable pagination information
      * @return list of transactions
      */
-    Page<Transaction> findByUserUuidAndIsMasterFalse(
+    Page<Transaction> findByUuidAndIsMasterFalse(
             String uuid,
             Pageable pageable);
 
@@ -48,7 +48,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUserUuidAndFromWalletIdAndTransactionType(
+    findByUuidAndFromWalletIdAndTransactionType(
             String uuid,
             String fromWalletId,
             TransactionType transactionType,
@@ -66,7 +66,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+    findByUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
             String uuid,
             String fromWalletId,
             TransactionType transactionType,
@@ -81,7 +81,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUserUuidAndToWalletIdAndTransactionType(
+    findByUuidAndToWalletIdAndTransactionType(
             String uuid,
             String toWalletId,
             TransactionType transactionType,
@@ -97,7 +97,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+    findByUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
             String uuid,
             String toWalletId,
             TransactionType transactionType,
@@ -112,11 +112,11 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ "
+    @Query("{ 'uuid': ?0, $or: [ "
       + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
       + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
       + "] }")
-    Page<Transaction> findAllByUserAndWallet(
+    Page<Transaction> findAllByUuidAndWallet(
             String uuid,
             String walletId,
             Pageable pageable);
@@ -131,11 +131,11 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ "
+    @Query("{ 'uuid': ?0, $or: [ "
       + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
       + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
       + "], 'paymentMethod': ?2 }")
-    Page<Transaction> findByUserUuidAndWalletIdAndPaymentMethod(
+    Page<Transaction> findByUuidAndWalletIdAndPaymentMethod(
             String uuid,
             String walletId,
             PaymentMethod paymentMethod,
@@ -148,11 +148,11 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'user.uuid': ?0, $or: [ "
+    @Query("{ 'uuid': ?0, $or: [ "
       + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
       + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
       + "] }")
-    List<Transaction> findAllByUserAndWallet(
+    List<Transaction> findAllByUuidAndWallet(
             String uuid,
             String walletId);
 
@@ -167,7 +167,7 @@ public interface TransactionRepository
      */
 
 
-    Page<Transaction> findByUserUuidAndTransactionTypeAndIsMasterFalse(
+    Page<Transaction> findByUuidAndTransactionTypeAndIsMasterFalse(
             String uuid,
             TransactionType transactionType,
             Pageable pageable);
@@ -183,7 +183,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+    findByUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
             String uuid,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
@@ -195,7 +195,7 @@ public interface TransactionRepository
      * @param pageable pagination information
         * @return list of transactions
         */
-    Page<Transaction> findByUserUuidAndGroupId(
+    Page<Transaction> findByUuidAndGroupId(
             String uuid,
             String groupId,
             Pageable pageable);
@@ -208,7 +208,7 @@ public interface TransactionRepository
      * @param pageable pagination information
      * @return list of transactions
      */
-    Page<Transaction> findByUserUuidAndPaymentMethodAndIsMasterFalse(
+    Page<Transaction> findByUuidAndPaymentMethodAndIsMasterFalse(
             String uuid,
             PaymentMethod paymentMethod,
             Pageable pageable);

@@ -14,6 +14,7 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -118,7 +119,7 @@ private static final int WALLET_SIZE = 19;
 
         if (transactionGroupId != null) {
             return transactionRepository
-                    .findByUserUuidAndGroupId(
+                    .findByUuidAndGroupId(
                             uuid, transactionGroupId, pageable);
         }
 
@@ -129,32 +130,32 @@ private static final int WALLET_SIZE = 19;
                 // Only those where subWalletId is the FROM wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.DEBIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUserUuidAndFromWalletIdAndTransactionType(
+                            .findByUuidAndFromWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.DEBIT, pageable);
                 }
             } else if (transactionType == TransactionType.CREDIT) {
                 // Only those where subWalletId is the TO wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUserUuidAndToWalletIdAndTransactionType(
+                            .findByUuidAndToWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             } else {
                 if (method != null) {
                     transactions = transactionRepository.
-                            findByUserUuidAndWalletIdAndPaymentMethod(
+                            findByUuidAndWalletIdAndPaymentMethod(
                             uuid, walletId, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findAllByUserAndWallet(
+                            .findAllByUuidAndWallet(
                                     uuid, walletId, pageable);
                 }
             }
@@ -163,21 +164,21 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
             if (transactionType != null) {
                 if (method != null) {
                     transactions = transactionRepository
-   .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+   .findByUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
                             uuid, transactionType, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUserUuidAndTransactionTypeAndIsMasterFalse(
+                            .findByUuidAndTransactionTypeAndIsMasterFalse(
                             uuid, transactionType, pageable);
                 }
             } else {
                 if (method != null) {
                     transactions = transactionRepository
-                            .findByUserUuidAndPaymentMethodAndIsMasterFalse(
+                            .findByUuidAndPaymentMethodAndIsMasterFalse(
                             uuid, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUserUuidAndIsMasterFalse(
+                            .findByUuidAndIsMasterFalse(
                                     uuid, pageable);
                 }
             }
@@ -274,23 +275,25 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
 
     /** {@inheritDoc} */
     @Override
+    @Cacheable("fromIcons")
     public String getFromIconOfTxn(
             final String mainWalletId, final String fromWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
         SubWallet subWallet = mainWallet.getSubWallets()
                 .stream().filter(pot -> pot.getSubWalletId()
                         .equals(fromWalletId)).findFirst().orElse(null);
-       if (subWallet != null) {
-           return subWallet.getIcon();
-       } else if (mainWallet.getMainWalletId().equals(fromWalletId)) {
-           return "mainWallet";
-       } else {
-           return "external";
-       }
+        if (subWallet != null) {
+            return subWallet.getIcon();
+        } else if (mainWallet.getMainWalletId().equals(fromWalletId)) {
+            return "mainWallet";
+        } else {
+            return "external";
+        }
     }
 
     /** {@inheritDoc} */
     @Override
+    @Cacheable("ToIcons")
     public String getToIconOfTxn(
             final String mainWalletId, final String toWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
