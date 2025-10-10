@@ -23,7 +23,7 @@ jobs:
           cache: 'maven'
 
       - name: Lint code
-        run: mvn checkstyle:check || echo "Lint skipped"
+        run: mvn checkstyle:check
 
       - name: Build JAR
         run: mvn clean package -DskipTests
@@ -61,7 +61,10 @@ jobs:
             cd ~/walletapp
 
             IMAGE=${{ secrets.DOCKER_USERNAME }}/walletapp
-
+            
+            echo "Pulling latest Docker image..."
+            docker pull $IMAGE:latest
+            
             # Stop and remove existing WalletApp container if it exists 
             if [ "$(docker ps -q -f name=walletapp)" ]; then
               docker stop walletapp
@@ -75,4 +78,4 @@ jobs:
               -p 8080:8080 \
               -e SPRING_DATA_MONGODB_URI=mongodb://wallet-mongo:27017/sunduk-pay \
               --restart unless-stopped \
-              $IMAGE
+              $IMAGE:latest
