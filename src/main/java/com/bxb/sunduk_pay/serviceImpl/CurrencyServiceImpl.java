@@ -16,9 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -46,9 +43,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     /** End year for historical data retrieval. */
     private static final int YEAR_END = 2025;
     /** Month constant for August. */
-    private static final int MONTH_AUGUST = 8;
+    private static final int MONTH_END = 8;
     /** Month constant for July. */
-    private static final int MONTH_JULY = 7;
+    private static final int MONTH_START = 7;
     /** Day constant for 19th. */
     private static final int DAY_19 = 19;
     /** Day constant for 13th. */
@@ -92,7 +89,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             log.error("Invalid amount received in request: {}",
                     currencyRequest.getAmount());
             throw new NullAmountException(
-             "Amount Cannot Be null !" + currencyRequest.getAmount());
+                    "Amount Cannot Be null !" + currencyRequest.getAmount());
         }
 
         log.debug("Converting amount {} with exchange rate {}",
@@ -151,42 +148,23 @@ public class CurrencyServiceImpl implements CurrencyService {
      * @return exchange rate
      */
     private double fetchExchangeRate(final String from, final String to) {
-     //   String url = exchangeApiUrl + "/latest" + "/" + from;
-        String url =  "https://v6.exchangerate-api.com/v6/"
-                +"136cca7e5f6ec25648bc5eca/latest/"
-                + from;
-        log.info("Fetching exchange rate for {} → {}", from, to);
+        String url = exchangeApiUrl + "/latest" + "/" + from;
+        log.info(url);
+
         log.debug(
-            "Preparing to fetch exchange rate from API for {} to {}",
+                "Preparing to fetch exchange rate from API for {} to {}",
                 from, to);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("User-Agent",
-                "Mozilla/5.0 (compatible; "
-                        + "SundukPay/1.0; +https://sundukpay.com)");
-        headers.add("Accept", "application/json");
-
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-
-
-
         ResponseEntity<Map> response;
         try {
-            response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    entity,
-                    Map.class
-            );
-
+            response = restTemplate.getForEntity(url, Map.class);
             log.debug("API call successful, response received");
         } catch (Exception e) {
             log.error("API call failed for fromCurrency={} with error: {}",
                     from,
                     e.getMessage());
             throw new InvalidCurrencyType(
-                 "API call failed for fromCurrency={} with error: {}"
-                    + e.getMessage());
+                    "API call failed for fromCurrency={} with error: {}"
+                            + e.getMessage());
         }
 
         Map<String, Object> body = response.getBody();
@@ -194,14 +172,14 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         if (body == null) {
             log.error(
-                 "Response from exchange rate API is null!");
+                    "Response from exchange rate API is null!");
             throw new CustomExchangeRateException(
                     "Empty response from exchange rate API");
         }
 
         if (!body.containsKey("conversion_rates")) {
             log.error(
-                  "Missing 'conversion_rates' in response from exchange api");
+                    "Missing 'conversion_rates' in response from exchange api");
             throw new CustomExchangeRateException("Missing 'conversion_rates' "
                     + "in response from external api");
         }
@@ -233,16 +211,16 @@ public class CurrencyServiceImpl implements CurrencyService {
             final String to) {
         String currencyPair = from.concat(to);
         LocalDate oneYear = LocalDate.of(
-                YEAR_START, MONTH_AUGUST, DAY_19);
+                YEAR_START, MONTH_END, DAY_19);
         LocalDate endDate = LocalDate.of(
-                YEAR_END, MONTH_AUGUST, DAY_19);
+                YEAR_END, MONTH_END, DAY_19);
         log.info("Fetching yearly rates for currencyPair={} from date={}",
                 currencyPair, oneYear);
 
 
         List<CurrencyRates> ratesForLastYear = currencyRateRepository
                 .findSpecificRate(
-                oneYear, endDate, currencyPair);
+                        oneYear, endDate, currencyPair);
         log.debug("Yearly raw data fetched: {}", ratesForLastYear);
 
 
@@ -255,7 +233,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
 
 
-/**     * Fetches historical monthly rates.
+    /**     * Fetches historical monthly rates.
      * @param from source currency
      * @param to   target currency
      * @return list of monthly currency rates
@@ -264,9 +242,9 @@ public class CurrencyServiceImpl implements CurrencyService {
                                                           final String to) {
         String currencyPair = from.concat(to);
         LocalDate oneMonth = LocalDate.of(
-                YEAR_END, MONTH_JULY, DAY_19);
+                YEAR_END, MONTH_START, DAY_19);
         LocalDate endDate = LocalDate.of(
-                YEAR_END, MONTH_AUGUST, DAY_19);
+                YEAR_END, MONTH_END, DAY_19);
 
         log.info(
                 "Fetching monthly rates for currencyPair={} from date={}",
@@ -275,15 +253,15 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         List<CurrencyRates> ratesForLastMonth = currencyRateRepository
                 .findSpecificRate(oneMonth,
-                endDate,
-                currencyPair);
+                        endDate,
+                        currencyPair);
 
         log.debug("Monthly raw data fetched: {}", ratesForLastMonth);
 
         List<CurrencyRatesResponse> response = mapper
                 .toCurrencyRatesResponses(ratesForLastMonth,
-                currencyPair,
-                TimeSeries.MONTH);
+                        currencyPair,
+                        TimeSeries.MONTH);
 
         log.info(
                 "Monthly rates mapped successfully. Count={}",
@@ -293,7 +271,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
 
-/**     * Fetches historical weekly rates.
+    /**     * Fetches historical weekly rates.
      * @param from source currency
      * @param to   target currency
      * @return list of weekly currency rates
@@ -303,9 +281,9 @@ public class CurrencyServiceImpl implements CurrencyService {
             final String to) {
         String currencyPair = from.concat(to);
         LocalDate startDate = LocalDate.of(
-                YEAR_END, MONTH_AUGUST, DAY_13);
+                YEAR_END, MONTH_END, DAY_13);
         LocalDate endDate = LocalDate.of(
-                YEAR_END, MONTH_AUGUST, DAY_19);
+                YEAR_END, MONTH_END, DAY_19);
 
         log.info("Fetching weekly rates for currencyPair={} from date={}",
                 currencyPair,
@@ -313,19 +291,19 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         List<CurrencyRates> ratesForLastWeek = currencyRateRepository
                 .findSpecificRate(startDate,
-                endDate,
-                currencyPair);
+                        endDate,
+                        currencyPair);
 
         log.debug("Weekly raw data fetched: {}",
                 ratesForLastWeek);
 
         List<CurrencyRatesResponse> response = mapper
                 .toCurrencyRatesResponses(ratesForLastWeek,
-                currencyPair,
-                TimeSeries.WEEK);
+                        currencyPair,
+                        TimeSeries.WEEK);
 
         log.info("Weekly rates mapped successfully. Count={}", response.size());
 
         return response;
-    }
+}
 }
