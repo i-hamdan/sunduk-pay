@@ -2,11 +2,13 @@ package com.bxb.sunduk_pay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * Main entry point for the SundukPay Spring Boot application.
  */
+@EnableCaching
 @SpringBootApplication
 @EnableScheduling
 public class SundukPayApplication {
@@ -18,6 +20,6 @@ private final String appName = "Sunduk Pay Application";
 * @param args command-line arguments passed to the application
 */
 public static void main(final String[] args) {
-SpringApplication.run(SundukPayApplication.class, args);
+    SpringApplication.run(SundukPayApplication.class, args);
 }
 }

@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -76,14 +75,12 @@ public class Transaction {
     /**
      * Reference to the user who performed the transaction.
      */
-    @DBRef
-    private User user;
+    private String uuid;
 
     /**
      * Reference to the main wallet involved in the transaction.
      */
-    @DBRef
-    private MainWallet mainWallet;
+    private String mainWalletId;
 
     /**
      * Name of the wallet from which the transaction originated.
@@ -96,6 +93,11 @@ public class Transaction {
     private String fromWalletId;
 
     /**
+     * Phone number associated with the source of the transaction.
+     */
+    private String fromPhoneNumber;
+
+    /**
      * Name of the wallet receiving the transaction.
      */
     private String toWallet;
@@ -104,6 +106,11 @@ public class Transaction {
      * ID of the wallet receiving the transaction.
      */
     private String toWalletId;
+
+    /**
+     * Phone number associated with the destination of the transaction.
+     */
+    private String toPhoneNumber;
 
     /**
      * Indicates if the transaction is performed by the master wallet.

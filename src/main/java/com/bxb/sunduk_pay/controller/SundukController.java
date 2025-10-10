@@ -70,7 +70,8 @@ public class SundukController {
                 "UTF-8")
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid(),
                 "UTF-8");
-
+        log.info("custom login api");
+        log.info("this line adding for dedubbing purpose");
         log.info("Redirecting to deep link:{}", deepLink);
         httpServletResponse.sendRedirect(deepLink);
         return ResponseEntity.ok().body(response);
