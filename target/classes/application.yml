@@ -1,0 +1,119 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/sunduk-pay
+
+  logging:
+    level:
+      org.springframework: DEBUG
+      org.mongodb.driver: DEBUG
+      com.bxb.sunduk_pay: DEBUG
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: playzzzaid@gmail.com
+    password: edse cxrp xysc nfhz
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  spring:
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+
+  jackson:
+    time-zone: Asia/Kolkata
+
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
+            client-secret: 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
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+twilio:
+  account-sid: ACdf2676753d81814c50b7115c5617a9a4
+  auth-token: b94932d45ef4af3f720d5096a94f9f19
+  from-number: "+19136751850"
+
+server:
+  use-forward-headers: true
+  address: 0.0.0.0
+  port: 8080
+  forward-headers-strategy: framework
+  servlet:
+    context-path: /api/sunduk-service
+    session:
+      timeout: 60m
+      cookie:
+        name: JSESSIONID
+        http-only: true
+        secure: true
+  tomcat:
+    background-processor-delay: 60
+
+sunduk:
+  security:
+    exclude-paths:
+      - /api/sunduk-service/oauth2/authorization
+      - /api/sunduk-service/login/oauth2/code
+      - /api/sunduk-service/upload-contact
+      - /api/sunduk-service/custom-logout
+      - /api/sunduk-service/custom-login
+      - /api/sunduk-service/webhook
+
+exchange:
+  api:
+    url: https://v6.exchangerate-api.com/v6/9778648bf4d8db8412125b38
+
+stripe:
+  key:
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
+  webhook:
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      stripeGateway:
+        registerHealthIndicator: true
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
