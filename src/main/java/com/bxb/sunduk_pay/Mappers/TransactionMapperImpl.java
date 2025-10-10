@@ -77,8 +77,8 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
         transactionResponse.setToWalletIcon(validations.
-                getToIconOfTxn(transaction.getMainWalletId()
-                , transaction.getToWalletId()));
+                getToIconOfTxn(transaction.getMainWalletId(),
+                        transaction.getToWalletId()));
         return transactionResponse;
     }
 

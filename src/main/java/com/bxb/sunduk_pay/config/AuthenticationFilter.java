@@ -44,7 +44,8 @@ public class AuthenticationFilter implements Filter {
             throws IOException, ServletException {
 
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        HttpServletResponse httpServletResponse =
+                (HttpServletResponse) response;
 
         String path = httpServletRequest.getRequestURI();
         log.info("Incoming request: {} {}",
