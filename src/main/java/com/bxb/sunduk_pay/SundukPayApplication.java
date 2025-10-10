@@ -20,7 +20,6 @@ private final String appName = "Sunduk Pay Application";
 * @param args command-line arguments passed to the application
 */
 public static void main(final String[] args) {
-    System.setProperty("java.net.preferIPv4Stack", "true");
     SpringApplication.run(SundukPayApplication.class, args);
 }
 }

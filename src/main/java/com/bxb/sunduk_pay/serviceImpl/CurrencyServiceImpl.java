@@ -149,7 +149,6 @@ public class CurrencyServiceImpl implements CurrencyService {
      */
     private double fetchExchangeRate(final String from, final String to) {
         String url = exchangeApiUrl + "/latest" + "/" + from;
-        log.info(url);
 
         log.debug(
                 "Preparing to fetch exchange rate from API for {} to {}",
