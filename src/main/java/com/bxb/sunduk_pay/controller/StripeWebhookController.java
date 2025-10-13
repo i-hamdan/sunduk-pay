@@ -2,110 +2,153 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.exception.StripeSessionException;
-import com.bxb.sunduk_pay.factoryPattern.TransferService;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.FailedTxnRecorder;
 import com.bxb.sunduk_pay.service.WalletService;
 import com.bxb.sunduk_pay.util.TransactionType;
-import com.stripe.exception.SignatureVerificationException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
+
+/**
+ * Controller to handle Stripe webhook events such as completed payments,
+ * failed payments, and expired checkout sessions.
+ */
 @Log4j2
 @RestController
+@RequiredArgsConstructor
 public class StripeWebhookController {
 
+    /** Constant to convert cents to dollars. */
+    private static final double VALUE = 100.0;
+    /** Services for wallet operations and recording failed transactions. */
     private final WalletService walletService;
- private final FailedTxnRecorder failedTxnRecorder;
-    public StripeWebhookController(WalletService walletService, FailedTxnRecorder failedTxnRecorder) {
-        this.walletService = walletService;
-        this.failedTxnRecorder = failedTxnRecorder;
-    }
 
+    /** Service to record failed transactions. */
+    private final FailedTxnRecorder failedTxnRecorder;
+
+
+    /** Stripe webhook endpoint secret for signature verification.*/
     @Value("${stripe.webhook.secret}")
     private String endpointSecret;
 
-
+    /**
+     * Handles incoming Stripe webhook events.
+     *
+     * @param request the HttpServletRequest
+     *                containing Stripe payload
+     * @return a response indicating the
+     * processing result
+     * @throws IOException if reading the
+     * request payload fails
+     */
     @PostMapping("/webhook")
-    public MainWalletResponse handleStripeEvent(HttpServletRequest request) throws IOException {
+    public MainWalletResponse handleStripeEvent(
+         final HttpServletRequest request) throws IOException {
+        // --- read payload ---
         String payload;
         String sigHeader = request.getHeader("Stripe-Signature");
         try {
-            payload = IOUtils.toString(request.getInputStream(), "UTF-8");
+            payload = IOUtils.toString(request.getInputStream(),
+                    "UTF-8");
         } catch (IOException e) {
             log.error("Failed to read Stripe webhook payload");
             throw new InvalidPayloadException("Invalid Stripe payload");
         }
 
+        // --- construct event ---
         Event event;
         try {
-            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
+            event = Webhook.constructEvent(payload,
+                    sigHeader,
+                    endpointSecret);
         } catch (Exception e) {
             log.error("Invalid Stripe signature.");
             throw new StripeSessionException("Invalid Stripe signature");
         }
+
+        // --- handle event ---
         try {
-        switch (event.getType()) {
-            case "checkout.session.completed": {
-                Session session = (Session) event.getDataObjectDeserializer()
-                        .getObject()
-                        .orElse(null);
+            Session session = null; // one variable reused
+            switch (event.getType()) {
+                case "checkout.session.completed":
+                    session = (Session) event.getDataObjectDeserializer()
+                            .getObject()
+                            .orElse(null);
+                    if (session != null) {
+                        return handleCompletedSession(session);
+                    }
+                    break;
 
-                if (session != null) {
-                    return handleCompletedSession(session);
-                }
-                break;
+                case "checkout.session.expired":
+                case "checkout.session.async_payment_failed":
+                case "payment_intent.payment_failed":
+                    session = (Session) event.getDataObjectDeserializer()
+                            .getObject()
+                            .orElse(null);
+                    if (session != null) {
+                        log.warn(
+                                "Payment failed for sessionId={}",
+                                session.getId());
+
+                        MainWalletRequest requestObj = new MainWalletRequest();
+                        requestObj.setUuid(session.getMetadata().get("userId"));
+                        requestObj.setAmount(session.getAmountTotal() / VALUE);
+                        requestObj.setTransactionType(TransactionType.valueOf(
+                                session.getMetadata().get("type")));
+                        requestObj.setSourceWalletId(session.getMetadata()
+                                .get("sourceWallet"));
+                        requestObj.setTargetWalletId(session.getMetadata()
+                                .get("targetWallet"));
+                        return failedTxnRecorder.recordFailedTxn(requestObj);
+                    }
+                    break;
+
+                default:
+                    log.info(
+                       "Unhandled Stripe event type: {}",
+                            event.getType());
             }
-
-            case "checkout.session.expired":
-            case "checkout.session.async_payment_failed":
-            case "payment_intent.payment_failed": {
-                Session session = (Session) event.getDataObjectDeserializer()
-                        .getObject()
-                        .orElse(null);
-
-                if (session != null) {
-                    log.warn("Payment failed for sessionId={}", session.getId());
-
-                    // Build failed transaction request
-                    MainWalletRequest requestObj = new MainWalletRequest();
-                    requestObj.setUuid(session.getMetadata().get("userId"));
-                    requestObj.setAmount(session.getAmountTotal() / 100.0);
-                    requestObj.setTransactionType(TransactionType.valueOf(session.getMetadata().get("type")));
-                    requestObj.setSourceWalletId(session.getMetadata().get("sourceWallet"));
-                    requestObj.setTargetWalletId(session.getMetadata().get("targetWallet"));
-                    // Save transaction with FAILED status
-                    return failedTxnRecorder.recordFailedTxn(requestObj);
-                }
-                break;
-            }
-            default:
-                log.info("Unhandled Stripe event type: {}", event.getType());
+        } catch (Exception e) {
+            log.error(
+          "Unexpected error handling Stripe webhook. Event={}",
+                    event);
+            throw new StripeSessionException(
+                    "Failed to process Stripe webhook");
         }
-    } catch (Exception e) {
-        log.error("Unexpected error handling Stripe webhook. Event={}", event);
-        throw new StripeSessionException("Failed to process Stripe webhook");
+
+        return MainWalletResponse.builder()
+                .message("Success").build();
     }
-        return MainWalletResponse.builder().message("Success").build();
-    }
-    private MainWalletResponse handleCompletedSession(Session session) {
+
+
+    /**
+     * Handles a completed Stripe checkout session.
+     *
+     * @param session Stripe event object
+     * @return response after processing payment
+     */
+    private MainWalletResponse handleCompletedSession(
+            final Session session) {
         String userId = session.getMetadata().get("userId");
         TransactionType transactionType = TransactionType.valueOf(
                 session.getMetadata().get("type").toUpperCase()
         );
         String targetWallet = session.getMetadata().get("targetWallet");
         String sourceWallet = session.getMetadata().get("sourceWallet");
-        double amount = session.getAmountTotal() / 100.0;
+        double amount = session.getAmountTotal() / VALUE;
 
         MainWalletRequest requestObj = new MainWalletRequest();
         requestObj.setUuid(userId);
@@ -120,5 +163,4 @@ public class StripeWebhookController {
             return walletService.addMoney(requestObj);
         }
     }
-
 }

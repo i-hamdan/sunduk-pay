@@ -1,30 +1,77 @@
 package com.bxb.sunduk_pay.service;
 
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+/**
+ * Service interface for handling wallet-related operations.
+ */
 public interface WalletService {
-//    String createWallet(WalletRequest walletRequest);
 
+    /**
+     * Displays the balance of the specified wallet.
+     *
+     * @param walletId the ID of the wallet
+     * @return the balance as a String
+     */
     String showBalance(String walletId);
 
-    void downloadTransactions(String walletId, HttpServletResponse response) throws IOException;
+    /**
+     * Downloads the transaction history of the specified wallet and
+     * writes it to the HTTP response.
+     *
+     * @param walletId the ID of the wallet
+     * @param response the
+     *HttpServletResponse to write the transaction history to
+     * @throws IOException if an I/O error occurs
+     */
+    void downloadTransactions(String walletId,
+                              HttpServletResponse response) throws IOException;
 
-//    String addMoneyToWallet(String userId, double amount, String paymentIntentId);
-
+    /**
+     * Processes a payment transaction.
+     *
+     * @param mainWalletRequest the request object containing payment details
+     * @return the response object
+     * containing the result of the payment transaction
+     */
     MainWalletResponse payMoney(MainWalletRequest mainWalletRequest);
 
+    /**
+     * Adds money to the wallet.
+     *
+     * @param mainWalletRequest the request object containing details for
+     *                         adding money
+     * @return the response object containing the result of the add money
+     * operation
+     */
     MainWalletResponse addMoney(MainWalletRequest mainWalletRequest);
 
+    /**
+     * Performs CRUD operations on the wallet.
+     *
+     * @param mainWalletRequest the request object containing wallet details
+     * @return the response object containing the result of the CRUD operation
+     */
     MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);
 
+    /**
+     * Records a failed transaction.
+     *
+     * @param requestObj the request object containing details of the
+     *                   failed transaction
+     * @return the response object containing the result of recording the
+     * failed transaction
+     */
     MainWalletResponse recordFailedTxn(MainWalletRequest requestObj);
 
+    /**
+     * Adds a dummy wallet for testing or demonstration purposes.
+     *
+     * @param request the request object containing details for the dummy wallet
+     */
     void addDummy(MainWalletRequest request);
 }

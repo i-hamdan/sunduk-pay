@@ -1,4 +1,5 @@
 package com.bxb.sunduk_pay.batch;
+
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.util.CurrencyPair;
 import lombok.RequiredArgsConstructor;
@@ -11,97 +12,65 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
-@Configuration
-@RequiredArgsConstructor
-@Log4j2
-public class BatchConfig {
+/**
+ * Batch configuration class for setting up jobs and steps.
+ * This class defines a job to fetch currency exchange rates
+ * using a reader, processor, and writer.
+ */
 
+@Configuration
+@Log4j2
+@RequiredArgsConstructor
+public class BatchConfig {
+/** Transaction manager for managing transactions in batch jobs.*/
     private final PlatformTransactionManager transactionManager;
+/** Reader to read currency pairs.*/
     private final CurrencyRateItemReader reader;
+/** Processor to process currency rates.*/
     private final CurrencyRatesItemProcessor processor;
+  /** Writer to write currency rates in database.*/
     private final CurrencyRatesItemWriter writer;
 
+    /** Default chunk size for step processing. */
+    private static final int CHUNK_SIZE = 100;
+
+    /**
+     * Defines a step to fetch currency rates.
+     *
+     * @param jobRepository the job repository
+     * @return the configured step
+     */
 
     @Bean
-    public Step fetchRatesStep(JobRepository jobRepository) {
+    public Step fetchRatesStep(final JobRepository jobRepository) {
         log.info("Creating Step: fetchRatesStep");
         return new StepBuilder("fetchRatesStep", jobRepository)
-                .<CurrencyPair, CurrencyRates>chunk(100, transactionManager) // Reader output, Processor output
+                .<CurrencyPair, CurrencyRates>chunk(
+                        CHUNK_SIZE, transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .build();
     }
 
+
+    /** Defines a job to import exchange rates.
+     *
+     * @param fetchRatesStep the step to fetch rates
+     * @param jobRepository  the job repository
+     * @return the configured job
+     */
     @Bean
-    public Job importExchangeRatesJob(Step fetchRatesStep, JobRepository jobRepository) {
+    public Job importExchangeRatesJob(
+            final Step fetchRatesStep,
+            final JobRepository jobRepository) {
         log.info("Creating Job: ExchangeRatesJob");
 
-        return new JobBuilder("ExchangeRatesJob", jobRepository)
+        return new JobBuilder("ExchangeRatesJob",
+                jobRepository)
                 .start(fetchRatesStep)
                 .build();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @Bean
-//    public JobLauncher jobLauncher(JobRepository jobRepository, TaskExecutor taskExecutor) {
-//        TaskExecutorJobLauncher jobLauncher = new TaskExecutorJobLauncher();
-//        jobLauncher.setJobRepository(jobRepository);
-//
-//        return jobLauncher;
-//    }
-//    @Bean
-//    @Primary
-//    public JobRepository jobRepository(
-//            JobInstanceMongoRepo jobInstanceRepository,
-//            JobExecutionMongoRepo jobExecutionRepository,
-//            StepExecutionMongoRepo stepExecutionRepository
-//    ) {
-//        return new CustomJobRespository(jobInstanceRepository, jobExecutionRepository, stepExecutionRepository);
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

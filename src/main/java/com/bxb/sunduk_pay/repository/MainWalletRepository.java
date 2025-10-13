@@ -6,7 +6,19 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Repository interface for managing MainWallet entities in MongoDB.
+ */
 @Repository
-public interface MainWalletRepository extends MongoRepository<MainWallet, String> {
-    Optional<MainWallet> findByUser_Uuid(String uuid);
+public interface MainWalletRepository
+        extends MongoRepository<MainWallet, String> {
+
+ /** Finds a MainWallet by the associated user's UUID.
+  * @param uuid The UUID of the user.
+  * @return An Optional containing the MainWallet if found,
+  * or empty if not found.
+  */
+ Optional<MainWallet> findByUserUuid(
+         String uuid);
+
 }
