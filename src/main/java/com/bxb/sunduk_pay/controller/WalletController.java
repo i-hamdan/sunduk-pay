@@ -54,7 +54,7 @@ public class WalletController {
      */
     @GetMapping("/wallet-showBalance/{walletId}")
     public ResponseEntity<String> showBalance(
-            @PathVariable final String walletId) {
+            @PathVariable final Long walletId) {
         return new ResponseEntity<>(
                 walletService.showBalance(walletId),
                 HttpStatus.OK);
@@ -72,19 +72,19 @@ public class WalletController {
         walletService.addDummy(request);
     }
 
-    /**
-     * Downloads all transactions of the specified wallet as a PDF.
-     *
-     * @param walletId wallet ID
-     * @param response HTTP servlet response to write PDF
-     * @throws IOException if PDF generation fails
-     */
-    @PostMapping("/wallet-downloadPdf/{walletId}")
-    public void downloadTransactions(@PathVariable final String walletId,
-                                     final HttpServletResponse response)
-            throws IOException {
-        walletService.downloadTransactions(walletId, response);
-    }
+//    /**
+//     * Downloads all transactions of the specified wallet as a PDF.
+//     *
+//     * @param walletId wallet ID
+//     * @param response HTTP servlet response to write PDF
+//     * @throws IOException if PDF generation fails
+//     */
+//    @PostMapping("/wallet-downloadPdf/{walletId}")
+//    public void downloadTransactions(@PathVariable final Long walletId,
+//                                     final HttpServletResponse response)
+//            throws IOException {
+//        walletService.downloadTransactions(walletId, response);
+//    }
 
     /**
      * Handles wallet CRUD operations and sets Stripe checkout URL cookie

@@ -75,13 +75,11 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
 
 
         Transaction failedTransaction = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .uuid(user.getUuid())
+                .user(user)
                 .amount(request.getAmount())
                 .transactionType(request.getTransactionType())
                 .description("Transaction failed")
                 .dateTime(LocalDateTime.now())
-                .mainWalletId(mainWallet.getMainWalletId())
                 .status("FAILED")
                 .fromWallet(fromWallet)
                 .fromWalletId(request.getSourceWalletId())

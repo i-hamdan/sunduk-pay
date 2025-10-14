@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 public class ContactRequest {
     /** The ID of the user uploading the contacts. */
-    private String userId;
+    private Long userId;
     /** The list of user contacts to be uploaded. */
     private List<UserContact> contacts;
 }

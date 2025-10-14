@@ -1,10 +1,10 @@
 package com.bxb.sunduk_pay.repository;
 
-import com.bxb.sunduk_pay.logModel.UserActivityLog;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.bxb.sunduk_pay.model.UserActivityLog;
+import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Repository interface for managing UserActivityLog document in MongoDB.
  */
 public interface UserActivityLogRepository
-        extends MongoRepository<UserActivityLog, String> {
+        extends JpaRepository<UserActivityLog, Long> {
 }

@@ -104,14 +104,14 @@ public class StripeWebhookController {
                                 session.getId());
 
                         MainWalletRequest requestObj = new MainWalletRequest();
-                        requestObj.setUuid(session.getMetadata().get("userId"));
+                        requestObj.setUuid(Long.parseLong(session.getMetadata().get("userId")));
                         requestObj.setAmount(session.getAmountTotal() / VALUE);
                         requestObj.setTransactionType(TransactionType.valueOf(
                                 session.getMetadata().get("type")));
-                        requestObj.setSourceWalletId(session.getMetadata()
-                                .get("sourceWallet"));
-                        requestObj.setTargetWalletId(session.getMetadata()
-                                .get("targetWallet"));
+                        requestObj.setSourceWalletId(Long.parseLong(session.getMetadata()
+                                .get("sourceWallet")));
+                        requestObj.setTargetWalletId(Long.parseLong(session.getMetadata()
+                                .get("targetWallet")));
                         return failedTxnRecorder.recordFailedTxn(requestObj);
                     }
                     break;
@@ -142,12 +142,12 @@ public class StripeWebhookController {
      */
     private MainWalletResponse handleCompletedSession(
             final Session session) {
-        String userId = session.getMetadata().get("userId");
+        Long userId = Long.parseLong(session.getMetadata().get("userId"));
         TransactionType transactionType = TransactionType.valueOf(
                 session.getMetadata().get("type").toUpperCase()
         );
-        String targetWallet = session.getMetadata().get("targetWallet");
-        String sourceWallet = session.getMetadata().get("sourceWallet");
+        Long targetWallet = Long.parseLong(session.getMetadata().get("targetWallet"));
+        Long sourceWallet = Long.parseLong(session.getMetadata().get("sourceWallet"));
         double amount = session.getAmountTotal() / VALUE;
 
         MainWalletRequest requestObj = new MainWalletRequest();

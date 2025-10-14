@@ -75,7 +75,6 @@ try {
                 size);
 
         SubWallet subWallet = SubWallet.builder()
-                .subWalletId(UUID.randomUUID().toString())
                 .balance(0d)
                 .targetBalance(mainWalletRequest.getTargetBalance())
                 .targetDate(mainWalletRequest.getTargetDate())

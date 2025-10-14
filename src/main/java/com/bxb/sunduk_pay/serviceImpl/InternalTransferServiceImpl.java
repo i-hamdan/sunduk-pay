@@ -114,16 +114,13 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     sourceWallet.getId());
 
             Transaction debitTransaction = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .groupId(groupId)
-                    .uuid(user.getUuid())
+                    .user(user)
                     .status("SUCCESS")
                     .amount(amount)
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
                     .description("Sent to " + targetWallet.getName())
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
                     .fromWallet(sourceWallet.getName())
                     .fromWalletId(sourceWallet.getId())
                     .toWallet(targetWallet.getName())
@@ -168,16 +165,13 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Creating credit transaction for targetWallet={}",
                     targetWallet.getId());
             Transaction creditTransaction = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .groupId(groupId)
-                    .uuid(user.getUuid())
+                    .user(user)
                     .amount(amount)
                     .status("SUCCESS")
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
                     .description("Received from " + sourceWallet.getName())
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
                     .fromWallet(sourceWallet.getName())
                     .fromWalletId(sourceWallet.getId())
                     .toWallet(targetWallet.getName())
@@ -192,7 +186,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Transactions saved successfully");
 
             log.debug("Updating main wallet with new transactions");
-            mainWallet.getTransactionHistory().addAll(transactions);
+            user.getTransactionHistory().addAll(transactions);
             mainWalletRepository.save(mainWallet);
             log.info("Main wallet updated successfully");
 
@@ -211,7 +205,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .status("SUCCESS")
                     .sourceTransactionId(transactions.get(0).getTransactionId())
                     .targetTransactionId(transactions.get(1).getTransactionId())
-                    .transactionGroupId(groupId)
                     .previousSourceWalletBalance(previousSourceWalletBalance)
                     .newSourceWalletBalance(newSourceWalletBalance)
                     .previousTargetWalletBalance(previousTargetWalletBalance)

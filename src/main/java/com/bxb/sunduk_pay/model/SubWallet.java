@@ -1,64 +1,63 @@
 package com.bxb.sunduk_pay.model;
 
-import jdk.jfr.Timestamp;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 /**
- * Model class representing a SubWallet entity.
+ * Represents a sub-wallet associated with a main wallet.
  */
-@Data
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@Data
 public class SubWallet {
-    /**
-     * The unique identifier for the sub-wallet.
+  /**
+     * Unique identifier for the sub-wallet.
      */
     @Id
-    private String subWalletId;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long subWalletId;
     /**
-     * The name of the sub-wallet.
+     * Name of the sub-wallet.
      */
     private String subWalletName;
-
     /**
-     * The current balance of the sub-wallet.
+     * Current balance of the sub-wallet.
      */
     private Double balance;
-
     /**
-     * The target balance to reach in the sub-wallet.
+     * Target balance for the sub-wallet.
      */
     private Double targetBalance;
-
-    /**
-     * The target date by which to reach the target balance.
+   /**
+     * Target date to achieve the target balance.
      */
     private LocalDate targetDate;
-
-    /**
-     * The icon representing the sub-wallet.
+  /**
+     * Icon representing the sub-wallet.
      */
     private String icon;
-
     /**
-     * The timestamp when the sub-wallet was created.
+     * Creation timestamp for the sub-wallet.
      */
-    @Timestamp
     private LocalDateTime createdAt;
-
-    /**
-     * The timestamp when the sub-wallet was last updated.
+   /**
+     * Last update timestamp for the sub-wallet.
      */
-    @Timestamp
     private LocalDateTime updatedAt;
-
     /**
-     * Indicates whether the sub-wallet is deleted.
+     * Indicates if the sub-wallet is deleted.
      */
     private Boolean isDeleted;
+    /**
+     * Main wallet associated with the sub-wallet.
+     */
+    @ManyToOne
+    @JoinColumn(name = "main_wallet_id")
+    private MainWallet mainWallet;
 }

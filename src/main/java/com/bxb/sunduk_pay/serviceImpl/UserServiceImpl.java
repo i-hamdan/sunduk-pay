@@ -72,24 +72,24 @@ public class UserServiceImpl implements UserService {
              "User not found in DB. Creating new user for email: {}",
              response.getEmail());
             user = userMapper.toUser(response);
-            user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
 
+            user=userRepository.save(user);
+
             MainWallet mainWallet = MainWallet.builder()
-                    .mainWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
+                    .createdAt(LocalDateTime.now())
                     .build();
-            mainWalletRepository.save(mainWallet);
+            mainWallet=mainWalletRepository.save(mainWallet);
 
             MasterWallet masterWallet = MasterWallet.builder()
-                    .masterWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
                     .mainWallet(mainWallet)
                     .createdAt(LocalDateTime.now())
                     .build();
-            masterWalletRepository.save(masterWallet);
+            masterWallet = masterWalletRepository.save(masterWallet);
 
             user.setMasterWallet(masterWallet);
             user.setMainWallet(mainWallet);

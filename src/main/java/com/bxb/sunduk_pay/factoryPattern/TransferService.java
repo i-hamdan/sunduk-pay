@@ -205,7 +205,7 @@ public class TransferService implements WalletOperation {
      */
     private WalletWrapper getWallet(
             final MainWallet mainWallet,
-            final String walletId) {
+            final Long walletId) {
 
         if (walletId == null) {
             log.warn("walletId is null, returning null");

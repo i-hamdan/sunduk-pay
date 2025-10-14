@@ -19,7 +19,7 @@ public interface PaymentService {
      * @param sourceWallet The wallet from which the amount will be debited.
      * @return A response object containing details of the checkout session.
      */
-    MainWalletResponse createCheckoutSession(String userId, Double amount,
+    MainWalletResponse createCheckoutSession(Long userId, Double amount,
                                              TransactionType transactionType,
                                              WalletWrapper targetWallet,
                                              WalletWrapper sourceWallet);

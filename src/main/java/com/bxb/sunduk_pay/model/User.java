@@ -1,68 +1,70 @@
 package com.bxb.sunduk_pay.model;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
-
 /**
  * Represents a user in the system.
  */
-@Document
+@Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "users")
 public class User {
     /**
      * Unique identifier for the user.
      */
     @Id
-    private String uuid;
-
-    /**
-     * The user's full name.
-     */
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long uuid;
+/**
+* Full name of the user.
+ */
     private String fullName;
-
     /**
-     * The user's gender.
+     * Gender of the user.
      */
     private String gender;
-
     /**
-     * The user's email address.
+     * Email address of the user.
      */
     private String email;
-
     /**
-     * The user's phone number.
+     * Phone number of the user.
      */
     private String phoneNumber;
-
     /**
-     * The user's password.
+     * Hashed password for user authentication.
      */
     private String password;
-
     /**
-     * Indicates if the user is deleted.
+     * Indicates if the user account is deleted.
      */
     private Boolean isDeleted;
-
-    /**
-     * Reference to the user's master wallet.
-     */
-    @DBRef
+ /**
+    * One-to-one relationship with MasterWallet.
+  */
+    @OneToOne(mappedBy = "user")
     private MasterWallet masterWallet;
-
     /**
-     * Reference to the user's main wallet.
+     * One-to-one relationship with MainWallet.
      */
-    @DBRef
+    @OneToOne(mappedBy = "user")
     private MainWallet mainWallet;
-
-    /**
-     * List of contacts associated with the user.
+/**
+ * One-to-many relationship with Transaction history.
      */
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transactionHistory;
+    /**
+     * One-to-many relationship with UserContact.
+     */
+    @OneToMany(mappedBy = "user")
     private List<UserContact> contacts;
-
 }
+

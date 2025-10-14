@@ -44,10 +44,8 @@ public class TransactionMapperImpl implements TransactionMapper {
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(
                 transaction.getTransactionId());
-        transactionResponse.setGroupId(
-                transaction.getGroupId());
         transactionResponse.setUuid(
-                transaction.getUuid());
+                transaction.getUser().getUuid());
         transactionResponse.setTransactionType(
                 transaction.getTransactionType());
         transactionResponse.setPaymentMethod(
@@ -56,9 +54,6 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getDescription());
         transactionResponse.setAmount(
                 transaction.getAmount());
-        transactionResponse.setMainWalletId(
-                transaction
-                .getMainWalletId());
         transactionResponse.setStatus(
                 transaction.getStatus());
         transactionResponse.setDate(
@@ -72,12 +67,12 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setFromWalletId(
                 transaction.getFromWalletId());
         transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
-                transaction.getMainWalletId(),
+                transaction.getUser().getMainWallet().getMainWalletId(),
                         transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
         transactionResponse.setToWalletIcon(validations.
-                getToIconOfTxn(transaction.getMainWalletId(),
+                getToIconOfTxn(transaction.getUser().getMainWallet().getMainWalletId(),
                         transaction.getToWalletId()));
         return transactionResponse;
     }

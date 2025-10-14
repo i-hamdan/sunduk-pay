@@ -1,56 +1,48 @@
 package com.bxb.sunduk_pay.model;
 
+
+import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
-
 /**
- * MasterWallet entity representing a user's master wallet.
+ * Represents a master wallet associated with a user.
  */
-
 @Data
-@Builder
-@NoArgsConstructor
+@Entity
 @AllArgsConstructor
-@Document
+@NoArgsConstructor
+@Builder
 public class MasterWallet {
     /**
      * Unique identifier for the master wallet.
      */
     @Id
-    private String masterWalletId;
-
-    /**
-     * Current balance of the master wallet.
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long masterWalletId;
+/**
+* Current balance of the master wallet.
      */
     private Double balance;
-
-    /**
-     * Indicates whether the master wallet is deleted.
-     */
-    private Boolean isDeleted;
-
-    /**
+/**
      * Timestamp when the master wallet was created.
      */
     @Timestamp
     private LocalDateTime createdAt;
-
     /**
-     * Reference to the user who owns this wallet.
+     * User associated with the master wallet.
      */
-    @DBRef
+    @OneToOne
+    @JoinColumn(name = "user_uuid")
     private User user;
-
     /**
-     * Reference to the associated main wallet.
+     * main wallet associated with the master wallet.
      */
-    @DBRef
+    @OneToOne
+    @JoinColumn(name = "main_wallet_id")
     private MainWallet mainWallet;
 }

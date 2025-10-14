@@ -3,7 +3,7 @@
 //
 //import com.bxb.sunduk_pay.exception.UserActivityLogException;
 ////import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-//import com.bxb.sunduk_pay.logModel.UserActivityLog;
+//import com.bxb.sunduk_pay.model.UserActivityLog;
 //import com.bxb.sunduk_pay.repository.UserActivityLogRepository;
 //import com.bxb.sunduk_pay.service.ActivityLogService;
 //import com.bxb.sunduk_pay.util.ActivityLogMessageUtil;

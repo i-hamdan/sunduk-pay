@@ -17,19 +17,19 @@ public interface WalletService {
      * @param walletId the ID of the wallet
      * @return the balance as a String
      */
-    String showBalance(String walletId);
+    String showBalance(Long walletId);
 
-    /**
-     * Downloads the transaction history of the specified wallet and
-     * writes it to the HTTP response.
-     *
-     * @param walletId the ID of the wallet
-     * @param response the
-     *HttpServletResponse to write the transaction history to
-     * @throws IOException if an I/O error occurs
-     */
-    void downloadTransactions(String walletId,
-                              HttpServletResponse response) throws IOException;
+//    /**
+//     * Downloads the transaction history of the specified wallet and
+//     * writes it to the HTTP response.
+//     *
+//     * @param walletId the ID of the wallet
+//     * @param response the
+//     *HttpServletResponse to write the transaction history to
+//     * @throws IOException if an I/O error occurs
+//     */
+//    void downloadTransactions(Long walletId,
+//                              HttpServletResponse response) throws IOException;
 
     /**
      * Processes a payment transaction.

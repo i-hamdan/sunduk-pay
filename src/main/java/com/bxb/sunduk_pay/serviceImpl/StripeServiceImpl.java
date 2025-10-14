@@ -52,7 +52,7 @@ public class StripeServiceImpl implements StripeService {
      */
     @Override
     public Session createCheckoutSession(
-            final String userId,
+            final Long userId,
             final Double amount,
             final TransactionType transactionType,
             final WalletWrapper targetWallet,
@@ -133,18 +133,18 @@ try {
 
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("userId", request.getUserId());
+        metadata.put("userId", request.getUserId().toString()   );
         metadata.put("type", request.getTransactionType().toString());
         metadata.put("amount", request.getAmount().toString());
         if (request.getSourceWallet() != null) {
             metadata.put("sourceWallet",
-                    request.getSourceWallet().getId());
+                    request.getSourceWallet().getId().toString());
         } else {
             metadata.put("sourceWallet", null);
         }
         if (request.getTargetWallet() != null) {
             metadata.put("targetWallet",
-                    request.getTargetWallet().getId());
+                    request.getTargetWallet().getId().toString());
         } else {
             metadata.put("targetWallet", null);
         }

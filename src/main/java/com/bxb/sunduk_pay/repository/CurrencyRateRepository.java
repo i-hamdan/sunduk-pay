@@ -3,7 +3,6 @@ package com.bxb.sunduk_pay.repository;
 import com.bxb.sunduk_pay.model.CurrencyRates;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -14,7 +13,6 @@ import java.util.List;
  * Extends MongoRepository to provide
  * CRUD operations and custom queries.
  */
-@Repository
 
 public interface CurrencyRateRepository
         extends MongoRepository<CurrencyRates, String> {

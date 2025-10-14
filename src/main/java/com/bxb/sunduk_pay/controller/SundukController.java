@@ -68,7 +68,7 @@ public class SundukController {
                 "UTF-8")
                 + "&fullName=" + URLEncoder.encode(user.getFullName(),
                 "UTF-8")
-                + "&uuid=" + URLEncoder.encode(dbUser.getUuid(),
+                + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
                 "UTF-8");
         log.info("custom login api");
         log.info("this line adding for dedubbing purpose");

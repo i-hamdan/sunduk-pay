@@ -28,7 +28,7 @@ public interface Validations {
      * @param uuid user UUID
      * @return {@link User}
      */
-    User getUserInfo(String uuid);
+    User getUserInfo(Long uuid);
 
     /**
      * Retrieves a main wallet by its ID.
@@ -37,14 +37,14 @@ public interface Validations {
      * @return {@link MainWallet}
      */
 
-    MainWallet getMainWalletByWalletId(String walletId);
+    MainWallet getMainWalletByWalletId(Long walletId);
     /**
      * Retrieves the main wallet associated with a user.
      *
      * @param uuid user UUID
      * @return {@link MainWallet}
      */
-    MainWallet getMainWalletInfo(String uuid);
+    MainWallet getMainWalletInfo(Long uuid);
 
     /**
      * Validates the allowed number of sub-wallets.
@@ -65,9 +65,9 @@ public interface Validations {
      * @return paginated list of {@link Transaction}
      */
     Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-            String uuid,
-            String walletId,
-            String transactionGroupId,
+            Long uuid,
+            Long walletId,
+            Long transactionGroupId,
             PaymentMethod paymentMethod,
             TransactionType transactionType,
             Pageable pageable);
@@ -79,7 +79,7 @@ public interface Validations {
      * @param subWalletId sub-wallet ID
      * @return {@link SubWallet} if found, otherwise null
      */
-    SubWallet findSubWalletIfExists(MainWallet wallet, String subWalletId);
+    SubWallet findSubWalletIfExists(MainWallet wallet, Long subWalletId);
     /**
      * Finds a sub-wallet if it exists in a main wallet.
      *
@@ -87,7 +87,7 @@ public interface Validations {
      * @param subWalletId sub-wallet ID
      * @return {@link SubWallet} or null
      */
-    SubWallet getSubWalletIfExists(MainWallet wallet, String subWalletId);
+    SubWallet getSubWalletIfExists(MainWallet wallet, Long subWalletId);
 
     /**
      * Retrieves the icon for the source wallet in a transaction.
@@ -96,7 +96,7 @@ public interface Validations {
      * @param fromWalletId source wallet ID
      * @return icon string
      */
-    String getFromIconOfTxn(String mainWalletId, String fromWalletId);
+    String getFromIconOfTxn(Long mainWalletId, Long fromWalletId);
 
     /**
      * Retrieves the icon for the destination wallet in a transaction.
@@ -105,7 +105,7 @@ public interface Validations {
      * @param toWalletId   destination wallet ID
      * @return icon string
      */
-    String getToIconOfTxn(String mainWalletId, String toWalletId);
+    String getToIconOfTxn(Long mainWalletId, Long toWalletId);
     /**
      * Removes a sub-wallet from a main wallet.
      *
@@ -113,7 +113,7 @@ public interface Validations {
      * @param subWalletId sub-wallet ID
      * @return true if removed successfully
      */
-    Boolean removeSubwallet(MainWallet wallet, String subWalletId);
+    Boolean removeSubwallet(MainWallet wallet, Long subWalletId);
     /**
      * Retrieves the master wallet associated with a user.
      *
@@ -121,7 +121,7 @@ public interface Validations {
      * @return {@link MasterWallet}
      */
 
-    MasterWallet getMasterWalletInfo(String uuid);
+    MasterWallet getMasterWalletInfo(Long uuid);
 
     /**
      * Finds a sub-wallet by its name within a main wallet.

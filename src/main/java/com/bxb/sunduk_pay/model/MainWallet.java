@@ -1,64 +1,58 @@
 package com.bxb.sunduk_pay.model;
 
-import jdk.jfr.Timestamp;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-/**
- * MainWallet entity representing a user's main wallet.
- */
 
-@Builder
-@Document
+/**
+ * Represents the main wallet associated with a user.
+ */
+@Entity
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Builder
 public class MainWallet {
     /**
      * Unique identifier for the main wallet.
      */
     @Id
-    private String mainWalletId;
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long mainWalletId;
     /**
      * Current balance of the main wallet.
      */
     private Double balance;
-
     /**
-     * Timestamp when the main wallet was created.
+     * main wallet creation timestamp.
      */
-    @Timestamp
     private LocalDateTime createdAt;
-
     /**
-     * Timestamp when the main wallet was last updated.
+     * main wallet last update timestamp.
      */
-    @Timestamp
     private LocalDateTime updatedAt;
+/**
+ * User associated with the main wallet.
+  */
 
-    /**
-     * Reference to the user who owns the main wallet.
-     */
-    @DBRef
+    @OneToOne
+    @JoinColumn(name = "user_uuid")
     private User user;
-
     /**
-     * List of transactions associated with the main wallet.
+     * List of sub-wallets associated with the main wallet.
      */
-    @DBRef
-    private List<Transaction> transactionHistory = new ArrayList<>();
-
-    /**
-     * List of sub-wallets under the main wallet.
-     */
+    @OneToMany(mappedBy = "mainWallet")
     private List<SubWallet> subWallets = new ArrayList<>();
 }

@@ -5,9 +5,9 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -16,27 +16,17 @@ import java.util.List;
  * Repository interface for managing
  * Transaction entities in MongoDB.
  */
-@Repository
 public interface TransactionRepository
-        extends MongoRepository<Transaction, String> {
-/**     * Finds transactions by main wallet ID and user UUID.
-     *
-     * @param walletId the main wallet ID
-     * @param uuid     the user UUID
-     * @return list of transactions
-     */
-    List<Transaction> findByMainWalletIdAndUuid(
-            String walletId,
-            String uuid);
+        extends JpaRepository<Transaction, Long> {
 
     /*** Finds transactions by user UUID.
- * And isMaster flag set to false.
+     * And isMaster flag set to false.
      * @param uuid the user UUID
      * @param pageable pagination information
      * @return list of transactions
      */
-    Page<Transaction> findByUuidAndIsMasterFalse(
-            String uuid,
+    Page<Transaction> findByUserUuidAndIsMasterFalse(
+            Long uuid,
             Pageable pageable);
 
     /**find transactions by user UUID,fromId and transaction type.
@@ -48,9 +38,9 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUuidAndFromWalletIdAndTransactionType(
-            String uuid,
-            String fromWalletId,
+    findByUserUuidAndFromWalletIdAndTransactionType(
+            Long uuid,
+            Long fromWalletId,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -66,9 +56,9 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-            String uuid,
-            String fromWalletId,
+    findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+            Long uuid,
+            Long fromWalletId,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
@@ -81,9 +71,9 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUuidAndToWalletIdAndTransactionType(
-            String uuid,
-            String toWalletId,
+    findByUserUuidAndToWalletIdAndTransactionType(
+            Long uuid,
+            Long toWalletId,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -97,9 +87,9 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-            String uuid,
-            String toWalletId,
+    findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+            Long uuid,
+            Long toWalletId,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
@@ -112,13 +102,17 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'uuid': ?0, $or: [ "
-      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-      + "] }")
-    Page<Transaction> findAllByUuidAndWallet(
-            String uuid,
-            String walletId,
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.user.uuid = :uuid
+      AND (
+        (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+        OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+      )
+""")
+    Page<Transaction> findAllByUserUuidAndWalletId(
+            @Param("uuid") Long uuid,
+            @Param("walletId") Long walletId,
             Pageable pageable);
 
     /**Method for fetching transactions.
@@ -131,14 +125,19 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'uuid': ?0, $or: [ "
-      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-      + "], 'paymentMethod': ?2 }")
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.user.uuid = :uuid
+      AND t.paymentMethod = :paymentMethod
+      AND (
+        (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+        OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+      )
+""")
     Page<Transaction> findByUuidAndWalletIdAndPaymentMethod(
-            String uuid,
-            String walletId,
-            PaymentMethod paymentMethod,
+            @Param("uuid") Long uuid,
+            @Param("walletId") Long walletId,
+            @Param("paymentMethod") PaymentMethod paymentMethod,
             Pageable pageable);
 
     /**find transactions by user UUID and walletId.
@@ -148,13 +147,17 @@ public interface TransactionRepository
      * @return list of transactions
      */
 
-    @Query("{ 'uuid': ?0, $or: [ "
-      + "{ $and: [ { 'fromWalletId': ?1 }, { 'transactionType': 'DEBIT' } ] }, "
-      + "{ $and: [ { 'toWalletId': ?1 }, { 'transactionType': 'CREDIT' } ] } "
-      + "] }")
-    List<Transaction> findAllByUuidAndWallet(
-            String uuid,
-            String walletId);
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.user.uuid = :uuid
+      AND (
+        (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+        OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+      )
+""")
+    List<Transaction> findAllByUserUuidAndWalletId(
+            @Param("uuid") Long uuid,
+            @Param("walletId") Long walletId);
 
     /**Method for fetching transactions.
      * find transactions by user UUID,
@@ -165,10 +168,8 @@ public interface TransactionRepository
      * @param pageable pagination information
      * @return list of transactions
      */
-
-
-    Page<Transaction> findByUuidAndTransactionTypeAndIsMasterFalse(
-            String uuid,
+    Page<Transaction> findByUserUuidAndTransactionTypeAndIsMasterFalse(
+            Long uuid,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -183,22 +184,12 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction>
-    findByUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
-            String uuid,
+    findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+            Long uuid,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
 
-    /**find transactions by user UUID,groupId and pageable.
-     * @param uuid the user UUID
-     * @param groupId transaction group id
-     * @param pageable pagination information
-        * @return list of transactions
-        */
-    Page<Transaction> findByUuidAndGroupId(
-            String uuid,
-            String groupId,
-            Pageable pageable);
 
 
     /**find transactions by user UUID,
@@ -208,8 +199,8 @@ public interface TransactionRepository
      * @param pageable pagination information
      * @return list of transactions
      */
-    Page<Transaction> findByUuidAndPaymentMethodAndIsMasterFalse(
-            String uuid,
+    Page<Transaction> findByUserUuidAndPaymentMethodAndIsMasterFalse(
+            Long uuid,
             PaymentMethod paymentMethod,
             Pageable pageable);
 }

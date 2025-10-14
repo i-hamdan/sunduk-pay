@@ -25,9 +25,9 @@ private static final int DEFAULT_SIZE = 10;
 
     /** Unique identifier for the request. */
     @NonNull
-    private String uuid;
+    private Long uuid;
     /** ID of the main wallet. */
-    private String mainWalletId;
+    private Long mainWalletId;
     /** Name of the sub-wallet. */
     private String subWalletName;
     /** Amount for transactions or operations. */
@@ -42,13 +42,13 @@ private static final int DEFAULT_SIZE = 10;
     /** Target date for scheduled transactions or goals. */
     private LocalDate targetDate;
    /** ID of the sub-wallet. */
-    private String subWalletId;
+    private Long subWalletId;
   /** Icon representing the sub-wallet. */
     private String icon;
     /** ID of the source wallet for transfers. */
-    private String sourceWalletId;
+    private Long sourceWalletId;
     /** ID of the target wallet for transfers. */
-    private String targetWalletId;
+    private Long targetWalletId;
 /** Action type for Updating pot (e.g., RENAME_POT,
     GOAL_AMOUNT,
     GOAL_DATE). */
@@ -56,9 +56,9 @@ private static final int DEFAULT_SIZE = 10;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
     /** ID of the wallet involved in the transaction. */
-    private String walletId;
+    private Long walletId;
     /** Group ID for batch transactions. */
-    private String transactionGroupId;
+    private Long transactionGroupId;
     /** Page number for pagination. */
     private int page = DEFAULT_PAGE;
     /** Number of records per page for pagination. */

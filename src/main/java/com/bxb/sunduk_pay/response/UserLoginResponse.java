@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class UserLoginResponse {
     /** The unique identifier of the user. */
-    private String uuid;
+    private Long uuid;
     /** The email address of the user. */
     private String email;
     /** The full name of the user. */

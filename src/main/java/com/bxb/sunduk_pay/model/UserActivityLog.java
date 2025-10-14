@@ -1,28 +1,36 @@
-package com.bxb.sunduk_pay.logModel;
+package com.bxb.sunduk_pay.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 /**
  * Represents a user activity log entry stored in MongoDB.
  */
-@Document
 @Data
 @Builder
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserActivityLog {
 
-    /** Unique identifier for the log entry.
+    /**
+     * Unique identifier for the log entry.
      */
     @Id
-    private String logId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long logId;
 
     /** UUID of the user associated with the activity.
      */
-    private String uuid;
+    private Long uuid;
 
     /** Email of the user associated with the activity.
      */

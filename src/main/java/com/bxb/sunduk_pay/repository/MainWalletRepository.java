@@ -1,17 +1,16 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.MainWallet;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 
 import java.util.Optional;
 
 /**
  * Repository interface for managing MainWallet entities in MongoDB.
  */
-@Repository
 public interface MainWalletRepository
-        extends MongoRepository<MainWallet, String> {
+        extends JpaRepository<MainWallet, Long> {
 
  /** Finds a MainWallet by the associated user's UUID.
   * @param uuid The UUID of the user.
@@ -19,6 +18,6 @@ public interface MainWalletRepository
   * or empty if not found.
   */
  Optional<MainWallet> findByUserUuid(
-         String uuid);
+         Long uuid);
 
 }

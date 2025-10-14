@@ -120,7 +120,6 @@ public class WalletServiceImpl implements WalletService {
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
                 .amount(request.getAmount())
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
@@ -128,8 +127,7 @@ public class WalletServiceImpl implements WalletService {
                 .status("SUCCESS")
                 .description("Deducted from master wallet")
                 .dateTime(LocalDateTime.now())
-                .mainWalletId(mainWallet.getMainWalletId())
-                .uuid(user.getUuid())
+                .user(user)
                 .fromWallet("Master Wallet")
                 .fromWalletId(masterWallet.getMasterWalletId())
                 .toWallet("Some external source")
@@ -151,7 +149,6 @@ public class WalletServiceImpl implements WalletService {
                     sourcesubWallet.getBalance());
 
             debitTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -159,12 +156,11 @@ public class WalletServiceImpl implements WalletService {
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
-                    .uuid(user.getUuid())
+                    .user(user)
                     .fromWallet(sourcesubWallet.getSubWalletName())
                     .fromWalletId(sourcesubWallet.getSubWalletId())
                     .toWallet("some external source")
-                    .toWalletId(UUID.randomUUID().toString()).build();
+                    .toWalletId(Long.parseLong(UUID.randomUUID().toString())).build();
             transactions.add(debitTxn);
 ////            TransactionEvent transactionEvent = transactionMapper
 ////                    .toTransactionEvent(debitTxn);
@@ -181,7 +177,6 @@ public class WalletServiceImpl implements WalletService {
                     mainWallet.getBalance());
 
             debitTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -189,12 +184,11 @@ public class WalletServiceImpl implements WalletService {
                     .status("SUCCESS")
                     .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
-                    .uuid(user.getUuid())
+                    .user(user)
                     .fromWallet("Main Wallet")
                     .fromWalletId(mainWallet.getMainWalletId())
                     .toWallet("some external target")
-                    .toWalletId(UUID.randomUUID().toString()).build();
+                    .toWalletId(Long.parseLong(UUID.randomUUID().toString())).build();
             transactions.add(debitTxn);
 
 //            TransactionEvent transactionEvent = transactionMapper
@@ -204,7 +198,7 @@ public class WalletServiceImpl implements WalletService {
 
         transactionRepository.saveAll(transactions);
         masterWalletRepository.save(masterWallet);
-        mainWallet.getTransactionHistory().addAll(transactions);
+        user.getTransactionHistory().addAll(transactions);
         mainWalletRepository.save(mainWallet);
 
         MainWalletResponse response = MainWalletResponse.builder()
@@ -273,16 +267,14 @@ public class WalletServiceImpl implements WalletService {
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
                 .amount(mainWalletRequest.getAmount())
-                .uuid(user.getUuid())
+                .user(user)
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .paymentMethod(PaymentMethod.CARD)
                 .status("SUCCESS")
                 .description("Credited to master wallet.")
                 .dateTime(LocalDateTime.now())
-                .mainWalletId(mainWallet.getMainWalletId())
                 .fromWallet("Some external source.")
                 .fromWalletId(mainWalletRequest.getSourceWalletId())
                 .toWallet("Master wallet")
@@ -304,8 +296,7 @@ public class WalletServiceImpl implements WalletService {
                     subWallet.getBalance());
 
             creditTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .uuid(user.getUuid())
+                    .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -314,9 +305,8 @@ public class WalletServiceImpl implements WalletService {
                     .description("Credited to sub wallet : "
                             + subWallet.getSubWalletName())
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
                     .fromWallet("Some external source.")
-                    .fromWalletId(UUID.randomUUID().toString())
+                    .fromWalletId(Long.parseLong(UUID.randomUUID().toString()))
                     .toWallet(subWallet.getSubWalletName())
                     .toWalletId(subWallet.getSubWalletId()).build();
 
@@ -335,8 +325,7 @@ public class WalletServiceImpl implements WalletService {
                     mainWallet.getBalance());
 
             creditTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .uuid(user.getUuid())
+                    .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -344,9 +333,8 @@ public class WalletServiceImpl implements WalletService {
                     .status("SUCCESS")
                     .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
-                    .mainWalletId(mainWallet.getMainWalletId())
                     .fromWallet("Some external source.")
-                    .fromWalletId(UUID.randomUUID().toString())
+                    .fromWalletId(Long.parseLong(UUID.randomUUID().toString()))
                     .toWallet("Main wallet")
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
@@ -359,7 +347,7 @@ public class WalletServiceImpl implements WalletService {
         }
 
         transactionRepository.saveAll(transactions);
-        mainWallet.getTransactionHistory()
+        user.getTransactionHistory()
                 .addAll(transactions);
         masterWalletRepository.save(masterWallet);
         mainWalletRepository.save(mainWallet);
@@ -440,13 +428,11 @@ public class WalletServiceImpl implements WalletService {
 
 
         Transaction failedTransaction = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .uuid(user.getUuid())
+                .user(user)
                 .amount(request.getAmount())
                 .transactionType(request.getTransactionType())
                 .description("Transaction failed")
                 .dateTime(LocalDateTime.now())
-                .mainWalletId(mainWallet.getMainWalletId())
                 .status("FAILED")
                 .fromWallet(fromWallet)
                 .fromWalletId(request.getSourceWalletId())
@@ -474,18 +460,16 @@ public class WalletServiceImpl implements WalletService {
                 .getMainWalletInfo(user.getUuid());
 
         Transaction txn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .uuid(user.getUuid())
-                .mainWalletId(mainWallet.getMainWalletId())
+                .user(user)
                 .amount(request.getAmount())
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .transactionType(request.getTransactionType())
                 .paymentMethod(request.getPaymentMethod())
                 .dateTime(LocalDateTime.now())
                 .toWallet("Dummy Wallet")
-                .toWalletId("123")
+                .toWalletId(123L)
                 .fromWallet("Dummy Wallet")
-                .fromWalletId("ABC")
+                .fromWalletId(321L)
                 .build();
         transactionRepository.save(txn);
     }
@@ -501,7 +485,7 @@ public class WalletServiceImpl implements WalletService {
      * the wallet with given ID does not exist.
      */
     //This will simply return the current balance of a wallet.
-    public String showBalance(final String walletId) {
+    public String showBalance(final Long walletId) {
         log.info("Fetching balance for walletId: {}",
                 walletId);
 
@@ -521,83 +505,82 @@ public class WalletServiceImpl implements WalletService {
     }
 
 
-
-    /**
-     * Exports the transaction history of a wallet to an Excel file
-     * and sends it in the HTTP response.
-     * @param walletId The ID of the wallet whose
-      transactions are to be exported.
-     * @param response The HttpServletResponse
-     to write the Excel file to.
-     * @throws IOException If an I/O error occurs
-     *during file writing.
-     * @throws WalletNotFoundException If the wallet
-     *with given ID does not exist.
-     */
-    @Override
-    public void downloadTransactions(
-            final String walletId,
-            final HttpServletResponse response)
-            throws IOException {
-        log.info(
-             "Starting to download transactions for walletId: {}",
-                walletId);
-
-        MainWallet wallet = mainWalletRepository.findById(walletId)
-             .orElseThrow(() -> {
-            log.error("Wallet not found with ID: {}", walletId);
-           return new WalletNotFoundException("invalid wallet id");
-                });
-        response.setContentType(
-         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader(
-        "Content-Disposition", "attachment; filename=transactions.xlsx");
-
-        log.info("Generating Excel sheet for walletId: {}", walletId);
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Transactions");
-
-        CreationHelper createHelper = workbook.getCreationHelper();
-        CellStyle dateStyle = workbook.createCellStyle();
-        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat(
-                "yyyy-MM-dd HH:mm:ss"));
-
-        XSSFRow row = sheet.createRow(0);
-        row.createCell(0).setCellValue("S.No");
-        row.createCell(TRANSACTION_TYPE_COLUMN).setCellValue("Type");
-        row.createCell(AMOUNT_COLUMN).setCellValue("Amount");
-        row.createCell(DESCRIPTION_COLUMN).setCellValue("Description");
-        row.createCell(DATE_COLUMN).setCellValue("Date&Time");
-
-        int rowNum = 1;
-        int count = 1;
-
-        List<Transaction> list = transactionRepository.
-                findByMainWalletIdAndUuid(walletId,
-                        wallet.getUser().getUuid());
-        log.info("Writing {} transactions into Excel for walletId: {}",
-                list.size(), walletId);
-
-        for (Transaction transaction : list) {
-            XSSFRow row1 = sheet.createRow(rowNum++);
-            row1.createCell(0).setCellValue(
-                    count++);
-            row1.createCell(TRANSACTION_TYPE_COLUMN).setCellValue(
-                    transaction.getTransactionType().toString());
-            row1.createCell(AMOUNT_COLUMN).setCellValue(
-                    transaction.getAmount());
-            row1.createCell(DESCRIPTION_COLUMN).setCellValue(
-                    transaction.getDescription());
-            Cell dateCell = row1.createCell(DATE_COLUMN);
-            dateCell.setCellValue(java.sql.Timestamp.valueOf(
-                    transaction.getDateTime()));
-            dateCell.setCellStyle(dateStyle);
-        }
-
-        workbook.write(response.getOutputStream());
-        workbook.close();
-        log.info(
-       "Excel file successfully written and sent in response for walletId: {}",
-                walletId);
-    }
+//    /**
+//     * Exports the transaction history of a wallet to an Excel file
+//     * and sends it in the HTTP response.
+//     * @param walletId The ID of the wallet whose
+//      transactions are to be exported.
+//     * @param response The HttpServletResponse
+//     to write the Excel file to.
+//     * @throws IOException If an I/O error occurs
+//     *during file writing.
+//     * @throws WalletNotFoundException If the wallet
+//     *with given ID does not exist.
+//     */
+//    @Override
+//    public void downloadTransactions(
+//            final Long walletId,
+//            final HttpServletResponse response)
+//            throws IOException {
+//        log.info(
+//             "Starting to download transactions for walletId: {}",
+//                walletId);
+//
+//        MainWallet wallet = mainWalletRepository.findById(walletId)
+//             .orElseThrow(() -> {
+//            log.error("Wallet not found with ID: {}", walletId);
+//           return new WalletNotFoundException("invalid wallet id");
+//                });
+//        response.setContentType(
+//         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+//        response.setHeader(
+//        "Content-Disposition", "attachment; filename=transactions.xlsx");
+//
+//        log.info("Generating Excel sheet for walletId: {}", walletId);
+//        XSSFWorkbook workbook = new XSSFWorkbook();
+//        XSSFSheet sheet = workbook.createSheet("Transactions");
+//
+//        CreationHelper createHelper = workbook.getCreationHelper();
+//        CellStyle dateStyle = workbook.createCellStyle();
+//        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat(
+//                "yyyy-MM-dd HH:mm:ss"));
+//
+//        XSSFRow row = sheet.createRow(0);
+//        row.createCell(0).setCellValue("S.No");
+//        row.createCell(TRANSACTION_TYPE_COLUMN).setCellValue("Type");
+//        row.createCell(AMOUNT_COLUMN).setCellValue("Amount");
+//        row.createCell(DESCRIPTION_COLUMN).setCellValue("Description");
+//        row.createCell(DATE_COLUMN).setCellValue("Date&Time");
+//
+//        int rowNum = 1;
+//        int count = 1;
+//
+//        List<Transaction> list = transactionRepository.
+//                findByMainWalletIdAndUserUuid(walletId,
+//                        wallet.getUser().getUuid());
+//        log.info("Writing {} transactions into Excel for walletId: {}",
+//                list.size(), walletId);
+//
+//        for (Transaction transaction : list) {
+//            XSSFRow row1 = sheet.createRow(rowNum++);
+//            row1.createCell(0).setCellValue(
+//                    count++);
+//            row1.createCell(TRANSACTION_TYPE_COLUMN).setCellValue(
+//                    transaction.getTransactionType().toString());
+//            row1.createCell(AMOUNT_COLUMN).setCellValue(
+//                    transaction.getAmount());
+//            row1.createCell(DESCRIPTION_COLUMN).setCellValue(
+//                    transaction.getDescription());
+//            Cell dateCell = row1.createCell(DATE_COLUMN);
+//            dateCell.setCellValue(java.sql.Timestamp.valueOf(
+//                    transaction.getDateTime()));
+//            dateCell.setCellStyle(dateStyle);
+//        }
+//
+//        workbook.write(response.getOutputStream());
+//        workbook.close();
+//        log.info(
+//       "Excel file successfully written and sent in response for walletId: {}",
+//                walletId);
+//    }
 }

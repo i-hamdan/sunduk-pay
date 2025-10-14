@@ -51,7 +51,7 @@ private static final int WALLET_SIZE = 19;
 
     /** {@inheritDoc} */
     public User getUserInfo(
-            final String uuid) {
+            final Long uuid) {
         log.info("Fetching user with UUID: {}", uuid);
         return userRepository.findById(uuid)
                 .orElseThrow(() -> {
@@ -66,7 +66,7 @@ private static final int WALLET_SIZE = 19;
 
     @Override
     public MainWallet getMainWalletByWalletId(
-            final String walletId) {
+            final Long walletId) {
       return mainWalletRepository.
               findById(walletId)
               .orElseThrow(() -> new ResourceNotFoundException(
@@ -77,7 +77,7 @@ private static final int WALLET_SIZE = 19;
     /** {@inheritDoc} */
 
     public MainWallet getMainWalletInfo(
-            final String uuid) {
+            final Long uuid) {
         log.info("Fetching mainWallet with UUID : {}",
                 uuid);
         return mainWalletRepository.findByUserUuid(uuid)
@@ -110,18 +110,13 @@ private static final int WALLET_SIZE = 19;
 
     @Override
     public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-       final String uuid,
-       final String walletId,
-       final String transactionGroupId,
+       final Long uuid,
+       final Long walletId,
+       final Long transactionGroupId,
        final PaymentMethod method,
        final TransactionType transactionType,
        final  Pageable pageable) {
 
-        if (transactionGroupId != null) {
-            return transactionRepository
-                    .findByUuidAndGroupId(
-                            uuid, transactionGroupId, pageable);
-        }
 
         Page<Transaction> transactions;
         if (walletId != null) {
@@ -130,22 +125,22 @@ private static final int WALLET_SIZE = 19;
                 // Only those where subWalletId is the FROM wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.DEBIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUuidAndFromWalletIdAndTransactionType(
+                            .findByUserUuidAndFromWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.DEBIT, pageable);
                 }
             } else if (transactionType == TransactionType.CREDIT) {
                 // Only those where subWalletId is the TO wallet
                 if (method != null) {
                     transactions = transactionRepository
-.findByUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+.findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
 uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUuidAndToWalletIdAndTransactionType(
+                            .findByUserUuidAndToWalletIdAndTransactionType(
                             uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             } else {
@@ -155,7 +150,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
                             uuid, walletId, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findAllByUuidAndWallet(
+                            .findAllByUserUuidAndWalletId(
                                     uuid, walletId, pageable);
                 }
             }
@@ -164,21 +159,21 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
             if (transactionType != null) {
                 if (method != null) {
                     transactions = transactionRepository
-   .findByUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+   .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
                             uuid, transactionType, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUuidAndTransactionTypeAndIsMasterFalse(
+                            .findByUserUuidAndTransactionTypeAndIsMasterFalse(
                             uuid, transactionType, pageable);
                 }
             } else {
                 if (method != null) {
                     transactions = transactionRepository
-                            .findByUuidAndPaymentMethodAndIsMasterFalse(
+                            .findByUserUuidAndPaymentMethodAndIsMasterFalse(
                             uuid, method, pageable);
                 } else {
                     transactions = transactionRepository
-                            .findByUuidAndIsMasterFalse(
+                            .findByUserUuidAndIsMasterFalse(
                                     uuid, pageable);
                 }
             }
@@ -229,7 +224,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     public SubWallet findSubWalletIfExists(
             final MainWallet wallet,
-           final String subWalletId) {
+           final Long subWalletId) {
         if (wallet == null || subWalletId == null) {
             log.error(
  "Validation failed: wallet or  subWalletId is null."
@@ -257,7 +252,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     /** {@inheritDoc} */
     @Override
     public SubWallet getSubWalletIfExists(final MainWallet wallet,
-                                          final String subWalletId) {
+                                          final Long subWalletId) {
         log.info(
                 "Searching for SubWallet with ID: {} in MainWallet: {}",
                 subWalletId, wallet
@@ -277,7 +272,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     @Cacheable("fromIcons")
     public String getFromIconOfTxn(
-            final String mainWalletId, final String fromWalletId) {
+            final Long mainWalletId, final Long fromWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
         SubWallet subWallet = mainWallet.getSubWallets()
                 .stream().filter(pot -> pot.getSubWalletId()
@@ -295,7 +290,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     @Cacheable("ToIcons")
     public String getToIconOfTxn(
-            final String mainWalletId, final String toWalletId) {
+            final Long mainWalletId, final Long toWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
         SubWallet subWallet = mainWallet
                 .getSubWallets().stream()
@@ -314,14 +309,14 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     /** {@inheritDoc} */
     @Override
     public Boolean removeSubwallet(
-            final MainWallet wallet, final String subWalletId) {
+            final MainWallet wallet, final Long subWalletId) {
         return wallet.getSubWallets().removeIf(subwallet ->
                 subwallet.getSubWalletId().equals(subWalletId));
     }
 
     /** {@inheritDoc} */
     @Override
-    public MasterWallet getMasterWalletInfo(final String uuid) {
+    public MasterWallet getMasterWalletInfo(final Long uuid) {
         log.info("Fetching MasterWallet for User UUID: {}", uuid);
         return masterWalletRepository.findByUserUuid(uuid).orElseThrow(() -> {
             log.error("User not found with ID: {}", uuid);

@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserResponse {
     /** The unique identifier of the user. */
-    private String uuid;
+    private Long uuid;
     /** The full name of the user. */
     private String fullName;
     /** The email address of the user. */

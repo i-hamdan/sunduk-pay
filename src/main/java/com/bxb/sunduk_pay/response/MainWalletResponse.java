@@ -28,11 +28,11 @@ public class MainWalletResponse {
      */
     private String status;
     /** User identifier associated with the transaction. */
-    private String uuid;
+    private Long uuid;
     /**
      * Identifier of the main wallet.
      */
-    private String mainWalletId; // main walletId
+    private Long mainWalletId; // main walletId
 
     /**
      * amount of balance in the main wallet.
@@ -59,7 +59,7 @@ public class MainWalletResponse {
      * Identifier of the source sub-wallet
      * from which funds are being transferred.
      */
-    private String sourceSubWalletId;
+    private Long sourceSubWalletId;
     /**
      * Previous balance in the source wallet
      * before the transfer operation is executed.
@@ -79,7 +79,7 @@ public class MainWalletResponse {
      * Identifier of the target sub-wallet
      * to which funds are being transferred.
      */
-    private String targetSubWalletId;
+    private Long targetSubWalletId;
     /**
      * Previous balance in the target wallet
      * before the transfer operation is executed.
@@ -105,18 +105,14 @@ public class MainWalletResponse {
      * created in the source wallet
      * as part of the transfer operation.
      */
-    private String sourceTransactionId;
+    private Long sourceTransactionId;
     /**
      * Identifier of the transaction
      * created in the target wallet
      * as part of the transfer operation.
      */
-    private String targetTransactionId;
-    /**
-     * Identifier for the group of transactions
-     * related to a single transfer operation.
-     */
-    private String transactionGroupId;
+    private Long targetTransactionId;
+
     /**
      * Message providing additional
      * information about the operation.
