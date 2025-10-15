@@ -14,7 +14,7 @@ import lombok.Data;
 @Builder
 public class StripeSessionRequest {
     /** User ID associated with the Stripe session.*/
-    private Long userId;
+    private String userId;
     /** Amount for the transaction. */
     private Double amount;
     /** Name of the product or service. */

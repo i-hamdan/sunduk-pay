@@ -43,7 +43,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @CircuitBreaker(name = "stripeGateway", fallbackMethod = "paymentFallback")
     public MainWalletResponse createCheckoutSession(
-            final Long userId,
+            final String userId,
             final Double amount,
             final TransactionType transactionType,
             final WalletWrapper targetWallet,
@@ -76,7 +76,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @return MainWalletResponse indicating failure.
      */
     public MainWalletResponse paymentFallback(
-            final Long userId,
+            final String userId,
             final Double amount,
             final TransactionType transactionType,
             final WalletWrapper targetWallet,

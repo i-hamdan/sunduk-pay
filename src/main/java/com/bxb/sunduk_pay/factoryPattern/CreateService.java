@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factoryPattern;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +29,8 @@ public class CreateService implements WalletOperation {
     private final Validations validations;
     /** Repository for MainWallet persistence. */
     private final MainWalletRepository mainWalletRepository;
+    /** Repository for SubWallet persistence. */
+    private final SubWalletRepository subWalletRepository;
 
     /**
      * Returns the RequestType handled by this service.
@@ -61,7 +63,7 @@ try {
         log.debug("MainWallet fetched successfully for UUID: {}",
                 mainWalletRequest.getUuid());
 
-        validations.findSubWalletByName(mainWallet,
+        validations.findSubWalletByName(
                 mainWalletRequest.getSubWalletName());
         log.debug("SubWallet name validation passed for name: {}",
                 mainWalletRequest.getSubWalletName());
@@ -82,10 +84,12 @@ try {
                 .isDeleted(false)
                 .icon(mainWalletRequest.getIcon())
                 .createdAt(LocalDateTime.now())
+                .mainWallet(mainWallet)
                 .build();
         log.info("New SubWallet built with name={} and targetBalance={}",
                 subWallet.getSubWalletName(), subWallet.getTargetBalance());
 
+        subWalletRepository.save(subWallet);
 
         mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);

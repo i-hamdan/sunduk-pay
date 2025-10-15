@@ -106,9 +106,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Updated source wallet balance: {}",
                     newSourceWalletBalance);
 
-            String groupId = UUID.randomUUID().toString();
-            log.debug("Generated transaction groupId={}",
-                    groupId);
 
             log.info("Creating debit transaction for sourceWallet={}",
                     sourceWallet.getId());
@@ -116,6 +113,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Transaction debitTransaction = Transaction.builder()
                     .user(user)
                     .status("SUCCESS")
+                    .isMaster(false)
                     .amount(amount)
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
@@ -168,6 +166,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .user(user)
                     .amount(amount)
                     .status("SUCCESS")
+                    .isMaster(false)
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.INTERNAL)
                     .description("Received from " + sourceWallet.getName())

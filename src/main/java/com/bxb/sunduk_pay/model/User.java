@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
+
 /**
  * Represents a user in the system.
  */
@@ -20,8 +22,8 @@ public class User {
      * Unique identifier for the user.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long uuid;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String  uuid;
 /**
 * Full name of the user.
  */

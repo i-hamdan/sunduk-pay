@@ -17,7 +17,7 @@ public interface WalletService {
      * @param walletId the ID of the wallet
      * @return the balance as a String
      */
-    String showBalance(Long walletId);
+    String showBalance(String walletId);
 
 //    /**
 //     * Downloads the transaction history of the specified wallet and

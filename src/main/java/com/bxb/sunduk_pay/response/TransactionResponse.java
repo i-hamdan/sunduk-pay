@@ -17,9 +17,9 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionResponse {
  /** Unique identifier for the transaction. */
-    private Long transactionId;
+    private String transactionId;
     /** User identifier associated with the transaction. */
-    private Long uuid;
+    private String uuid;
     /** Type of the transaction (e.g., CREDIT, DEBIT). */
     private TransactionType transactionType;
   /** Level of the transaction (e.g., INTERNAL,EXTERNAL). */
@@ -44,13 +44,13 @@ public class TransactionResponse {
     private String fromWallet;
     /** Identifier of the source wallet
      *  associated with the transaction. */
-    private Long fromWalletId;
+    private String fromWalletId;
     /** Name of the destination wallet
      * associated with the transaction. */
     private String toWallet;
    /** Identifier of the destination wallet
     *  associated with the transaction. */
-    private Long toWalletId;
+    private String toWalletId;
    /** Icon of the destination wallet. */
     private String toWalletIcon;
     /** Icon of the source wallet. */

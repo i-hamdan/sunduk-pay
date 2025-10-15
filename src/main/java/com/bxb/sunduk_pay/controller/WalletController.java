@@ -54,7 +54,7 @@ public class WalletController {
      */
     @GetMapping("/wallet-showBalance/{walletId}")
     public ResponseEntity<String> showBalance(
-            @PathVariable final Long walletId) {
+            @PathVariable final String walletId) {
         return new ResponseEntity<>(
                 walletService.showBalance(walletId),
                 HttpStatus.OK);

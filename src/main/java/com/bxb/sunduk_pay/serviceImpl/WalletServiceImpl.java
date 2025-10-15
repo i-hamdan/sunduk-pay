@@ -20,20 +20,12 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 //import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +85,9 @@ public class WalletServiceImpl implements WalletService {
         MainWallet mainWallet = validations
                 .getMainWalletInfo(request.getUuid());
         SubWallet sourcesubWallet = validations
-                .findSubWalletIfExists(mainWallet,
-                request.getSourceWalletId());
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getSourceWalletId());
 
         log.info("MasterWallet balance before: {}",
                 masterWallet.getBalance());
@@ -131,7 +124,7 @@ public class WalletServiceImpl implements WalletService {
                 .fromWallet("Master Wallet")
                 .fromWalletId(masterWallet.getMasterWalletId())
                 .toWallet("Some external source")
-                .toWalletId(request.getTargetWalletId())
+                .toWalletId(UUID.randomUUID().toString())
                 .isMaster(true)
                 .build();
 
@@ -153,6 +146,7 @@ public class WalletServiceImpl implements WalletService {
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
+                    .isMaster(false)
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
@@ -160,7 +154,7 @@ public class WalletServiceImpl implements WalletService {
                     .fromWallet(sourcesubWallet.getSubWalletName())
                     .fromWalletId(sourcesubWallet.getSubWalletId())
                     .toWallet("some external source")
-                    .toWalletId(Long.parseLong(UUID.randomUUID().toString())).build();
+                    .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
 ////            TransactionEvent transactionEvent = transactionMapper
 ////                    .toTransactionEvent(debitTxn);
@@ -181,6 +175,7 @@ public class WalletServiceImpl implements WalletService {
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
+                    .isMaster(false)
                     .status("SUCCESS")
                     .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
@@ -188,7 +183,7 @@ public class WalletServiceImpl implements WalletService {
                     .fromWallet("Main Wallet")
                     .fromWalletId(mainWallet.getMainWalletId())
                     .toWallet("some external target")
-                    .toWalletId(Long.parseLong(UUID.randomUUID().toString())).build();
+                    .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
 
 //            TransactionEvent transactionEvent = transactionMapper
@@ -240,7 +235,8 @@ public class WalletServiceImpl implements WalletService {
         MainWallet mainWallet = validations
                 .getMainWalletInfo(mainWalletRequest.getUuid());
         SubWallet subWallet = validations
-                .findSubWalletIfExists(mainWallet,
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
                         mainWalletRequest.getTargetWalletId());
 
         log.info("MasterWallet balance before: {}",
@@ -276,7 +272,7 @@ public class WalletServiceImpl implements WalletService {
                 .description("Credited to master wallet.")
                 .dateTime(LocalDateTime.now())
                 .fromWallet("Some external source.")
-                .fromWalletId(mainWalletRequest.getSourceWalletId())
+                .fromWalletId(UUID.randomUUID().toString())
                 .toWallet("Master wallet")
                 .toWalletId(masterWallet.getMasterWalletId())
                 .isMaster(true)
@@ -301,12 +297,13 @@ public class WalletServiceImpl implements WalletService {
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
+                    .isMaster(false)
                     .status("SUCCESS")
                     .description("Credited to sub wallet : "
                             + subWallet.getSubWalletName())
                     .dateTime(LocalDateTime.now())
                     .fromWallet("Some external source.")
-                    .fromWalletId(Long.parseLong(UUID.randomUUID().toString()))
+                    .fromWalletId(UUID.randomUUID().toString())
                     .toWallet(subWallet.getSubWalletName())
                     .toWalletId(subWallet.getSubWalletId()).build();
 
@@ -330,11 +327,12 @@ public class WalletServiceImpl implements WalletService {
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
+                    .isMaster(false)
                     .status("SUCCESS")
                     .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
                     .fromWallet("Some external source.")
-                    .fromWalletId(Long.parseLong(UUID.randomUUID().toString()))
+                    .fromWalletId(UUID.randomUUID().toString())
                     .toWallet("Main wallet")
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
@@ -396,11 +394,13 @@ public class WalletServiceImpl implements WalletService {
         MainWallet mainWallet = validations
                 .getMainWalletInfo(request.getUuid());
         SubWallet sourceSubWallet = validations
-                .findSubWalletIfExists(mainWallet,
-                request.getSourceWalletId());
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getSourceWalletId());
         SubWallet targetSubwallet = validations
-                .findSubWalletIfExists(mainWallet,
-                request.getTargetWalletId());
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getTargetWalletId());
 
         String fromWallet = null;
         if (mainWallet.getMainWalletId().
@@ -433,6 +433,7 @@ public class WalletServiceImpl implements WalletService {
                 .transactionType(request.getTransactionType())
                 .description("Transaction failed")
                 .dateTime(LocalDateTime.now())
+                .isMaster(false)
                 .status("FAILED")
                 .fromWallet(fromWallet)
                 .fromWalletId(request.getSourceWalletId())
@@ -466,10 +467,11 @@ public class WalletServiceImpl implements WalletService {
                 .transactionType(request.getTransactionType())
                 .paymentMethod(request.getPaymentMethod())
                 .dateTime(LocalDateTime.now())
+                .isMaster(false)
                 .toWallet("Dummy Wallet")
-                .toWalletId(123L)
+                .toWalletId(UUID.randomUUID().toString())
                 .fromWallet("Dummy Wallet")
-                .fromWalletId(321L)
+                .fromWalletId(UUID.randomUUID().toString())
                 .build();
         transactionRepository.save(txn);
     }
@@ -485,7 +487,7 @@ public class WalletServiceImpl implements WalletService {
      * the wallet with given ID does not exist.
      */
     //This will simply return the current balance of a wallet.
-    public String showBalance(final Long walletId) {
+    public String showBalance(final String walletId) {
         log.info("Fetching balance for walletId: {}",
                 walletId);
 

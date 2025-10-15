@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,8 +22,8 @@ public class UserActivityLog {
      * Unique identifier for the log entry.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long logId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String logId;
 
     /** UUID of the user associated with the activity.
      */
@@ -51,4 +48,9 @@ public class UserActivityLog {
     /** Timestamp of when the activity occurred.
      */
     private LocalDateTime localDateTime;
+
+    @ManyToOne
+    @JoinColumn(name="user_uuid")
+    private User user;
+
 }

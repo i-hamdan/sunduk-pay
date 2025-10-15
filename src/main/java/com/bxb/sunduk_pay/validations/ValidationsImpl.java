@@ -6,10 +6,7 @@ import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
-import com.bxb.sunduk_pay.repository.MasterWalletRepository;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
-import com.bxb.sunduk_pay.repository.UserRepository;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -45,13 +42,15 @@ public class ValidationsImpl implements Validations {
     private final TransactionRepository transactionRepository;
     /** Repository for accessing master wallet data. */
     private final MasterWalletRepository masterWalletRepository;
+    /** Repository for accessing sub-wallet data. */
+    private final SubWalletRepository subWalletRepository;
     /** Maximum allowed number of sub-wallets. */
 private static final int WALLET_SIZE = 19;
 
 
     /** {@inheritDoc} */
     public User getUserInfo(
-            final Long uuid) {
+            final String uuid) {
         log.info("Fetching user with UUID: {}", uuid);
         return userRepository.findById(uuid)
                 .orElseThrow(() -> {
@@ -66,7 +65,7 @@ private static final int WALLET_SIZE = 19;
 
     @Override
     public MainWallet getMainWalletByWalletId(
-            final Long walletId) {
+            final String walletId) {
       return mainWalletRepository.
               findById(walletId)
               .orElseThrow(() -> new ResourceNotFoundException(
@@ -77,7 +76,7 @@ private static final int WALLET_SIZE = 19;
     /** {@inheritDoc} */
 
     public MainWallet getMainWalletInfo(
-            final Long uuid) {
+            final String uuid) {
         log.info("Fetching mainWallet with UUID : {}",
                 uuid);
         return mainWalletRepository.findByUserUuid(uuid)
@@ -109,10 +108,9 @@ private static final int WALLET_SIZE = 19;
     /** {@inheritDoc} */
 
     @Override
-    public Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-       final Long uuid,
-       final Long walletId,
-       final Long transactionGroupId,
+    public Page<Transaction> getTransactions(
+       final String uuid,
+       final String walletId,
        final PaymentMethod method,
        final TransactionType transactionType,
        final  Pageable pageable) {
@@ -223,47 +221,24 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     /** {@inheritDoc} */
     @Override
     public SubWallet findSubWalletIfExists(
-            final MainWallet wallet,
-           final Long subWalletId) {
-        if (wallet == null || subWalletId == null) {
+            final String mainWalletId,
+            final String subWalletId) {
+        if (subWalletId == null) {
             log.error(
- "Validation failed: wallet or  subWalletId is null."
-         + " Wallet = "
-         + wallet.getMainWalletId()
-         + " SubWalletId = "
-         + subWalletId);
+ "Validation failed:subWalletId is null."
+            );
             throw new NullValueException(
-                    "wallet or subWalletId must not be null.");
+                    "subWalletId must not be null.");
         }
         log.info(
-  "Searching for SubWallet with ID: {} in MainWallet: {}",
-  subWalletId, wallet.getMainWalletId());
-        return wallet.getSubWallets().stream()
-                .filter(sw -> sw.getSubWalletId().equals(subWalletId))
-                .findFirst()
+  "Searching for SubWallet with ID: {} ", subWalletId);
+        return subWalletRepository
+        .findBySubWalletIdAndMainWallet_MainWalletIdAndIsDeletedFalse(
+               subWalletId, mainWalletId)
                 .orElseGet(() -> {
                     log.warn(
-  "SubWallet not found. SubWalletId={} under MainWallet={}",
-  subWalletId, wallet.getMainWalletId());
-                    return null;
-                });
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public SubWallet getSubWalletIfExists(final MainWallet wallet,
-                                          final Long subWalletId) {
-        log.info(
-                "Searching for SubWallet with ID: {} in MainWallet: {}",
-                subWalletId, wallet
-                        .getMainWalletId());
-        return wallet.getSubWallets().stream()
-                .filter(sw -> sw.getSubWalletId().equals(subWalletId))
-                .findFirst()
-                .orElseGet(() -> {
-                    log.warn("SubWallet not found."
-                       + " SubWalletId={} under MainWallet={}",
-                            subWalletId, wallet.getMainWalletId());
+  "SubWallet not found. SubWalletId={} ",
+  subWalletId);
                     return null;
                 });
     }
@@ -272,7 +247,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     @Cacheable("fromIcons")
     public String getFromIconOfTxn(
-            final Long mainWalletId, final Long fromWalletId) {
+            final String mainWalletId, final String fromWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
         SubWallet subWallet = mainWallet.getSubWallets()
                 .stream().filter(pot -> pot.getSubWalletId()
@@ -290,7 +265,7 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     @Override
     @Cacheable("ToIcons")
     public String getToIconOfTxn(
-            final Long mainWalletId, final Long toWalletId) {
+            final String mainWalletId, final String toWalletId) {
         MainWallet mainWallet = getMainWalletByWalletId(mainWalletId);
         SubWallet subWallet = mainWallet
                 .getSubWallets().stream()
@@ -309,14 +284,14 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     /** {@inheritDoc} */
     @Override
     public Boolean removeSubwallet(
-            final MainWallet wallet, final Long subWalletId) {
+            final MainWallet wallet, final String subWalletId) {
         return wallet.getSubWallets().removeIf(subwallet ->
                 subwallet.getSubWalletId().equals(subWalletId));
     }
 
     /** {@inheritDoc} */
     @Override
-    public MasterWallet getMasterWalletInfo(final Long uuid) {
+    public MasterWallet getMasterWalletInfo(final String uuid) {
         log.info("Fetching MasterWallet for User UUID: {}", uuid);
         return masterWalletRepository.findByUserUuid(uuid).orElseThrow(() -> {
             log.error("User not found with ID: {}", uuid);
@@ -327,16 +302,12 @@ uuid, walletId, TransactionType.CREDIT, method, pageable);
     /**method to find subwallet by name.
      * {@inheritDoc} */
     @Override
-    public void findSubWalletByName(
-            final MainWallet mainWallet,
+    public void     findSubWalletByName(
             final String subWalletName) {
-        Optional<SubWallet> subWallet = mainWallet
-                .getSubWallets().stream()
-                .filter(sw -> sw.getSubWalletName()
-                        .equalsIgnoreCase(subWalletName))
-                .findFirst();
-        if (subWallet.isPresent()&&!subWallet
-                .get().getIsDeleted()) {
+        Optional<SubWallet> subWallet = subWalletRepository
+                .findBySubWalletNameIgnoreCaseAndIsDeletedFalse(
+                        subWalletName);
+        if (subWallet.isPresent()) {
             throw new SubWalletAlreadyExistsException(
                     "SubWallet with name "
                             + subWalletName

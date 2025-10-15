@@ -72,10 +72,9 @@ public class FetchTransactionsService implements WalletOperation {
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
             Page<Transaction> transactions = validations
-                    .validateTransactionsByUuidAndSubWalletId(
+                    .getTransactions(
                             mainWalletRequest.getUuid(),
                             mainWalletRequest.getWalletId(),
-                            mainWalletRequest.getTransactionGroupId(),
                             mainWalletRequest.getPaymentMethod(),
                             mainWalletRequest.getTransactionType(),
                             pageable);

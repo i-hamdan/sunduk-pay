@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Implementation of FailedTxnRecorder service.
@@ -42,11 +41,13 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
         MainWallet mainWallet = validations
                 .getMainWalletInfo(request.getUuid());
         SubWallet sourceSubWallet = validations
-                .getSubWalletIfExists(mainWallet,
-                request.getSourceWalletId());
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getSourceWalletId());
         SubWallet targetSubwallet = validations
-                .getSubWalletIfExists(mainWallet,
-                request.getTargetWalletId());
+                .findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getTargetWalletId());
 
         String fromWallet = null;
         if (mainWallet.getMainWalletId().equals(request.getSourceWalletId())) {

@@ -12,6 +12,7 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
+import jakarta.validation.constraints.Negative;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,9 @@ public class TransferService implements WalletOperation {
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
         try {
+            if (mainWalletRequest.getAmount()==0||mainWalletRequest.getAmount()<0) {
+                throw new InvalidPayloadException("amount cannot be zero or negative");
+            }
             log.info("Performing transfer request for UUID: {}, Request: {}",
                     mainWalletRequest.getUuid(), mainWalletRequest);
 
@@ -205,7 +209,7 @@ public class TransferService implements WalletOperation {
      */
     private WalletWrapper getWallet(
             final MainWallet mainWallet,
-            final Long walletId) {
+            final String walletId) {
 
         if (walletId == null) {
             log.warn("walletId is null, returning null");
@@ -221,7 +225,8 @@ public class TransferService implements WalletOperation {
                         + "Validating sub wallet.",
                 walletId);
 
-        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,
+        SubWallet subWallet = validations.findSubWalletIfExists(
+                mainWallet.getMainWalletId(),
                 walletId);
         log.debug("Returning sub wallet wrapper for wallet ID {}",
                 walletId);

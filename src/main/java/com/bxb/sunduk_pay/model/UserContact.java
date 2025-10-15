@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
+import com.ctc.wstx.evt.WstxEventReader;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +18,8 @@ public class UserContact {
      * Unique identifier for the contact.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long contactId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String contactId;
     /**
      * The name of the user.
      */

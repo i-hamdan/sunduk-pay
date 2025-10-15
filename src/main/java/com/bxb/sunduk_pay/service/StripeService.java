@@ -23,7 +23,7 @@ public interface StripeService {
      * @throws Exception If an error occurs during session creation.
      * @return The created Stripe Session object.
      */
-    Session createCheckoutSession(Long userId, Double amount,
+    Session createCheckoutSession(String userId, Double amount,
                                   TransactionType transactionType,
                                   WalletWrapper targetWallet,
                                   WalletWrapper sourceWallet) throws Exception;

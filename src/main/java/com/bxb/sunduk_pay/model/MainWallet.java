@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Represents the main wallet associated with a user.
@@ -29,8 +30,8 @@ public class MainWallet {
      * Unique identifier for the main wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mainWalletId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String mainWalletId;
     /**
      * Current balance of the main wallet.
      */

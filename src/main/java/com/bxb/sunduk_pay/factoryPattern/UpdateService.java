@@ -87,7 +87,8 @@ public class UpdateService implements WalletOperation {
         log.debug("Retrieved MainWallet with ID: {}",
                 mainWallet.getMainWalletId());
 
-        SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,
+        SubWallet subWallet = validations.findSubWalletIfExists(
+                mainWallet.getMainWalletId(),
                 mainWalletRequest.getSubWalletId());
 
         String oldName = (subWallet != null)

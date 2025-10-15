@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 /**
  * Represents a master wallet associated with a user.
  */
@@ -22,8 +24,8 @@ public class MasterWallet {
      * Unique identifier for the master wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long masterWalletId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String masterWalletId;
 /**
 * Current balance of the master wallet.
      */

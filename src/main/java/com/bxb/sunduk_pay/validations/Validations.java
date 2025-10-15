@@ -28,7 +28,7 @@ public interface Validations {
      * @param uuid user UUID
      * @return {@link User}
      */
-    User getUserInfo(Long uuid);
+    User getUserInfo(String uuid);
 
     /**
      * Retrieves a main wallet by its ID.
@@ -37,14 +37,14 @@ public interface Validations {
      * @return {@link MainWallet}
      */
 
-    MainWallet getMainWalletByWalletId(Long walletId);
+    MainWallet getMainWalletByWalletId(String walletId);
     /**
      * Retrieves the main wallet associated with a user.
      *
      * @param uuid user UUID
      * @return {@link MainWallet}
      */
-    MainWallet getMainWalletInfo(Long uuid);
+    MainWallet getMainWalletInfo(String uuid);
 
     /**
      * Validates the allowed number of sub-wallets.
@@ -56,18 +56,16 @@ public interface Validations {
     /**
      * Validates and retrieves transactions based on various filters.
      *
-     * @param uuid user UUID
-     * @param walletId  main wallet ID
-     * @param transactionGroupId transaction group ID (optional)
-     * @param paymentMethod  payment method filter (optional)
+     * @param uuid            user UUID
+     * @param walletId        main wallet ID
+     * @param paymentMethod   payment method filter (optional)
      * @param transactionType transaction type filter (optional)
-     * @param pageable   pagination information
+     * @param pageable        pagination information
      * @return paginated list of {@link Transaction}
      */
-    Page<Transaction> validateTransactionsByUuidAndSubWalletId(
-            Long uuid,
-            Long walletId,
-            Long transactionGroupId,
+    Page<Transaction> getTransactions(
+            String uuid,
+            String walletId,
             PaymentMethod paymentMethod,
             TransactionType transactionType,
             Pageable pageable);
@@ -75,19 +73,11 @@ public interface Validations {
     /**
      * Finds a sub-wallet by its ID within a main wallet.
      *
-     * @param wallet      main wallet
-     * @param subWalletId sub-wallet ID
+     * @param mainWalletId
+     * @param subWalletId  sub-wallet ID
      * @return {@link SubWallet} if found, otherwise null
      */
-    SubWallet findSubWalletIfExists(MainWallet wallet, Long subWalletId);
-    /**
-     * Finds a sub-wallet if it exists in a main wallet.
-     *
-     * @param wallet main wallet
-     * @param subWalletId sub-wallet ID
-     * @return {@link SubWallet} or null
-     */
-    SubWallet getSubWalletIfExists(MainWallet wallet, Long subWalletId);
+    SubWallet findSubWalletIfExists(String mainWalletId,String subWalletId);
 
     /**
      * Retrieves the icon for the source wallet in a transaction.
@@ -96,7 +86,7 @@ public interface Validations {
      * @param fromWalletId source wallet ID
      * @return icon string
      */
-    String getFromIconOfTxn(Long mainWalletId, Long fromWalletId);
+    String getFromIconOfTxn(String mainWalletId, String fromWalletId);
 
     /**
      * Retrieves the icon for the destination wallet in a transaction.
@@ -105,7 +95,7 @@ public interface Validations {
      * @param toWalletId   destination wallet ID
      * @return icon string
      */
-    String getToIconOfTxn(Long mainWalletId, Long toWalletId);
+    String getToIconOfTxn(String mainWalletId, String toWalletId);
     /**
      * Removes a sub-wallet from a main wallet.
      *
@@ -113,7 +103,7 @@ public interface Validations {
      * @param subWalletId sub-wallet ID
      * @return true if removed successfully
      */
-    Boolean removeSubwallet(MainWallet wallet, Long subWalletId);
+    Boolean removeSubwallet(MainWallet wallet, String subWalletId);
     /**
      * Retrieves the master wallet associated with a user.
      *
@@ -121,17 +111,17 @@ public interface Validations {
      * @return {@link MasterWallet}
      */
 
-    MasterWallet getMasterWalletInfo(Long uuid);
+    MasterWallet getMasterWalletInfo(String uuid);
 
     /**
      * Finds a sub-wallet by its name within a main wallet.
-     * @param mainWallet   main wallet
+     *
      * @param subWalletName sub-wallet name
-     * if found,
-     * otherwise empty
+     *                      if found,
+     *                      otherwise empty
      */
-    void findSubWalletByName(MainWallet mainWallet,
-                                            String subWalletName);
+    void findSubWalletByName(
+            String subWalletName);
 
     /**
      * Validates that the target balance is

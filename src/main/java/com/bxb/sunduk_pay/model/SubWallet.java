@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 /**
  * Represents a sub-wallet associated with a main wallet.
  */
@@ -20,8 +22,8 @@ public class SubWallet {
      * Unique identifier for the sub-wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long subWalletId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String subWalletId;
     /**
      * Name of the sub-wallet.
      */

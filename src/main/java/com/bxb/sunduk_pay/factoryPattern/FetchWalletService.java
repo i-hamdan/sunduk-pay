@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factoryPattern;
 import com.bxb.sunduk_pay.Mappers.WalletMapper;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
@@ -24,6 +25,8 @@ public class FetchWalletService implements WalletOperation {
     private final Validations validations;
     /** Mapper to convert wallet entities to response DTOs.**/
     private final WalletMapper walletMapper;
+    /** Repository to access SubWallet data.**/
+    private final SubWalletRepository subWalletRepository;
 
     /**
      * Returns the request type handled by this service.
@@ -48,10 +51,9 @@ public class FetchWalletService implements WalletOperation {
             final MainWalletRequest mainWalletRequest) {
         MainWallet mainWallet = validations.
                 getMainWalletInfo(mainWalletRequest.getUuid());
-        List<SubWallet> subWallets = mainWallet.getSubWallets()
-                .stream()
-                .filter(
-                sw -> !sw.getIsDeleted()).toList();
+        List<SubWallet> subWallets = subWalletRepository
+                .findAllByMainWallet_MainWalletIdAndIsDeletedFalse(
+                mainWallet.getMainWalletId());
         return walletMapper.toWalletResponse(mainWallet, subWallets);
     }
 }

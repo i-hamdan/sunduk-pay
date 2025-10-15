@@ -17,7 +17,7 @@ import java.util.List;
  * Transaction entities in MongoDB.
  */
 public interface TransactionRepository
-        extends JpaRepository<Transaction, Long> {
+        extends JpaRepository<Transaction, String> {
 
     /*** Finds transactions by user UUID.
      * And isMaster flag set to false.
@@ -26,7 +26,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction> findByUserUuidAndIsMasterFalse(
-            Long uuid,
+            String uuid,
             Pageable pageable);
 
     /**find transactions by user UUID,fromId and transaction type.
@@ -39,8 +39,8 @@ public interface TransactionRepository
      */
     Page<Transaction>
     findByUserUuidAndFromWalletIdAndTransactionType(
-            Long uuid,
-            Long fromWalletId,
+            String uuid,
+            String fromWalletId,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -57,8 +57,8 @@ public interface TransactionRepository
      */
     Page<Transaction>
     findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-            Long uuid,
-            Long fromWalletId,
+            String uuid,
+            String fromWalletId,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
@@ -72,8 +72,8 @@ public interface TransactionRepository
      */
     Page<Transaction>
     findByUserUuidAndToWalletIdAndTransactionType(
-            Long uuid,
-            Long toWalletId,
+            String uuid,
+            String toWalletId,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -88,8 +88,8 @@ public interface TransactionRepository
      */
     Page<Transaction>
     findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-            Long uuid,
-            Long toWalletId,
+            String uuid,
+            String toWalletId,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
@@ -111,8 +111,8 @@ public interface TransactionRepository
       )
 """)
     Page<Transaction> findAllByUserUuidAndWalletId(
-            @Param("uuid") Long uuid,
-            @Param("walletId") Long walletId,
+            @Param("uuid") String uuid,
+            @Param("walletId") String walletId,
             Pageable pageable);
 
     /**Method for fetching transactions.
@@ -135,8 +135,8 @@ public interface TransactionRepository
       )
 """)
     Page<Transaction> findByUuidAndWalletIdAndPaymentMethod(
-            @Param("uuid") Long uuid,
-            @Param("walletId") Long walletId,
+            @Param("uuid") String uuid,
+            @Param("walletId") String walletId,
             @Param("paymentMethod") PaymentMethod paymentMethod,
             Pageable pageable);
 
@@ -156,8 +156,8 @@ public interface TransactionRepository
       )
 """)
     List<Transaction> findAllByUserUuidAndWalletId(
-            @Param("uuid") Long uuid,
-            @Param("walletId") Long walletId);
+            @Param("uuid") String uuid,
+            @Param("walletId") String walletId);
 
     /**Method for fetching transactions.
      * find transactions by user UUID,
@@ -169,7 +169,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction> findByUserUuidAndTransactionTypeAndIsMasterFalse(
-            Long uuid,
+            String uuid,
             TransactionType transactionType,
             Pageable pageable);
 
@@ -185,7 +185,7 @@ public interface TransactionRepository
      */
     Page<Transaction>
     findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
-            Long uuid,
+            String uuid,
             TransactionType transactionType,
             PaymentMethod paymentMethod,
             Pageable pageable);
@@ -200,7 +200,7 @@ public interface TransactionRepository
      * @return list of transactions
      */
     Page<Transaction> findByUserUuidAndPaymentMethodAndIsMasterFalse(
-            Long uuid,
+            String uuid,
             PaymentMethod paymentMethod,
             Pageable pageable);
 }

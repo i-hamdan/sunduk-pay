@@ -64,8 +64,17 @@ public class DeleteService implements WalletOperation {
             log.debug("Fetched MainWallet. mainWalletId={}, userUuid={}",
                     mainWallet.getMainWalletId(), user.getUuid());
 
-            SubWallet subWallet = validations.findSubWalletIfExists(mainWallet,
+            SubWallet subWallet = validations.findSubWalletIfExists(
+                    mainWallet.getMainWalletId(),
                     mainWalletRequest.getSubWalletId());
+            if (subWallet == null) {
+                log.error("SubWallet with ID {} not found.",
+                        mainWalletRequest.getSubWalletId());
+                throw new CannotDeleteWalletException(
+                        "SubWallet with ID "
+                                + mainWalletRequest.getSubWalletId()
+                                + " does not exist.");
+            }
             log.debug(
                     "Found SubWallet. subWalletId={}, subWalletName={}, balance={}",
                     subWallet.getSubWalletId(), subWallet.getSubWalletName(),
@@ -82,9 +91,9 @@ public class DeleteService implements WalletOperation {
                         "SubWallet [{}] successfully deleted (soft delete).",
                         subWallet.getSubWalletName());
 
-                return MainWalletResponse.builder().message("SubWallet named ["
+                return MainWalletResponse.builder().message("SubWallet named "
                                 + subWallet.getSubWalletName()
-                                + "] was deleted successfully as its balance was 0.")
+                                + " has deleted successfully.")
                         .build();
             } else {
                 log.error(
@@ -92,8 +101,8 @@ public class DeleteService implements WalletOperation {
                         subWallet.getSubWalletName(),
                         subWallet.getBalance());
                 throw new CannotDeleteWalletException(
-                        "Cannot delete SubWallet [" + subWallet.getSubWalletName()
-                                + "] because it still contains a balance of "
+                        "Cannot delete SubWallet " + subWallet.getSubWalletName()
+                                + " because it contains a balance of "
                                 + subWallet.getBalance()
                                 + ". Please transfer or withdraw the funds first."
                 );

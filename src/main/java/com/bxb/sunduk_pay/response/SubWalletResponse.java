@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class SubWalletResponse {
     /** The unique identifier of the sub-wallet. */
-    private Long subWalletId;
+    private String subWalletId;
     /** The name of the sub-wallet. */
     private String subWalletName;
     /** The current balance of the sub-wallet. */

@@ -34,7 +34,7 @@ public class WalletWrapper {
     /** Gets the ID of the underlying wallet.
      * @return the ID of the MainWallet or SubWallet
      */
-    public Long getId() {
+    public String getId() {
         return mainWallet != null
                 ? mainWallet.getMainWalletId()
                 : subWallet.getSubWalletId();

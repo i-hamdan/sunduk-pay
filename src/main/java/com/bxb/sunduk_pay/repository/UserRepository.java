@@ -8,7 +8,7 @@ import java.util.Optional;
  * Extends MongoRepository to provide CRUD
  * operations on User documents in MongoDB.
  */
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
     /**
      * Finds a user by email who is not marked as deleted.
      *

@@ -24,8 +24,8 @@ public class Transaction {
      * Unique identifier for the transaction.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long transactionId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String transactionId;
     /**
      * User associated with the transaction.
      */
@@ -74,6 +74,7 @@ public class Transaction {
      * Indicates if the transaction is
      * associated with a master wallet.
      */
+    @Column(nullable = false)
     private Boolean isMaster;
     /**
      * Name of the sender in the transaction.
@@ -82,7 +83,7 @@ public class Transaction {
     /**
      * ID of the sender's wallet in the transaction.
      */
-    private Long fromWalletId;
+    private String fromWalletId;
     /**
      * Phone number of the sender in the transaction.
      */
@@ -94,7 +95,7 @@ public class Transaction {
     /**
      * ID of the receiver's wallet in the transaction.
      */
-    private Long toWalletId;
+    private String toWalletId;
     /**
      * Phone number of the recipient in the transaction.
      */

@@ -52,7 +52,7 @@ public class StripeServiceImpl implements StripeService {
      */
     @Override
     public Session createCheckoutSession(
-            final Long userId,
+            final String userId,
             final Double amount,
             final TransactionType transactionType,
             final WalletWrapper targetWallet,

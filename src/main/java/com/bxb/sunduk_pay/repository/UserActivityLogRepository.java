@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Repository interface for managing UserActivityLog document in MongoDB.
  */
 public interface UserActivityLogRepository
-        extends JpaRepository<UserActivityLog, Long> {
+        extends JpaRepository<UserActivityLog, String> {
 }
