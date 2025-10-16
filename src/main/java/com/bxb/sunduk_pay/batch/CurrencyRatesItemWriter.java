@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
-import com.bxb.sunduk_pay.repository.CurrencyRateRepository;
+//import com.bxb.sunduk_pay.repository.CustomCurrencyRateRepositoryImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.item.Chunk;
@@ -22,7 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
     /** Repository for saving CurrencyRates to MongoDB. */
-    private final CurrencyRateRepository currencyRateRepository;
+//    private final CustomCurrencyRateRepositoryImpl customCurrencyRateRepositoryImpl;
 
     /**
      * Writes a chunk of CurrencyRates items by merging them into a
@@ -42,10 +42,10 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
                 chunk.size()
         );
         for (CurrencyRates rate : chunk.getItems()) {
-            allRates.putAll(rate.getRates());
+        //    allRates.putAll(rate.getRates());
         }
-        merged.setRates(allRates);
-        currencyRateRepository.save(merged); // ek hi document save hoga
+        //merged.setRates(allRates);
+       // currencyRateRepository.save(merged); // ek hi document save hoga
         log.info(
                 "Saved merged rates to MongoDB. Total pairs: {}",
                 allRates.size()

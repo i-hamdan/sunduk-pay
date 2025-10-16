@@ -1,9 +1,7 @@
-twilio:
-  account-sid: ACdf2676753d81814c50b7115c5617a9a4
-  auth-token: b94932d45ef4af3f720d5096a94f9f19
-  from-number: "+19136751850"
-
 spring:
+  config:
+    import: classpath:queries.yml
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -30,32 +28,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
   batch:
     jdbc:
       initialize-schema: never
     job:
       enabled: false
+
   jackson:
     time-zone: Asia/Kolkata
-
-
-
-  #  kafka:
-  #    bootstrap-servers: localhost:9092
-  #    producer:
-  #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  #    consumer:
-  #      group-id: email-group
-  #      auto-offset-reset: earliest
-  #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-  #      properties:
-  #        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-  #        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-  #        spring.json.trusted.packages: '*'
-
-
 
   security:
     oauth2:
@@ -69,14 +50,12 @@ spring:
               - profile
               - email
             redirect-uri: "{baseUrl}/login/oauth2/code/google"
-            #redirect-uri: "https://1ade22207b22.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
-
 
   data:
     mongodb:
@@ -96,6 +75,11 @@ server:
   tomcat:
     background-processor-delay: 60
 
+twilio:
+  account-sid: ACdf2676753d81814c50b7115c5617a9a4
+  auth-token: b94932d45ef4af3f720d5096a94f9f19
+  from-number: "+19136751850"
+
 sunduk:
   security:
     exclude-paths:
@@ -106,11 +90,10 @@ sunduk:
       - /api/sunduk-service/upload-contact
       - /api/sunduk-service/webhook
 
-
-
 exchange:
   api:
     url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca
+
 stripe:
   key:
     secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR

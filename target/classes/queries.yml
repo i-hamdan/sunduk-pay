@@ -1,0 +1,17 @@
+queries:
+  modules:
+    currency:
+      findSpecificRate: |
+        SELECT date, {column} AS rate
+        FROM currency_rates
+        WHERE date BETWEEN :start AND :end
+        ORDER BY date ASC
+
+  transaction:
+    findAllByUserUuidAndWalletId: >
+      SELECT t FROM Transaction t
+      WHERE t.user.uuid = :uuid
+        AND (
+          (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+          OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+        )
