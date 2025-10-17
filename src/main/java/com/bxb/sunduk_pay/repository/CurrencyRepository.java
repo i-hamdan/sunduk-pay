@@ -5,6 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 
-public interface CurrencyRepository extends JpaRepository<CurrencyRates, LocalDate>
+/**
+ * Repository interface for managing CurrencyRates entities in the database.
+ */
+public interface CurrencyRepository extends
+        JpaRepository<CurrencyRates, LocalDate>
         ,CustomCurrencyRepository {
 }

@@ -6,6 +6,3 @@ queries:
         FROM currency_rates
         WHERE date BETWEEN :start AND :end
         ORDER BY date ASC
-
-
-

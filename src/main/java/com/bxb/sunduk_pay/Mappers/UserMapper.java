@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.Mappers;
 //import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -36,14 +37,14 @@ public interface UserMapper {
      */
     UserResponse toUserResponse(User user);
 
-//   /**
-//   * Converts a User entity into a Kafka event object for
-//   * publishing user-related events.
-//     *
-//     * @param user      the User entity
-// * @param eventType the type of event (e.g., CREATED, UPDATED)
-//     * @return a UserKafkaEvent object.
-//     */
-   // UserKafkaEvent toKafkaEvent(User user, String eventType);
+   /**
+   * Converts a User entity into a Kafka event object for
+   * publishing user-related events.
+     *
+     * @param user      the User entity
+ * @param eventType the type of event (e.g., CREATED, UPDATED)
+     * @return a UserKafkaEvent object.
+     */
+    UserKafkaEvent toKafkaEvent(User user, String eventType);
 }
 

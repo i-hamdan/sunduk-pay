@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Implementation of FailedTxnRecorder service.
@@ -73,9 +74,8 @@ public class FailedTxnRecorderImpl implements FailedTxnRecorder {
             toWallet = "Some external target";
         }
 
-
-
         Transaction failedTransaction = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .amount(request.getAmount())
                 .transactionType(request.getTransactionType())

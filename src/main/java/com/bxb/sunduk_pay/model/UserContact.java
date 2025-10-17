@@ -18,7 +18,6 @@ public class UserContact {
      * Unique identifier for the contact.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String contactId;
     /**
      * The name of the user.

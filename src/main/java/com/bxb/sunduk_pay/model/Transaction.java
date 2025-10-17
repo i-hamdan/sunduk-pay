@@ -24,7 +24,6 @@ public class Transaction {
      * Unique identifier for the transaction.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String transactionId;
     /**
      * User associated with the transaction.

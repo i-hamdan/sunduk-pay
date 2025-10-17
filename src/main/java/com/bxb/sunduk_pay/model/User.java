@@ -22,7 +22,6 @@ public class User {
      * Unique identifier for the user.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String  uuid;
 /**
 * Full name of the user.

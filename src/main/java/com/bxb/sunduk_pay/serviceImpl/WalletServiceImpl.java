@@ -4,7 +4,7 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
 import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
-//import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -23,6 +23,7 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 //import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,8 +59,8 @@ public class WalletServiceImpl implements WalletService {
     private final TransactionRepository transactionRepository;
     /**TransactionMapper for mapping Transaction entities to DTOs.*/
     private final TransactionMapper transactionMapper;
-//    /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
-//    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+    /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
+    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
     /**Wallet operation implementations based on request type.*/
     private final WalletOperationFactory walletOperationFactory;
     /**Validations for performing various validation checks.*/
@@ -113,6 +114,7 @@ public class WalletServiceImpl implements WalletService {
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .amount(request.getAmount())
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
@@ -142,6 +144,7 @@ public class WalletServiceImpl implements WalletService {
                     sourcesubWallet.getBalance());
 
             debitTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -156,10 +159,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWallet("some external source")
                     .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
-////            TransactionEvent transactionEvent = transactionMapper
-////                    .toTransactionEvent(debitTxn);
-////            kafkaTemplate.send("transaction-topic",
-//                    transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(debitTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         } else {
             validations.validateBalance(mainWallet.getBalance(),
@@ -171,6 +174,7 @@ public class WalletServiceImpl implements WalletService {
                     mainWallet.getBalance());
 
             debitTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
@@ -186,9 +190,9 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(UUID.randomUUID().toString()).build();
             transactions.add(debitTxn);
 
-//            TransactionEvent transactionEvent = transactionMapper
-//                    .toTransactionEvent(debitTxn);
-//            kafkaTemplate.send("transaction-topic", transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(debitTxn);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
         }
 
         transactionRepository.saveAll(transactions);
@@ -263,6 +267,7 @@ public class WalletServiceImpl implements WalletService {
 
         List<Transaction> transactions = new ArrayList<>();
         Transaction masterWalletTxn = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .amount(mainWalletRequest.getAmount())
                 .user(user)
                 .transactionType(TransactionType.CREDIT)
@@ -292,6 +297,7 @@ public class WalletServiceImpl implements WalletService {
                     subWallet.getBalance());
 
             creditTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
@@ -308,10 +314,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(subWallet.getSubWalletId()).build();
 
             transactions.add(creditTxn);
-//            TransactionEvent transactionEvent = transactionMapper
-//                    .toTransactionEvent(creditTxn);
-//            kafkaTemplate.send("transaction-topic",
-//                    transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         } else {
             mainWallet.setBalance(mainWallet.getBalance()
@@ -322,6 +328,7 @@ public class WalletServiceImpl implements WalletService {
                     mainWallet.getBalance());
 
             creditTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
                     .transactionType(TransactionType.CREDIT)
@@ -337,10 +344,10 @@ public class WalletServiceImpl implements WalletService {
                     .toWalletId(mainWallet.getMainWalletId()).build();
 
             transactions.add(creditTxn);
-//            TransactionEvent transactionEvent = transactionMapper
-//                    .toTransactionEvent(creditTxn);
-//            kafkaTemplate.send("transaction-topic",
-          //          transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTxn);
+            kafkaTemplate.send("transaction-topic",
+                    transactionEvent);
 
         }
 
@@ -380,75 +387,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     /**
-     * Records a failed transaction in the database.
-     * @param request The request containing
-     *        transaction details such as source ,
-     *         target , amount , and type.
-     * @return a MainWalletResponse indicating transaction failure.
-     */
-    @Override
-        public MainWalletResponse recordFailedTxn(
-                final MainWalletRequest request) {
-
-        User user = validations.getUserInfo(request.getUuid());
-        MainWallet mainWallet = validations
-                .getMainWalletInfo(request.getUuid());
-        SubWallet sourceSubWallet = validations
-                .findSubWalletIfExists(
-                        mainWallet.getMainWalletId(),
-                        request.getSourceWalletId());
-        SubWallet targetSubwallet = validations
-                .findSubWalletIfExists(
-                        mainWallet.getMainWalletId(),
-                        request.getTargetWalletId());
-
-        String fromWallet = null;
-        if (mainWallet.getMainWalletId().
-                equals(request.getSourceWalletId())) {
-            fromWallet = "Main wallet";
-        } else if (sourceSubWallet != null
-                && sourceSubWallet.getSubWalletId()
-                .equals(request.getSourceWalletId())) {
-            fromWallet = sourceSubWallet.getSubWalletName();
-        } else {
-            fromWallet = "Some external source";
-        }
-
-        String toWallet = null;
-        if (mainWallet.getMainWalletId()
-                .equals(request.getTargetWalletId())) {
-            toWallet = "Main wallet";
-        } else if (targetSubwallet != null
-                && targetSubwallet.getSubWalletId()
-                .equals(request.getTargetWalletId())) {
-            toWallet = targetSubwallet.getSubWalletName();
-        } else {
-            toWallet = "Some external target";
-        }
-
-
-        Transaction failedTransaction = Transaction.builder()
-                .user(user)
-                .amount(request.getAmount())
-                .transactionType(request.getTransactionType())
-                .description("Transaction failed")
-                .dateTime(LocalDateTime.now())
-                .isMaster(false)
-                .status("FAILED")
-                .fromWallet(fromWallet)
-                .fromWalletId(request.getSourceWalletId())
-                .toWallet(toWallet)
-                .toWalletId(request.getTargetWalletId())
-                .build();
-
-        transactionRepository.save(failedTransaction);
-        return MainWalletResponse.builder()
-                    .message("Transaction failed!")
-                    .build();
-        }
-
-    /**
-     * Records a failed transaction in the database.
+     * Records a dummy transaction in the database.
      *
      * @param request The request containing
      *        transaction details such as source ,
@@ -461,6 +400,7 @@ public class WalletServiceImpl implements WalletService {
                 .getMainWalletInfo(user.getUuid());
 
         Transaction txn = Transaction.builder()
+                .transactionId(UUID.randomUUID().toString())
                 .user(user)
                 .amount(request.getAmount())
                 .transactionLevel(TransactionLevel.EXTERNAL)

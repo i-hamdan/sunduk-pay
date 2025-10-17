@@ -24,7 +24,6 @@ public class MasterWallet {
      * Unique identifier for the master wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String masterWalletId;
 /**
 * Current balance of the master wallet.

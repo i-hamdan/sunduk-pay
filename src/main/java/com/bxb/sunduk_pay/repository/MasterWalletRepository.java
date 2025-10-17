@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.MasterWallet;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import java.util.UUID;
  * Repository interface for MasterWallet entity.
  * Extends MongoRepository to provide CRUD operations.
  */
+@Repository
 public interface MasterWalletRepository
         extends JpaRepository<MasterWallet,String> {
    /**

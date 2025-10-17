@@ -59,16 +59,6 @@ public interface WalletService {
     MainWalletResponse walletCrud(MainWalletRequest mainWalletRequest);
 
     /**
-     * Records a failed transaction.
-     *
-     * @param requestObj the request object containing details of the
-     *                   failed transaction
-     * @return the response object containing the result of recording the
-     * failed transaction
-     */
-    MainWalletResponse recordFailedTxn(MainWalletRequest requestObj);
-
-    /**
      * Adds a dummy wallet for testing or demonstration purposes.
      *
      * @param request the request object containing details for the dummy wallet

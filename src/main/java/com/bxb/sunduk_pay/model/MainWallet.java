@@ -30,7 +30,6 @@ public class MainWallet {
      * Unique identifier for the main wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String mainWalletId;
     /**
      * Current balance of the main wallet.

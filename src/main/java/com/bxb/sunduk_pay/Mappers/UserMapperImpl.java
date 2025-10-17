@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.Mappers;
 
 
 //import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -74,22 +75,22 @@ UserLoginResponse userLoginResponse = new UserLoginResponse();
         }
         return responses;
     }
-///**
-//     * Converts a User entity to a
-//     UserKafkaEvent for event messaging.
-//    * @param user the User entity to convert
-//     * @param eventType the type
-// *    of event (e.g., "USER_CREATED", "USER_UPDATED")
-//     * @return the corresponding UserKafkaEvent
-//     */
-//    public UserKafkaEvent toKafkaEvent(
-//            final User user, final String eventType) {
-//        UserKafkaEvent kafkaEvent = new UserKafkaEvent();
-//        kafkaEvent.setEmail(user.getEmail());
-//        kafkaEvent.setUuid(user.getUuid());
-//        kafkaEvent.setFullName(user.getFullName());
-//        kafkaEvent.setEventType(eventType);
-//        return kafkaEvent;
-//    }
+/**
+     * Converts a User entity to a
+     UserKafkaEvent for event messaging.
+    * @param user the User entity to convert
+     * @param eventType the type
+ *    of event (e.g., "USER_CREATED", "USER_UPDATED")
+     * @return the corresponding UserKafkaEvent
+     */
+    public UserKafkaEvent toKafkaEvent(
+            final User user, final String eventType) {
+        UserKafkaEvent kafkaEvent = new UserKafkaEvent();
+        kafkaEvent.setEmail(user.getEmail());
+        kafkaEvent.setUuid(user.getUuid());
+        kafkaEvent.setFullName(user.getFullName());
+        kafkaEvent.setEventType(eventType);
+        return kafkaEvent;
+    }
 }
 

@@ -3,6 +3,8 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 //import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 //import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
@@ -17,6 +19,7 @@ import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 //import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,10 +59,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     private final MainWalletRepository mainWalletRepository;
     /** Mapper for converting transactions to events. */
     private final TransactionMapper transactionMapper;
-//   /** Kafka template for publishing transaction events. */
-//   private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-//   /** Kafka template for publishing goal completion events. */
-//  private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
+   /** Kafka template for publishing transaction events. */
+   private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+   /** Kafka template for publishing goal completion events. */
+  private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
 
 
     /**
@@ -111,6 +114,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     sourceWallet.getId());
 
             Transaction debitTransaction = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .status("SUCCESS")
                     .isMaster(false)
@@ -163,6 +167,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Creating credit transaction for targetWallet={}",
                     targetWallet.getId());
             Transaction creditTransaction = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(amount)
                     .status("SUCCESS")
@@ -192,9 +197,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info(
          "Publishing transaction event to Kafka topic "
                  + "'transaction-topic'");
-//            TransactionEvent transactionEvent = transactionMapper
-//                    .toTransactionEvent(creditTransaction);
-//            kafkaTemplate.send("transaction-topic", transactionEvent);
+            TransactionEvent transactionEvent = transactionMapper
+                    .toTransactionEvent(creditTransaction);
+            kafkaTemplate.send("transaction-topic", transactionEvent);
             log.info("Transaction event published to Kafka successfully");
 
 
@@ -232,18 +237,18 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 "Publishing goal milestone {}% completion for wallet {}",
                 milestone, wallet.getId());
 
-//        GoalCompletionEvent event = GoalCompletionEvent.builder()
-//                .userId(user.getUuid())
-//                .email(user.getEmail())
-//                .walletId(wallet.getId())
-//                .walletName(wallet.getName())
-//                .milestone(milestone)
-//                .currentBalance(wallet.getBalance())
-//                .goalAmount(wallet.getGoalAmount())
-//                .timestamp(LocalDateTime.now())
-//                .build();
-//
-//        kafkaGoalTemplate.send("goal-completion-topic", event);
+        GoalCompletionEvent event = GoalCompletionEvent.builder()
+                .userId(user.getUuid())
+                .email(user.getEmail())
+                .walletId(wallet.getId())
+                .walletName(wallet.getName())
+                .milestone(milestone)
+                .currentBalance(wallet.getBalance())
+                .goalAmount(wallet.getGoalAmount())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        kafkaGoalTemplate.send("goal-completion-topic", event);
     }
 
 }

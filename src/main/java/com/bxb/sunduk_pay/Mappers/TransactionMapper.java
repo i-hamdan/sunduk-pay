@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.Mappers;
 
 
 //import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 
@@ -30,11 +31,11 @@ public interface TransactionMapper {
     List<TransactionResponse> toTransactionsResponse(
             List<Transaction> transactions);
 
-//    /**
-// * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
-//     *
-//     * @param transaction the Transaction entity
-//     * @return the corresponding TransactionEvent
-//     */
-  //  TransactionEvent toTransactionEvent(Transaction transaction);
+    /**
+ * Converts a Transaction entity to a TransactionEvent for Kafka publishing.
+     *
+     * @param transaction the Transaction entity
+     * @return the corresponding TransactionEvent
+     */
+    TransactionEvent toTransactionEvent(Transaction transaction);
 }

@@ -22,12 +22,11 @@ public class UserActivityLog {
      * Unique identifier for the log entry.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String logId;
 
     /** UUID of the user associated with the activity.
      */
-    private Long uuid;
+    private String uuid;
 
     /** Email of the user associated with the activity.
      */

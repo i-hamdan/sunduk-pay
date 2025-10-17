@@ -22,7 +22,6 @@ public class SubWallet {
      * Unique identifier for the sub-wallet.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String subWalletId;
     /**
      * Name of the sub-wallet.

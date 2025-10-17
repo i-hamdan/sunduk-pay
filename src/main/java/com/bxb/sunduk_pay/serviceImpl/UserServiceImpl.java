@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 //import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
@@ -16,6 +17,7 @@ import com.bxb.sunduk_pay.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 //import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -39,10 +41,10 @@ public class UserServiceImpl implements UserService {
      * Mapper for converting between User entities and DTOs.
      */
     private final UserMapper userMapper;
-//    /**
-//     * Kafka template for sending user events.
-//     */
-    //private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
+    /**
+     * Kafka template for sending user events.
+     */
+    private final KafkaTemplate<String, UserKafkaEvent> kafkaTemplate;
     /**
      * Repository for main wallet data access.
      */
@@ -72,11 +74,13 @@ public class UserServiceImpl implements UserService {
              "User not found in DB. Creating new user for email: {}",
              response.getEmail());
             user = userMapper.toUser(response);
+            user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
 
             user=userRepository.save(user);
 
             MainWallet mainWallet = MainWallet.builder()
+                    .mainWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
                     .createdAt(LocalDateTime.now())
@@ -84,6 +88,7 @@ public class UserServiceImpl implements UserService {
             mainWallet=mainWalletRepository.save(mainWallet);
 
             MasterWallet masterWallet = MasterWallet.builder()
+                    .masterWalletId(UUID.randomUUID().toString())
                     .balance(0d)
                     .user(user)
                     .mainWallet(mainWallet)
@@ -95,16 +100,16 @@ public class UserServiceImpl implements UserService {
             user.setMainWallet(mainWallet);
             userRepository.save(user);
 
-//            UserKafkaEvent userEvent = userMapper
-//                    .toKafkaEvent(user, "SIGNUP");
-//            kafkaTemplate.send("user-topic", userEvent);
+            UserKafkaEvent userEvent = userMapper
+                    .toKafkaEvent(user, "SIGNUP");
+            kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
-//            UserKafkaEvent userEvent = userMapper
-//                    .toKafkaEvent(user,  "LOGIN");
-//            kafkaTemplate.send("user-topic", userEvent);
-//            log.info("Login successful");
+            UserKafkaEvent userEvent = userMapper
+                    .toKafkaEvent(user,  "LOGIN");
+            kafkaTemplate.send("user-topic", userEvent);
+            log.info("Login successful");
         }
         return user;
     }

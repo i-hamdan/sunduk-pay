@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.repository;
 import com.bxb.sunduk_pay.model.MainWallet;
 import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
 
 
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.UUID;
 /**
  * Repository interface for managing MainWallet entities in MongoDB.
  */
+@Service
 public interface MainWalletRepository
         extends JpaRepository<MainWallet, String> {
 
