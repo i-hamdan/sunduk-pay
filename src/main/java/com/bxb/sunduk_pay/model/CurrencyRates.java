@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.Map;
 
 @Entity
 @Table(name = "currency_rates")
@@ -112,4 +113,7 @@ public class CurrencyRates {
     @Column(name = "JPYSAR") private Double jpysar;
     @Column(name = "JPYKWD") private Double jpykwd;
     @Column(name = "JPYOMR") private Double jpyomr;
+
+    @Transient
+    private Map<String, Double> rates;
 }

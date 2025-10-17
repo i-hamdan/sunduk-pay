@@ -15,6 +15,8 @@ spring:
           auth: true
           starttls:
             enable: true
+  config:
+    import: classpath:queries.yml
 
   datasource:
     url: jdbc:mysql://localhost:3306/SundukPay
@@ -40,20 +42,20 @@ spring:
 
 
 
-  #  kafka:
-  #    bootstrap-servers: localhost:9092
-  #    producer:
-  #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-  #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-  #    consumer:
-  #      group-id: email-group
-  #      auto-offset-reset: earliest
-  #      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  #      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-  #      properties:
-  #        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
-  #        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-  #        spring.json.trusted.packages: '*'
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: email-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.trusted.packages: '*'
 
 
 
@@ -110,7 +112,7 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/136cca7e5f6ec25648bc5eca
+    url: https://v6.exchangerate-api.com/v6/09a314fc07e168435db69de3
 stripe:
   key:
     secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR

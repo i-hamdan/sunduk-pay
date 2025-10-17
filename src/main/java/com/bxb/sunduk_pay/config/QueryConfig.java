@@ -12,9 +12,5 @@ import java.util.Map;
 public class QueryConfig {
     private Map<String, Map<String,String>> modules;
 
-    @PostConstruct
-    public void init() {
-        System.out.println("Loaded query config: " + modules);
-    }
 
 }

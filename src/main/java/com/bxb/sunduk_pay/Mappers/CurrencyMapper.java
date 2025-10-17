@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Mapper interface for converting CurrencyRates to response objects
@@ -43,12 +44,10 @@ public interface CurrencyMapper {
      * @return list of CurrencyRatesResponse.
      */
 
-//    List<CurrencyRatesResponse>
-//    toCurrencyRatesResponses(
-//    List<CurrencyRates> currencyRates,
-//    String rateKey,
-//    TimeSeries timeSeries
-//    );
+    List<CurrencyRatesResponse>toCurrencyRatesResponses(List<Map<String, Object>> currencyRates,
+                                                        String rateKey,
+                                                        TimeSeries timeSeries
+    );
 
     /**
      * Computes monthly average rates from a list of CurrencyRates.
@@ -58,8 +57,9 @@ public interface CurrencyMapper {
      * @return list of CurrencyRatesResponse representing monthly averages
      * representing monthly averages.
      */
-//    List<CurrencyRatesResponse> toMonthlyAverageResponses(
-//            List<CurrencyRates> currencyRates,
-//            String rateKey);
+    List<CurrencyRatesResponse> toMonthlyAverageResponses(
+            List<Map<String, Object>> currencyRates,
+            String rateKey);
+
 
 }

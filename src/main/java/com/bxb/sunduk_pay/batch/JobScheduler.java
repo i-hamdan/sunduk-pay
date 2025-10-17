@@ -38,6 +38,7 @@ public class JobScheduler {
      * @see JobLauncher#run(Job, JobParameters)
      */
     @Scheduled(cron = "0 0 0 * * *")
+    //@Scheduled(cron = "0,30 * * * * *")
     public void runJob() {
         try {
             log.info("Scheduler method triggered");

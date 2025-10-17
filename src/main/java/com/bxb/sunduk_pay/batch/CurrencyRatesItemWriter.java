@@ -1,16 +1,16 @@
 package com.bxb.sunduk_pay.batch;
 
 import com.bxb.sunduk_pay.model.CurrencyRates;
-//import com.bxb.sunduk_pay.repository.CustomCurrencyRateRepositoryImpl;
+import com.bxb.sunduk_pay.repository.CurrencyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,8 +22,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
     /** Repository for saving CurrencyRates to MongoDB. */
-//    private final CustomCurrencyRateRepositoryImpl customCurrencyRateRepositoryImpl;
-
+private final CurrencyRepository currencyRepository;
     /**
      * Writes a chunk of CurrencyRates items by merging them into a
      * single document and saving it to MongoDB.
@@ -34,21 +33,40 @@ public class CurrencyRatesItemWriter implements ItemWriter<CurrencyRates> {
     public void write(
             final Chunk<? extends CurrencyRates> chunk
             ) throws Exception {
-        Map<String, Double> allRates = new HashMap<>();
-        CurrencyRates merged = new CurrencyRates();
-        merged.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
-        log.info(
-                "Merging {} ExchangeRate items into a single document.",
-                chunk.size()
-        );
-        for (CurrencyRates rate : chunk.getItems()) {
-        //    allRates.putAll(rate.getRates());
+
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Kolkata"));
+        log.info("Merging {} currency rate items for date {}",
+                chunk.size(), today);
+
+        CurrencyRates entity = new CurrencyRates();
+        entity.setDate(today);
+
+        for (CurrencyRates items : chunk.getItems()) {
+            Map<String,Double> rates = items.getRates();
+            if (rates==null) continue;
+            for (Map.Entry<String, Double> entry : rates.entrySet()) {
+                String pair = entry.getKey().toLowerCase();
+                Double value = entry.getValue();
+                try {
+                    Field field = CurrencyRates
+                            .class.getDeclaredField(pair);
+                    field.setAccessible(true);
+                    field.set(entity, value);
+                    log.debug("Set field {} = {}",
+                            pair, value);
+                } catch (NoSuchFieldException e) {
+                    log.debug("No matching column for currency pair: {}",
+                            pair);
+
+                }
+
+            }
         }
-        //merged.setRates(allRates);
-       // currencyRateRepository.save(merged); // ek hi document save hoga
+
+
+        currencyRepository.save(entity);
         log.info(
-                "Saved merged rates to MongoDB. Total pairs: {}",
-                allRates.size()
-        );
+                " {} with pairs.", today);
     }
 }

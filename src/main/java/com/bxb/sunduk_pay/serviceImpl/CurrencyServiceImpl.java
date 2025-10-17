@@ -221,21 +221,24 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .findSpecificRate(oneYear, endDate, currencyPair);
 
         // Group by month and take average
-        Map<java.time.YearMonth, Double> monthlyAverages = results.stream()
-                .collect(java.util.stream.Collectors.groupingBy(
-                        r -> java.time.YearMonth.from(((java.sql.Date) r.get("date")).toLocalDate()),
-                            java.util.stream.Collectors.averagingDouble(r -> (Double) r.get("rate"))
-                ));
+//        Map<java.time.YearMonth, Double> monthlyAverages = results.stream()
+//                .collect(java.util.stream.Collectors.groupingBy(
+//                        r -> java.time.YearMonth.from(((java.sql.Date) r.get("date")).toLocalDate()),
+//                            java.util.stream.Collectors.averagingDouble(r -> (Double) r.get("rate"))
+//                ));
+//
+//        List<CurrencyRatesResponse> response = new ArrayList<>();
+//        monthlyAverages.forEach((ym, avg) -> {
+//            CurrencyRatesResponse res = new CurrencyRatesResponse();
+//            res.setMonth(ym.format(java.time.format.DateTimeFormatter.ofPattern("MMM yyyy")));
+//            res.setValue(avg);
+//            response.add(res);
+//        });
+//
+//        return response;
+    return mapper.toMonthlyAverageResponses(results,
+            currencyPair);
 
-        List<CurrencyRatesResponse> response = new ArrayList<>();
-        monthlyAverages.forEach((ym, avg) -> {
-            CurrencyRatesResponse res = new CurrencyRatesResponse();
-            res.setMonth(ym.format(java.time.format.DateTimeFormatter.ofPattern("MMM yyyy")));
-            res.setValue(avg);
-            response.add(res);
-        });
-
-        return response;
     }
 
 
@@ -261,15 +264,10 @@ public class CurrencyServiceImpl implements CurrencyService {
         List<Map<String, Object>> results = currencyRateRepositoryImpl
                 .findSpecificRate(oneMonth, endDate, currencyPair);
 
-        List<CurrencyRatesResponse> response = results.stream().map(row -> {
-            CurrencyRatesResponse r = new CurrencyRatesResponse();
-            r.setDate(((java.sql.Date) row.get("date")).toLocalDate());
-            r.setValue((Double) row.get("rate"));
-            r.setDayMonth(r.getDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM")));
-            return r;
-        }).toList();
 
-        return response;
+    return mapper.toCurrencyRatesResponses(results,
+            currencyPair,
+            TimeSeries.MONTH);
     }
 
 
@@ -294,14 +292,8 @@ public class CurrencyServiceImpl implements CurrencyService {
         List<Map<String, Object>> results = currencyRateRepositoryImpl
                 .findSpecificRate(startDate, endDate, currencyPair);
 
-        List<CurrencyRatesResponse> response = results.stream().map(row -> {
-            CurrencyRatesResponse r = new CurrencyRatesResponse();
-            r.setDate(((java.sql.Date)row.get("date")).toLocalDate());
-            r.setValue((Double) row.get("rate"));
-            r.setDay(r.getDate().format(java.time.format.DateTimeFormatter.ofPattern("dd MMM")));
-            return r;
-        }).toList();
-
-        return response;
-}
+     return mapper.toCurrencyRatesResponses(results,
+            currencyPair,
+            TimeSeries.WEEK);
+    }
 }

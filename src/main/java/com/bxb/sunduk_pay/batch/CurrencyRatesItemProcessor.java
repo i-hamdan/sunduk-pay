@@ -64,7 +64,8 @@ public class CurrencyRatesItemProcessor implements
         log.info("Received conversion rate for {} -> {}: {}", from, to, rate);
         CurrencyRates currencyRates = new CurrencyRates();
         currencyRates.setDate(LocalDate.now(ZoneId.of("Asia/Kolkata")));
-        //currencyRates.setRates(Map.of(pair.name(), rate));
+        currencyRates.setRates(Map.of(pair.name(), rate));
+
         log.debug("Built ExchangeRate object: {}", currencyRates);
         return currencyRates;
     }
