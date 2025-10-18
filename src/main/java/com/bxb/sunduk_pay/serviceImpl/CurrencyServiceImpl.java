@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.CurrencyMapper;
-
 import com.bxb.sunduk_pay.exception.CustomExchangeRateException;
 import com.bxb.sunduk_pay.exception.InvalidCurrencyType;
 import com.bxb.sunduk_pay.exception.NullAmountException;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -219,23 +217,6 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         List<Map<String, Object>> results = currencyRateRepositoryImpl
                 .findSpecificRate(oneYear, endDate, currencyPair);
-
-        // Group by month and take average
-//        Map<java.time.YearMonth, Double> monthlyAverages = results.stream()
-//                .collect(java.util.stream.Collectors.groupingBy(
-//                        r -> java.time.YearMonth.from(((java.sql.Date) r.get("date")).toLocalDate()),
-//                            java.util.stream.Collectors.averagingDouble(r -> (Double) r.get("rate"))
-//                ));
-//
-//        List<CurrencyRatesResponse> response = new ArrayList<>();
-//        monthlyAverages.forEach((ym, avg) -> {
-//            CurrencyRatesResponse res = new CurrencyRatesResponse();
-//            res.setMonth(ym.format(java.time.format.DateTimeFormatter.ofPattern("MMM yyyy")));
-//            res.setValue(avg);
-//            response.add(res);
-//        });
-//
-//        return response;
     return mapper.toMonthlyAverageResponses(results,
             currencyPair);
 

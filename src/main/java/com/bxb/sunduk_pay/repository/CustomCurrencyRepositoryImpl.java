@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.config.QueryConfig;
-import com.bxb.sunduk_pay.util.CurrencyPair;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
@@ -10,7 +9,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Custom repository implementation for currency-related queries.
@@ -45,18 +47,15 @@ public class CustomCurrencyRepositoryImpl implements CustomCurrencyRepository {
      */
     @Override
     public List<Map<String, Object>> findSpecificRate(
-            LocalDate startDate,
-            LocalDate endDate,
-            String currencyPair) {
-        // Validate enum
-        try {
-            CurrencyPair.valueOf(currencyPair);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid currency pair: " + currencyPair);
-        }
+           final LocalDate startDate,
+           final LocalDate endDate,
+           final String currencyPair) {
 
-         String findSpecificRate =  queryConfig.getModules().get("currency").get("findSpecificRate");
-        String sql = findSpecificRate.replace("{column}", currencyPair.toUpperCase());
+         String findSpecificRate =  queryConfig.getModules()
+                 .get("currency").get("findSpecificRate");
+        String sql = findSpecificRate
+                .replace("{column}",
+                        currencyPair.toUpperCase());
 
         Query query = entityManager.createNativeQuery(sql);
         query.setParameter("start", startDate);

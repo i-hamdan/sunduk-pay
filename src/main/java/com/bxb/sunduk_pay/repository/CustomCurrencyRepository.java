@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public interface CustomCurrencyRepository {
     List<Map<String, Object>> findSpecificRate(
-            LocalDate startDate,
-            LocalDate endDate,
-            String currencyPair);
+           final LocalDate startDate,
+           final LocalDate endDate,
+           final String currencyPair);
 }

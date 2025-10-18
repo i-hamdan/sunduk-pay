@@ -56,7 +56,8 @@ private final CurrencyRepository currencyRepository;
                     log.debug("Set field {} = {}",
                             pair, value);
                 } catch (NoSuchFieldException e) {
-                    log.debug("No matching column for currency pair: {}",
+                    log.debug(
+          "No matching column for currency pair: {}",
                             pair);
 
                 }

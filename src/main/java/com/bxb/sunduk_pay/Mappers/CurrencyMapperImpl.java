@@ -76,28 +76,35 @@ public class CurrencyMapperImpl implements CurrencyMapper {
 
  */
     @Override
-    public List<CurrencyRatesResponse> toCurrencyRatesResponses(List<Map<String, Object>> currencyRates, String rateKey, TimeSeries timeSeries) {
-        List<CurrencyRatesResponse> response = currencyRates
+    public List<CurrencyRatesResponse> toCurrencyRatesResponses(
+            final List<Map<String, Object>> currencyRates,
+            final String rateKey,
+            final TimeSeries timeSeries) {
+        List<CurrencyRatesResponse> response =
+                currencyRates
                 .stream().map(row -> {
-            CurrencyRatesResponse r = new CurrencyRatesResponse();
-            r.setDate(((java.sql.Date)row.get("date")).toLocalDate());
+            CurrencyRatesResponse r =
+                    new CurrencyRatesResponse();
+            r.setDate(((java.sql.Date)row
+                    .get("date")).toLocalDate());
             r.setValue((Double) row.get("rate"));
         switch (timeSeries){
-            case WEEK -> {
+            case WEEK ->
                 r.setDay(r.getDate()
-                        .format(java.time.format
-                                .DateTimeFormatter.ofPattern("dd MMM")));
-            }
-            case MONTH -> {
-                r.setDayMonth(r.getDate().format(DateTimeFormatter.ofPattern("dd MMM")));
-            }
-            default -> {
+              .format(java.time.format
+             .DateTimeFormatter.ofPattern("dd MMM")));
+
+            case MONTH ->
+                r.setDayMonth(r.getDate()
+                        .format(DateTimeFormatter
+                                .ofPattern("dd MMM")));
+
+            default ->
                 throw new ResourceNotFoundException(
                         "Unsupported TimeSeries: " + timeSeries);
-            }
-        }
 
-            return r;
+        }
+        return r;
         }).toList();
 
         return response;
@@ -111,15 +118,19 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      */
 
     @Override
-    public List<CurrencyRatesResponse> toMonthlyAverageResponses(List<Map<String, Object>> currencyRates, String rateKey) {
-      Map<YearMonth, Double> monthlyAverages = currencyRates.stream()
+    public List<CurrencyRatesResponse> toMonthlyAverageResponses(
+            final List<Map<String, Object>> currencyRates,
+            final String rateKey) {
+      Map<YearMonth, Double> monthlyAverages =
+              currencyRates.stream()
                 .collect(Collectors.groupingBy(
                         r -> YearMonth
                                 .from(((java.sql.Date) r.get("date"))
                                         .toLocalDate()),
                         TreeMap::new,
                         Collectors.averagingDouble(
-                                r -> (Double) r.get("rate"))
+                                r ->
+                                        (Double) r.get("rate"))
                 ));
 
         List<CurrencyRatesResponse> response = new ArrayList<>();
