@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -77,6 +78,7 @@ try {
                 size);
 
         SubWallet subWallet = SubWallet.builder()
+                .subWalletId(UUID.randomUUID().toString())
                 .balance(0d)
                 .targetBalance(mainWalletRequest.getTargetBalance())
                 .targetDate(mainWalletRequest.getTargetDate())
