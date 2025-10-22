@@ -346,6 +346,8 @@ public class WalletServiceImpl implements WalletService {
             transactions.add(creditTxn);
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTxn);
+            log.info("sending transaction event to kafka: {}",
+                    transactionEvent);
             kafkaTemplate.send("transaction-topic",
                     transactionEvent);
 
