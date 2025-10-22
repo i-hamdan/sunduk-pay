@@ -60,15 +60,15 @@ spring:
       client:
         registration:
           google:
-            client-id: 727045239291-gbdj1qa8osubkr5r82fbrb2d9rdmavmn.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
+            client-secret: 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
             scope:
               - openid
               - profile
               - email
               -
 #            redirect-uri: "http://localhost:8080/api/sunduk-service/login/oauth2/code/google"
-            redirect-uri: "http://srv1005736.hstgr.cloud/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "https://walletapp.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
