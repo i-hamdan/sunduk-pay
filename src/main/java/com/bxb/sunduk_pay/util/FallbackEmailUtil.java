@@ -97,14 +97,14 @@ public class FallbackEmailUtil {
                     ? event.getToWallet() + " (" + toWalletId + ")"
                     : "N/A")
                     + "\n"
-                    + "• Amount: $"
+                    + "• Amount: "
                     + String.format("%.2f", event.getAmount()) + "\n"
                     + "• Date & Time: " + event.getDateTime() + "\n"
                     + "• Current Balance ("
                     + (balanceWalletName != null
                     ? balanceWalletName
                     : "Wallet")
-                    + "): $"
+                    + "): "
                     + (event.getRemainingBalance() != null
                     ? String.format("%.2f", event.getRemainingBalance())
                     : "N/A")

@@ -175,7 +175,7 @@ public class TransactionMapperImpl implements TransactionMapper {
                         transaction.getTransactionId(), e);
             }
 
-       //     transactionEvent.setRemainingBalance(balance);
+            transactionEvent.setRemainingBalance(balance);
             return transactionEvent;
         }
 }
