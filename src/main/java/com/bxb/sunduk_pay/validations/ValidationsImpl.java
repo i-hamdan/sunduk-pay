@@ -1,11 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 
-import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
+import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
@@ -15,10 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
-import com.bxb.sunduk_pay.exception.NullAmountException;
-import com.bxb.sunduk_pay.exception.NullValueException;
-import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -105,82 +97,116 @@ private static final int WALLET_SIZE = 19;
         }
     }
 
-    /** {@inheritDoc} */
 
+    /**
+     * Retrieves a paginated list of transactions for a specific user.
+     * <p>
+     * This method supports multiple optional filters:
+     * <ul>
+     *   <li><b>walletId</b> – filters transactions for that specific wallet.</li>
+     *   <li><b>transactionType</b> – filters by CREDIT or DEBIT transactions.</li>
+     *   <li><b>paymentMethod</b> – filters by a specific payment method
+     *       (e.g., UPI, CARD, etc.).</li>
+     * </ul>
+     * <p>
+     * The logic prioritizes the most specific filters first
+     * (wallet + type + method) and falls back to broader searches
+     * when some filters are missing.
+     * <p>
+     * Throws {@link TransactionNotFoundException} if no transactions are found.
+     *
+     * @param uuid            unique user identifier
+     * @param walletId        optional wallet identifier
+     * @param method          optional payment method
+     * @param transactionType optional transaction type (CREDIT/DEBIT)
+     * @param pageable        pagination information
+     * @return a paginated list of {@link Transaction} objects
+     * @throws TransactionNotFoundException if no matching transactions are found
+     */
     @Override
     public Page<Transaction> getTransactions(
-       final String uuid,
-       final String walletId,
-       final PaymentMethod method,
-       final TransactionType transactionType,
-       final  Pageable pageable) {
+            final String uuid,
+            final String walletId,
+            final PaymentMethod method,
+            final TransactionType transactionType,
+            final Pageable pageable) {
 
+        if (uuid == null) {
+            throw new InvalidPayloadException("User UUID cannot be null");
+        }
 
         Page<Transaction> transactions;
-        if (walletId != null) {
-            // Subwallet is specified
-            if (transactionType == TransactionType.DEBIT) {
-                // Only those where subWalletId is the FROM wallet
-                if (method != null) {
+
+        boolean hasWallet = walletId != null;
+        boolean hasType = transactionType != null;
+        boolean hasMethod = method != null;
+
+        // Case 1: Wallet is provided
+        if (hasWallet) {
+            // Case 1a: Debit transactions
+            if (hasType && transactionType == TransactionType.DEBIT) {
+                if (hasMethod) {
                     transactions = transactionRepository
-.findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-uuid, walletId, TransactionType.DEBIT, method, pageable);
+                            .findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+                                    uuid, walletId, TransactionType.DEBIT, method, pageable);
                 } else {
                     transactions = transactionRepository
                             .findByUserUuidAndFromWalletIdAndTransactionType(
-                            uuid, walletId, TransactionType.DEBIT, pageable);
+                                    uuid, walletId, TransactionType.DEBIT, pageable);
                 }
-            } else if (transactionType == TransactionType.CREDIT) {
-                // Only those where subWalletId is the TO wallet
-                if (method != null) {
+            }
+
+            // Case 1b: Credit transactions
+            else if (hasType && transactionType == TransactionType.CREDIT) {
+                if (hasMethod) {
                     transactions = transactionRepository
-.findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-uuid, walletId, TransactionType.CREDIT, method, pageable);
+                            .findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+                                    uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
                     transactions = transactionRepository
                             .findByUserUuidAndToWalletIdAndTransactionType(
-                            uuid, walletId, TransactionType.CREDIT, pageable);
+                                    uuid, walletId, TransactionType.CREDIT, pageable);
                 }
-            } else {
-                if (method != null) {
-                    transactions = transactionRepository.
-                            findByUuidAndWalletIdAndPaymentMethod(
-                            uuid, walletId, method, pageable);
+            }
+
+            // Case 1c: No transaction type filter
+            else {
+                if (hasMethod) {
+                    transactions = transactionRepository
+                            .findByUuidAndWalletIdAndPaymentMethod(
+                                    uuid, walletId, method, pageable);
                 } else {
                     transactions = transactionRepository
                             .findAllByUserUuidAndWalletId(
                                     uuid, walletId, pageable);
                 }
             }
-        } else {
-            // No subwallet filter
-            if (transactionType != null) {
-                if (method != null) {
-                    transactions = transactionRepository
-   .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
-                            uuid, transactionType, method, pageable);
-                } else {
-                    transactions = transactionRepository
-                            .findByUserUuidAndTransactionTypeAndIsMasterFalse(
-                            uuid, transactionType, pageable);
-                }
+        }
+
+        // Case 2: No wallet filter
+        else {
+            if (hasType && hasMethod) {
+                transactions = transactionRepository
+                        .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+                                uuid, transactionType, method, pageable);
+            } else if (hasType) {
+                transactions = transactionRepository
+                        .findByUserUuidAndTransactionTypeAndIsMasterFalse(
+                                uuid, transactionType, pageable);
+            } else if (hasMethod) {
+                transactions = transactionRepository
+                        .findByUserUuidAndPaymentMethodAndIsMasterFalse(
+                                uuid, method, pageable);
             } else {
-                if (method != null) {
-                    transactions = transactionRepository
-                            .findByUserUuidAndPaymentMethodAndIsMasterFalse(
-                            uuid, method, pageable);
-                } else {
-                    transactions = transactionRepository
-                            .findByUserUuidAndIsMasterFalse(
-                                    uuid, pageable);
-                }
+                transactions = transactionRepository
+                        .findByUserUuidAndIsMasterFalse(uuid, pageable);
             }
         }
 
+        // Throw exception if no records found
         if (transactions.isEmpty()) {
             throw new TransactionNotFoundException(
-                    "No transactions found for User UUID: "
-                            + uuid);
+                    "No transactions found for User UUID: " + uuid);
         }
 
         return transactions;
