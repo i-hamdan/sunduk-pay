@@ -102,12 +102,16 @@ public class UserServiceImpl implements UserService {
 
             UserKafkaEvent userEvent = userMapper
                     .toKafkaEvent(user, "SIGNUP");
+            log.info("Sending user signup event to Kafka for email: {}",
+                    user.getEmail());
             kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
         } else {
             user = userOptional.get();
             UserKafkaEvent userEvent = userMapper
                     .toKafkaEvent(user,  "LOGIN");
+            log.info("Sending user login event to Kafka for email: {}",
+                    user.getEmail());
             kafkaTemplate.send("user-topic", userEvent);
             log.info("Login successful");
         }
