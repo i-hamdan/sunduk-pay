@@ -65,7 +65,7 @@ public class TransactionEvent {
     /**
      * Timestamp when the transaction occurred.
      */
-    private LocalDateTime dateTime;
+    private String dateTime;
 
     /**
      * Balance remaining after the transaction.

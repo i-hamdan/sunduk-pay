@@ -116,7 +116,7 @@ public class TransactionMapperImpl implements TransactionMapper {
             transactionEvent.setAmount(
                     transaction.getAmount());
             transactionEvent.setDateTime(
-                    transaction.getDateTime());
+                    transaction.getDateTime().format(DATETIME_FORMATTER));
             transactionEvent.setEmail(
                     transaction.getUser().getEmail());
             transactionEvent.setUuid(
