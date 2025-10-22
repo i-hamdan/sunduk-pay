@@ -68,7 +68,7 @@ spring:
               - email
               -
 #            redirect-uri: "http://localhost:8080/api/sunduk-service/login/oauth2/code/google"
-            redirect-uri: "https://walletapp.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
