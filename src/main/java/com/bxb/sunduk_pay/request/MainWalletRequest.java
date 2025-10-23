@@ -22,7 +22,8 @@ private static final int DEFAULT_PAGE = 0;
 private static final int DEFAULT_SIZE = 10;
 
 
-
+    /***  PIN for authentication.*/
+    private String mpin;
     /** Unique identifier for the request. */
     @NonNull
     private String uuid;

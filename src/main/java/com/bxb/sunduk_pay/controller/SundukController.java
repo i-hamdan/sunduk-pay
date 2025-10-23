@@ -14,11 +14,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 
@@ -62,6 +59,8 @@ public class SundukController {
                 + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
+        boolean isExists = dbUser.getIsExists();
+
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
                 + "&email=" + URLEncoder.encode(user.getEmail(),
@@ -69,27 +68,16 @@ public class SundukController {
                 + "&fullName=" + URLEncoder.encode(user.getFullName(),
                 "UTF-8")
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
-                "UTF-8");
-        log.info("custom login api");
-        log.info("this line adding for dedubbing purpose");
+                "UTF-8")
+                + "&isExists=" + isExists;
+
+
         log.info("Redirecting to deep link:{}", deepLink);
         httpServletResponse.sendRedirect(deepLink);
         return ResponseEntity.ok().body(response);
-
     }
 
-    /**
-     * Uploads contacts for the authenticated user.
-     *
-     * @param contactRequest contact request payload
-     * @return user response after upload
-     */
-    @PostMapping("/upload-contact")
-    public UserResponse uploadContacts(
-            @RequestBody
-           final ContactRequest contactRequest) {
-        return service.uploadContacts(contactRequest);
-    }
+
     /**
      * Logs out the current user by invalidating the session.
      *

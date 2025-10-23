@@ -29,6 +29,7 @@ public interface InternalTransferService {
                                           WalletWrapper sourceWallet,
                                           WalletWrapper targetWallet,
                                           Double previousSourceWalletBalance,
-                                          Double previousTargetWalletBalance);
+                                          Double previousTargetWalletBalance,
+                                          String mpin);
 }
 

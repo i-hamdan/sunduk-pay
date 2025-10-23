@@ -12,26 +12,6 @@ import java.io.IOException;
 public interface WalletService {
 
     /**
-     * Displays the balance of the specified wallet.
-     *
-     * @param walletId the ID of the wallet
-     * @return the balance as a String
-     */
-    String showBalance(String walletId);
-
-//    /**
-//     * Downloads the transaction history of the specified wallet and
-//     * writes it to the HTTP response.
-//     *
-//     * @param walletId the ID of the wallet
-//     * @param response the
-//     *HttpServletResponse to write the transaction history to
-//     * @throws IOException if an I/O error occurs
-//     */
-//    void downloadTransactions(Long walletId,
-//                              HttpServletResponse response) throws IOException;
-
-    /**
      * Processes a payment transaction.
      *
      * @param mainWalletRequest the request object containing payment details

@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.factoryPattern;
+package com.bxb.sunduk_pay.WalletFactoryPattern;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.TransactionNotFoundException;

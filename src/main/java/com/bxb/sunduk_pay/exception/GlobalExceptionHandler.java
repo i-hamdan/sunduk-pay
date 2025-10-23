@@ -19,7 +19,24 @@ import java.time.LocalDateTime;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    /**
+     * Handles {@link InvalidMpinException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
 
+    @ExceptionHandler(value = InvalidMpinException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleInvalidMpinException(
+            final InvalidMpinException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
     /**
      * Handles {@link CannotCreateWalletException}.
      *

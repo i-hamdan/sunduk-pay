@@ -38,18 +38,6 @@ public class EmailServiceImpl implements EmailService {
     }
 
     /**
- * Processes a goal completion event and sends an email notification.
-
-* @param event the goal completion event containing email and goal details.
-     */
-    @Override
-    public void processGoalCompletionEvent(final GoalCompletionEvent event) {
-    String subject = emailMessageUtil.buildGoalSubject(event);
-    String body = emailMessageUtil.buildGoalBody(event);
-    sendEmail(event.getEmail(), subject, body);
-    }
-
-    /**
      * Sends an email with the specified recipient, subject, and body.
      *
      * @param to      recipient email address

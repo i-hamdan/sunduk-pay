@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperationFactory;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
@@ -10,13 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
 
 
 /**
@@ -46,19 +42,7 @@ public class WalletController {
     private static final int STRIPE_CHECKOUT_COOKIE_MAX_AGE_SECONDS = 300;
 
 
-    /**
-     * Returns the current balance of the specified wallet.
-     *
-     * @param walletId the wallet ID
-     * @return wallet balance as a string
-     */
-    @GetMapping("/wallet-showBalance/{walletId}")
-    public ResponseEntity<String> showBalance(
-            @PathVariable final String walletId) {
-        return new ResponseEntity<>(
-                walletService.showBalance(walletId),
-                HttpStatus.OK);
-    }
+
 
     /**
      * Adds dummy transaction data to the specified wallet.
@@ -71,20 +55,6 @@ public class WalletController {
             final MainWalletRequest request) {
         walletService.addDummy(request);
     }
-
-//    /**
-//     * Downloads all transactions of the specified wallet as a PDF.
-//     *
-//     * @param walletId wallet ID
-//     * @param response HTTP servlet response to write PDF
-//     * @throws IOException if PDF generation fails
-//     */
-//    @PostMapping("/wallet-downloadPdf/{walletId}")
-//    public void downloadTransactions(@PathVariable final Long walletId,
-//                                     final HttpServletResponse response)
-//            throws IOException {
-//        walletService.downloadTransactions(walletId, response);
-//    }
 
     /**
      * Handles wallet CRUD operations and sets Stripe checkout URL cookie

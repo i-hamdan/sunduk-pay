@@ -24,10 +24,4 @@ public interface EmailService {
      */
     void sendEmail(String to, String subject, String body);
 
-    /**
-     * Processes a goal completion event to send a notification email.
-     *
-     * @param event the goal completion event containing relevant details
-     */
-    void processGoalCompletionEvent(GoalCompletionEvent event);
 }

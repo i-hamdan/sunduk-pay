@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.factoryPattern;
+package com.bxb.sunduk_pay.WalletFactoryPattern;
 
 import com.bxb.sunduk_pay.util.RequestType;
 import jakarta.annotation.PostConstruct;

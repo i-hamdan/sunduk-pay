@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 //import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
-//import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
@@ -50,7 +50,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     private static final int GOAL_75_PERCENT = 75;
     /** 100% goal completion threshold. */
     private static final int GOAL_100_PERCENT = 100;
-
+    /** Validations utility for MPIN checks. */
+    private final MpinValidations mpinValidations;
     /** Validations utility for business rule enforcement. */
     private final Validations validations;
     /** Repository for transaction persistence. */
@@ -86,7 +87,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             final WalletWrapper sourceWallet,
             final WalletWrapper targetWallet,
             final Double previousSourceWalletBalance,
-            final Double previousTargetWalletBalance) {
+            final Double previousTargetWalletBalance,
+            final String mpin) {
         try {
             log.info("Starting internal transfer of amount {} from {} to {}",
                     amount, sourceWallet.getId(), targetWallet.getId());
@@ -98,8 +100,15 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             + sourceWallet.getBalance()
             + ", transferAmount=" + amount);
 
+
             validations.validateBalance(sourceWallet.getBalance(), amount);
             log.info("Balance validation successful");
+
+
+            /* Validate MPIN for payment */
+           mpinValidations.validateMpinForPayment(user.getUuid(),mpin);
+
+
 
             log.info(
                     "Deducting {} from source wallet {}",
@@ -139,30 +148,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Updated target wallet balance: {}",
                     newTargetWalletBalance);
 
-
-            Double goalAmount = targetWallet.getGoalAmount();
-            if (goalAmount != null && goalAmount > 0) {
-                double completionPercent = (targetWallet.getBalance()
-                        / goalAmount) * GOAL_100_PERCENT;
-                if (completionPercent >= GOAL_50_PERCENT
-                && previousTargetWalletBalance < goalAmount
-                        * FIFTY_PERCENT) {
-               sendGoalCompletionEvent(user,
-                       targetWallet,
-                       GOAL_50_PERCENT);
-                }
-                if (completionPercent >= GOAL_75_PERCENT
-                && previousTargetWalletBalance < goalAmount
-                        * SEVENTY_FIVE_PERCENT) {
-                  sendGoalCompletionEvent(user,
-                          targetWallet,
-                          GOAL_75_PERCENT);
-                }
-                if (completionPercent >= GOAL_100_PERCENT
-                 && previousTargetWalletBalance < goalAmount) {
-                 sendGoalCompletionEvent(user, targetWallet, GOAL_100_PERCENT);
-                }
-            }
 
             log.info("Creating credit transaction for targetWallet={}",
                     targetWallet.getId());
@@ -223,32 +208,4 @@ public class InternalTransferServiceImpl implements InternalTransferService {
         }
 
     }
-    /**
-     * Sends a goal completion event to Kafka for a milestone.
-     *
-     * @param user      the user
-     * @param wallet    the wallet
-     * @param milestone milestone percentage
-     */
-    private void sendGoalCompletionEvent(final User user,
-                                         final WalletWrapper wallet,
-                                         final int milestone) {
-        log.info(
-                "Publishing goal milestone {}% completion for wallet {}",
-                milestone, wallet.getId());
-
-        GoalCompletionEvent event = GoalCompletionEvent.builder()
-                .userId(user.getUuid())
-                .email(user.getEmail())
-                .walletId(wallet.getId())
-                .walletName(wallet.getName())
-                .milestone(milestone)
-                .currentBalance(wallet.getBalance())
-                .goalAmount(wallet.getGoalAmount())
-                .timestamp(LocalDateTime.now())
-                .build();
-
-        kafkaGoalTemplate.send("goal-completion-topic", event);
-    }
-
 }

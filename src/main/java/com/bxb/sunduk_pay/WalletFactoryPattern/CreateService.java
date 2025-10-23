@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.factoryPattern;
+package com.bxb.sunduk_pay.WalletFactoryPattern;
 
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
@@ -54,7 +54,7 @@ public class CreateService implements WalletOperation {
            final MainWalletRequest mainWalletRequest) {
         log.info("Starting SubWallet creation for User UUID: {}",
                 mainWalletRequest.getUuid());
-try {
+      try {
         validations.getUserInfo(mainWalletRequest.getUuid());
         log.debug("User validation successful for UUID: {}",
                 mainWalletRequest.getUuid());

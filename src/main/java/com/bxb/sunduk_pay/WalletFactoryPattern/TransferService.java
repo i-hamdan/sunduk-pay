@@ -1,5 +1,6 @@
-package com.bxb.sunduk_pay.factoryPattern;
+package com.bxb.sunduk_pay.WalletFactoryPattern;
 
+import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
@@ -12,7 +13,6 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
-import jakarta.validation.constraints.Negative;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -27,13 +27,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TransferService implements WalletOperation {
 
-    /**internal transfer service for handling internal wallet transfers.*/
+    /**
+     * internal transfer service for handling internal wallet transfers.
+     */
     private final InternalTransferService internalTransferService;
 
-    /** Validations utility for user and wallet validations. */
+    /**
+     * Validations utility for user and wallet validations.
+     */
     private final Validations validations;
+    /**
+     * MPIN validations utility for MPIN related validations.
+     */
 
-    /** Payment service for handling external payments. */
+    private final MpinValidations mpinValidations;
+    /**
+     * Payment service for handling external payments.
+     */
     private final PaymentService paymentService;
 
     /**
@@ -48,6 +58,7 @@ public class TransferService implements WalletOperation {
 
     /**
      * Performs a money transfer based on source and target wallets.
+     *
      * @param mainWalletRequest request containing source
      *                          , target, amount, and method
      * @return MainWalletResponse with transfer result
@@ -56,8 +67,9 @@ public class TransferService implements WalletOperation {
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
         try {
-            if (mainWalletRequest.getAmount()==0||mainWalletRequest.getAmount()<0) {
-                throw new InvalidPayloadException("amount cannot be zero or negative");
+            if (mainWalletRequest.getAmount() == 0 || mainWalletRequest.getAmount() < 0) {
+                throw new InvalidPayloadException("amount cannot be zero or " +
+                        "negative");
             }
             log.info("Performing transfer request for UUID: {}, Request: {}",
                     mainWalletRequest.getUuid(), mainWalletRequest);
@@ -97,15 +109,20 @@ public class TransferService implements WalletOperation {
                         sourceWallet,
                         targetWallet,
                         previousSourceWalletBalance,
-                        previousTargetWalletBalance);
-            } else if (sourceExists && !targetExists) {
+                        previousTargetWalletBalance,
+                        mainWalletRequest.getMpin());
+            }
+            else if (sourceExists && !targetExists) {
                 log.info("Processing external outgoing transfer");
 
                 return handleExternalOutGoingTransfer(sourceWallet,
                         targetWallet,
                         mainWalletRequest.getAmount(),
-                        user);
-            } else if (!sourceExists && targetExists) {
+                        user,
+                        mainWalletRequest.getMpin()
+                );
+            }
+            else if (!sourceExists && targetExists) {
                 log.info("Processing external incoming transfer");
 
                 return handleExternalIncomingTransfer(user,
@@ -125,14 +142,17 @@ public class TransferService implements WalletOperation {
         }
     }
 
-    /** Method for handling external incoming transfer.
-     @param user the user initiating the transfer,
-     @param amount the amount to be transferred,
-     @param targetWallet the wallet receiving the funds,
-     @param sourceWallet the wallet from which the
-     funds are sent (can be null)
-     @return MainWalletResponse with transfer result
-     * */
+    /**
+     * Method for handling external incoming transfer.
+     *
+     * @param user         the user initiating the transfer,
+     * @param amount       the amount to be transferred,
+     * @param targetWallet the wallet receiving the funds,
+     * @param sourceWallet the wallet from which the
+     *                     funds are sent (can be null)
+     * @return MainWalletResponse with transfer result
+     *
+     */
     private MainWalletResponse handleExternalIncomingTransfer(
             final User user,
             final Double amount,
@@ -141,6 +161,7 @@ public class TransferService implements WalletOperation {
         log.info(
                 "Creating checkout session for incoming transfer, Amount: {}",
                 amount);
+
         return paymentService.createCheckoutSession(user.getUuid(),
                 amount,
                 TransactionType.CREDIT,
@@ -148,21 +169,26 @@ public class TransferService implements WalletOperation {
                 sourceWallet);
     }
 
-    /** Handle external outgoing transfer.
-     @param sourceSubWallet the wallet from which funds are sent,
-        @param targetWallet the wallet receiving the funds,
-        @param amount the amount to be transferred,
-        @param user the user initiating the transfer
-        @return MainWalletResponse with transfer result
+    /**
+     * Handle external outgoing transfer.
+     *
+     * @param sourceSubWallet the wallet from which funds are sent,
+     * @param targetWallet    the wallet receiving the funds,
+     * @param amount          the amount to be transferred,
+     * @param user            the user initiating the transfer
+     * @return MainWalletResponse with transfer result
      */
     private MainWalletResponse handleExternalOutGoingTransfer(
             final WalletWrapper sourceSubWallet,
             final WalletWrapper targetWallet,
             final Double amount,
-            final User user) {
+            final User user,
+            final String mpin) {
         log.info("Processing outgoing transfer, Amount: {}",
                 amount);
-        validations.validateBalance(sourceSubWallet.getBalance(), amount);
+        validations.validateBalance(sourceSubWallet.getBalance(),amount);
+        /* Validate MPIN for payment */
+        mpinValidations.validateMpinForPayment(user.getUuid(),mpin);
         return paymentService.createCheckoutSession(user.getUuid(),
                 amount,
                 TransactionType.DEBIT,
@@ -170,19 +196,22 @@ public class TransferService implements WalletOperation {
                 sourceSubWallet);
     }
 
-    /** Handle internal transfer between main<->subWallet.
+    /**
+     * Handle internal transfer between main<->subWallet.
      * And subWallet<->subWallet.
-     @param user the user initiating the transfer,
-        @param mainWallet the user's main wallet,
-        @param amount the amount to be transferred,
-        @param sourceWallet the wallet from which funds are sent,
-        @param targetWallet the wallet receiving the funds,
-        @param previousSourceWalletBalance the balance of the source
-        wallet before transfer,
-        @param previousTargetWalletBalance the balance of the target
-        wallet before transfer
-        @return MainWalletResponse with transfer result
-     * */
+     *
+     * @param user                        the user initiating the transfer,
+     * @param mainWallet                  the user's main wallet,
+     * @param amount                      the amount to be transferred,
+     * @param sourceWallet                the wallet from which funds are sent,
+     * @param targetWallet                the wallet receiving the funds,
+     * @param previousSourceWalletBalance the balance of the source
+     *                                    wallet before transfer,
+     * @param previousTargetWalletBalance the balance of the target
+     *                                    wallet before transfer
+     * @return MainWalletResponse with transfer result
+     *
+     */
     public MainWalletResponse handleInternalTransfer(
             final User user,
             final MainWallet mainWallet,
@@ -190,22 +219,25 @@ public class TransferService implements WalletOperation {
             final WalletWrapper sourceWallet,
             final WalletWrapper targetWallet,
             final Double previousSourceWalletBalance,
-            final Double previousTargetWalletBalance) {
+            final Double previousTargetWalletBalance,
+            final String mpin) {
         return internalTransferService
                 .doInternalTransfer(user,
-                mainWallet,
-                amount,
-                sourceWallet,
-                targetWallet,
-                previousSourceWalletBalance,
-                previousTargetWalletBalance);
+                        mainWallet,
+                        amount,
+                        sourceWallet,
+                        targetWallet,
+                        previousSourceWalletBalance,
+                        previousTargetWalletBalance, mpin);
     }
 
-    /** Get WalletWrapper for mainWallet or subWallet based on walletId.
-     @param mainWallet the main wallet containing sub-wallets,
-        @param walletId the ID of the wallet to retrieve
-     @return WalletWrapper for the specified walletId,
-     or null if not found
+    /**
+     * Get WalletWrapper for mainWallet or subWallet based on walletId.
+     *
+     * @param mainWallet the main wallet containing sub-wallets,
+     * @param walletId   the ID of the wallet to retrieve
+     * @return WalletWrapper for the specified walletId,
+     * or null if not found
      */
     private WalletWrapper getWallet(
             final MainWallet mainWallet,

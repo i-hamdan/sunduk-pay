@@ -328,7 +328,7 @@ private static final int WALLET_SIZE = 19;
     /**method to find subwallet by name.
      * {@inheritDoc} */
     @Override
-    public void     findSubWalletByName(
+    public void findSubWalletByName(
             final String subWalletName) {
         Optional<SubWallet> subWallet = subWalletRepository
                 .findBySubWalletNameIgnoreCaseAndIsDeletedFalse(

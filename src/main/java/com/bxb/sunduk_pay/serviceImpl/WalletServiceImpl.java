@@ -1,9 +1,8 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.factoryPattern.WalletOperation;
-import com.bxb.sunduk_pay.factoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperation;
+import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperationFactory;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;
@@ -418,113 +417,4 @@ public class WalletServiceImpl implements WalletService {
         transactionRepository.save(txn);
     }
 
-    /**
-     * Returns the current balance of a wallet.
-     *
-     * @param walletId The ID of the wallet
-     *                 to fetch balance for.
-     * @return String A message containing
-     * the wallet ID and its current balance.
-     * @throws WalletNotFoundException If
-     * the wallet with given ID does not exist.
-     */
-    //This will simply return the current balance of a wallet.
-    public String showBalance(final String walletId) {
-        log.info("Fetching balance for walletId: {}",
-                walletId);
-
-        MainWallet wallet = mainWalletRepository.findById(walletId)
-                .orElseThrow(() -> {
-                    log.error("Invalid wallet ID: {}",
-                            walletId);
-                    return new WalletNotFoundException(
-                            "Wallet Id is not valid!");
-                });
-
-        String balanceMsg = "Current balance in wallet "
-                + wallet.getMainWalletId()
-                + " is " + wallet.getBalance() + ".";
-        log.info(balanceMsg);
-        return balanceMsg;
-    }
-
-
-//    /**
-//     * Exports the transaction history of a wallet to an Excel file
-//     * and sends it in the HTTP response.
-//     * @param walletId The ID of the wallet whose
-//      transactions are to be exported.
-//     * @param response The HttpServletResponse
-//     to write the Excel file to.
-//     * @throws IOException If an I/O error occurs
-//     *during file writing.
-//     * @throws WalletNotFoundException If the wallet
-//     *with given ID does not exist.
-//     */
-//    @Override
-//    public void downloadTransactions(
-//            final Long walletId,
-//            final HttpServletResponse response)
-//            throws IOException {
-//        log.info(
-//             "Starting to download transactions for walletId: {}",
-//                walletId);
-//
-//        MainWallet wallet = mainWalletRepository.findById(walletId)
-//             .orElseThrow(() -> {
-//            log.error("Wallet not found with ID: {}", walletId);
-//           return new WalletNotFoundException("invalid wallet id");
-//                });
-//        response.setContentType(
-//         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-//        response.setHeader(
-//        "Content-Disposition", "attachment; filename=transactions.xlsx");
-//
-//        log.info("Generating Excel sheet for walletId: {}", walletId);
-//        XSSFWorkbook workbook = new XSSFWorkbook();
-//        XSSFSheet sheet = workbook.createSheet("Transactions");
-//
-//        CreationHelper createHelper = workbook.getCreationHelper();
-//        CellStyle dateStyle = workbook.createCellStyle();
-//        dateStyle.setDataFormat(createHelper.createDataFormat().getFormat(
-//                "yyyy-MM-dd HH:mm:ss"));
-//
-//        XSSFRow row = sheet.createRow(0);
-//        row.createCell(0).setCellValue("S.No");
-//        row.createCell(TRANSACTION_TYPE_COLUMN).setCellValue("Type");
-//        row.createCell(AMOUNT_COLUMN).setCellValue("Amount");
-//        row.createCell(DESCRIPTION_COLUMN).setCellValue("Description");
-//        row.createCell(DATE_COLUMN).setCellValue("Date&Time");
-//
-//        int rowNum = 1;
-//        int count = 1;
-//
-//        List<Transaction> list = transactionRepository.
-//                findByMainWalletIdAndUserUuid(walletId,
-//                        wallet.getUser().getUuid());
-//        log.info("Writing {} transactions into Excel for walletId: {}",
-//                list.size(), walletId);
-//
-//        for (Transaction transaction : list) {
-//            XSSFRow row1 = sheet.createRow(rowNum++);
-//            row1.createCell(0).setCellValue(
-//                    count++);
-//            row1.createCell(TRANSACTION_TYPE_COLUMN).setCellValue(
-//                    transaction.getTransactionType().toString());
-//            row1.createCell(AMOUNT_COLUMN).setCellValue(
-//                    transaction.getAmount());
-//            row1.createCell(DESCRIPTION_COLUMN).setCellValue(
-//                    transaction.getDescription());
-//            Cell dateCell = row1.createCell(DATE_COLUMN);
-//            dateCell.setCellValue(java.sql.Timestamp.valueOf(
-//                    transaction.getDateTime()));
-//            dateCell.setCellStyle(dateStyle);
-//        }
-//
-//        workbook.write(response.getOutputStream());
-//        workbook.close();
-//        log.info(
-//       "Excel file successfully written and sent in response for walletId: {}",
-//                walletId);
-//    }
 }

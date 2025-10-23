@@ -67,5 +67,10 @@ public class User {
      */
     @OneToMany(mappedBy = "user")
     private List<UserContact> contacts;
+
+
+    @Transient
+    private Boolean isExists;
+
 }
 
