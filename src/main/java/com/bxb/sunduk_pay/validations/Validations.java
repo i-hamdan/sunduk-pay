@@ -119,9 +119,10 @@ public interface Validations {
      * @param subWalletName sub-wallet name
      *                      if found,
      *                      otherwise empty
+     * @param mainWalletId
      */
     void findSubWalletByName(
-            String subWalletName);
+            String subWalletName, String mainWalletId);
 
     /**
      * Validates that the target balance is

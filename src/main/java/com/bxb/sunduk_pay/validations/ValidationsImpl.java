@@ -329,10 +329,9 @@ private static final int WALLET_SIZE = 19;
      * {@inheritDoc} */
     @Override
     public void findSubWalletByName(
-            final String subWalletName) {
+            final String subWalletName, String mainWalletId) {
         Optional<SubWallet> subWallet = subWalletRepository
-                .findBySubWalletNameIgnoreCaseAndIsDeletedFalse(
-                        subWalletName);
+       .findActiveByNameAndMainWallet(subWalletName,mainWalletId);
         if (subWallet.isPresent()) {
             throw new SubWalletAlreadyExistsException(
                     "SubWallet with name "

@@ -65,7 +65,7 @@ public class CreateService implements WalletOperation {
                 mainWalletRequest.getUuid());
 
         validations.findSubWalletByName(
-                mainWalletRequest.getSubWalletName());
+                mainWalletRequest.getSubWalletName(),mainWallet.getMainWalletId());
         log.debug("SubWallet name validation passed for name: {}",
                 mainWalletRequest.getSubWalletName());
 
