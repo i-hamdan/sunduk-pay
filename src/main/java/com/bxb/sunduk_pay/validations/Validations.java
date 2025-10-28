@@ -23,12 +23,12 @@ public interface Validations {
      */
     void validateBalance(Double balance, Double amount);
     /**
-     * Retrieves user information by UUID.
+     * Retrieves user information by email.
      *
-     * @param uuid user UUID
+     * @param email user email
      * @return {@link User}
      */
-    User getUserInfo(String uuid);
+    User getUserInfo(String email);
 
     /**
      * Retrieves a main wallet by its ID.
@@ -132,6 +132,11 @@ public interface Validations {
      */
     void validateTargetBalance(Double balance, Double amount);
 
-
-
+/**
+     * Retrieves user email information by UUID.
+     *
+     * @param uuid user UUID
+     * @return {@link User}
+     */
+    User getUserEmailInfo(String uuid);
 }

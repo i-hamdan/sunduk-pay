@@ -67,10 +67,11 @@ public class User {
      */
     @OneToMany(mappedBy = "user")
     private List<UserContact> contacts;
-
-
+    /**
+     * Indicates if the MPIN is created for the user.
+     */
     @Transient
-    private Boolean isExists;
+    private Boolean isMpinCreated;
 
 }
 

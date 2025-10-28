@@ -46,6 +46,11 @@
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
 		<!--		&lt;!&ndash; Optional: Bridge java.util.logging to Log4j2 &ndash;&gt;-->
 		<!--		<dependency>-->
 		<!--			<groupId>org.apache.logging.log4j</groupId>-->

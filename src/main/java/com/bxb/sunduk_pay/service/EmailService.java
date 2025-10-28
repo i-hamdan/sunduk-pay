@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.service;
 
-import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 
 /**
@@ -22,6 +22,13 @@ public interface EmailService {
      * @param subject the subject of the email
      * @param body    the body content of the email
      */
-    void sendEmail(String to, String subject, String body);
+    void sendEmail(String to, String subject, String body,Boolean isHtml);
+/**
+     * Processes an OTP-related Kafka event to send an email.
+     *
+     * @param event the OTP Kafka event containing email details
+     */
+
+    void processOtpEvent(OtpEvent event);
 
 }

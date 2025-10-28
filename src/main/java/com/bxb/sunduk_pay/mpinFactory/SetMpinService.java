@@ -40,13 +40,15 @@ public class SetMpinService implements MpinOperation{
      */
     @Override
     public MpinResponse perform(MpinRequest mpinRequest) {
-        String encryptMpin = mpinEncryption.encryptMpin(mpinRequest.getMpin());
-
+        // Encrypt the provided MPIN.
+        String encryptMpin = mpinEncryption
+                .encryptMpin(mpinRequest.getMpin());
+        // Retrieve user information using UUID.
         User user = validations.
                 getUserInfo(mpinRequest.getUuid());
         log.info("Setting MPIN for user UUID: {}",
                 user.getUuid());
-
+        // Create a new MPIN entity.
         Mpin mpin = Mpin.builder()
                 .user(user)
                 .mpin(encryptMpin)

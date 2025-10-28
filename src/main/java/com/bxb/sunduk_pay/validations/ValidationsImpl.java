@@ -374,4 +374,15 @@ private static final int WALLET_SIZE = 19;
                 balance, amount);
 
     }
+
+    @Override
+    public User getUserEmailInfo(String email) {
+        log.info("Fetching user with email: {}", email);
+        return userRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> {
+                    log.error("User not found with email: {}", email);
+                    return new UserNotFoundException(
+                          "this email is not registered: " + email
+                            );
+                });    }
 }

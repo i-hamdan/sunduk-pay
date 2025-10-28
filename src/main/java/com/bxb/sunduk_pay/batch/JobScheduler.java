@@ -58,8 +58,7 @@ public class JobScheduler {
 
         } catch (Exception e) {
             log.error(" Error while running scheduled job: {}",
-                    e.getMessage(),
-                    e
+                    e.getMessage()
             );
         }
     }

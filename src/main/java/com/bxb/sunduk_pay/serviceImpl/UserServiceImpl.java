@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
+import com.bxb.sunduk_pay.repository.MpinRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.response.UserLoginResponse;
 import com.bxb.sunduk_pay.service.UserService;
@@ -48,6 +49,10 @@ public class UserServiceImpl implements UserService {
      * Repository for master wallet data access.
      */
     private final MasterWalletRepository masterWalletRepository;
+    /**
+     * Repository for MPIN data access.
+     */
+    private final MpinRepository mpinRepository;
 
 
 
@@ -100,7 +105,6 @@ public class UserServiceImpl implements UserService {
                     user.getEmail());
             kafkaTemplate.send("user-topic", userEvent);
             log.info("New user saved with UUID: {}", user.getUuid());
-            user.setIsExists(false);
 
         } else {
             user = userOptional.get();
@@ -110,9 +114,12 @@ public class UserServiceImpl implements UserService {
                     user.getEmail());
             kafkaTemplate.send("user-topic", userEvent);
             log.info("Login successful");
-            user.setIsExists(true);
 
         }
+
+        boolean present = mpinRepository
+                .findByUser_Uuid(user.getUuid()).isPresent();
+        user.setIsMpinCreated(present);
         return user;
     }
 

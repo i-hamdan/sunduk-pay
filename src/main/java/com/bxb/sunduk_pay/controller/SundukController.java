@@ -59,7 +59,8 @@ public class SundukController {
                 + user.getFullName());
         User dbUser = service.userLogin(response);
         response.setUuid(dbUser.getUuid());
-        boolean isExists = dbUser.getIsExists();
+
+        boolean isMpinCreated = dbUser.getIsMpinCreated();
 
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
@@ -69,7 +70,7 @@ public class SundukController {
                 "UTF-8")
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
                 "UTF-8")
-                + "&isExists=" + isExists;
+                + "&isMpinCreated=" + isMpinCreated;
 
 
         log.info("Redirecting to deep link:{}", deepLink);
