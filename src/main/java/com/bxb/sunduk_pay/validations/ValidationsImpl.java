@@ -382,7 +382,6 @@ private static final int WALLET_SIZE = 19;
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", email);
                     return new UserNotFoundException(
-                          "this email is not registered: " + email
-                            );
+                          "this email is not registered with us"                            );
                 });    }
 }
