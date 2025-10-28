@@ -3,7 +3,6 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 //import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.encryption.MpinValidations;
-import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.Transaction;
@@ -62,8 +61,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
     private final TransactionMapper transactionMapper;
    /** Kafka template for publishing transaction events. */
    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-   /** Kafka template for publishing goal completion events. */
-  private final KafkaTemplate<String, GoalCompletionEvent> kafkaGoalTemplate;
+
 
 
     /**
