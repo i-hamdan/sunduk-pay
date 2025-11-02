@@ -3,10 +3,7 @@ package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.*;
 import jdk.jfr.Timestamp;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,7 +11,8 @@ import java.util.UUID;
 /**
  * Represents a master wallet associated with a user.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor

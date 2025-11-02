@@ -1,15 +1,16 @@
 package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
 /**
  * Entity representing a Mobile PIN (MPIN)
  * associated with a user.
  */
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,9 +23,22 @@ public class Mpin {
      */
     private Long pinId;
     /**
-     * The mobile PIN value.
+     * The user associated with this MPIN.
      */
+
     private String mpin;
+    /**
+     * Number of failed attempts to enter the MPIN.
+     */
+    private int failedAttempts;
+    /**
+     * Indicates whether the MPIN is locked due to too many failed attempts.
+     */
+    private boolean locked;
+    /**
+     * Timestamp until which the MPIN is locked.
+     */
+    private LocalDateTime lockedUntil;
     /**
      * The user associated with this MPIN.
      */

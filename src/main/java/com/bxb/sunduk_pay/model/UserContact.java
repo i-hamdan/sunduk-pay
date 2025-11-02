@@ -2,15 +2,14 @@ package com.bxb.sunduk_pay.model;
 
 import com.ctc.wstx.evt.WstxEventReader;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Model representing a user's contact information.
  */
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserContact {

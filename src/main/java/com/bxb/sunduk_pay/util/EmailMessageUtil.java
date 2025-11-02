@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.util;
 
-
 import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import org.springframework.stereotype.Component;
@@ -156,6 +155,24 @@ public class EmailMessageUtil {
       margin-top: 20px;
       text-align: left;
     }
+    .greeting {
+    font-size: 20px;
+    margin-bottom: 0.5rem;
+    }
+                
+    .hi-text {
+    color: #000000f7;
+    font-weight: 400;
+    font-size: 25px;
+    margin-right: 5px; 
+    }
+                
+    .name-text {
+    color: #C19945;
+    font-weight: 500;
+    font-size: 20px;
+    }
+    
   </style>
 </head>
 
@@ -165,50 +182,69 @@ public class EmailMessageUtil {
       <div class="card-body ">
 
         <!-- Logo Section -->
-        <div class="d-flex align-items-center " style="display:flex !important; justify-items:center !important;gap:14px; ">
-          <img src="cid:logoImage" alt="Sunduk Pay Logo" width="90" height="90" class="me-2" />
-          <span class="logo-text" style="padding-top:30px !important">Sunduk Pay</span>
+        <div class="d-flex align-items-center " style="display:flex !important;
+         justify-items:center !important;gap:14px; ">
+          <img src="cid:logoImage" alt="Sunduk Pay Logo" 
+          width="90" height="90" class="me-2" />
+          <span class="logo-text" 
+          style="padding-top:30px !important">Sunduk Pay</span>
         </div>
 
         <!-- Title Bar -->
         <div class="title-bar mb-4">4 Digit PIN To Reset Sunduk MPIN</div>
 
         <!-- Content -->
-        <p class="fs-5 mb-2"><strong>Hi</strong> <span style="color:#C19945;">%s</span>,</p>
+         <p class="greeting mb-2">
+         <span class="hi-text">Hi</span>
+         <span class="name-text">%s</span>
+         </p>
 
         <p class="text-muted">
-          We received a request to <strong class="text-dark">reset</strong> your PIN for your Sunduk Account.
+          We received a request to 
+          <strong class="text-dark">reset
+          </strong> your PIN for your Sunduk Account.
         </p>
 
         <p class="text-muted mt-2">
-          To proceed, please use the <strong class="text-dark">4-digit verification MPIN</strong> below to reset your MPIN securely in the Sunduk app.
+          To proceed, please use the
+           <strong class="text-dark">4-digit verification MPIN
+           </strong> below to reset your MPIN securely in the Sunduk app.
         </p>
 
         <h4 class="fw-semibold mt-4 mb-1 text-dark">Your Verification PIN</h4>
          <div class="pin-box">
-         <span class="bracket">[</span><span class="pin">%s</span><span class="bracket">]</span>
+         <span class="bracket">[</span>
+         <span class="pin">%s</span><span class="bracket">]</span>
          </div>
          
         <p class="text-muted mt-3">
-          This PIN is valid for <strong class="text-dark">Today</strong> and can only be used once.<br>
-          Enter this code on the <strong class="text-dark">“Verify OTP”</strong> screen in your Sunduk app to set your new MPIN.
+          This PIN is valid for 
+        <strong class="text-dark">Today</strong> and can only be used once.<br>
+          Enter this code on the 
+          <strong class="text-dark">“Verify OTP”</strong>
+           screen in your Sunduk app to set your new MPIN.
         </p>
 
         <p class="fw-semibold text-dark mt-3">
-          If you did not request this reset, please ignore this message. Your account will remain secure.
+          If you did not request this reset, 
+          please ignore this message. Your account will remain secure.
         </p>
 
         <!-- Security Tips -->
             <ul class="security-list text-muted">
-        <li><span>#</span>Never share this PIN or your MPIN with anyone, including Sunduk representatives.</li>
-        <li><span>#</span>Sunduk will never ask for your PIN via call, SMS, or email.</li>
+        <li><span>#</span>Never share this PIN or your MPIN with anyone, 
+        including Sunduk representatives.</li>
+        <li><span>#</span>Sunduk will never ask for your PIN via call,
+         SMS, or email.</li>
         <li><span>#</span>Always use the official Sunduk app or website.</li>
         </ul>
 
         <!-- Help -->
         <h4 class="mt-4 text-dark fw-semibold">Need Help?</h4>
         <p class="text-muted mb-0">
-          Contact our support team at <a href="mailto:support@sunduk.com" class="text-decoration-none" style="color:#C19945;">support@sunduk.com</a>
+          Contact our support team at
+           <a href="mailto:support@sunduk.com" class="text-decoration-none" 
+           style="color:#C19945;">support@sunduk.com</a>
         </p>
 
         <!-- Footer -->

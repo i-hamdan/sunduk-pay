@@ -51,14 +51,18 @@ public class SetMpinService implements MpinOperation{
         // Create a new MPIN entity.
         Mpin mpin = Mpin.builder()
                 .user(user)
+                .failedAttempts(0)
+                .locked(false)
+                .lockedUntil(null)
                 .mpin(encryptMpin)
+
                 .build();
 
         repository.save(mpin);
 
         return MpinResponse.builder()
-                .message("MPIN set successfully." +
-                        " You can now use your new MPIN " +
+                .title("MPIN set successfully.")
+                .message(" You can now use your new MPIN " +
                         "to access your account and authorize transaction.")
                 .build();
     }

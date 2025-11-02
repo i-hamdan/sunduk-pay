@@ -11,9 +11,11 @@ public class MpinMapperImpl implements MpinMapper {
     public OtpEvent toOtpEvent(String uuid, String email,
                                String fullname,
                                String otp) {
+
+        String firstname = fullname.trim().split("\\s+")[0];
         return OtpEvent.builder()
                 .userId(uuid)
-                .fullname(fullname)
+                .fullname(firstname)
                 .email(email)
                 .otp(otp)
                 .build();

@@ -46,7 +46,7 @@ public class ValidateOtp implements MpinOperation{
         } else {
             // throw exception for invalid otp
             throw new InvalidMpinException("Invalid code.please check your" +
-                    " email for the correct code" +
+                    " email for the correct code " +
                     "and re entre.");
         }
     }

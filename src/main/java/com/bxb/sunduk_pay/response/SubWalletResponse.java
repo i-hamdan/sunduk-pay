@@ -1,11 +1,13 @@
 package com.bxb.sunduk_pay.response;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Response object representing a sub-wallet with its details.
  */
-@Data
+@Getter
+@Setter
 public class SubWalletResponse {
     /** The unique identifier of the sub-wallet. */
     private String subWalletId;

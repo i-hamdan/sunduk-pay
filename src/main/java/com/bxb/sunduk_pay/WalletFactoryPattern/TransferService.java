@@ -188,7 +188,7 @@ public class TransferService implements WalletOperation {
                 amount);
         validations.validateBalance(sourceSubWallet.getBalance(),amount);
         /* Validate MPIN for payment */
-        mpinValidations.validateMpinForPayment(user.getUuid(),mpin);
+        mpinValidations.validateMpin(user.getUuid(),mpin);
         return paymentService.createCheckoutSession(user.getUuid(),
                 amount,
                 TransactionType.DEBIT,
@@ -221,6 +221,8 @@ public class TransferService implements WalletOperation {
             final Double previousSourceWalletBalance,
             final Double previousTargetWalletBalance,
             final String mpin) {
+
+        mpinValidations.validateMpin(user.getUuid(),mpin);
         return internalTransferService
                 .doInternalTransfer(user,
                         mainWallet,

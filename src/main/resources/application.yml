@@ -15,11 +15,6 @@ spring:
           auth: true
           starttls:
             enable: true
-
-  redis:
-    host: localhost
-    port: 6379
-
   config:
     import: classpath:queries.yml
 
@@ -71,15 +66,15 @@ spring:
       client:
         registration:
           google:
-            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
+            client-secret: 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
 
             scope:
               - openid
               - profile
               - email
-#            redirect-uri: "{baseUrl}/login/oauth2/code/google"
-        redirect-uri: "https://d0feda3788b5.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            #redirect-uri: "https://73ec7c7ead5a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -113,8 +108,8 @@ sunduk:
       - /api/sunduk-service/login/oauth2/code
       - /api/sunduk-service/custom-logout
       - /api/sunduk-service/custom-login
+      - /api/sunduk-service/upload-contact
       - /api/sunduk-service/webhook
-      - /api/sunduk-service/ws
 
 
 

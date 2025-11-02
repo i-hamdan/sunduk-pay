@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,11 +10,12 @@ import java.util.UUID;
 /**
  * Represents a sub-wallet associated with a main wallet.
  */
-@Entity
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Data
+@Entity
 public class SubWallet {
   /**
      * Unique identifier for the sub-wallet.

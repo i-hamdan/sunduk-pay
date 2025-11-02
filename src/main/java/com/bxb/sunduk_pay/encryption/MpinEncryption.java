@@ -17,7 +17,7 @@ public class MpinEncryption {
      * @param mpin
      * @return The hashed MPIN.
      */
-    public String encryptMpin(String mpin) {
+    public String encryptMpin(final String mpin) {
         if (mpin == null) {
             throw new ResourceNotFoundException("MPIN cannot be null");
         }
@@ -33,7 +33,8 @@ public class MpinEncryption {
      * @return true if the MPINs match, false otherwise.
      */
 
-    public boolean verifyMpin(String inputMpin, String hashedMpin) {
+    public boolean verifyMpin(final String inputMpin,
+                              final String hashedMpin) {
         if (inputMpin == null) {
             throw new ResourceNotFoundException("MPIN cannot be null");
         }

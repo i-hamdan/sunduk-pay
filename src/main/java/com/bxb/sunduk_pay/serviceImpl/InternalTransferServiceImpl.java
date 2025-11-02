@@ -94,7 +94,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             List<Transaction> transactions = new ArrayList<>();
 
             log.debug(
-    "Validating source wallet balance: currentBalance="
+            "Validating source wallet balance: currentBalance="
             + sourceWallet.getBalance()
             + ", transferAmount=" + amount);
 
@@ -104,7 +104,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
 
 
             /* Validate MPIN for payment */
-           mpinValidations.validateMpinForPayment(user.getUuid(),mpin);
+          // mpinValidations.validateMpin(user.getUuid(),mpin);
 
 
 

@@ -48,10 +48,14 @@ public class FogetMpinReset implements MpinOperation{
                 mpinEncryption.encryptMpin(mpinRequest.getNewMpin());
         // set new mpin for user
        mpin.setMpin(encryptMpin);
+       mpin.setLockedUntil(null);
+       mpin.setFailedAttempts(0);
+       mpin.setLocked(false);
 
        mpinRepository.save(mpin);
         return MpinResponse.builder()
-                .message("MPIN reset successfully." +
+                .title("MPIN reset successfully.")
+                .message(
                         " You can use it now to access your account" +
                         "and authorize transactions.")
                 .build();

@@ -12,7 +12,7 @@ public interface MpinValidations {
      * @param uuid
      * @param inputMpin
      */
-    void validateMpinForPayment(final String uuid, final String inputMpin);
+    void validateMpin(final String uuid, final String inputMpin);
 /**
      * Validates the MPIN for setting a new MPIN.
      * @param uuid
@@ -20,5 +20,4 @@ public interface MpinValidations {
     Mpin findMpinByUuid(final String uuid);
 
 
-    void validateMpinForReset(final String uuid, final String inputMpin);
 }

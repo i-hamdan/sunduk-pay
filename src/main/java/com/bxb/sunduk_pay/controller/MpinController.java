@@ -1,12 +1,9 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.encryption.MpinEncryption;
-import com.bxb.sunduk_pay.repository.MpinRepository;
 import com.bxb.sunduk_pay.request.MpinRequest;
 import com.bxb.sunduk_pay.response.MpinResponse;
 import com.bxb.sunduk_pay.service.MpinService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,11 +21,11 @@ public class MpinController {
     private final MpinService mpinService;
 /**
  * * Constructor for MpinController.
- * @param mpinService the MPIN service to be used
+ * @param mpinServices the MPIN service to be used
  */
 
-    public MpinController(MpinService mpinService) {
-        this.mpinService = mpinService;
+    public MpinController(final MpinService mpinServices) {
+        this.mpinService = mpinServices;
     }
     /**
      * Endpoint to set or update the MPIN for a user.
@@ -36,14 +33,14 @@ public class MpinController {
      * @param request the request containing user UUID and new MPIN
      * @return response indicating success or failure of the operation
      */
-@PostMapping("/mpin")
+    @PostMapping("/mpin")
     public ResponseEntity<MpinResponse> mpinApi(
-            @RequestBody MpinRequest request)
+            @RequestBody final MpinRequest request)
 {
         log.info("Received MPIN set request for UUID: {}",
                 request.getUuid() + "mpin " + request.getMpin());
 
-        return ResponseEntity.ok(mpinService.mpinApi(request));
+            return ResponseEntity.ok(mpinService.mpinApi(request));
 }
 
 

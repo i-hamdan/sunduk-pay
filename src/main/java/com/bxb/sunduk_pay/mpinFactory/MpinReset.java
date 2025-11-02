@@ -32,16 +32,20 @@ public class MpinReset implements MpinOperation{
         // Validate the UUID and retrieve the corresponding MPIN record.
         Mpin mpin = mpinValidations.findMpinByUuid(mpinRequest.getUuid());
        // Validate the existing MPIN.
-        mpinValidations.validateMpinForReset(mpinRequest.getUuid(),
+        mpinValidations.validateMpin(mpinRequest.getUuid(),
                 mpinRequest.getMpin());
         // Encrypt the new MPIN.
         String encryptMpin = mpinEncryption.encryptMpin(mpinRequest.getNewMpin());
         // Set the new MPIN for the user.
         mpin.setMpin(encryptMpin);
+        mpin.setLockedUntil(null);
+        mpin.setFailedAttempts(0);
+        mpin.setLocked(false);
         // Save the updated MPIN record.
          mpinRepository.save(mpin);
         return MpinResponse.builder()
-                .message("MPIN Change successfully." +
+                .title("MPIN Change successfully.")
+                .message(
                         " You can now  use your new MPIN to access your " +
                         "account and authorize transactions.")
                 .build();
