@@ -55,5 +55,8 @@ public class TransactionResponse {
     private String toWalletIcon;
     /** Icon of the source wallet. */
     private String fromWalletIcon;
+    /** UPI ID of the recipient
+     *  in case of external transactions. */
+    private String recipientUpiId;
 }
 

@@ -15,5 +15,15 @@ public enum RequestType {
     /** Request to fetch wallet information. */
     FETCH_WALLET,
     /** Request to transfer money between accounts or wallets. */
-    TRANSFER_MONEY
+    TRANSFER_MONEY,
+    /** Request to search for contacts. */
+    SEARCH_CONTACTS,
+    /** Request to add a reminder. */
+    ADD_REMINDER,
+    /** Request to get reminders. */
+    FETCH_REMINDERS,
+    /** Request to update FCM token. */
+    UPDATE_FCM_TOKEN,
+    /** Request to delete a reminder. */
+    DELETE_REMINDER;
 }

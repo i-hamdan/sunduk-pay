@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.service.ExternalTransferService;
 import com.bxb.sunduk_pay.service.InternalTransferService;
 import com.bxb.sunduk_pay.service.PaymentService;
 import com.bxb.sunduk_pay.util.RequestType;
@@ -45,6 +46,9 @@ public class TransferService implements WalletOperation {
      * Payment service for handling external payments.
      */
     private final PaymentService paymentService;
+
+    /** External transfer service for handling external transfers. */
+    private final ExternalTransferService externalTransferService;
 
     /**
      * Returns the request type handled by this service.
@@ -99,6 +103,11 @@ public class TransferService implements WalletOperation {
 
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
+
+            if (mainWalletRequest.getPaymentMethod()!= null && "UPI".equalsIgnoreCase(mainWalletRequest.getPaymentMethod().toString())) {
+                log.info("Processing UPI transfer");
+                return externalTransferService.handleUPITransfer(mainWalletRequest);
+            }
 
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");

@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.UserContact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,4 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     Optional<User> findByEmailAndIsDeletedFalse(
             String email);
-
-
 }

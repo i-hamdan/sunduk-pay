@@ -375,6 +375,21 @@ private static final int WALLET_SIZE = 19;
 
     }
 
+   /** {@inheritDoc} */
+    @Override
+    public void validateRecipientUpiId(String recipientUpiId) {
+
+        log.info("Validating recipient UPI ID: {}", recipientUpiId);
+
+        if (recipientUpiId == null || recipientUpiId.isBlank()) {
+            log.error("Validation failed: recipient UPI ID is null or blank");
+            throw new NullValueException("Recipient UPI ID cannot be null or blank.");
+        }
+
+        log.debug("Validation successful for UPI ID: {}", recipientUpiId);
+
+    }
+
     @Override
     public User getUserEmailInfo(String email) {
         log.info("Fetching user with email: {}", email);

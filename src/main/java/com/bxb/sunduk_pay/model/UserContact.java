@@ -27,14 +27,9 @@ public class UserContact {
      * The phone number of the user.
      */
     private String phone;
-/**
- * The email address of the user.
- */
-    private String email;
+
     /**
-     * The user associated with this contact information.
- */
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+     * The UPI ID of the recipient.
+     */
+    private String upiId;
 }

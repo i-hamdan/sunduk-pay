@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.util.ActionType;
-import com.bxb.sunduk_pay.util.PaymentMethod;
-import com.bxb.sunduk_pay.util.RequestType;
-import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -56,8 +53,20 @@ private static final int DEFAULT_SIZE = 10;
     private ActionType actionType;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
+    /** Phone number for UPI contact search. */
+    private String phone;
+    /** UPI ID of the recipient for external transfers. */
+    private String recipientUpiId;
+    /** Start date for reminders. */
+    private LocalDate startDate;
+    /** Duration for reminders. */
+    private Duration duration;
+    /** Remark or note associated with the reminder. */
+    private String remark;
     /** ID of the wallet involved in the transaction. */
     private String walletId;
+    /** ID of the reminder for operations related to reminders. */
+    private String reminderId;
     /** Page number for pagination. */
     private int page = DEFAULT_PAGE;
     /** Number of records per page for pagination. */
@@ -66,5 +75,7 @@ private static final int DEFAULT_SIZE = 10;
     private String sortBy = "dateTime";
     /** Sort direction: ASC or DESC. */
     private String sortDirection = "DESC";
+    /** FCM token for push notifications. */
+    public String fcmToken;
 }
 

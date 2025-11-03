@@ -97,4 +97,8 @@ public class Transaction {
      * Phone number of the recipient in the transaction.
      */
     private String toPhoneNumber;
+    /**
+     * UPI ID of the recipient in the transaction.
+     */
+    private String recipientUpiId;
 }

@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
 import com.bxb.sunduk_pay.exception.TransactionProcessingException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
@@ -29,6 +30,8 @@ public class FetchTransactionsService implements WalletOperation {
     private final Validations validations;
     /** Mapper to convert transaction entities to response DTOs. **/
     private final TransactionMapper transactionMapper;
+
+    private final TransactionRepository transactionRepository;
 
     /**
      * Returns the request type handled by this service.
@@ -71,13 +74,23 @@ public class FetchTransactionsService implements WalletOperation {
                     mainWalletRequest.getSize(),
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
-            Page<Transaction> transactions = validations
-                    .getTransactions(
-                            mainWalletRequest.getUuid(),
-                            mainWalletRequest.getWalletId(),
-                            mainWalletRequest.getPaymentMethod(),
-                            mainWalletRequest.getTransactionType(),
-                            pageable);
+            Page<Transaction> transactions;
+
+            if (mainWalletRequest.getRecipientUpiId() != null && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
+
+                transactions = transactionRepository.findByRecipientUpiIdAndIsMasterFalse(
+                        mainWalletRequest.getRecipientUpiId(), pageable);
+            }
+            else {
+
+                transactions = validations
+                        .getTransactions(
+                                mainWalletRequest.getUuid(),
+                                mainWalletRequest.getWalletId(),
+                                mainWalletRequest.getPaymentMethod(),
+                                mainWalletRequest.getTransactionType(),
+                                pageable);
+            }
 
             log.info(
                 "Returning {} transactions for uuid ID:{} And SubWallet ID: {}",

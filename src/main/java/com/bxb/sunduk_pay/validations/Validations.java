@@ -119,7 +119,6 @@ public interface Validations {
      * @param subWalletName sub-wallet name
      *                      if found,
      *                      otherwise empty
-     * @param mainWalletId
      */
     void findSubWalletByName(
             String subWalletName, String mainWalletId);
@@ -139,4 +138,13 @@ public interface Validations {
      * @return {@link User}
      */
     User getUserEmailInfo(String uuid);
+    /**
+     * Validates the format of a recipient UPI ID.
+     *
+     * @param recipientUpiId recipient UPI ID
+     */
+    void validateRecipientUpiId(String recipientUpiId);
+
+
+
 }

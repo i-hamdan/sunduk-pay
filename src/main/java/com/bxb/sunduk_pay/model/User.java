@@ -20,6 +20,7 @@ public class User {
      * Unique identifier for the user.
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String  uuid;
 /**
 * Full name of the user.
@@ -61,10 +62,19 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Transaction> transactionHistory;
     /**
-     * One-to-many relationship with UserContact.
+     * FCM token for push notifications.
+     */
+    private String fcmToken;
+    /**
+     * One-to-many relationship with Reminder.
      */
     @OneToMany(mappedBy = "user")
-    private List<UserContact> contacts;
+    private List<Reminder> reminders;
+//    /**
+//     * One-to-many relationship with UserContact.
+//     */
+//    @OneToMany(mappedBy = "user")
+//    private List<UserContact> contacts;
     /**
      * Indicates if the MPIN is created for the user.
      */

@@ -205,4 +205,17 @@ public interface TransactionRepository
             String uuid,
             PaymentMethod paymentMethod,
             Pageable pageable);
+
+    /**Method for fetching transactions.
+     * find transactions by recipient UPI ID
+     * and isMaster false.
+     *
+     * @param recipientUpiId recipient UPI ID
+     * @param pageable pagination information
+     * @return list of transactions
+     */
+    Page<Transaction> findByRecipientUpiIdAndIsMasterFalse(
+            String recipientUpiId,
+            Pageable pageable);
+
 }

@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.ContactRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.MpinRepository;
@@ -54,6 +55,11 @@ public class UserServiceImpl implements UserService {
      */
     private final MpinRepository mpinRepository;
 
+    /**
+     * Repository for contact data access.
+     */
+
+    private final ContactRepository contactRepository;
 
 
     /**
@@ -76,6 +82,7 @@ public class UserServiceImpl implements UserService {
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setIsDeleted(false);
+
             user=userRepository.save(user);
 
             MainWallet mainWallet = MainWallet.builder()

@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.model.Reminder;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -122,5 +125,17 @@ public class MainWalletResponse {
     private String session;
     /** URL to redirect the user for completing payment. */
     private String checkoutUrl;
+    /** Date and time when the transaction occurred. */
+    private LocalDateTime transactionDate;
+    /** Name of the recipient in UPI transactions. */
+    private String name;
+    /** Phone number of the recipient in UPI transactions.*/
+    private String phone;
+    /** UPI ID of the recipient in UPI transactions. */
+    private String recipientUpiId;
+    /** List of reminders associated with the main wallet. */
+    private List<ReminderResponse> reminders;
+
+
 }
 
