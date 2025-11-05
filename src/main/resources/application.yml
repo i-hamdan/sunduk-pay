@@ -78,7 +78,7 @@ spring:
               - openid
               - profile
               - email
-            redirect-uri: "https://wallet.sundukpay.com/login/oauth2/code/google"
+            redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
             #redirect-uri: "https://73ec7c7ead5a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
@@ -148,4 +148,3 @@ management:
 logging:
   level:
     com.bxb.sunduk_pay: DEBUG
-    
