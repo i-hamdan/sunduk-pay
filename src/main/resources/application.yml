@@ -148,3 +148,4 @@ management:
 logging:
   level:
     com.bxb.sunduk_pay: DEBUG
+    
