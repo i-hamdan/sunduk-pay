@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 
 /**
- * Controller for handling user login, logout, and contact upload.
+ * Controller for handling user login, logout.
  */
 
 @Log4j2

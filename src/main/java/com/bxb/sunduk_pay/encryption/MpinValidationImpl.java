@@ -7,8 +7,6 @@ import com.bxb.sunduk_pay.repository.MpinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -52,15 +50,20 @@ public class MpinValidationImpl implements MpinValidations {
             } else {
                 Duration remaining = Duration.between(LocalDateTime.now(),
                         mpin.getLockedUntil());
-                long hoursLeft = remaining.toHours();
-                log.info(hoursLeft);
-                long minutesLeft = remaining.toMinutesPart();
-                log.info(minutesLeft);
-                long secondLeft = remaining.toSeconds();
-                log.info(secondLeft);
+//                long hoursLeft = remaining.toHours();
+//                log.info(hoursLeft);
+//                long minutesLeft = remaining.toMinutesPart();
+//                log.info(minutesLeft);
+//                long secondLeft = remaining.toSeconds();
+//                log.info(secondLeft);
+                long totalSeconds = remaining.getSeconds();
+                long hoursLeft = totalSeconds / 3600;
+                long minutesLeft = (totalSeconds % 3600) / 60;
+                long secondsLeft = totalSeconds % 60;
                 throw new InvalidMpinException(
-                      "Your MPIN is blocked. Try again in "+ hoursLeft +
-                                minutesLeft + secondLeft);
+                        String.format("Your MPIN is blocked. Try again in %02d hours %02d minutes %02d seconds",
+                                hoursLeft, minutesLeft, secondsLeft)
+                );
 
             }
         }
@@ -76,7 +79,7 @@ public class MpinValidationImpl implements MpinValidations {
 
             if (failedAttempts >= 3) {
                 mpin.setLocked(true);
-                mpin.setLockedUntil(LocalDateTime.now().plusMinutes(10));
+                mpin.setLockedUntil(LocalDateTime.now().plusMinutes(2));
                 mpinRepository.save(mpin);
 
                 log.error("User {} MPIN blocked for 2 minutes after 3" +
