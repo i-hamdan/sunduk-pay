@@ -19,9 +19,9 @@ spring:
     import: classpath:queries.yml
 
   datasource:
-    url: jdbc:mysql://localhost:3306/SundukPay
-    username: root
-    password: root123
+    url: jdbc:mysql://walletapp-sql:3306/sundukpay
+    username: walletuser
+    password: walletpass123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -45,7 +45,12 @@ spring:
 
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
+    properties:
+      security.protocol: PLAINTEXT
+      session.timeout.ms: 45000
+      request.timeout.ms: 60000
+      retry.backoff.ms: 5000
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -66,14 +71,14 @@ spring:
       client:
         registration:
           google:
-            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
+            client-secret: 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
 
             scope:
               - openid
               - profile
               - email
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            redirect-uri: "https://wallet.sundukpay.com/login/oauth2/code/google"
             #redirect-uri: "https://73ec7c7ead5a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
@@ -82,12 +87,6 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
-
-  data:
-    mongodb:
-      host: localhost
-      port: 27017
-      database: MyDB
 
 server:
   port: 8080
@@ -118,10 +117,10 @@ exchange:
     url: https://v6.exchangerate-api.com/v6/09a314fc07e168435db69de3
 stripe:
   key:
-    secret: sk_test_51RohZUFjIPvwIVrLyRAcI7OWRbYVmEZ976vhMmJDyYyXeCDkpxE0ZPA5XUr7xxqw168zJTtU9S8S5YFFNHoKyYPR00MaFmFn8l
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
 
   webhook:
-    secret: whsec_ada8e07c83edd36fb4e5110e64dd53607228345dd6520476ab01dd208701e6b5
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
 
 
 resilience4j:
