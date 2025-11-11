@@ -37,7 +37,7 @@ private final RedisConnectionFactory connectionFactory;
     @PostConstruct
     public void init() {
         try {
-            String pong = connectionFactory.getConnection().ping();
+            String pong = this.connectionFactory.getConnection().ping();
             log.info("Redis connected successfully: {}", pong);
         } catch (Exception e) {
             log.error(

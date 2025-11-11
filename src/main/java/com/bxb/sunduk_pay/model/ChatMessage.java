@@ -1,8 +1,12 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.*;
-import lombok.*;
-import org.springframework.stereotype.Component;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -42,10 +46,4 @@ public class ChatMessage {
      */
     private String status;
 
-    /**
-     * Associated transaction, if the message is related to a transaction.
-     */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transaction_id", nullable = true)
-    private Transaction transaction;
 }

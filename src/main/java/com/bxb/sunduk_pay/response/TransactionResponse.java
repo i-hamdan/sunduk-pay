@@ -36,14 +36,14 @@ public class TransactionResponse {
     private String date;
     /** Date and Time when the transaction occurred. */
     private String dateTime;
-    /**Date and time in LocalDateTime format for ui purposes*/
+    /**Date and time in LocalDateTime format for ui purposes.*/
     private LocalDateTime chatDateTime;
   /** Status of the transaction (e.g., Success, failure). */
     private String status;
     /** Full name of the user associated
      *  with the transaction. */
     private String fullName;
-    /**Tag of the transaction*/
+    /**Tag of the transaction.*/
     private String paymentTag;
     /** Name of the source wallet associated
      * with the transaction. */

@@ -5,31 +5,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessageResponse {
-    /** Unique identifier for the chat message */
+    /** Unique identifier for the chat message. */
     private String messageId;
-    /** ID of the sender of the message */
+    /** ID of the sender of the message. */
     private String senderId;
-    /** ID of the receiver of the message */
+    /** ID of the receiver of the message. */
     private String receiverId;
     /** PhoneNumber of the sender ,
-     * including in response dto because of frontend requirement*/
+     * including in response dto because of frontend requirement.*/
     private String senderPhoneNumber;
     /** PhoneNumber of the receiver ,
-     * including in response dto because of frontend requirement*/
+     * including in response dto because of frontend requirement.*/
     private String receiverPhoneNumber;
-    /** Content of the chat message */
+    /** Content of the chat message. */
     private String content;
-    /** Status of the chat message*/
+    /** Status of the chat message.*/
     private String status;
-    /** Timestamp when the message was sent */
+    /** Timestamp when the message was sent. */
     private String date;
-    /** Time when the message was sent */
+    /** Time when the message was sent. */
     private String time;
 }

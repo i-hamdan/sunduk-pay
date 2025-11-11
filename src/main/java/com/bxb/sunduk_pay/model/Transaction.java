@@ -3,8 +3,18 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 

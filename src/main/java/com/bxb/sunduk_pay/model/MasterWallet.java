@@ -1,9 +1,16 @@
 package com.bxb.sunduk_pay.model;
 
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
 import jdk.jfr.Timestamp;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

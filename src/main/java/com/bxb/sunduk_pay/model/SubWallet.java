@@ -1,11 +1,17 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * Represents a sub-wallet associated with a main wallet.
