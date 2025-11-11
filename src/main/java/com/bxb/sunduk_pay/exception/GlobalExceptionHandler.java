@@ -347,6 +347,51 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+
+    /**
+     * Handles {@link CannotFetchMessagesException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
+    @ExceptionHandler(value = CannotFetchMessagesException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleCannotFetchMessagesException(
+            final CannotFetchMessagesException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+
+    @ExceptionHandler(value = RedisOperationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleRedisOperationException(
+            final RedisOperationException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Redis operation failed!",
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+    @ExceptionHandler(value = ChatProcessingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleChatProcessingException(
+            final ChatProcessingException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Chat processing failed!",
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
     /**
      * Handles {@link HttpMessageNotReadableException}
      * for invalid JSON payloads.

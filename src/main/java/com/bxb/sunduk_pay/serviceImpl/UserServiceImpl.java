@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -81,6 +82,7 @@ public class UserServiceImpl implements UserService {
              response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
+            user.setPhoneNumber(response.getPhoneNumber());
             user.setIsDeleted(false);
 
             user=userRepository.save(user);
@@ -115,6 +117,10 @@ public class UserServiceImpl implements UserService {
 
         } else {
             user = userOptional.get();
+            if (user.getPhoneNumber()==null){
+             log.error( "User found but phone number is null for email: {}",
+                     user.getEmail());
+            }
             UserKafkaEvent userEvent = userMapper
                     .toKafkaEvent(user,  "LOGIN");
             log.info("Sending user login event to Kafka for email: {}",

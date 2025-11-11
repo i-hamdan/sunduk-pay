@@ -73,6 +73,9 @@ public class Transaction {
      */
     @Column(nullable = false)
     private Boolean isMaster;
+
+    /** The Tag of the transaction*/
+    private String paymentTag;
     /**
      * Name of the sender in the transaction.
      */

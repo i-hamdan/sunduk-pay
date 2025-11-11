@@ -30,7 +30,12 @@ public interface ChatMessageMapper {
      * Converts a ChatMessage to a ChatMessageResponse.
      *
      * @param chatMessage the chat message model
+     * @param senderNo
+     * @param receiverNo
      * @return the corresponding chat message response
      */
-    ChatMessageResponse toChatMessageResponse(final ChatMessage chatMessage);
+    ChatMessageResponse toChatMessageResponse(final ChatMessage chatMessage,
+                                              final String senderNo ,
+                                              final String receiverNo);
+
 }

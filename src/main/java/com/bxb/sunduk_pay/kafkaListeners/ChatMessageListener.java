@@ -1,35 +1,57 @@
 package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.Mappers.ChatMessageMapper;
+import com.bxb.sunduk_pay.exception.ChatProcessingException;
 import com.bxb.sunduk_pay.kafkaEvents.ChatMessageEvent;
-import com.bxb.sunduk_pay.model.ChatMessage;
-import com.bxb.sunduk_pay.repository.ChatMessageRepository;
 import com.bxb.sunduk_pay.response.ChatMessageResponse;
+import com.bxb.sunduk_pay.service.ChatMessageService;
+import com.bxb.sunduk_pay.service.UserToUserTransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+/**
+ * Listener for chat message events from Kafka.
+ * Processes incoming chat messages and forwards
+ * them to WebSocket clients.
+ */
 @Component
 @Log4j2
 @RequiredArgsConstructor
 public class ChatMessageListener {
+
+    /**
+     * Executor for handling asynchronous processing of chat messages.
+     */
+    private final Executor executor = Executors
+            .newFixedThreadPool(5);
+
     /**
      * Messaging template for sending messages to WebSocket clients.
      */
     private final SimpMessagingTemplate messagingTemplate;
 
     /**
-     * Mapper for converting chat message events to chat message models.
+     * Service for handling chat message operations.
+     */
+    private final ChatMessageService messageService;
+
+    /**
+     * Service for handling user-to-user transfers.
+     */
+    private final UserToUserTransferService userTransferService;
+
+    /**
+     * Mapper for converting between chat message events and models.
      */
     private final ChatMessageMapper chatMessageMapper;
-    /**
-     * Repository for persisting chat messages.
-     */
-    private final ChatMessageRepository chatMessageRepository;
+
 
     /**
      * Consumes chat message events from the "chat-messages" Kafka topic,
@@ -41,24 +63,78 @@ public class ChatMessageListener {
     @KafkaListener(topics = "chat-messages",
             groupId = "chat-service-group")
     public void consumeChatMessage(final ChatMessageEvent messageEvent) {
-
         log.info("Received chat message from {} to {}: {}",
                 messageEvent.getSenderId(),
                 messageEvent.getReceiverId(),
                 messageEvent.getContent());
+            handleNormalMessage(messageEvent);
 
-        ChatMessage chatMessage = chatMessageMapper.toChatMessage(messageEvent);
-        chatMessage.setMessageId(UUID.randomUUID().toString());
-        chatMessage.setTimestamp(LocalDateTime.now());
-        chatMessage.setStatus("SUCCESS");
+    }
 
-        chatMessageRepository.save(chatMessage);
+    /**
+     * Handles normal chat messages by processing them asynchronously.
+     *
+     * @param messageEvent the chat message event to be processed
+     */
+    private void handleNormalMessage(ChatMessageEvent messageEvent) {
+        processAsync(messageEvent);
+    }
 
-        ChatMessageResponse chatMessageResponse = chatMessageMapper
-                .toChatMessageResponse(chatMessage);
+    /**
+     * Processes the chat message event asynchronously.
+     *
+     * @param messageEvent the chat message event to be processed
+     */
+    private void processAsync(ChatMessageEvent messageEvent) {
+        try {
+            CompletableFuture
+                    .supplyAsync(() -> {
+                        log.info(
 
-        messagingTemplate.convertAndSend(
-                "/queue/" + chatMessage.getReceiverId(),
-                chatMessageResponse);
+            "[AsyncThread: {}] Starting message processing...",
+                                Thread.currentThread().getName());
+                        return messageService.processMessage(messageEvent);
+                    }, executor)
+                    .thenAccept(response -> {
+                        log.info(
+
+   "[ThenAcceptThread: {}] Sending message to user...",
+                                Thread.currentThread().getName());
+                        sendMessageToWebSocket(response);
+                    })
+                    .exceptionally(ex -> {
+                        log.error("[ErrorThread: {}] Exception: {}",
+                 Thread.currentThread().getName(), ex.getMessage());
+                        return null;
+                    });
+        } catch (Exception e) {
+            log.error("Failed to process chat message asynchronously: "
+                    + e.getMessage());
+            throw new ChatProcessingException(
+                    "Failed to process chat message asynchronously: "
+                            + e.getMessage());
+        }
+    }
+
+    /**
+     * Sends the chat message response to the appropriate WebSocket destination.
+     *
+     * @param response the chat message response to be sent
+     */
+    private void sendMessageToWebSocket(
+            final ChatMessageResponse response) {
+        try {
+            messagingTemplate.convertAndSend(
+                    "/queue/" + response.getReceiverId(),
+                    response);
+            log.info(
+        "Forwarded chat message to WebSocket destination /queue/{}",
+                    response.getReceiverId());
+        } catch (Exception e) {
+            log.error("Failed to send message to WebSocket: "
+                    + e.getMessage());
+            throw new ChatProcessingException("unable to forward "
+                    + "message to WebSocket. " + e.getMessage());
+        }
     }
 }

@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     Optional<User> findByEmailAndIsDeletedFalse(
             String email);
+
+    Optional<User>findByPhoneNumber(String phoneNumber);
 }

@@ -23,12 +23,12 @@ public interface Validations {
      */
     void validateBalance(Double balance, Double amount);
     /**
-     * Retrieves user information by email.
+     * Retrieves user information by uuid.
      *
-     * @param email user email
+     * @param uuid user uuid
      * @return {@link User}
      */
-    User getUserInfo(String email);
+    User getUserInfo(String uuid);
 
     /**
      * Retrieves a main wallet by its ID.
@@ -57,6 +57,8 @@ public interface Validations {
      * Validates and retrieves transactions based on various filters.
      *
      * @param uuid            user UUID
+     * @param senderId
+     * @param receiverId
      * @param walletId        main wallet ID
      * @param paymentMethod   payment method filter (optional)
      * @param transactionType transaction type filter (optional)
@@ -65,6 +67,7 @@ public interface Validations {
      */
     Page<Transaction> getTransactions(
             String uuid,
+            String receiverId,
             String walletId,
             PaymentMethod paymentMethod,
             TransactionType transactionType,
@@ -134,10 +137,10 @@ public interface Validations {
 /**
      * Retrieves user email information by UUID.
      *
-     * @param uuid user UUID
+     * @param email user UUID
      * @return {@link User}
      */
-    User getUserEmailInfo(String uuid);
+    User getUserEmailInfo(String email);
     /**
      * Validates the format of a recipient UPI ID.
      *
@@ -145,6 +148,7 @@ public interface Validations {
      */
     void validateRecipientUpiId(String recipientUpiId);
 
+    User getUserByPhoneNumber(String phoneNumber);
 
 
 }

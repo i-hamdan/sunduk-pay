@@ -9,15 +9,21 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Configuration class for initializing Firebase.
+ */
 @Configuration
 public class FirebaseConfig {
 
+    /** Initializes Firebase with service account credentials. */
     @PostConstruct
     public void initialize() throws IOException {
-        InputStream serviceAccount = getClass().getResourceAsStream("/firebase-service-account.json");
+        InputStream serviceAccount = getClass().getResourceAsStream(
+                "/firebase-service-account.json");
 
         if (serviceAccount == null) {
-            throw new IOException("firebase-service-account.json not found in classpath!");
+            throw new IOException(
+                    "firebase-service-account.json not found in classpath!");
         }
 
         FirebaseOptions options = FirebaseOptions.builder()

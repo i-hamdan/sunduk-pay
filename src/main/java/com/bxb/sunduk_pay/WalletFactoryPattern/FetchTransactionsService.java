@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -77,15 +78,13 @@ public class FetchTransactionsService implements WalletOperation {
             Page<Transaction> transactions;
 
             if (mainWalletRequest.getRecipientUpiId() != null && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
-
                 transactions = transactionRepository.findByRecipientUpiIdAndIsMasterFalse(
                         mainWalletRequest.getRecipientUpiId(), pageable);
-            }
-            else {
-
+            } else {
                 transactions = validations
                         .getTransactions(
                                 mainWalletRequest.getUuid(),
+                                mainWalletRequest.getReceiverId(),
                                 mainWalletRequest.getWalletId(),
                                 mainWalletRequest.getPaymentMethod(),
                                 mainWalletRequest.getTransactionType(),

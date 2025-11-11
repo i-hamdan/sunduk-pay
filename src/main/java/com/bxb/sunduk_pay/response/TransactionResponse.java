@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 /**
  * Response object representing a transaction.
  */
@@ -30,27 +32,39 @@ public class TransactionResponse {
     private Double amount;
     /** Description or note about the transaction. */
     private String description;
-    /** Date and time when the transaction occurred. */
+    /** Date when the transaction occurred. */
     private String date;
-    /** Time when the transaction occurred. */
+    /** Date and Time when the transaction occurred. */
     private String dateTime;
+    /**Date and time in LocalDateTime format for ui purposes*/
+    private LocalDateTime chatDateTime;
   /** Status of the transaction (e.g., Success, failure). */
     private String status;
     /** Full name of the user associated
      *  with the transaction. */
     private String fullName;
+    /**Tag of the transaction*/
+    private String paymentTag;
     /** Name of the source wallet associated
      * with the transaction. */
     private String fromWallet;
     /** Identifier of the source wallet
      *  associated with the transaction. */
     private String fromWalletId;
+
+    /** Phone number of the sender
+     *  in case of external transactions. */
+    private String fromPhoneNumber;
+
     /** Name of the destination wallet
      * associated with the transaction. */
     private String toWallet;
    /** Identifier of the destination wallet
     *  associated with the transaction. */
     private String toWalletId;
+    /** Phone number of the recipient
+     *  in case of external transactions. */
+    private String toPhoneNumber;
    /** Icon of the destination wallet. */
     private String toWalletIcon;
     /** Icon of the source wallet. */

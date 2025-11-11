@@ -103,8 +103,6 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Balance validation successful");
 
 
-            /* Validate MPIN for payment */
-          // mpinValidations.validateMpin(user.getUuid(),mpin);
 
 
 

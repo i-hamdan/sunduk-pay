@@ -71,7 +71,6 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                 request.getRecipientUpiId());
 
         try {
-
             // Step 1: Validate recipient UPI ID first
             validations.validateRecipientUpiId(request.getRecipientUpiId());
 

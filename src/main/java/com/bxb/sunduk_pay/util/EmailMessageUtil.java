@@ -41,14 +41,14 @@ public class EmailMessageUtil {
      */
     public String buildBody(final UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
-            return "Assalamualaikum " + event.getFullName() + ",\n\n"
+            return "Hi " + event.getFullName() + ",\n\n"
                      + "We're happy to see you back on Sunduk!\n"
                      + "You have successfully logged in to your account.\n\n"
                      + "If this wasn't you, please "
                      +  "secure your account immediately.\n\n"
                      + "Team Sunduk";
         } else {
-            return "Assalamualaikum " + event.getFullName() + ",\n\n"
+            return "Hi " + event.getFullName() + ",\n\n"
                     + "Welcome to SundukPay! \n\n"
                     + "Your account has been successfully created, "
                     + "and you’re now part of a secure and seamless way "

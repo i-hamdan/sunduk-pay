@@ -27,19 +27,23 @@ import java.net.URLEncoder;
 @RequiredArgsConstructor
 // this needs to remove once we moved to domain
 public class SundukController {
-    /** Service for user-related operations. */
+    /**
+     * Service for user-related operations.
+     */
     private final UserService service;
-    /** Mapper for converting OIDC user info
-     * to application user model. */
+    /**
+     * Mapper for converting OIDC user info
+     * to application user model.
+     */
     private final UserMapper userMapper;
 
 
     /**
      * Handles custom login via OIDC.
      *
-     * @param session current HTTP session
+     * @param session             current HTTP session
      * @param httpServletResponse HTTP response to send redirect
-     * @param user authenticated OIDC user
+     * @param user                authenticated OIDC user
      * @return user login response
      * @throws IOException if redirect fails
      */
@@ -59,6 +63,7 @@ public class SundukController {
         response.setUuid(dbUser.getUuid());
 
         boolean isMpinCreated = dbUser.getIsMpinCreated();
+        String phoneNumber = dbUser.getPhoneNumber();
 
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
@@ -68,6 +73,8 @@ public class SundukController {
                 "UTF-8")
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
                 "UTF-8")
+                + "&phoneNumber=" + URLEncoder.encode(
+                (phoneNumber != null) ? phoneNumber : "", "UTF-8")
                 + "&isMpinCreated=" + isMpinCreated;
 
 

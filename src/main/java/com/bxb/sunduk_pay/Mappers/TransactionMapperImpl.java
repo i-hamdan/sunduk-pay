@@ -63,17 +63,26 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getDateTime().format(DATE_FORMATTER));
         transactionResponse.setDateTime(
               transaction.getDateTime().format(DATETIME_FORMATTER));
+        transactionResponse.setChatDateTime(transaction.getDateTime());
         transactionResponse.setTransactionLevel(
                 transaction.getTransactionLevel());
+        if(transaction.getPaymentTag() != null){
+        transactionResponse.setPaymentTag(transaction
+                .getPaymentTag());
+        }
         transactionResponse.setFromWallet(
                 transaction.getFromWallet());
         transactionResponse.setFromWalletId(
                 transaction.getFromWalletId());
+        transactionResponse.setFromPhoneNumber(
+                transaction.getFromPhoneNumber());
         transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
                 transaction.getUser().getMainWallet().getMainWalletId(),
                         transaction.getFromWalletId()));
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
+        transactionResponse.setToPhoneNumber(
+                transaction.getToPhoneNumber());
         transactionResponse.setToWalletIcon(validations.
                 getToIconOfTxn(transaction.getUser().getMainWallet().getMainWalletId(),
                         transaction.getToWalletId()));

@@ -22,7 +22,7 @@ public class ReminderScheduler {
     private final ReminderRepository reminderRepository;
     private final PushNotificationService pushNotificationService;
 
-    @Scheduled(cron = "0 * * * * *") // runs every minute
+    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
     public void sendReminderNotifications() {
         LocalDate today = LocalDate.now();
         List<Reminder> remindersToSend = new ArrayList<>();

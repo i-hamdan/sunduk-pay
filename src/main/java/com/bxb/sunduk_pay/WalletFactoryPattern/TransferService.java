@@ -10,6 +10,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.ExternalTransferService;
 import com.bxb.sunduk_pay.service.InternalTransferService;
 import com.bxb.sunduk_pay.service.PaymentService;
+import com.bxb.sunduk_pay.service.UserToUserTransferService;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
@@ -51,6 +52,12 @@ public class TransferService implements WalletOperation {
     private final ExternalTransferService externalTransferService;
 
     /**
+     * User to user transfer service for handling
+     * transfers between users.
+     */
+    private final UserToUserTransferService userTransferService;
+
+    /**
      * Returns the request type handled by this service.
      *
      * @return request type TRANSFER_MONEY
@@ -71,11 +78,33 @@ public class TransferService implements WalletOperation {
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
         try {
-            if (mainWalletRequest.getAmount() == 0 || mainWalletRequest.getAmount() < 0) {
-                throw new InvalidPayloadException("amount cannot be zero or " +
-                        "negative");
+            if (mainWalletRequest.getPaymentMethod() != null && "UPI"
+                    .equalsIgnoreCase(mainWalletRequest.getPaymentMethod()
+                            .toString())) {
+                log.info("Processing UPI transfer");
+                return externalTransferService
+                        .handleUPITransfer(mainWalletRequest);
+            } else if (mainWalletRequest.getPaymentMethod() != null
+                    && "PHONE_NUMBER"
+                    .equalsIgnoreCase(mainWalletRequest.getPaymentMethod()
+                            .toString())) {
+                mpinValidations.validateMpin(mainWalletRequest.getSenderId(),
+                        mainWalletRequest.getMpin());
+                return userTransferService.transferBetweenUsers(
+                        mainWalletRequest.getSenderId(),
+                        mainWalletRequest.getReceiverId(),
+                        mainWalletRequest.getAmount(),
+                        mainWalletRequest.getPaymentTag(),
+                        mainWalletRequest.getSourceWalletId()
+                );
             }
-            log.info("Performing transfer request for UUID: {}, Request: {}",
+            if (mainWalletRequest.getAmount() == 0
+                    || mainWalletRequest.getAmount() < 0) {
+                throw new InvalidPayloadException("amount cannot be zero or "
+                        + "negative");
+            }
+            log.info(
+             "Performing transfer request for UUID: {}, Request: {}",
                     mainWalletRequest.getUuid(), mainWalletRequest);
 
             User user = validations.getUserInfo(mainWalletRequest.getUuid());
@@ -104,10 +133,7 @@ public class TransferService implements WalletOperation {
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
 
-            if (mainWalletRequest.getPaymentMethod()!= null && "UPI".equalsIgnoreCase(mainWalletRequest.getPaymentMethod().toString())) {
-                log.info("Processing UPI transfer");
-                return externalTransferService.handleUPITransfer(mainWalletRequest);
-            }
+
 
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");

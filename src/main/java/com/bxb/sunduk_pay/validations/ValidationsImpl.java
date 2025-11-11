@@ -116,6 +116,8 @@ private static final int WALLET_SIZE = 19;
      * Throws {@link TransactionNotFoundException} if no transactions are found.
      *
      * @param uuid            unique user identifier
+     * @param senderId
+     * @param receiverId
      * @param walletId        optional wallet identifier
      * @param method          optional payment method
      * @param transactionType optional transaction type (CREDIT/DEBIT)
@@ -126,6 +128,7 @@ private static final int WALLET_SIZE = 19;
     @Override
     public Page<Transaction> getTransactions(
             final String uuid,
+            final String receiverId,
             final String walletId,
             final PaymentMethod method,
             final TransactionType transactionType,
@@ -140,6 +143,23 @@ private static final int WALLET_SIZE = 19;
         boolean hasWallet = walletId != null;
         boolean hasType = transactionType != null;
         boolean hasMethod = method != null;
+
+        if (receiverId != null
+                && method == PaymentMethod.PHONE_NUMBER) {
+            log.info("Fetching transactions for history between {} and {} ",
+                    uuid,receiverId);
+            User sendingUser = getUserInfo(uuid);
+            User receivingUser = getUserByPhoneNumber(receiverId);
+            log.info("Both users fetched and their numbers are {} and {} ",
+                    sendingUser.getPhoneNumber(),receivingUser.getPhoneNumber());
+            return transactionRepository
+                    .getTransactionsBySenderAndReceiverId(
+                            uuid,
+                            sendingUser.getPhoneNumber(),
+                            receivingUser.getPhoneNumber(),
+                            PaymentMethod.PHONE_NUMBER,
+                            pageable);
+        }
 
         // Case 1: Wallet is provided
         if (hasWallet) {
@@ -388,6 +408,14 @@ private static final int WALLET_SIZE = 19;
 
         log.debug("Validation successful for UPI ID: {}", recipientUpiId);
 
+    }
+
+    @Override
+    public User getUserByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(()->new UserNotFoundException(
+                        "User not found with phone number: "
+                        +phoneNumber));
     }
 
     @Override

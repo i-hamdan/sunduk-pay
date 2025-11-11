@@ -53,6 +53,8 @@ private static final int DEFAULT_SIZE = 10;
     private ActionType actionType;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
+    /** Tag used in transaction*/
+    private String paymentTag;
     /** Phone number for UPI contact search. */
     private String phone;
     /** UPI ID of the recipient for external transfers. */
@@ -65,6 +67,10 @@ private static final int DEFAULT_SIZE = 10;
     private String remark;
     /** ID of the wallet involved in the transaction. */
     private String walletId;
+    /** ID of the sender for phone number transactions. */
+    private String senderId;
+    /** ID of the receiver for phone number transactions. */
+    private String receiverId;
     /** ID of the reminder for operations related to reminders. */
     private String reminderId;
     /** Page number for pagination. */
