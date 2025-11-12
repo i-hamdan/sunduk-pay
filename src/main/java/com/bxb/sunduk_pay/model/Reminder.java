@@ -53,6 +53,10 @@ public class Reminder {
      */
     private String remark;
     /**
+     * Contact number associated with the reminder.
+     */
+    private String contactNumber;
+    /**
      * User associated with the reminder.
      */
     @ManyToOne

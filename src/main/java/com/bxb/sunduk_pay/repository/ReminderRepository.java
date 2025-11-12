@@ -2,8 +2,11 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.util.Duration;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+
 
 import java.util.List;
 
@@ -23,4 +26,10 @@ public interface ReminderRepository extends JpaRepository<Reminder, String> {
      * Finds a reminder by its unique reminderId.
      */
     Reminder findByReminderId(String reminderId);
+
+    /**
+     * Finds reminders by contact number with pagination support.
+     */
+    Page<Reminder> findByContactNumber(String contactNumber, Pageable pageable);
+
 }

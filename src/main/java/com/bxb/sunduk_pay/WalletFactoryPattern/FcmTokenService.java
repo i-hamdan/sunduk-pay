@@ -43,7 +43,7 @@ public class FcmTokenService implements WalletOperation {
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
 
         User user=validations.getUserInfo(mainWalletRequest.getUuid());
-        user.setFcmToken(mainWalletRequest.fcmToken);
+        user.setFcmToken(mainWalletRequest.getFcmToken());
         userRepository.save(user);
         log.info("FCM Token updated for user: {}", mainWalletRequest.getUuid());
 

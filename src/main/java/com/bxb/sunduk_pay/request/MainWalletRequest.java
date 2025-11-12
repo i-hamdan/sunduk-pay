@@ -82,6 +82,8 @@ private static final int DEFAULT_SIZE = 10;
     /** Sort direction: ASC or DESC. */
     private String sortDirection = "DESC";
     /** FCM token for push notifications. */
-    public String fcmToken;
+    private String fcmToken;
+    /** Contact number associated with the reminder. */
+    private String contactNumber;
 }
 

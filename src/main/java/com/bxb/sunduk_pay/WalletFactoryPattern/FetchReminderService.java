@@ -1,13 +1,14 @@
 package com.bxb.sunduk_pay.WalletFactoryPattern;
 
+import com.bxb.sunduk_pay.Mappers.ReminderMapper;
 import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.repository.ReminderRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.ReminderResponse;
-import com.bxb.sunduk_pay.util.ReminderUtil;
 import com.bxb.sunduk_pay.util.RequestType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +24,14 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FetchReminderService implements WalletOperation{
 
+    /** Repository for accessing reminder data. */
     private final ReminderRepository reminderRepository;
+
+    /** Mapper to convert Reminder entities to ReminderResponse DTOs. */
+    private final ReminderMapper reminderMapper;
     /**
      * @return FETCH_REMINDERS request type.
      */
@@ -53,17 +59,15 @@ public class FetchReminderService implements WalletOperation{
                     mainWalletRequest.getSize(),
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
-        Page<Reminder> reminderPage = reminderRepository.findAll(pageable);
-        List<ReminderResponse> reminderResponses = reminderPage.getContent().stream()
-                .map(reminder -> ReminderResponse.builder()
-                        .reminderId(reminder.getReminderId())
-                        .amount(reminder.getAmount())
-                        .duration(reminder.getDuration().name())
-                        .startDate(reminder.getStartDate())
-                        .remark(reminder.getRemark())
-                        .nextDue(ReminderUtil.calculateDaysUntilNextDue(reminder))
-                        .build())
-                .toList();
+        Page<Reminder> reminderPage =
+                reminderRepository.findByContactNumber(mainWalletRequest.getContactNumber(), pageable);
+
+        List<ReminderResponse> reminderResponses =
+                reminderPage.getContent().stream()
+                        .map(reminderMapper::toReminderResponse)
+                        .toList();
+        log.info("Fetched {} reminders for contact number: {}",
+                reminderResponses.size(), mainWalletRequest.getContactNumber());
 
         return MainWalletResponse.builder()
                 .reminders(reminderResponses)
