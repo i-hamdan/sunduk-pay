@@ -71,7 +71,7 @@ jobs:
               docker rm walletapp
             fi
 
-            # Start WalletApp container safely (waits for Redis before starting)
+            # Start WalletApp container (waits for Redis before starting)
              docker run -d \
              --name walletapp \
              --network walletapp-network \
