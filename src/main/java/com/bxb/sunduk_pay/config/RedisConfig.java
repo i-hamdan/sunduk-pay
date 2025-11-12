@@ -24,7 +24,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * Configuration class for RedisTemplate with custom serializers.
  */
 @Configuration
-@AutoConfigureAfter(RedisAutoConfiguration.class)
 @RequiredArgsConstructor
 @Log4j2
 public class RedisConfig {
