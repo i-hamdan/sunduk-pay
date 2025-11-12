@@ -80,6 +80,8 @@ jobs:
              -e SPRING_DATASOURCE_USERNAME=walletuser \
              -e SPRING_DATASOURCE_PASSWORD=walletpass123 \
              -e SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
+             -e SPRING_REDIS_HOST=redis \
+             -e SPRING_REDIS_PORT=6379 \
              --restart unless-stopped \
              $IMAGE:latest \
-             sh -c "until nc -z redis 6379; do echo 'Waiting for Redis...'; sleep 2; done; echo ' Redis ready! Starting WalletApp...'; java -jar app.jar"
+             sh -c "until nc -z redis 6379; do echo 'Waiting for Redis...'; sleep 2; done; echo 'Redis ready! Starting WalletApp...'; java -jar app.jar"
