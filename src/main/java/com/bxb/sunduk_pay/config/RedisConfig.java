@@ -10,6 +10,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -22,6 +24,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * Configuration class for RedisTemplate with custom serializers.
  */
 @Configuration
+@AutoConfigureAfter(RedisAutoConfiguration.class) 
 @RequiredArgsConstructor
 @Log4j2
 public class RedisConfig {
