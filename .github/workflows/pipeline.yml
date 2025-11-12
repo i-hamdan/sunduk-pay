@@ -71,14 +71,15 @@ jobs:
               docker rm walletapp
             fi
 
-            # Start WalletApp container
+            # Start WalletApp container safely (waits for Redis before starting)
              docker run -d \
-              --name walletapp \
-              --network walletapp-network \
-              -p 8080:8080 \
-              -e SPRING_DATASOURCE_URL=jdbc:mysql://walletapp-mysql:3306/sundukpay \
-              -e SPRING_DATASOURCE_USERNAME=walletuser \
-              -e SPRING_DATASOURCE_PASSWORD=walletpass123 \
-              -e SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
-              --restart unless-stopped \
-              $IMAGE:latest
+             --name walletapp \
+             --network walletapp-network \
+             -p 8080:8080 \
+             -e SPRING_DATASOURCE_URL=jdbc:mysql://walletapp-mysql:3306/sundukpay \
+             -e SPRING_DATASOURCE_USERNAME=walletuser \
+             -e SPRING_DATASOURCE_PASSWORD=walletpass123 \
+             -e SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092 \
+             --restart unless-stopped \
+             $IMAGE:latest \
+             sh -c "until nc -z redis 6379; do echo 'Waiting for Redis...'; sleep 2; done; echo ' Redis ready! Starting WalletApp...'; java -jar app.jar"
