@@ -1,8 +1,6 @@
 package com.bxb.sunduk_pay.config;
 
 import com.bxb.sunduk_pay.model.ChatMessage;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.response.ChatAndTransactionUnifiedDTO;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -10,11 +8,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
@@ -28,22 +29,38 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Log4j2
 public class RedisConfig {
 
-    /**
-     * Redis connection factory.
-     */
-private final RedisConnectionFactory connectionFactory;
+
+    @Value("${spring.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
 
     /**
-     * Initializes the Redis connection and logs the status.
+     * Manually configure the Redis connection factory so it doesn't
+     * default to localhost.
      */
-    @PostConstruct
-    public void init() {
+    @Bean
+    public LettuceConnectionFactory redisConnectionFactory() {
+        log.info(
+                "Creating RedisConnectionFactory with host={} and port={}",
+                redisHost, redisPort);
+        return new LettuceConnectionFactory(
+                new RedisStandaloneConfiguration(redisHost, redisPort));
+    }
+
+    //  Initialize after full context is ready (safe & no circular refs)
+    @EventListener(ContextRefreshedEvent.class)
+    public void verifyRedisConnection(ContextRefreshedEvent event) {
         try {
-            String pong = connectionFactory.getConnection().ping();
-            log.info("Redis connected successfully: {}", pong);
+            RedisConnectionFactory factory = event
+                    .getApplicationContext().getBean(
+                            RedisConnectionFactory.class);
+            String pong = factory.getConnection().ping();
+            log.info(" Redis connected successfully: {}", pong);
         } catch (Exception e) {
             log.error(
-         "Redis connection failed during initialization: {}",
+                    " Redis connection failed during initialization: {}",
                     e.getMessage(), e);
         }
     }

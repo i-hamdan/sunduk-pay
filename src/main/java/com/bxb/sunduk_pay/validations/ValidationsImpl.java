@@ -116,7 +116,6 @@ private static final int WALLET_SIZE = 19;
      * Throws {@link TransactionNotFoundException} if no transactions are found.
      *
      * @param uuid            unique user identifier
-     * @param senderId
      * @param receiverId
      * @param walletId        optional wallet identifier
      * @param method          optional payment method

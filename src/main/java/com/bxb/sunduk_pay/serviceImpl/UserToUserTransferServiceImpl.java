@@ -22,6 +22,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -208,6 +209,7 @@ public class UserToUserTransferServiceImpl
         log.info("Saving all transactions to the database.");
         transactionRepository.saveAll(transactions);
 
+        redisTemplate.expire(key, Duration.ofHours(24));
         log.info("All transactions saved successfully. Transfer complete.");
 
         return MainWalletResponse.builder()

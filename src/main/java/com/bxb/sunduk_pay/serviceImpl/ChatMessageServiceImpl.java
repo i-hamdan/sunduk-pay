@@ -162,7 +162,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             // Save the message to Redis list
             chatMessageRedisTemplate.opsForList().rightPush(key, message);
             // Set expiration time for the key if not already set
-            chatMessageRedisTemplate.expire(key, Duration.ofMinutes(5));
+            chatMessageRedisTemplate.expire(key, Duration.ofHours(24));
 
             log.info("Saved chat message to Redis with key: {}", key);
         } catch (Exception e) {
@@ -223,8 +223,8 @@ log.info(
                 chatMessageRedisTemplate.opsForList().rightPushAll(
                         chatKey, chatMessages);
 
-                chatMessageRedisTemplate.expire(chatKey, Duration.ofMinutes(5));
-                log.info("Chat loaded into Redis & TTL set (5 min)");
+                chatMessageRedisTemplate.expire(chatKey, Duration.ofHours(24));
+                log.info("Chat loaded into Redis & TTL set (24 hours)");
 
             }
         }else log.info("Chat loaded from Redis. Total messages: {}",
@@ -251,8 +251,8 @@ log.info(
                         transactions);
 
                 transactionRedisTemplate.expire(transactionKey,
-                        Duration.ofMinutes(5));
-                log.info("Transactions cached & TTL set (5 min)");
+                        Duration.ofHours(24));
+                log.info("Transactions cached & TTL set (24 hours)");
 
             }
         } else log.info("Transactions loaded from Redis. Total: {}",
