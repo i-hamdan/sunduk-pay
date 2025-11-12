@@ -25,16 +25,11 @@ spring:
         max-idle: 8
         min-idle: 2
 
-  servlet:
-    multipart:
-      max-file-size: 5MB
-      max-request-size: 5MB
-
   config:
     import: classpath:queries.yml
 
   datasource:
-    url: jdbc:mysql://walletapp-sql:3306/sundukpay
+    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
     username: walletuser
     password: walletpass123
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -94,7 +89,7 @@ spring:
               - profile
               - email
             redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
-            #redirect-uri: "https://73ec7c7ead5a.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
+
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -129,7 +124,7 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/09a314fc07e168435db69de3
+    url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
 stripe:
   key:
     secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv

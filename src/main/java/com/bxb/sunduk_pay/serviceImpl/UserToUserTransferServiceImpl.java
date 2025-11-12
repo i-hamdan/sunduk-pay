@@ -2,7 +2,11 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
@@ -253,8 +257,8 @@ public class UserToUserTransferServiceImpl
             log.error(
       "No Wallet found for wallet ID {} in MainWalletId {}.",
                     walletId, mainWallet.getMainWalletId());
-            throw new WalletNotFoundException("Wallet with id "+walletId+" " +
-                    "does not belong to to user : "+mainWallet.
+            throw new WalletNotFoundException("Wallet with id "+ walletId +" "
+                    + "does not belong to to user : "+mainWallet.
                     getUser().getFullName());
         }
     }

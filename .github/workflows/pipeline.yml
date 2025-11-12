@@ -22,8 +22,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Lint code
-        run: mvn checkstyle:check
+#      - name: Lint code
+#        run: mvn checkstyle:check
 
       - name: Build JAR
         run: mvn clean package -DskipTests

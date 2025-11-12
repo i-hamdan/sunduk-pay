@@ -9,7 +9,7 @@ import java.util.Optional;
  * Extends JpaRepository to provide CRUD operations.
  */
 
-public interface MpinRepository extends JpaRepository<Mpin,Long> {
+public interface MpinRepository extends JpaRepository<Mpin, Long> {
     /**
      * Finds an MPIN by the associated user's UUID.
      * @param uuid the UUID of the user

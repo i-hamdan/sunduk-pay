@@ -86,6 +86,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final TransactionMapper transactionMapper;
 
 
+
+
     @Override
     public ChatMessageResponse processMessage(ChatMessageEvent messageEvent) {
         log.info("Processing chat message from {} to {}: {}",
@@ -303,7 +305,7 @@ log.info(
         public User getReceiverUserDetails(String receiverId) {
             try {
                 log.info("Finding user by phoneNumber : {}",
-                        receiverId);
+                       "****"+receiverId.substring(9,13));
                 return validations.getUserByPhoneNumber(receiverId);
             } catch (UserNotFoundException e) {
                 throw new WebSocketUserNotFoundException(
