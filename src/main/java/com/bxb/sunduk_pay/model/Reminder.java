@@ -56,9 +56,12 @@ public class Reminder {
      * Contact number associated with the reminder.
      */
     private String contactNumber;
+    /** Contact name associated with reminder. */
+    private String contactName;
     /**
      * User associated with the reminder.
      */
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

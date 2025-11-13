@@ -22,6 +22,7 @@ public class ReminderMapperImpl implements ReminderMapper{
                 .startDate(reminder.getStartDate())
                 .remark(reminder.getRemark())
                 .nextDue(ReminderUtil.calculateDaysUntilNextDue(reminder))
+                .contactName(reminder.getContactName())
                 .build();
         return reminderResponse;
     }

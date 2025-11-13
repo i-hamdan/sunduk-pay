@@ -85,5 +85,7 @@ private static final int DEFAULT_SIZE = 10;
     private String fcmToken;
     /** Contact number associated with the reminder. */
     private String contactNumber;
+    /** Contact name associated with reminder. */
+    private String contactName;
 }
 

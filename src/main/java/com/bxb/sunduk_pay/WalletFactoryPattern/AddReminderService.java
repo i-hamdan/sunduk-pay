@@ -44,6 +44,7 @@ public class AddReminderService implements WalletOperation {
                 .duration(mainWalletRequest.getDuration())
                 .remark(mainWalletRequest.getRemark())
                 .contactNumber(mainWalletRequest.getContactNumber())
+                .contactName(mainWalletRequest.getContactName())
                 .user(user)
                 .build();
 

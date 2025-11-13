@@ -24,4 +24,6 @@ public class ReminderResponse {
     private String remark;
     /** Next due date for the reminder. */
     private long nextDue;
+    /** Contact name associated with reminder. */
+    private String contactName;
 }
