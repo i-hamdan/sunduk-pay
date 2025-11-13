@@ -121,6 +121,7 @@ sunduk:
       - /api/sunduk-service/custom-login
       - /api/sunduk-service/upload-contact
       - /api/sunduk-service/webhook
+      - /api/sunduk-service/ws
 
 
 
