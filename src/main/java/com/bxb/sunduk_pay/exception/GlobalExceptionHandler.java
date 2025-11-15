@@ -1,11 +1,13 @@
 package com.bxb.sunduk_pay.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
  * </p>
  */
 @RestControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler {
     /**
      * Handles {@link InvalidMpinException}.
@@ -345,6 +348,39 @@ public class GlobalExceptionHandler {
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
+    }
+
+
+    @ExceptionHandler(InvalidPhotoException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleInvalidPhotoException(
+            final InvalidPhotoException e,
+            final HttpServletRequest request) {
+
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleMaxUploadSizeExceededException(
+            final MaxUploadSizeExceededException e,
+            final HttpServletRequest request) {
+        log.error("File size exceeds the maximum limit!"+
+                " Please upload a 1 mb file.");
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                "File size exceeds the maximum limit!"+
+                        " Please upload a 1 mb file.",
+                request.getRequestURI()
+        );
+
     }
 
 

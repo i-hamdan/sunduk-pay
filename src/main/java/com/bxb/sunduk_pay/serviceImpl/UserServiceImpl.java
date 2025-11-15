@@ -11,8 +11,11 @@ import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.MpinRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
-import com.bxb.sunduk_pay.response.UserLoginResponse;
+import com.bxb.sunduk_pay.request.UserRequest;
+import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
+import com.bxb.sunduk_pay.userFactory.UserOperation;
+import com.bxb.sunduk_pay.userFactory.UserOperationFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -31,6 +34,7 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final UserOperationFactory userOperation;
     /**
      * Repository for user data access.
      */
@@ -71,7 +75,7 @@ public class UserServiceImpl implements UserService {
      * @return The User object after login or creation.
      */
     @Override
-    public User userLogin(final UserLoginResponse response) {
+    public User userLogin(final UserResponse response) {
         Optional<User> userOptional
             = userRepository.findByEmailAndIsDeletedFalse(
             response.getEmail());
@@ -134,6 +138,13 @@ public class UserServiceImpl implements UserService {
                 .findByUser_Uuid(user.getUuid()).isPresent();
         user.setIsMpinCreated(present);
         return user;
+    }
+
+    @Override
+    public UserResponse userOperations(UserRequest request) {
+        UserOperation userOperations =
+                userOperation.getUserOperations(request.getUserRequestType());
+    return userOperations.perform(request);
     }
 
 }

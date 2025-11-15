@@ -2,12 +2,15 @@ package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.TimeSeries;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Request object for currency conversion and time series data.
  */
 
-@Data
+@Getter
+@Setter
 public class CurrencyRequest {
     /**
      * The currency code to convert from (e.g., "USD").

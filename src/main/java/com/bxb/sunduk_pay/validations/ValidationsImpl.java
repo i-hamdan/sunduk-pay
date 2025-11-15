@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
-
+import com.bxb.sunduk_pay.encryption.HashUtil;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
@@ -15,8 +16,9 @@ import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.User;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,6 +28,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class ValidationsImpl implements Validations {
+    /** Utility for hashing operations. */
+    private final HashUtil hashUtil;
     /** Repository for accessing user data. */
     private final UserRepository userRepository;
     /** Repository for accessing main wallet data. */
@@ -126,7 +130,7 @@ private static final int WALLET_SIZE = 19;
      */
     @Override
     public Page<Transaction> getTransactions(
-            final String uuid,
+            final String uuid   ,
             final String receiverId,
             final String walletId,
             final PaymentMethod method,
@@ -230,7 +234,6 @@ private static final int WALLET_SIZE = 19;
 
         return transactions;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -393,8 +396,18 @@ private static final int WALLET_SIZE = 19;
                 balance, amount);
 
     }
+/** {@inheritDoc} */
+    @Override
+    public User getUserEmailInfo(String email) {
+        log.info("Fetching user with email: {}", email);
+        return userRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> {
+                    log.error("User not found with email: {}", email);
+                    return new UserNotFoundException(
+                            "this email is not registered with us"                            );
+                });    }
 
-   /** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public void validateRecipientUpiId(String recipientUpiId) {
 
@@ -409,21 +422,37 @@ private static final int WALLET_SIZE = 19;
 
     }
 
+
+
+
     @Override
     public User getUserByPhoneNumber(String phoneNumber) {
-        return userRepository.findByPhoneNumber(phoneNumber)
+        String phoneHash = hashUtil.sha256(phoneNumber);
+        return userRepository.findByPhoneNumberHash(phoneHash)
                 .orElseThrow(()->new UserNotFoundException(
                         "User not found with phone number: "
                         +phoneNumber));
     }
 
+
+/** {@inheritDoc} */
     @Override
-    public User getUserEmailInfo(String email) {
-        log.info("Fetching user with email: {}", email);
-        return userRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> {
-                    log.error("User not found with email: {}", email);
-                    return new UserNotFoundException(
-                          "this email is not registered with us"                            );
-                });    }
+    public void validatePorfilePhoto(MultipartFile photo) {
+        // Check if file is null or empty
+        if (photo == null || photo.isEmpty()) {
+            log.error("No photo uploaded or file is empty");
+            throw new InvalidPhotoException("Please upload a valid JPEG photo.");
+        }
+
+
+        // Check MIME type
+        String contentType = photo.getContentType();
+        List<String> allowedTypes = List.of("image/jpeg", "image/heic", "image/heif");
+
+        if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
+            log.error("Invalid MIME type: {}", contentType);
+            throw new InvalidPhotoException("Only JPEG  (HEIC/HEIF) images are allowed.");
+        }
+
+    }
 }

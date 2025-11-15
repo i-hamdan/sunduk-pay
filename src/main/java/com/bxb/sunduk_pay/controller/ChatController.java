@@ -59,6 +59,7 @@ public class ChatController {
      *
      * @param request the chat message request payload
      */
+
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload final ChatMessageRequest request) {
 

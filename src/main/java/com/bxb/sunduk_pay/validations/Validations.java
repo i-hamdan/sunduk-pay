@@ -1,15 +1,15 @@
 package com.bxb.sunduk_pay.validations;
 
-
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Defines validation operations for wallets, users, and transactions.
@@ -57,7 +57,6 @@ public interface Validations {
      * Validates and retrieves transactions based on various filters.
      *
      * @param uuid            user UUID
-     * @param senderId
      * @param receiverId
      * @param walletId        main wallet ID
      * @param paymentMethod   payment method filter (optional)
@@ -148,7 +147,20 @@ public interface Validations {
      */
     void validateRecipientUpiId(String recipientUpiId);
 
+    /**
+     * Validates the size of an uploaded photo.
+     * @param photo
+     */
+    void validatePorfilePhoto(MultipartFile photo);
+
+    /**
+     * Retrieves user information by phone number.
+     *
+     * @param phoneNumber user phone number
+     * @return {@link User}
+     */
     User getUserByPhoneNumber(String phoneNumber);
+
 
 
 }

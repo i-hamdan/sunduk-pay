@@ -17,7 +17,7 @@ spring:
             enable: true
 
   redis:
-    host: redis
+    host: 127.0.0.1
     port: 6379
     timeout: 60000
     lettuce:
@@ -31,16 +31,16 @@ spring:
     import: classpath:queries.yml
 
   datasource:
-    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
-    username: walletuser
-    password: walletpass123
+    url: jdbc:mysql://localhost:3306/SundukPay
+    username: root
+    password: root123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -57,12 +57,7 @@ spring:
 
 
   kafka:
-    bootstrap-servers: kafka:9092
-    properties:
-      security.protocol: PLAINTEXT
-      session.timeout.ms: 45000
-      request.timeout.ms: 60000
-      retry.backoff.ms: 5000
+    bootstrap-servers: localhost:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -76,22 +71,20 @@ spring:
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
         spring.json.trusted.packages: '*'
 
-
-
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 980304959413-ltjpmn920d55loc7ddc831s56bdr5pa4.apps.googleusercontent.com
+            client-secret: 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
 
             scope:
               - openid
               - profile
               - email
-            redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
-
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
+            #redirect-uri: "https://b05622ba9a3e.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -105,12 +98,14 @@ server:
   servlet:
     context-path: /api/sunduk-service
     session:
-      timeout: 60m
+      timeout: 90d
       cookie:
         same-site: none
         secure: true
   tomcat:
     background-processor-delay: 60
+
+
 
 sunduk:
   security:
@@ -125,15 +120,16 @@ sunduk:
 
 
 
+
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
+    url: https://v6.exchangerate-api.com/v6/09a314fc07e168435db69de3
 stripe:
   key:
-    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
+    secret: sk_test_51RohZUFjIPvwIVrLyRAcI7OWRbYVmEZ976vhMmJDyYyXeCDkpxE0ZPA5XUr7xxqw168zJTtU9S8S5YFFNHoKyYPR00MaFmFn8l
 
   webhook:
-    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+    secret: whsec_ada8e07c83edd36fb4e5110e64dd53607228345dd6520476ab01dd208701e6b5
 
 
 resilience4j:
@@ -161,3 +157,4 @@ management:
 logging:
   level:
     com.bxb.sunduk_pay: DEBUG
+

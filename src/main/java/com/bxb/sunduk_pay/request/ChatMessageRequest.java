@@ -1,11 +1,12 @@
 package com.bxb.sunduk_pay.request;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * Request object for sending a chat message.
  */
-@Data
+@Getter
+@Setter
     public class ChatMessageRequest {
     /** The ID of the sender of the message. */
     private String senderId;

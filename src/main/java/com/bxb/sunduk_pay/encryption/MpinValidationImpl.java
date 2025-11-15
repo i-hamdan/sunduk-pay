@@ -3,7 +3,9 @@ package com.bxb.sunduk_pay.encryption;
 import com.bxb.sunduk_pay.exception.InvalidMpinException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.Mpin;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MpinRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,10 @@ public class MpinValidationImpl implements MpinValidations {
      * Service for MPIN encryption and verification.
      */
     private final MpinEncryption encryption;
+    /**
+     *
+     */
+    private final UserRepository userRepository;
 
     /**
      * Validates the MPIN for payment operations.
@@ -50,18 +56,14 @@ public class MpinValidationImpl implements MpinValidations {
             } else {
                 Duration remaining = Duration.between(LocalDateTime.now(),
                         mpin.getLockedUntil());
-//                long hoursLeft = remaining.toHours();
-//                log.info(hoursLeft);
-//                long minutesLeft = remaining.toMinutesPart();
-//                log.info(minutesLeft);
-//                long secondLeft = remaining.toSeconds();
-//                log.info(secondLeft);
+
                 long totalSeconds = remaining.getSeconds();
                 long hoursLeft = totalSeconds / 3600;
                 long minutesLeft = (totalSeconds % 3600) / 60;
                 long secondsLeft = totalSeconds % 60;
                 throw new InvalidMpinException(
-                        String.format("Your MPIN is blocked. Try again in %02d hours %02d minutes %02d seconds",
+                        String.format("Your MPIN is blocked. Try again " +
+                                    "in %02d hours %02d minutes %02d seconds",
                                 hoursLeft, minutesLeft, secondsLeft)
                 );
 
@@ -120,5 +122,24 @@ public class MpinValidationImpl implements MpinValidations {
                         new UserNotFoundException
                                 ("MPIN not found for user: " + uuid));
     }
-}
+
+    /**
+     *
+     * @param email user UUID
+     *
+     */
+    @Override
+    public User getUserEmailInfo(String email) {
+        log.info("Fetching user with email: {}", email);
+
+
+        return userRepository.findByEmailAndIsDeletedFalse(email)
+                .orElseThrow(() -> {
+                    log.error("User not found with email: {}", email);
+                    return new UserNotFoundException(
+                            "this email is not registered with us");
+                });
+    }
+    }
+
 

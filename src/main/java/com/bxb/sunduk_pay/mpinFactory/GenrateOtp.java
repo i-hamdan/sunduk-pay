@@ -1,12 +1,12 @@
 package com.bxb.sunduk_pay.mpinFactory;
 
 import com.bxb.sunduk_pay.Mappers.MpinMapper;
+import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.MpinRequest;
 import com.bxb.sunduk_pay.response.MpinResponse;
 import com.bxb.sunduk_pay.util.MpinRequestType;
-import com.bxb.sunduk_pay.validations.Validations;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,7 +28,7 @@ public class GenrateOtp implements MpinOperation{
     /**
     validation utility.
      */
-    private final Validations validations;
+    private final MpinValidations validations;
     /**
      * Cache to store OTPs temporarily.
      */

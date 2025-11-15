@@ -1,16 +1,16 @@
 package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
+
 import java.time.LocalDate;
 
 /**
  * Request object for operations related to the main wallet.
  */
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class MainWalletRequest {
 
 /** Default pagination values. */

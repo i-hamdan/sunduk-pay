@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.encryption;
 
 import com.bxb.sunduk_pay.model.Mpin;
+import com.bxb.sunduk_pay.model.User;
 
 /**
  * Interface defining MPIN validation methods.
@@ -19,5 +20,13 @@ public interface MpinValidations {
      */
     Mpin findMpinByUuid(final String uuid);
 
+
+   /**
+   * Retrieves user email information by UUID.
+   *
+   * @param email user UUID
+   * @return {@link User
+    **/
+    User getUserEmailInfo(String email);
 
 }

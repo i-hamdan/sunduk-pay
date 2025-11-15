@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.response.UserLoginResponse;
+import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +23,6 @@ import java.net.URLEncoder;
 
 @Log4j2
 @RestController
-@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 @RequiredArgsConstructor
 // this needs to remove once we moved to domain
 public class SundukController {
@@ -49,12 +48,12 @@ public class SundukController {
      */
     @GetMapping(value = "/custom-login",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserLoginResponse> login(
+    public ResponseEntity<UserResponse> login(
             final HttpSession session,
             @AuthenticationPrincipal final OidcUser user,
             final HttpServletResponse httpServletResponse)
             throws IOException {
-        UserLoginResponse response = userMapper.getUser(user);
+        UserResponse response = userMapper.getUser(user);
         log.info("Session Id : "
                 + session.getId()
                 + " By: "

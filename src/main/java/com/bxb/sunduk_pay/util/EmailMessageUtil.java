@@ -78,7 +78,7 @@ public class EmailMessageUtil {
 
 
     public String buildSubjectForOtp(final OtpEvent event) {
-        return "HI" + event.getFullname() + ", Your Sunduk MPIN Reset OTP";
+        return "Hi " + event.getFullname() + ", Your Sunduk MPIN Reset OTP";
     }
     public String buildBodyForOtp(final OtpEvent event) {
 

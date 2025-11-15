@@ -1,18 +1,13 @@
 package com.bxb.sunduk_pay.model;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import java.util.List;
+
+
 /**
  * Represents a user in the system.
  */
@@ -54,9 +49,21 @@ public class User {
      * Indicates if the user account is deleted.
      */
     private Boolean isDeleted;
- /**
+    /**
+     * DOb of User
+     */
+    private String dateOfBirth;
+    /**
+     * present adress of User
+      */
+    private String presentAddress;
+    /**
+     * permanent address of USer
+     */
+    private String permanentAddress;
+    /**
     * One-to-one relationship with MasterWallet.
-  */
+    */
     @OneToOne(mappedBy = "user")
     private MasterWallet masterWallet;
     /**
@@ -78,16 +85,28 @@ public class User {
      */
     @OneToMany(mappedBy = "user")
     private List<Reminder> reminders;
-//    /**
-//     * One-to-many relationship with UserContact.
-//     */
-//    @OneToMany(mappedBy = "user")
-//    private List<UserContact> contacts;
+    /**
+     * Profile photo of the user.
+     */
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] profilePhoto;
+
+    /**
+     * Hashed phone number for queries.
+     */
+    private String phoneNumberHash;
+
+
     /**
      * Indicates if the MPIN is created for the user.
      */
     @Transient
     private Boolean isMpinCreated;
+
+
 
 }
 
