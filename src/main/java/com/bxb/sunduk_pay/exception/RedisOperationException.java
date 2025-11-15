@@ -9,7 +9,7 @@ public class RedisOperationException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public RedisOperationException(String message) {
+    public RedisOperationException(final String message) {
         super(message);
     }
 }

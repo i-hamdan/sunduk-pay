@@ -9,7 +9,7 @@ public class InvalidMpinException extends RuntimeException {
      * with the specified detail message.
      *@param message
      */
-    public InvalidMpinException(String message) {
+    public InvalidMpinException(final String message) {
         super(message);
     }
 }

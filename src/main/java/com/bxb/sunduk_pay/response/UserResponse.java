@@ -1,7 +1,11 @@
 package com.bxb.sunduk_pay.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
  * Response object for user login containing user details.
@@ -23,15 +27,16 @@ public class UserResponse {
     private String phoneNumber;
     /** message regarding the user operation status. */
     private String message;
-    /** present address of user*/
+    /** present address of user.*/
     private String presentAddress;
-    /**permanent address of user*/
+    /**permanent address of user.*/
     private String permanentAddress;
-
+/** date of birth of user.*/
     private String dob;
-
+/** profile photo of user.*/
     private String profilePhoto;
 }
+
 
 
 

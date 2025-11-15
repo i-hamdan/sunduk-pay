@@ -19,6 +19,20 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class MpinValidationImpl implements MpinValidations {
+/***
+     * Time constants for lock duration calculations.
+     */
+    private static final int ONE_HOUR_IN_SECONDS = 3600;
+    /**
+     * Time constants for lock duration calculations.
+     */
+    private static final int ONE_MINUTE_IN_SECONDS = 60;
+    /**
+     * Maximum allowed failed MPIN attempts before locking.
+     */
+    private static final int MAX_FAILED_ATTEMPTS = 3;
+
+
     /**
      * Repository for MPIN operations.
      */
@@ -43,7 +57,8 @@ public class MpinValidationImpl implements MpinValidations {
 
         Mpin mpin = mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
-                        new UserNotFoundException("MPIN not found for user: " + uuid));
+                        new UserNotFoundException("MPIN not found for user: "
+                                + uuid));
 
         // Check if locked
         if (mpin.isLocked()) {
@@ -60,9 +75,9 @@ public class MpinValidationImpl implements MpinValidations {
                         mpin.getLockedUntil());
 
                 long totalSeconds = remaining.getSeconds();
-                long hoursLeft = totalSeconds / 3600;
-                long minutesLeft = (totalSeconds % 3600) / 60;
-                long secondsLeft = totalSeconds % 60;
+                long hoursLeft = totalSeconds / ONE_HOUR_IN_SECONDS;
+                long minutesLeft = (totalSeconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS;
+                long secondsLeft = totalSeconds % ONE_MINUTE_IN_SECONDS;
                 throw new InvalidMpinException(
                         String.format("Your MPIN is blocked. Try again " +
                                     "in %02d hours %02d minutes %02d seconds",
@@ -81,26 +96,25 @@ public class MpinValidationImpl implements MpinValidations {
             mpin.setFailedAttempts(failedAttempts);
 
 
-            if (failedAttempts >= 3) {
+            if (failedAttempts >= MAX_FAILED_ATTEMPTS) {
                 mpin.setLocked(true);
                 mpin.setLockedUntil(LocalDateTime.now().plusMinutes(2));
                 mpinRepository.save(mpin);
 
-                log.error("User {} MPIN blocked for 2 minutes after 3" +
-                        " failed attempts", uuid);
+                log.error("User {} MPIN blocked for 2 minutes after 3"
+                        + " failed attempts", uuid);
                 
                 throw new InvalidMpinException(
-
-                                "You have entered the wrong MPIN too many times. " +
-                                        "Your account is temporary locked for" +
-                                        " 24 hours");
+                        "You have entered the wrong MPIN too many times. "
+                         + "Your account is temporary locked for"
+                         + " 24 hours");
             }
 
             // Save updated failed attempts before throwing
             mpinRepository.save(mpin);
 
 
-            int attemptsLeft = 3 - failedAttempts;
+            int attemptsLeft = MAX_FAILED_ATTEMPTS - failedAttempts;
             throw new InvalidMpinException("you have entered a incorrect mpin "
                      + attemptsLeft + " attempt  remaining");
         }
@@ -118,7 +132,7 @@ public class MpinValidationImpl implements MpinValidations {
      * @param uuid
      */
     @Override
-    public Mpin findMpinByUuid(String uuid) {
+    public Mpin findMpinByUuid(final String uuid) {
         return mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
                         new UserNotFoundException
@@ -131,7 +145,7 @@ public class MpinValidationImpl implements MpinValidations {
      *
      */
     @Override
-    public User getUserEmailInfo(String email) {
+    public User getUserEmailInfo(final String email) {
         log.info("Fetching user with email: {}", email);
 
 

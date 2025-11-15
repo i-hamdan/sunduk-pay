@@ -18,7 +18,7 @@ public class WebSocketUserNotFoundException extends RuntimeException {
  * @param message the detail message describing the reason
  *                for the exception
  */
-    public WebSocketUserNotFoundException(String message) {
+    public WebSocketUserNotFoundException(final String message) {
         super(message);
     }
 }

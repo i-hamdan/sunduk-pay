@@ -15,7 +15,7 @@ public class HashUtil {
      * @param input the input string to hash
      * @return the SHA-256 hash as a hexadecimal string
      */
-    public String sha256(String input) {
+    public String sha256(final String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 

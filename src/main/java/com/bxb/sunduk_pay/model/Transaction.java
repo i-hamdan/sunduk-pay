@@ -17,16 +17,15 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+/**
+ * Represents a financial transaction in the system.
+ */
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-/**
- * Represents a financial transaction in the system.
- */
 public class Transaction {
     /**
      * Unique identifier for the transaction.
@@ -84,7 +83,7 @@ public class Transaction {
     @Column(nullable = false)
     private Boolean isMaster;
 
-    /** The Tag of the transaction*/
+    /** The Tag of the transaction.*/
     private String paymentTag;
     /**
      * Name of the sender in the transaction.

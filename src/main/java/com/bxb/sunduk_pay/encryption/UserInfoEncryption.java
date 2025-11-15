@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class UserInfoEncryption {
+public  final class  UserInfoEncryption {
 /**  * Key and salt for encryption.
  */
     private static final String KEY = "mySecretKey123";
@@ -21,7 +21,11 @@ public class UserInfoEncryption {
     private static final TextEncryptor ENCRYPTOR =
             Encryptors.text(KEY, SALT);
 
-
+    /**
+     * Encrypts the given field.
+     * @param field
+     * @return
+     */
     public  String encrypt(final String field) {
         if (field == null) {
             return null;
@@ -29,6 +33,11 @@ public class UserInfoEncryption {
         return ENCRYPTOR.encrypt(field);
     }
 
+    /**
+     * Decrypts the given encrypted field.
+     * @param encryptedfiled
+     * @return
+     */
 
     public  String decrypt(final String encryptedfiled) {
         if (encryptedfiled == null) {

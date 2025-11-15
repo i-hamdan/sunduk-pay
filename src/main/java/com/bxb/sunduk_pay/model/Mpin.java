@@ -25,11 +25,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Mpin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     /**
      * Unique identifier for the MPIN.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long pinId;
     /**
      * The user associated with this MPIN.

@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Event class representing an OTP (One-Time Password) event.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,13 +22,13 @@ public class OtpEvent {
      * The full name of the user who achieved the milestone.
      */
     private String fullname;
-
+/**
+     * The OTP code generated for the user.
+     */
 
     private String otp;
     /**
      * The email of the user who achieved the milestone.
      */
     private String email;
-
 }
-/// mapper banan jo user se event convert kredega  ??

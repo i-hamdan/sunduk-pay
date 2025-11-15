@@ -350,6 +350,13 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link InvalidPhotoException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
 
     @ExceptionHandler(InvalidPhotoException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -364,20 +371,27 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI());
     }
+    /**
+     * Handles {@link MaxUploadSizeExceededException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleMaxUploadSizeExceededException(
             final MaxUploadSizeExceededException e,
             final HttpServletRequest request) {
-        log.error("File size exceeds the maximum limit!"+
-                " Please upload a 1 mb file.");
+        log.error("File size exceeds the maximum limit!"
+                + " Please upload a 1 mb file.");
         return new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(),
-                "File size exceeds the maximum limit!"+
-                        " Please upload a 1 mb file.",
+                "File size exceeds the maximum limit!"
+                        + " Please upload a 1 mb file.",
                 request.getRequestURI()
         );
 
@@ -402,6 +416,13 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI());
     }
+    /**
+     * Handles {@link RedisOperationException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
 
 
     @ExceptionHandler(value = RedisOperationException.class)
@@ -415,6 +436,13 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI());
     }
+    /**
+     * Handles {@link ChatProcessingException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
 
     @ExceptionHandler(value = ChatProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

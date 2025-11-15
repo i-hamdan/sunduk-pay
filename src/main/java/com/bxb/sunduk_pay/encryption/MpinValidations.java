@@ -13,12 +13,13 @@ public interface MpinValidations {
      * @param uuid
      * @param inputMpin
      */
-    void validateMpin(final String uuid, final String inputMpin);
-/**
+    void validateMpin(String uuid, String inputMpin);
+     /**
      * Validates the MPIN for setting a new MPIN.
      * @param uuid
+     * @return Mpin
      */
-    Mpin findMpinByUuid(final String uuid);
+    Mpin findMpinByUuid(String uuid);
 
 
    /**
@@ -27,6 +28,6 @@ public interface MpinValidations {
    * @param email user UUID
    * @return {@link User
     **/
-    User getUserEmailInfo(final String email);
+    User getUserEmailInfo(String email);
 
 }

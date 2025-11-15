@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * this class is used to create mpin response
+ * this class is used to create mpin response.
  */
 @Getter
 @Setter
@@ -14,8 +14,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class MpinResponse {
-    /** using for passing message response*/
+    /** using for passing message response.*/
     private String message;
-    /** using for passing title respnse*/
+    /** using for passing title respnse.*/
     private String title;
 }

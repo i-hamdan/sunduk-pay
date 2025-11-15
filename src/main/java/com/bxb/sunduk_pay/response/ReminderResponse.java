@@ -4,12 +4,11 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-
-@Data
-@Builder
 /**
  * Response class representing a reminder.
  */
+@Data
+@Builder
 public class ReminderResponse {
 
     /** Unique identifier for the reminder. */

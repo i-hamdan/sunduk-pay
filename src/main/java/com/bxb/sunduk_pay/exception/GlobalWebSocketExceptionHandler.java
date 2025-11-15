@@ -25,7 +25,7 @@ public class GlobalWebSocketExceptionHandler {
     @MessageExceptionHandler(WebSocketUserNotFoundException.class)
     @SendToUser("/queue/error")
     public WebSocketErrorResponse handleWebSocketUserNotFound(
-            WebSocketUserNotFoundException e) {
+           final WebSocketUserNotFoundException e) {
         log.warn("WebSocket user not found: {}", e.getMessage());
         return new WebSocketErrorResponse(
                 "USER_NOT_FOUND",
@@ -44,7 +44,7 @@ public class GlobalWebSocketExceptionHandler {
      */
     @MessageExceptionHandler(Exception.class)
     @SendToUser("/queue/error")
-    public WebSocketErrorResponse handleGenericWebSocketError(Exception e) {
+    public WebSocketErrorResponse handleGenericWebSocketError(final Exception e) {
         log.error("WebSocket error: {}", e.getMessage(), e);
         return new WebSocketErrorResponse(
                 "ERROR",

@@ -12,18 +12,18 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 /**
- * UploadProfilePhoto handles the uploading of profile photos
+ * UploadProfilePhoto handles the uploading of profile photos.
  */
 @Service
 @Log4j2
 @RequiredArgsConstructor
 public class UploadProfilePhoto implements PhotoOperation{
     /**
-     * Validations instance for user validation
+     * Validations instance for user validation.
      */
     private final Validations validations;
     /**
-     * UserRepository for database operations
+     * UserRepository for database operations.
      */
     private final UserRepository userRepository;
    /**
@@ -40,7 +40,7 @@ public class UploadProfilePhoto implements PhotoOperation{
      * @return PhotoResponse
      */
     @Override
-    public PhotoResponse perform(PhotoRequest photoRequest) {
+    public PhotoResponse perform(final PhotoRequest photoRequest) {
             log.info("Uploading profile photo for user: "
                     + photoRequest.getUuid());
 
