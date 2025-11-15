@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.UserContact;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -23,6 +22,13 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmailAndIsDeletedFalse(
             String email);
 
+    /**
+     * Finds a user by phone number hash.
+     *
+     * @param phoneNumberHash the hash of the user's phone number
+     * @return an Optional containing the User if found,
+     * or empty if not found
+     */
     Optional<User> findByPhoneNumberHash(String phoneNumberHash);
 
 }

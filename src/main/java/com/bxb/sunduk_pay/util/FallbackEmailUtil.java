@@ -124,7 +124,8 @@ public class FallbackEmailUtil {
                     + "Warm regards,\n"
                     + "SundukPay Team";
 
-            emailService.sendEmail(event.getEmail(), subject, body,false);
+            emailService.sendEmail(event.getEmail(), subject, body,
+                    false);
         } catch (Exception e) {
             log.error(
                     "Failed to send fallback email for Txn ID {}: {}",

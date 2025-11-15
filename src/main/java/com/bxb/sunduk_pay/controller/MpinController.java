@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@Log4j2
 /**
  * Controller for handling MPIN-related operations.
  */
+@RestController
+@Log4j2
 public class MpinController {
     /**
      * Service for MPIN operations.
@@ -35,17 +35,13 @@ public class MpinController {
      */
     @PostMapping("/mpin")
     public ResponseEntity<MpinResponse> mpinApi(
-            @RequestBody final MpinRequest request)
-{
+            @RequestBody final MpinRequest request) {
         log.info("Received MPIN set request for UUID: {}",
                 request.getUuid() + "mpin " + request.getMpin());
 
             return ResponseEntity.ok(mpinService.mpinApi(request));
+ }
 }
-
-
-
-    }
 
 
 

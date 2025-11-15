@@ -16,6 +16,6 @@ public interface MpinRepository extends JpaRepository<Mpin, Long> {
      * @return an Optional containing the MPIN if found,
      * or empty if not found
      */
-    Optional<Mpin> findByUser_Uuid(String uuid);
+    Optional<Mpin> findByUserUuid(String uuid);
 
 }

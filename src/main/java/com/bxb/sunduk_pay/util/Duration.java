@@ -4,12 +4,12 @@ package com.bxb.sunduk_pay.util;
  * for reminders or scheduling.
  */
 public enum Duration {
-    /** Daily duration */
+    /** Daily duration. */
     DAILY,
-    /** Weekly duration */
+    /** Weekly duration. */
     WEEKLY,
-    /** Monthly duration */
+    /** Monthly duration. */
     MONTHLY,
-    /** Yearly duration */
+    /** Yearly duration. */
     YEARLY
 }

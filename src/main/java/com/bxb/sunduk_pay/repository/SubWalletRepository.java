@@ -3,13 +3,11 @@ package com.bxb.sunduk_pay.repository;
 import com.bxb.sunduk_pay.model.SubWallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Repository interface for managing SubWallet
@@ -46,7 +44,7 @@ public interface SubWalletRepository extends
      * or empty if not found
      */
     Optional<SubWallet>
-    findBySubWalletIdAndMainWallet_MainWalletIdAndIsDeletedFalse(
+    findBySubWalletIdAndMainWalletMainWalletIdAndIsDeletedFalse(
             String subWalletId, String mainWalletId);
 
     /** Find all non-deleted sub-wallets associated
@@ -55,6 +53,6 @@ public interface SubWalletRepository extends
      * @return a list of non-deleted SubWallets
      */
     List<SubWallet>
-    findAllByMainWallet_MainWalletIdAndIsDeletedFalse(
+    findAllByMainWalletMainWalletIdAndIsDeletedFalse(
             String mainWalletId);
 }

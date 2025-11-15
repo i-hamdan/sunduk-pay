@@ -77,9 +77,22 @@ public class EmailMessageUtil {
     }
 
 
+    /**
+     * Build the subject line for an OTP event.
+     *
+     * @param event the OTP event
+     * @return the subject line
+     */
     public String buildSubjectForOtp(final OtpEvent event) {
         return "Hi " + event.getFullname() + ", Your Sunduk MPIN Reset OTP";
     }
+
+    /**
+     * Build the body content for an OTP event.
+     *
+     * @param event the OTP event
+     * @return the body content
+     */
     public String buildBodyForOtp(final OtpEvent event) {
 
         String html = """
@@ -89,8 +102,12 @@ public class EmailMessageUtil {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>4 Digit PIN To Reset Sunduk MPIN</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://
+  cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+  rel="stylesheet" />
+  <link href="https://
+  fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" 
+  rel="stylesheet" />
   <style>
     * {
       font-family: "Poppins", sans-serif !important;
@@ -114,11 +131,11 @@ public class EmailMessageUtil {
   border-bottom: 1px solid #f0f0f0;
   color: #666666;
   padding: 12px 0;
-  font-weight: 500;        
-  text-align: center;      
-  font-size: 22px;         
-  white-space: nowrap;     
-  letter-spacing: 0.5px;   
+  font-weight: 500;
+  text-align: center;
+  font-size: 22px;
+  white-space: nowrap;
+  letter-spacing: 0.5px; 
                     }
     .pin-box {
       font-size: 22px;
@@ -134,16 +151,14 @@ public class EmailMessageUtil {
       }
        .security-list {
        list-style-type: none;
-       padding-left: 0;      
+       padding-left: 0;
        margin: 0;
        }
-                
        .security-list li {
        margin-bottom: 6px;
        line-height: 1.8;
        padding-left: 8px;
        }
-                
        .security-list span {
        color: #C19945;
        font-weight: 600;
@@ -159,20 +174,17 @@ public class EmailMessageUtil {
     font-size: 20px;
     margin-bottom: 0.5rem;
     }
-                
     .hi-text {
     color: #000000f7;
     font-weight: 400;
     font-size: 25px;
-    margin-right: 5px; 
-    }
-                
+    margin-right: 5px;
+    }           
     .name-text {
     color: #C19945;
     font-weight: 500;
     font-size: 20px;
     }
-    
   </style>
 </head>
 
@@ -184,9 +196,9 @@ public class EmailMessageUtil {
         <!-- Logo Section -->
         <div class="d-flex align-items-center " style="display:flex !important;
          justify-items:center !important;gap:14px; ">
-          <img src="cid:logoImage" alt="Sunduk Pay Logo" 
+          <img src="cid:logoImage" alt="Sunduk Pay Logo"
           width="90" height="90" class="me-2" />
-          <span class="logo-text" 
+          <span class="logo-text"
           style="padding-top:30px !important">Sunduk Pay</span>
         </div>
 
@@ -200,7 +212,7 @@ public class EmailMessageUtil {
          </p>
 
         <p class="text-muted">
-          We received a request to 
+          We received a request to
           <strong class="text-dark">reset
           </strong> your PIN for your Sunduk Account.
         </p>
@@ -216,23 +228,22 @@ public class EmailMessageUtil {
          <span class="bracket">[</span>
          <span class="pin">%s</span><span class="bracket">]</span>
          </div>
-         
         <p class="text-muted mt-3">
-          This PIN is valid for 
+          This PIN is valid for
         <strong class="text-dark">Today</strong> and can only be used once.<br>
-          Enter this code on the 
+          Enter this code on the
           <strong class="text-dark">“Verify OTP”</strong>
            screen in your Sunduk app to set your new MPIN.
         </p>
 
         <p class="fw-semibold text-dark mt-3">
-          If you did not request this reset, 
+          If you did not request this reset,
           please ignore this message. Your account will remain secure.
         </p>
 
         <!-- Security Tips -->
             <ul class="security-list text-muted">
-        <li><span>#</span>Never share this PIN or your MPIN with anyone, 
+        <li><span>#</span>Never share this PIN or your MPIN with anyone,
         including Sunduk representatives.</li>
         <li><span>#</span>Sunduk will never ask for your PIN via call,
          SMS, or email.</li>
@@ -243,7 +254,7 @@ public class EmailMessageUtil {
         <h4 class="mt-4 text-dark fw-semibold">Need Help?</h4>
         <p class="text-muted mb-0">
           Contact our support team at
-           <a href="mailto:support@sunduk.com" class="text-decoration-none" 
+           <a href="mailto:support@sunduk.com" class="text-decoration-none"
            style="color:#C19945;">support@sunduk.com</a>
         </p>
 

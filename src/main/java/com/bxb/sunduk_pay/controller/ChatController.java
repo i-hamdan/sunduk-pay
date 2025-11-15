@@ -2,15 +2,11 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.Mappers.ChatMessageMapper;
 import com.bxb.sunduk_pay.kafkaEvents.ChatMessageEvent;
-import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.ChatMessageRequest;
 import com.bxb.sunduk_pay.response.ChatAndTransactionUnifiedDTO;
-import com.bxb.sunduk_pay.response.ChatMessageResponse;
 import com.bxb.sunduk_pay.service.ChatMessageService;
-import com.bxb.sunduk_pay.service.UserToUserTransferService;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
-import com.bxb.sunduk_pay.validations.MessageValidations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -75,11 +71,11 @@ public class ChatController {
                 request.getSenderId(),
                 request.getReceiverId());
 
-        log.info( "Forwarding chat message from {} to {}: {}",
+        log.info("Forwarding chat message from {} to {}: {}",
                 request.getSenderId(),
                 request.getReceiverId(),
                 request.getContent());
-        kafkaTemplate.send("chat-messages",key, messageEvent);
+        kafkaTemplate.send("chat-messages", key, messageEvent);
     }
 
     /**
@@ -90,9 +86,9 @@ public class ChatController {
      * @return a ResponseEntity containing a
      * list of ChatAndTransactionUnifiedDTO
      */
-    @PostMapping("/chatHistory" )
+    @PostMapping("/chatHistory")
     public ResponseEntity<List<ChatAndTransactionUnifiedDTO>> fetchChatHistory(
-            @RequestBody final ChatMessageRequest messageRequest){
+            @RequestBody final ChatMessageRequest messageRequest) {
         return ResponseEntity.ok(messageService
                 .fetchChatHistory(messageRequest));
     }

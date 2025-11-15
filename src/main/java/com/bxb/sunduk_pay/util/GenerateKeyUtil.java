@@ -1,8 +1,6 @@
 package com.bxb.sunduk_pay.util;
 
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -15,6 +13,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class GenerateKeyUtil {
 
+    /** Length of ID part to consider for key generation.
+     */
+    private final Integer FOUR = 4;
+
+    private final Integer SIX = 6;
     /**
      * Generates a Redis key for chat history between two users
      * based on the last 4 digits of their IDs.
@@ -36,15 +39,15 @@ public class GenerateKeyUtil {
         String trimmedSender = senderId.trim();
         String trimmedReceiver = receiverId.trim();
 
-        if (trimmedSender.length() < 4 || trimmedReceiver.length() < 4) {
+        if (trimmedSender.length() < FOUR || trimmedReceiver.length() < FOUR) {
             throw new InvalidPayloadException(
                     "Sender and Receiver IDs must have at least 4 digits");
         }
 
         String senderLast4 = trimmedSender.substring(
-                trimmedSender.length() - 6);
+                trimmedSender.length() - SIX);
         String receiverLast4 = trimmedReceiver.substring(
-                trimmedReceiver.length() - 6);
+                trimmedReceiver.length() - SIX);
 
         // Generate consistent key (order-independent)
         String chatKey;

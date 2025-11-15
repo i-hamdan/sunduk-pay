@@ -52,7 +52,7 @@ public class FetchWalletService implements WalletOperation {
         MainWallet mainWallet = validations.
                 getMainWalletInfo(mainWalletRequest.getUuid());
         List<SubWallet> subWallets = subWalletRepository
-                .findAllByMainWallet_MainWalletIdAndIsDeletedFalse(
+                .findAllByMainWalletMainWalletIdAndIsDeletedFalse(
                 mainWallet.getMainWalletId());
         return walletMapper.toWalletResponse(mainWallet, subWallets);
     }

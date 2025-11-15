@@ -41,10 +41,9 @@ public class MpinValidationImpl implements MpinValidations {
     public void validateMpin(final String uuid, final String inputMpin) {
         log.info("Validating MPIN for user: {}", uuid);
 
-        Mpin mpin = mpinRepository.findByUser_Uuid(uuid)
+        Mpin mpin = mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
-                        new UserNotFoundException("MPIN not found for user: "
-                                + uuid));
+                        new UserNotFoundException("MPIN not found for user: " + uuid));
 
         // Check if locked
         if (mpin.isLocked()) {
@@ -92,9 +91,9 @@ public class MpinValidationImpl implements MpinValidations {
                 
                 throw new InvalidMpinException(
 
-                 "You have entered the wrong MPIN too many times. " +
-                 "Your account is temporary locked for" +
-                 " 24 hours");
+                                "You have entered the wrong MPIN too many times. " +
+                                        "Your account is temporary locked for" +
+                                        " 24 hours");
             }
 
             // Save updated failed attempts before throwing
@@ -119,8 +118,8 @@ public class MpinValidationImpl implements MpinValidations {
      * @param uuid
      */
     @Override
-    public Mpin findMpinByUuid(final String uuid) {
-        return mpinRepository.findByUser_Uuid(uuid)
+    public Mpin findMpinByUuid(String uuid) {
+        return mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
                         new UserNotFoundException
                                 ("MPIN not found for user: " + uuid));
@@ -132,7 +131,7 @@ public class MpinValidationImpl implements MpinValidations {
      *
      */
     @Override
-    public User getUserEmailInfo(final String email) {
+    public User getUserEmailInfo(String email) {
         log.info("Fetching user with email: {}", email);
 
 

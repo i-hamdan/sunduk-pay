@@ -9,6 +9,6 @@ import java.time.LocalDate;
  * Repository interface for managing CurrencyRates entities in the database.
  */
 public interface CurrencyRepository extends
-        JpaRepository<CurrencyRates, LocalDate>
-        ,CustomCurrencyRepository {
+        JpaRepository<CurrencyRates, LocalDate>,
+        CustomCurrencyRepository {
 }

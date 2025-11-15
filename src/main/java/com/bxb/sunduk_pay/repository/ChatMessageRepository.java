@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ChatMessageRepository extends
-        JpaRepository<ChatMessage,String> {
+        JpaRepository <ChatMessage, String> {
 
     /**
      * Finds chat messages between a sender and receiver,
@@ -24,6 +24,6 @@ public interface ChatMessageRepository extends
             OR (m.senderId = :receiverId AND m.receiverId = :senderId)
             ORDER BY m.timestamp DESC
             """)
-    List<ChatMessage>findBySenderIdAndReceiverId(
+    List<ChatMessage> findBySenderIdAndReceiverId(
             String senderId, String receiverId);
 }

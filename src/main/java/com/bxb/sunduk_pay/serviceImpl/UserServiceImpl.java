@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
@@ -135,7 +134,7 @@ public class UserServiceImpl implements UserService {
         }
 
         boolean present = mpinRepository
-                .findByUser_Uuid(user.getUuid()).isPresent();
+                .findByUserUuid(user.getUuid()).isPresent();
         user.setIsMpinCreated(present);
         return user;
     }

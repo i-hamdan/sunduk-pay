@@ -281,7 +281,7 @@ private static final int WALLET_SIZE = 19;
         log.info(
   "Searching for SubWallet with ID: {} ", subWalletId);
         return subWalletRepository
-        .findBySubWalletIdAndMainWallet_MainWalletIdAndIsDeletedFalse(
+        .findBySubWalletIdAndMainWalletMainWalletIdAndIsDeletedFalse(
                subWalletId, mainWalletId)
                 .orElseGet(() -> {
                     log.warn(

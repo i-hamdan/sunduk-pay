@@ -17,18 +17,24 @@ import java.util.List;
 public interface ReminderRepository extends JpaRepository<Reminder, String> {
 
     /**
-     * Finds reminders by duration type (DAILY, WEEKLY, etc.)
-     * ignoring case.
+     * Finds reminders by their duration.
+     * @param duration the duration to filter reminders by
+     * @return a list of reminders matching the specified duration
      */
     List<Reminder> findByDuration(Duration duration);
 
     /**
      * Finds a reminder by its unique reminderId.
+     * @param reminderId the unique identifier of the reminder
+     * @return the reminder with the specified reminderId
      */
     Reminder findByReminderId(String reminderId);
 
     /**
      * Finds reminders by contact number with pagination support.
+     * @param contactNumber the contact number to filter reminders by
+     * @param pageable the pagination information
+     * @return a page of reminders matching the specified contact number
      */
     Page<Reminder> findByContactNumber(String contactNumber, Pageable pageable);
 

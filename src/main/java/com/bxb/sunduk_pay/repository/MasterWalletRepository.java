@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Repository interface for MasterWallet entity.
@@ -13,7 +12,7 @@ import java.util.UUID;
  */
 @Repository
 public interface MasterWalletRepository
-        extends JpaRepository<MasterWallet,String> {
+        extends JpaRepository<MasterWallet, String> {
    /**
     * Finds a MasterWallet by the associated user's UUID.
     * @param uuid the UUID of the user

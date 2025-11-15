@@ -114,8 +114,10 @@ public interface TransactionRepository
                 SELECT t FROM Transaction t
                 WHERE t.user.uuid = :uuid
                   AND (
-                    (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
-                    OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+                    (t.fromWalletId = :walletId AND t.transactionType =
+                     com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+                    OR (t.toWalletId = :walletId AND t.transactionType =
+                     com.bxb.sunduk_pay.util.TransactionType.CREDIT)
                   )
             """)
     Page<Transaction> findAllByUserUuidAndWalletId(
@@ -140,8 +142,10 @@ public interface TransactionRepository
                 WHERE t.user.uuid = :uuid
                   AND t.paymentMethod = :paymentMethod
                   AND (
-                    (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
-                    OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+                    (t.fromWalletId = :walletId AND t.transactionType =
+                     com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+                    OR (t.toWalletId = :walletId AND t.transactionType =
+                     com.bxb.sunduk_pay.util.TransactionType.CREDIT)
                   )
             """)
     Page<Transaction> findByUuidAndWalletIdAndPaymentMethod(
@@ -162,8 +166,10 @@ public interface TransactionRepository
                 SELECT t FROM Transaction t
                 WHERE t.user.uuid = :uuid
                   AND (
-                    (t.fromWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.DEBIT)
-                    OR (t.toWalletId = :walletId AND t.transactionType = com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+                    (t.fromWalletId = :walletId AND t.transactionType =
+                    com.bxb.sunduk_pay.util.TransactionType.DEBIT)
+                    OR (t.toWalletId = :walletId AND t.transactionType =
+                     com.bxb.sunduk_pay.util.TransactionType.CREDIT)
                   )
             """)
     List<Transaction> findAllByUserUuidAndWalletId(
@@ -246,6 +252,18 @@ public interface TransactionRepository
 
 
 
+    /**
+     * find transactions by user UUID,
+     * sender and receiver phoneNumbers,
+     * payment method and isMaster false.
+     *
+     * @param uuid          the user UUID
+     * @param phone1        the phoneNumber of sender
+     * @param phone2        the phoneNumber of receiver
+     * @param paymentMethod the method of payment
+     * @param pageable      pagination information
+     * @return list of transactions
+     */
     @Query("""
     SELECT t FROM Transaction t
     WHERE
