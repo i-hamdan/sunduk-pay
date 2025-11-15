@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-
+/**
+ * Implementation of MPIN validation logic.
+ */
 @Log4j2
 @RequiredArgsConstructor
 @Component
@@ -41,7 +43,8 @@ public class MpinValidationImpl implements MpinValidations {
 
         Mpin mpin = mpinRepository.findByUser_Uuid(uuid)
                 .orElseThrow(() ->
-                        new UserNotFoundException("MPIN not found for user: " + uuid));
+                        new UserNotFoundException("MPIN not found for user: "
+                                + uuid));
 
         // Check if locked
         if (mpin.isLocked()) {
@@ -89,9 +92,9 @@ public class MpinValidationImpl implements MpinValidations {
                 
                 throw new InvalidMpinException(
 
-                                "You have entered the wrong MPIN too many times. " +
-                                        "Your account is temporary locked for" +
-                                        " 24 hours");
+                 "You have entered the wrong MPIN too many times. " +
+                 "Your account is temporary locked for" +
+                 " 24 hours");
             }
 
             // Save updated failed attempts before throwing
@@ -116,7 +119,7 @@ public class MpinValidationImpl implements MpinValidations {
      * @param uuid
      */
     @Override
-    public Mpin findMpinByUuid(String uuid) {
+    public Mpin findMpinByUuid(final String uuid) {
         return mpinRepository.findByUser_Uuid(uuid)
                 .orElseThrow(() ->
                         new UserNotFoundException
@@ -129,7 +132,7 @@ public class MpinValidationImpl implements MpinValidations {
      *
      */
     @Override
-    public User getUserEmailInfo(String email) {
+    public User getUserEmailInfo(final String email) {
         log.info("Fetching user with email: {}", email);
 
 

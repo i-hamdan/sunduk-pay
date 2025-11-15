@@ -27,6 +27,6 @@ public interface MpinValidations {
    * @param email user UUID
    * @return {@link User
     **/
-    User getUserEmailInfo(String email);
+    User getUserEmailInfo(final String email);
 
 }

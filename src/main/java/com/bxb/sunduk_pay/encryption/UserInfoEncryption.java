@@ -2,20 +2,27 @@ package com.bxb.sunduk_pay.encryption;
 
 import org.springframework.security.crypto.encrypt.Encryptors;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.stereotype.Component
-        ;
+import org.springframework.stereotype.Component;
+
+/**
+ * Utility class for encrypting and decrypting user information.
+ */
 
 @Component
 public class UserInfoEncryption {
-
+/**  * Key and salt for encryption.
+ */
     private static final String KEY = "mySecretKey123";
+   /**  * Salt for encryption.
+     */
     private static final String SALT = "a1b2c3d4e5f60708";
-
+/**  * TextEncryptor instance for encryption and decryption.
+     */
     private static final TextEncryptor ENCRYPTOR =
             Encryptors.text(KEY, SALT);
 
 
-    public  String encrypt(String field) {
+    public  String encrypt(final String field) {
         if (field == null) {
             return null;
         }
@@ -23,7 +30,7 @@ public class UserInfoEncryption {
     }
 
 
-    public  String decrypt(String encryptedfiled) {
+    public  String decrypt(final String encryptedfiled) {
         if (encryptedfiled == null) {
             return null;
         }
