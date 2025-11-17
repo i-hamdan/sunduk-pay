@@ -43,8 +43,10 @@ private final CurrencyRepository currencyRepository;
         entity.setDate(today);
 
         for (CurrencyRates items : chunk.getItems()) {
-            Map<String,Double> rates = items.getRates();
-            if (rates==null) continue;
+            Map<String, Double> rates = items.getRates();
+            if (rates == null) {
+                continue;
+            }
             for (Map.Entry<String, Double> entry : rates.entrySet()) {
                 String pair = entry.getKey().toLowerCase();
                 Double value = entry.getValue();

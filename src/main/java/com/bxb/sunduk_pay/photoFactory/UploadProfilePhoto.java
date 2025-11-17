@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class UploadProfilePhoto implements PhotoOperation{
+public class UploadProfilePhoto implements PhotoOperation {
     /**
      * Validations instance for user validation.
      */

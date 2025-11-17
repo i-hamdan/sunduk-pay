@@ -107,8 +107,10 @@ private static final int WALLET_SIZE = 19;
      * <p>
      * This method supports multiple optional filters:
      * <ul>
-     *   <li><b>walletId</b> – filters transactions for that specific wallet.</li>
-     *   <li><b>transactionType</b> – filters by CREDIT or DEBIT transactions.</li>
+     *   <li><b>walletId</b> –
+     *   filters transactions for that specific wallet.</li>
+     *   <li><b>transactionType</b> –
+     *   filters by CREDIT or DEBIT transactions.</li>
      *   <li><b>paymentMethod</b> – filters by a specific payment method
      *       (e.g., UPI, CARD, etc.).</li>
      * </ul>
@@ -117,7 +119,8 @@ private static final int WALLET_SIZE = 19;
      * (wallet + type + method) and falls back to broader searches
      * when some filters are missing.
      * <p>
-     * Throws {@link TransactionNotFoundException} if no transactions are found.
+     * Throws {@link TransactionNotFoundException}
+     * if no transactions are found.
      *
      * @param uuid            unique user identifier
      * @param receiverId
@@ -126,11 +129,12 @@ private static final int WALLET_SIZE = 19;
      * @param transactionType optional transaction type (CREDIT/DEBIT)
      * @param pageable        pagination information
      * @return a paginated list of {@link Transaction} objects
-     * @throws TransactionNotFoundException if no matching transactions are found
+     * @throws TransactionNotFoundException if no matching transactions
+     * are found
      */
     @Override
     public Page<Transaction> getTransactions(
-            final String uuid   ,
+            final String uuid,
             final String receiverId,
             final String walletId,
             final PaymentMethod method,
@@ -149,12 +153,14 @@ private static final int WALLET_SIZE = 19;
 
         if (receiverId != null
                 && method == PaymentMethod.PHONE_NUMBER) {
-            log.info("Fetching transactions for history between {} and {} ",
-                    uuid,receiverId);
+            log.info
+             ("Fetching transactions for history between {} and {} ",
+                    uuid, receiverId);
             User sendingUser = getUserInfo(uuid);
             User receivingUser = getUserByPhoneNumber(receiverId);
-            log.info("Both users fetched and their numbers are {} and {} ",
-                    sendingUser.getPhoneNumber(),receivingUser.getPhoneNumber());
+            log.info
+             ("Both users fetched and their numbers are {} and {} ",
+             sendingUser.getPhoneNumber(),receivingUser.getPhoneNumber());
             return transactionRepository
                     .getTransactionsBySenderAndReceiverId(
                             uuid,
@@ -183,12 +189,12 @@ private static final int WALLET_SIZE = 19;
             else if (hasType && transactionType == TransactionType.CREDIT) {
                 if (hasMethod) {
                     transactions = transactionRepository
-                            .findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
-                                    uuid, walletId, TransactionType.CREDIT, method, pageable);
+                .findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
+                uuid, walletId, TransactionType.CREDIT, method, pageable);
                 } else {
                     transactions = transactionRepository
                             .findByUserUuidAndToWalletIdAndTransactionType(
-                                    uuid, walletId, TransactionType.CREDIT, pageable);
+                 uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             }
 
@@ -210,16 +216,16 @@ private static final int WALLET_SIZE = 19;
         else {
             if (hasType && hasMethod) {
                 transactions = transactionRepository
-                        .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
-                                uuid, transactionType, method, pageable);
+           .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(
+           uuid, transactionType, method, pageable);
             } else if (hasType) {
                 transactions = transactionRepository
-                        .findByUserUuidAndTransactionTypeAndIsMasterFalse(
-                                uuid, transactionType, pageable);
+            .findByUserUuidAndTransactionTypeAndIsMasterFalse(
+            uuid, transactionType, pageable);
             } else if (hasMethod) {
                 transactions = transactionRepository
-                        .findByUserUuidAndPaymentMethodAndIsMasterFalse(
-                                uuid, method, pageable);
+            .findByUserUuidAndPaymentMethodAndIsMasterFalse(
+            uuid, method, pageable);
             } else {
                 transactions = transactionRepository
                         .findByUserUuidAndIsMasterFalse(uuid, pageable);
@@ -249,7 +255,7 @@ private static final int WALLET_SIZE = 19;
   balance, amount);
             throw new NullAmountException(
                     "Balance and amount must not be null. Provided balance="
-                            + balance + ", amount=" + amount);
+                            + balance + ", amount= " + amount);
         }
         if (balance < amount) {
             log.error(
@@ -414,11 +420,14 @@ private static final int WALLET_SIZE = 19;
         log.info("Validating recipient UPI ID: {}", recipientUpiId);
 
         if (recipientUpiId == null || recipientUpiId.isBlank()) {
-            log.error("Validation failed: recipient UPI ID is null or blank");
-            throw new NullValueException("Recipient UPI ID cannot be null or blank.");
+            log.error
+                    ("Validation failed: recipient UPI ID is null or blank");
+            throw new NullValueException
+                    ("Recipient UPI ID cannot be null or blank.");
         }
 
-        log.debug("Validation successful for UPI ID: {}", recipientUpiId);
+        log.debug("Validation successful for UPI ID: {}",
+                recipientUpiId);
 
     }
 
@@ -441,17 +450,21 @@ private static final int WALLET_SIZE = 19;
         // Check if file is null or empty
         if (photo == null || photo.isEmpty()) {
             log.error("No photo uploaded or file is empty");
-            throw new InvalidPhotoException("Please upload a valid JPEG photo.");
+            throw new InvalidPhotoException
+                    ("Please upload a valid JPEG photo.");
         }
 
 
         // Check MIME type
         String contentType = photo.getContentType();
-        List<String> allowedTypes = List.of("image/jpeg", "image/heic", "image/heif");
+        List<String> allowedTypes = List.of("image/jpeg", "image/heic",
+                "image/heif");
 
-        if (contentType == null || !allowedTypes.contains(contentType.toLowerCase())) {
+        if (contentType == null || !allowedTypes.contains(contentType
+                .toLowerCase())) {
             log.error("Invalid MIME type: {}", contentType);
-            throw new InvalidPhotoException("Only JPEG  (HEIC/HEIF) images are allowed.");
+            throw new InvalidPhotoException("Only JPEG  "
+                    + "(HEIC/HEIF) images are allowed.");
         }
 
     }

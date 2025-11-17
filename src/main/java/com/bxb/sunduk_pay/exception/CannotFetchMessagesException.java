@@ -10,7 +10,7 @@ public class CannotFetchMessagesException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public CannotFetchMessagesException(String message) {
+    public CannotFetchMessagesException(final String message) {
         super(message);
     }
 }

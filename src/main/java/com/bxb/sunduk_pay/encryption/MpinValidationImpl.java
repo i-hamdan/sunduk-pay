@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
 /**
  * Implementation of MPIN validation logic.
  */
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Component
 public class MpinValidationImpl implements MpinValidations {
-/***
+    /***
      * Time constants for lock duration calculations.
      */
     private static final int ONE_HOUR_IN_SECONDS = 3600;
@@ -42,12 +43,13 @@ public class MpinValidationImpl implements MpinValidations {
      */
     private final MpinEncryption encryption;
     /**
-     *
+     *User repository for user operations.
      */
     private final UserRepository userRepository;
 
     /**
      * Validates the MPIN for payment operations.
+     *
      * @param uuid
      * @param inputMpin
      */
@@ -76,11 +78,13 @@ public class MpinValidationImpl implements MpinValidations {
 
                 long totalSeconds = remaining.getSeconds();
                 long hoursLeft = totalSeconds / ONE_HOUR_IN_SECONDS;
-                long minutesLeft = (totalSeconds % ONE_HOUR_IN_SECONDS) / ONE_MINUTE_IN_SECONDS;
+                long minutesLeft = (totalSeconds % ONE_HOUR_IN_SECONDS) /
+                        ONE_MINUTE_IN_SECONDS;
                 long secondsLeft = totalSeconds % ONE_MINUTE_IN_SECONDS;
                 throw new InvalidMpinException(
-                        String.format("Your MPIN is blocked. Try again " +
-                                    "in %02d hours %02d minutes %02d seconds",
+                        String.format("Your MPIN is blocked. Try again "
+                                        + "in %02d hours %02d minutes %02d "
+                                        + "seconds",
                                 hoursLeft, minutesLeft, secondsLeft)
                 );
 
@@ -103,20 +107,18 @@ public class MpinValidationImpl implements MpinValidations {
 
                 log.error("User {} MPIN blocked for 2 minutes after 3"
                         + " failed attempts", uuid);
-                
+
                 throw new InvalidMpinException(
                         "You have entered the wrong MPIN too many times. "
-                         + "Your account is temporary locked for"
-                         + " 24 hours");
+                                + "Your account is temporary locked for"
+                                + " 24 hours");
             }
-
-            // Save updated failed attempts before throwing
             mpinRepository.save(mpin);
 
 
             int attemptsLeft = MAX_FAILED_ATTEMPTS - failedAttempts;
             throw new InvalidMpinException("you have entered a incorrect mpin "
-                     + attemptsLeft + " attempt  remaining");
+                    + attemptsLeft + " attempt  remaining");
         }
 
         // If valid, reset failed attempts
@@ -130,6 +132,7 @@ public class MpinValidationImpl implements MpinValidations {
      * Validates the MPIN for setting a new MPIN.
      *
      * @param uuid
+     * @return Mpin
      */
     @Override
     public Mpin findMpinByUuid(final String uuid) {
@@ -140,10 +143,11 @@ public class MpinValidationImpl implements MpinValidations {
     }
 
     /**
+     * Retrieves user email information by UUID.
      *
-     * @param email user UUID
-     *
-     */
+     * @param email user email
+     * @return {@link User}
+     **/
     @Override
     public User getUserEmailInfo(final String email) {
         log.info("Fetching user with email: {}", email);
@@ -156,6 +160,6 @@ public class MpinValidationImpl implements MpinValidations {
                             "this email is not registered with us");
                 });
     }
-    }
+}
 
 

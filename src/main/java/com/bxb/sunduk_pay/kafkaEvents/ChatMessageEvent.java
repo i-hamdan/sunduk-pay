@@ -1,6 +1,10 @@
 package com.bxb.sunduk_pay.kafkaEvents;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 /**
  * Event class representing a chat message.
  */

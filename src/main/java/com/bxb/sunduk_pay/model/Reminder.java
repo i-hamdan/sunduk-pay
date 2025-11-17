@@ -17,6 +17,9 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Model representing a reminder entity.
+ */
 @Entity
 @Table(name = "reminders")
 @Data
@@ -24,9 +27,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 
-/**
- * Model representing a reminder entity.
- */
 public class Reminder {
 
     /**

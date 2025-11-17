@@ -10,6 +10,13 @@ import java.time.temporal.ChronoUnit;
 public class ReminderUtil {
 
     /**
+     * Private constructor to prevent instantiation.
+     */
+    // Prevent instantiation — required by Checkstyle
+    private ReminderUtil() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+    /**
      * Calculates how many days remain until the next due reminder.
      * Returns 0 if the reminder is due today.
      * @param reminder the reminder object

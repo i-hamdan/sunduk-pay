@@ -9,7 +9,7 @@ public class InvalidPhotoException extends RuntimeException {
      * Constructor for InvalidPhotoException.
      * @param message
      */
-    public InvalidPhotoException(String message) {
+    public InvalidPhotoException(final String message) {
         super(message);
     }
 }

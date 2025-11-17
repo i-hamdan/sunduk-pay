@@ -15,10 +15,10 @@ public interface UserToUserTransferService {
      * @return the updated main wallet response after the transfer
      */
     MainWalletResponse transferBetweenUsers(
-            final String senderId,
-            final String receiverId,
-            final Double amount,
-            final String paymentTag,
-            final String senderWalletId
+             String senderId,
+             String receiverId,
+             Double amount,
+             String paymentTag,
+             String senderWalletId
             );
 }

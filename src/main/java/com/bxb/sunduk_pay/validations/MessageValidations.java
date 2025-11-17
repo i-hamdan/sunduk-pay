@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.model.ChatMessage;
-import com.bxb.sunduk_pay.response.ChatMessageResponse;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Interface for validating and processing chat messages.
@@ -18,7 +16,7 @@ public interface MessageValidations {
      * @return a list of chat messages
      */
     List<ChatMessage> getMessagesFromDb(
-            final String senderId,
-           final String receiverId);
+             String senderId,
+            String receiverId);
 
 }

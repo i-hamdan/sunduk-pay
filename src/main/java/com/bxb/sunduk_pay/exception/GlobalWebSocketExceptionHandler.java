@@ -44,7 +44,8 @@ public class GlobalWebSocketExceptionHandler {
      */
     @MessageExceptionHandler(Exception.class)
     @SendToUser("/queue/error")
-    public WebSocketErrorResponse handleGenericWebSocketError(final Exception e) {
+    public WebSocketErrorResponse handleGenericWebSocketError
+    (final Exception e) {
         log.error("WebSocket error: {}", e.getMessage(), e);
         return new WebSocketErrorResponse(
                 "ERROR",

@@ -10,7 +10,7 @@ public class ChatProcessingException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public ChatProcessingException(String message) {
+    public ChatProcessingException(final String message) {
         super(message);
     }
 }

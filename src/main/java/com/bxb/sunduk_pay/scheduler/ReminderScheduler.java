@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Scheduler component to send reminder notifications to users
+ * Scheduler component to send reminder notifications to users.
  */
 @Component
 @RequiredArgsConstructor
@@ -81,8 +81,7 @@ public void sendReminderNotifications() {
 
         for (Reminder reminder : remindersToSend) {
             User user = reminder.getUser();
-            if (user == null || user.getFcmToken() == null)
-            {
+            if (user == null || user.getFcmToken() == null) {
                 continue;
             }
 

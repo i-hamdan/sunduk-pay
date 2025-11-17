@@ -4,7 +4,9 @@ import com.bxb.sunduk_pay.util.PhotoRequestType;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 /**
  * Factory class to manage and provide PhotoOperation
  * implementations based on PhotoRequestType.
@@ -37,7 +39,7 @@ public class PhotoOperationsFactory {
      * @param type the type of photo request
      * @return PhotoOperation
      */
-    public PhotoOperation getOperation(PhotoRequestType type) {
+    public PhotoOperation getOperation(final PhotoRequestType type) {
         return operationMap.get(type);
     }
 }

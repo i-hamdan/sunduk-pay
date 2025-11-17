@@ -4,14 +4,11 @@ import com.bxb.sunduk_pay.Mappers.ChatMessageMapper;
 import com.bxb.sunduk_pay.exception.CannotFetchMessagesException;
 import com.bxb.sunduk_pay.model.ChatMessage;
 import com.bxb.sunduk_pay.repository.ChatMessageRepository;
-import com.bxb.sunduk_pay.response.ChatMessageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of MessageValidations for validating and processing chat messages.
@@ -36,10 +33,10 @@ public class MesageValidationsImpl implements MessageValidations {
             final String senderId,
             final String receiverId) {
         try {
-            if (senderId==null || receiverId==null) {
+            if (senderId == null || receiverId == null) {
                 throw new IllegalArgumentException(
-                        "Sender ID and Receiver ID " +
-                        "must not be null.");
+                        "Sender ID and Receiver ID "
+                                + "must not be null.");
             }
             return chatMessageRepository
                     .findBySenderIdAndReceiverId(
@@ -49,8 +46,8 @@ public class MesageValidationsImpl implements MessageValidations {
             log.error("Error retrieving messages from DB: "
                     + e.getMessage());
             throw new CannotFetchMessagesException(
-                    "Unable to fetch messages from " +
-                    "database." + e.getMessage());
+                    "Unable to fetch messages from "
+                            + "database." + e.getMessage());
         }
 
     }

@@ -24,7 +24,7 @@ public  final class  UserInfoEncryption {
     /**
      * Encrypts the given field.
      * @param field
-     * @return
+     * @return encrypted string
      */
     public  String encrypt(final String field) {
         if (field == null) {
@@ -36,7 +36,7 @@ public  final class  UserInfoEncryption {
     /**
      * Decrypts the given encrypted field.
      * @param encryptedfiled
-     * @return
+     * @return decrypted string
      */
 
     public  String decrypt(final String encryptedfiled) {
