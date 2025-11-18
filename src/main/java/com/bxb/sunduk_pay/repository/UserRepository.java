@@ -30,5 +30,13 @@ public interface UserRepository extends JpaRepository<User, String> {
      * or empty if not found
      */
     Optional<User> findByPhoneNumberHash(String phoneNumberHash);
+/**
+     * Finds a user by phone number.
+     *
+     * @param phoneNumber the user's phone number
+     * @return an Optional containing the User if found,
+     * or empty if not found
+     */
+    Optional<User> findByPhoneNumber(String phoneNumber);
 
 }
