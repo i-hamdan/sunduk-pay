@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperationFactory;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;

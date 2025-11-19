@@ -4,6 +4,9 @@ import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility class for encrypting and verifying MPINs using BCrypt hashing.
+ */
 @Component
 public class MpinEncryption {
     /**

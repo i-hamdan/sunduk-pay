@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.util.RiskLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,11 +24,5 @@ public class SubWalletResponse {
     private String icon;
     /** The creation timestamp of the sub-wallet. */
     private String createdAt;
-
-    /** Indicates whether the sub-wallet is invested. */
-    private boolean isInvested;
-
-//    /** The risk level associated with the sub-wallet. */
-//    private RiskLevel riskLevel;
 }
 

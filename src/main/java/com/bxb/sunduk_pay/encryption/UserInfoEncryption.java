@@ -10,14 +10,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public  final class  UserInfoEncryption {
-/**  * Key and salt for encryption.
+/**
+ * * Key and salt for encryption.
  */
     private static final String KEY = "mySecretKey123";
    /**  * Salt for encryption.
      */
     private static final String SALT = "a1b2c3d4e5f60708";
-/**  * TextEncryptor instance for encryption and decryption.
-     */
+    /**
+    ** TextEncryptor instance for encryption and decryption.
+     * */
     private static final TextEncryptor ENCRYPTOR =
             Encryptors.text(KEY, SALT);
 

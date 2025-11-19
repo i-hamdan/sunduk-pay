@@ -1,8 +1,8 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperation;
-import com.bxb.sunduk_pay.WalletFactoryPattern.WalletOperationFactory;
+import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperation;
+import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperationFactory;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.MainWallet;

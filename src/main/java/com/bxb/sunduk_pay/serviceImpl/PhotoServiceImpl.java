@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
-import com.bxb.sunduk_pay.photoFactory.PhotoOperation;
-import com.bxb.sunduk_pay.photoFactory.PhotoOperationsFactory;
+import com.bxb.sunduk_pay.factories.photoFactory.PhotoOperation;
+import com.bxb.sunduk_pay.factories.photoFactory.PhotoOperationsFactory;
 import com.bxb.sunduk_pay.request.PhotoRequest;
 import com.bxb.sunduk_pay.response.PhotoResponse;
 import com.bxb.sunduk_pay.service.PhotoService;
