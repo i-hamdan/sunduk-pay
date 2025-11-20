@@ -206,12 +206,10 @@ public class CurrencyServiceImpl implements CurrencyService {
     private List<CurrencyRatesResponse> fetchYearlyRates(
             final String from,
             final String to) {
-        String currencyPair = from.concat(to);
-        LocalDate oneYear = LocalDate.of(
-                YEAR_START, MONTH_END, DAY_19);
-        LocalDate endDate = LocalDate.of(
-                YEAR_END, MONTH_END, DAY_19);
-        log.info("Fetching yearly rates for currencyPair={} from date={}",
+    String currencyPair = from.concat(to);
+    LocalDate oneYear = LocalDate.of(YEAR_START, MONTH_END, DAY_19);
+    LocalDate endDate = LocalDate.of( YEAR_END, MONTH_END, DAY_19);
+    log.info("Fetching yearly rates for currencyPair={} from date={}",
                 currencyPair, oneYear);
 
 

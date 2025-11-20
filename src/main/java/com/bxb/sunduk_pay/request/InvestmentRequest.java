@@ -16,8 +16,8 @@ private String uuid;
 private String subWalletId;
 /** Amount to be invested.*/
 private RiskLevel riskLevel;
-    /**
-     * Type of investment request (e.g., CREATE, UPDATE, DELETE).
-     */
-    private InvestmentRequesType requestType;
+/**
+* Type of investment request (e.g., CREATE, UPDATE, DELETE).
+*/
+private InvestmentRequesType requestType;
 }
