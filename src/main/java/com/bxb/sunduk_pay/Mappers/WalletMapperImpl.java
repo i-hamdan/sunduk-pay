@@ -37,6 +37,19 @@ public class WalletMapperImpl implements WalletMapper {
         return response;
     }
 
+    @Override
+    public SubWalletResponse toSubWalletResponses(SubWallet subWallet) {
+      SubWalletResponse subWalletResponse = new SubWalletResponse();
+        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
+        subWalletResponse.setBalance(subWallet.getBalance());
+        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
+        subWalletResponse.setTargetDate(subWallet.getTargetDate().toString());
+        subWalletResponse.setIcon(subWallet.getIcon());
+        subWalletResponse.setInvested(subWallet.getIsInvested());
+
+        return subWalletResponse;
+    }
+
 
     /**
      * Converts a list of SubWallet entities into

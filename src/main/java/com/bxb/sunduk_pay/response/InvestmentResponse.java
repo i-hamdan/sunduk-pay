@@ -22,11 +22,7 @@ public class InvestmentResponse {
     /**
      * Total amount invested by the user.
      */
-    private double investedAmount; // same ass pot balance
-    /**
-     *
-     */
-    private double progressPercentage;// how much amount left for fullfill pot
+    private Double investedAmount; // same as pot balance
 
     /**
      * Current investment value (inside the analytical circle)
@@ -51,7 +47,4 @@ public class InvestmentResponse {
     /**response message.*/
     private String message;
 }
-
-
-
 

@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
@@ -17,7 +18,6 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -38,6 +38,10 @@ public class CancelInvestmentService implements InvestmentOperation {
      */
     private final Validations validations;
 
+    /**
+     * Repository for sub-wallet operations.
+     */
+    private final SubWalletRepository subWalletRepository;
     /**
      * Repository for transaction operations.
      */
@@ -73,12 +77,14 @@ public class CancelInvestmentService implements InvestmentOperation {
 
             if (subWallet != null && subWallet.getIsInvested()) {
                 Investment investment = investmentRepository
-                        .findBySubWalletSubWalletId(
+                        .findBySubWalletSubWalletIdAndIsActiveTrue(
                                 subWallet.getSubWalletId()).orElseThrow(
                                 () -> new InvestmentNotFoundException(
                                  "Investment not found for cancellation"));
                 investment.setActive(false);
                 investment.setUpdatedAt(LocalDateTime.now());
+
+                subWallet.setIsInvested(false);
 
                 Transaction transaction = Transaction.builder()
                         .transactionId(UUID.randomUUID().toString())
@@ -87,6 +93,7 @@ public class CancelInvestmentService implements InvestmentOperation {
                         .amount(subWallet.getBalance())
                         .transactionType(TransactionType.CREDIT)
                         .transactionLevel(TransactionLevel.INVESTED)
+                        .dateTime(LocalDateTime.now())
                         .fromWallet("Investment")
                         .toWallet(subWallet.getSubWalletName())
                         .toWalletId(subWallet.getSubWalletId())
@@ -94,6 +101,7 @@ public class CancelInvestmentService implements InvestmentOperation {
                                 + subWallet.getSubWalletName())
                         .build();
 
+                subWalletRepository.save(subWallet);
                 transactionRepository.save(transaction);
                 investmentRepository.save(investment);
 

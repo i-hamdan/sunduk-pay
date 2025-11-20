@@ -71,4 +71,5 @@ public class SubWallet {
     @ManyToOne
     @JoinColumn(name = "main_wallet_id")
     private MainWallet mainWallet;
+
 }

@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
-import com.bxb.sunduk_pay.util.RiskLevel;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SubWalletResponse {
     /** The unique identifier of the sub-wallet. */
     private String subWalletId;
@@ -24,5 +25,7 @@ public class SubWalletResponse {
     private String icon;
     /** The creation timestamp of the sub-wallet. */
     private String createdAt;
+    /** The risk level associated with the sub-wallet. */
+    private boolean isInvested;
 }
 

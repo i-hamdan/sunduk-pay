@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface InvestmentRepository extends
         JpaRepository<Investment, String> {
 
-    Optional<Investment> findBySubWalletSubWalletId(
+    Optional<Investment> findBySubWalletSubWalletIdAndIsActiveTrue(
             String subWalletId);
 }

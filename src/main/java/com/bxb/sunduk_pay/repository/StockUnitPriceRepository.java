@@ -15,6 +15,4 @@ public interface StockUnitPriceRepository extends JpaRepository<StockUnitPrice, 
 
     Optional<StockUnitPrice> findByDate(LocalDate date);
 
-    @Query("SELECT f FROM StockUnitPrice f ORDER BY f.date DESC")
-    List<StockUnitPrice> getAllByLatest();
 }
