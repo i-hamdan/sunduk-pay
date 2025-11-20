@@ -47,5 +47,11 @@ public class InvestmentResponse {
      * Last month increase/decrease in portfolio (displayed above graph)
      */
     private Double lastMonthChange;
+
+    /**response message.*/
+    private String message;
 }
+
+
+
 

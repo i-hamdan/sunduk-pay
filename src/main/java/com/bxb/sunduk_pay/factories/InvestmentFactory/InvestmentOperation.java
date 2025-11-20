@@ -2,7 +2,7 @@ package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
-import com.bxb.sunduk_pay.util.InvestmentRequesType;
+import com.bxb.sunduk_pay.util.InvestmentRequestType;
 
 /**
  * Interface defining the contract for investment operations.
@@ -15,7 +15,7 @@ public interface InvestmentOperation {
      *
      * @return InvestmentRequesType associated with this operation.
      */
-    InvestmentRequesType getInvestmentRequestType();
+    InvestmentRequestType getInvestmentRequestType();
     /**
      * Performs the investment operation based on the provided request.
      *

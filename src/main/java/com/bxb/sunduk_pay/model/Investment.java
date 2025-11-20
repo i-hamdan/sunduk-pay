@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.RiskLevel;
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@Entity
 public class Investment {
     /**
      * Unique identifier for the investment.
@@ -23,7 +25,7 @@ public class Investment {
      * The sub-wallet associated with the investment.
      */
     @ManyToOne
-    private SubWallet subWalletId;
+    private SubWallet subWallet;
     /**
      * The risk level associated with the investment.
      */

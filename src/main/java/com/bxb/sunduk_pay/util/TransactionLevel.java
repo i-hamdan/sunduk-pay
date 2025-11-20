@@ -9,5 +9,7 @@ public enum TransactionLevel {
   /** Transaction occurring within the user's own accounts or pots. */
     INTERNAL,
 /** Transaction involving an external party, such as a bank or another user. */
-    EXTERNAL
+    EXTERNAL,
+    /** Transaction that has been fully processed and settled. */
+    INVESTED
 }

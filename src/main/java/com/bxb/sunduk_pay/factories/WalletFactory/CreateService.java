@@ -84,6 +84,7 @@ public class CreateService implements WalletOperation {
                 .targetDate(mainWalletRequest.getTargetDate())
                 .subWalletName(mainWalletRequest.getSubWalletName())
                 .isDeleted(false)
+                .isInvested(false)
                 .icon(mainWalletRequest.getIcon())
                 .createdAt(LocalDateTime.now())
                 .mainWallet(mainWallet)

@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
-import com.bxb.sunduk_pay.util.InvestmentRequesType;
+import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class InvestmentOperationsFactory {
     /**
      * Initializes the investment operation map after construction.
      */
-    private Map<InvestmentRequesType,InvestmentOperation>
+    private Map<InvestmentRequestType,InvestmentOperation>
             investmentOperationMap = new HashMap<>();
 
     /**
@@ -46,7 +46,7 @@ public class InvestmentOperationsFactory {
      * @return InvestmentOperation
      */
     public InvestmentOperation getOperation(
-            final InvestmentRequesType type) {
+            final InvestmentRequestType type) {
         return investmentOperationMap.get(type);
     }
 

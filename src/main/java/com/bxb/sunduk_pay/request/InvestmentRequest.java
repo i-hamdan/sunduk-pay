@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.util.InvestmentRequesType;
+import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import com.bxb.sunduk_pay.util.RiskLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,5 +19,5 @@ private RiskLevel riskLevel;
 /**
 * Type of investment request (e.g., CREATE, UPDATE, DELETE).
 */
-private InvestmentRequesType requestType;
+private InvestmentRequestType requestType;
 }

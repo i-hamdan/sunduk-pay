@@ -60,6 +60,11 @@ public class SubWallet {
      * Indicates if the sub-wallet is deleted.
      */
     private Boolean isDeleted;
+
+    /**
+     * Indicates if the sub-wallet has active investments.
+     */
+    private Boolean isInvested;
     /**
      * Main wallet associated with the sub-wallet.
      */
