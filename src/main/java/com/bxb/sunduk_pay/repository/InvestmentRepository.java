@@ -7,10 +7,20 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Repository interface for managing Investment entities in the database.
+ */
 @Repository
 public interface InvestmentRepository extends
         JpaRepository<Investment, String> {
 
+    /**
+     * Finds an active investment by its associated sub-wallet ID.
+     *
+     * @param subWalletId the ID of the sub-wallet
+     * @return an Optional containing the active Investment if found,
+     * otherwise empty
+     */
     Optional<Investment> findBySubWalletSubWalletIdAndIsActiveTrue(
             String subWalletId);
 

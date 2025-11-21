@@ -12,6 +12,10 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import com.zaxxer.hikari.HikariDataSource;
 
+/**
+ * Configuration class for setting up PostgreSQL database connection
+ * and JPA repositories.
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
@@ -51,7 +55,8 @@ public class PostgresConfig {
 
     @Bean(name = "postgresTransactionManager")
     public PlatformTransactionManager postgresTransactionManager(
-            @Qualifier("postgresEntityManagerFactory") LocalContainerEntityManagerFactoryBean factory) {
+            @Qualifier("postgresEntityManagerFactory")
+            LocalContainerEntityManagerFactoryBean factory) {
         return new JpaTransactionManager(factory.getObject());
     }
 }

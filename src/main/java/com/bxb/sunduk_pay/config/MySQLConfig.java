@@ -12,6 +12,10 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import com.zaxxer.hikari.HikariDataSource;
 
+/**
+ * Configuration class for setting up MySQL database connectivity
+ * and JPA repositories.
+ */
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
@@ -54,7 +58,8 @@ public class MySQLConfig {
     @Primary
     @Bean(name = "mysqlTransactionManager")
     public PlatformTransactionManager mysqlTransactionManager(
-            @Qualifier("mysqlEntityManagerFactory") LocalContainerEntityManagerFactoryBean factory) {
+            @Qualifier("mysqlEntityManagerFactory")
+            LocalContainerEntityManagerFactoryBean factory) {
         return new JpaTransactionManager(factory.getObject());
     }
 }
