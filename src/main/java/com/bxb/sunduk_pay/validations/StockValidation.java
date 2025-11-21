@@ -6,4 +6,5 @@ import java.time.LocalDate;
 
 public interface StockValidation {
     StockUnitPrice getStockUnitPriceByDate(LocalDate date);
+    void ValidateBalanceForInvestment(Double balance);
 }

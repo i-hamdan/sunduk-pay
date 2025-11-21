@@ -12,6 +12,8 @@ import java.util.Optional;
 @Repository
 public interface StockUnitPriceRepository extends JpaRepository<StockUnitPrice, Long> {
 
+    @Query("SELECT s FROM StockUnitPrice s ORDER BY s.date DESC LIMIT 1")
+    Optional<StockUnitPrice> findLatest();
 
     Optional<StockUnitPrice> findByDate(LocalDate date);
 

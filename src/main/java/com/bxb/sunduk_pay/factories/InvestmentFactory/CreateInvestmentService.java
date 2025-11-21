@@ -1,6 +1,9 @@
 package com.bxb.sunduk_pay.factories.InvestmentFactory;
-
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.Investment;
+import com.bxb.sunduk_pay.model.StockUnitPrice;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.StockUnitPriceRepository;
 import com.bxb.sunduk_pay.repository.SubWalletRepository;
@@ -60,6 +63,12 @@ public class CreateInvestmentService implements InvestmentOperation {
     public InvestmentRequestType getInvestmentRequestType() {
         return InvestmentRequestType.CREATE_INVESTMENT;
     }
+    /**
+     * Performs the investment creation operation based on the provided request.
+     *
+     * @param request the investment request
+     * @return the investment response
+     */
 
     @Transactional
     @Override
@@ -72,8 +81,16 @@ public class CreateInvestmentService implements InvestmentOperation {
                 validations.findSubWalletIfExists(user.getMainWallet()
                                 .getMainWalletId(),
                         request.getSubWalletId());
+        log.info("verifying sub-wallet: " + subWallet);
+
+        stockValidation.ValidateBalanceForInvestment(subWallet.getBalance());
+        log.info("Balance validation passed for sub-wallet: "
+                + subWallet.getSubWalletName());
 
         if (subWallet != null && !subWallet.getIsInvested()) {
+
+            log.info("Creating investment for sub-wallet: "
+                    + subWallet.getSubWalletName());
 
             subWallet.setIsInvested(true);
 
@@ -82,18 +99,24 @@ public class CreateInvestmentService implements InvestmentOperation {
                     .getInvestedAt());
                     log.info(price);
 
+                    log.info("Determining unit price based on risk level: "
+                    + request.getRiskLevel());
+
             double unitPrice =
                     switch (request.getRiskLevel()) {
                         case LOW -> price.getLowPrice();
                         case MEDIUM -> price.getMediumPrice();
                         case HIGH -> price.getHighPrice();
                     };
-            double units = subWallet.getBalance() / unitPrice;
-            log.info(units);
 
+            log.info("Unit price determined: " + unitPrice);
+            double units = subWallet.getBalance() / unitPrice;
+
+            log.info("Units to be purchased: " + units);
             Investment investment = Investment.builder()
                     .InvestmentId(UUID.randomUUID().toString())
                     .subWallet(subWallet)
+                    .currentValue(subWallet.getBalance())
                     .riskLevel(request.getRiskLevel())
                     .investmentAmount(subWallet.getBalance())
                     .unitPriceAtPurchase(unitPrice)
@@ -131,8 +154,8 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         } else {
             throw new IllegalArgumentException("Investment cannot be created. "
-                    + "Either the sub-wallet does not exist or it is already " +
-                    "invested.");
+                    + "Either the sub-wallet does not exist or it is already "
+                    + "invested.");
         }
     }
 

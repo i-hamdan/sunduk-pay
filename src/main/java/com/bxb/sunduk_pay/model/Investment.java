@@ -59,7 +59,10 @@ public class Investment {
      * Indicates whether the investment is currently active.
      */
     private boolean isActive;
-
+    /**
+     * The current value of the investment.
+     */
+    private Double currentValue;
 
 }
 

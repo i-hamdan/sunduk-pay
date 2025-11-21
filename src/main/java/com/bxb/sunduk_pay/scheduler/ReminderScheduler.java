@@ -24,7 +24,8 @@ public class ReminderScheduler {
 /**     * Repository for accessing reminders.
      */
     private final ReminderRepository reminderRepository;
-    /**     * Service for sending push notifications.
+    /**
+     * * Service for sending push notifications.
      */
     private final PushNotificationService pushNotificationService;
 /**
