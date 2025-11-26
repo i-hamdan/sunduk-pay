@@ -72,6 +72,8 @@ public class DailyPriceScheduler {
      * runs at 5:00 PM (17:00) every weekday.
      */
     @Scheduled(cron = "0 0 17 * * MON-FRI")
+    //@Scheduled(cron = "0 */2 * * * *")
+
     public void runDailyPriceFetch() {
         logger.info("Starting daily asset price fetch job.");
         long startTime = System.currentTimeMillis();

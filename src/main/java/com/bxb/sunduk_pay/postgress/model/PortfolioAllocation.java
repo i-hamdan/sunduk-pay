@@ -1,17 +1,15 @@
 package com.bxb.sunduk_pay.postgress.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * Entity representing the allocation of assets within a portfolio model.
  */
 @Entity
 @Table(name = "portfolio_allocations")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

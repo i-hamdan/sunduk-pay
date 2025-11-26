@@ -1,9 +1,8 @@
 package com.bxb.sunduk_pay.model;
 
+import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.util.RiskLevel;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -23,7 +22,7 @@ public class Investment {
      * Unique identifier for the investment.
      */
     @Id
-    private String InvestmentId;
+    private String investmentId;
     /**
      * The sub-wallet associated with the investment.
      */
@@ -32,6 +31,7 @@ public class Investment {
     /**
      * The risk level associated with the investment.
      */
+    @Enumerated(EnumType.STRING)
     private RiskLevel riskLevel;
     /**
      * The amount invested.
@@ -63,6 +63,9 @@ public class Investment {
      * The current value of the investment.
      */
     private Double currentValue;
+
+    // Which portfolio model (LOW/MEDIUM/HIGH)
+    private Long portfolioModelId;
 
 }
 

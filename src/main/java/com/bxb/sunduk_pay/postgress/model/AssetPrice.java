@@ -1,10 +1,7 @@
 package com.bxb.sunduk_pay.postgress.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +12,8 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "asset_prices")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -47,7 +45,8 @@ public class AssetPrice {
 
     /**
      * The {@link Asset} to which this price belongs.
-     * This establishes a Many-to-One relationship, meaning one asset can have many price records.
+     * This establishes a Many-to-One relationship,
+     * meaning one asset can have many price records.
      */
     @ManyToOne
     @JoinColumn(name = "stock_id")

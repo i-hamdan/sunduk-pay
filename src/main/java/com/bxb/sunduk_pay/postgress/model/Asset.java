@@ -1,19 +1,21 @@
 package com.bxb.sunduk_pay.postgress.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+/**
+ * Represents a financial asset in the system.
+ */
 @Entity
 @Table(name = "assets")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Asset {
-
+/**     * Unique identifier for the asset.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

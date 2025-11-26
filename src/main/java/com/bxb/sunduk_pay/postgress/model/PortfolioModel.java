@@ -1,10 +1,7 @@
 package com.bxb.sunduk_pay.postgress.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,7 +10,8 @@ import java.util.List;
  */
 @Entity
 @Table(name = "portfolio_models")
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +24,7 @@ public class PortfolioModel {
 
     /** Name of the portfolio model. */
     private String name;
+
 
     /** List of allocations associated with the portfolio model. */
     @OneToMany(mappedBy = "portfolioModel")
