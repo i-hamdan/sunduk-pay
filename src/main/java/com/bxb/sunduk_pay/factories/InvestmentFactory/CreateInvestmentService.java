@@ -22,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -96,8 +98,8 @@ public class CreateInvestmentService implements InvestmentOperation {
             double totalCombinedUnits = 0;
 
             // 7. LocalDateTime me convert (price table LocalDateTime use karta hai)
-            LocalDateTime investedAtDate = request.getInvestedAt()
-                    .atStartOfDay();
+            LocalDateTime assetDate =
+                    LocalDateTime.now().minusMonths(10);
 
             // 8. Model ke andar kitne assets hai + unka weight
             List<PortfolioAllocation> allocations = portfolioModel.getAllocations();
@@ -115,7 +117,7 @@ public class CreateInvestmentService implements InvestmentOperation {
                 AssetPrice assetPrice =
                         stockValidation.getClosestOrLatestPrice(
                                 asset.getId(),
-                                investedAtDate
+                                assetDate
                         );
 
         // this is to handle cases where no price is found eg(in cash assits)
@@ -146,9 +148,11 @@ public class CreateInvestmentService implements InvestmentOperation {
 
             // 15. Investment Object Create karna
             Investment investment = Investment.builder()
-
+                    .user(user)
                     .portfolioModelId(portfolioModel.getId())// Kon sa model use hua
                     .investmentId(UUID.randomUUID().toString())
+                    .investedAt(LocalDate.now())
+                    .assetDate(assetDate)// this is for record purpose only
                     .subWallet(subWallet)              // Konse pot me investment hua
                     .investmentAmount(potAmount)       // Kitna paisa invest
                     .units(totalCombinedUnits)         // Total units sab assets se
@@ -156,9 +160,10 @@ public class CreateInvestmentService implements InvestmentOperation {
                     .updatedAt(LocalDateTime.now())
                     .currentValue(potAmount)           // Start me currentValue = investedAmount
                     .riskLevel(request.getRiskLevel()) // Risk Level
-                    .investedAt(request.getInvestedAt())
                     .isActive(true)
                     .build();
+
+            log.info(investment);
 
             investmentRepository.save(investment);
 

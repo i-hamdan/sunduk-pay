@@ -28,6 +28,13 @@ public class Investment {
      */
     @ManyToOne
     private SubWallet subWallet;
+
+    /**
+     * The user who made the investment.
+     */
+    @ManyToOne
+    private User user;
+
     /**
      * The risk level associated with the investment.
      */
@@ -50,7 +57,8 @@ public class Investment {
     /**
     * The date when the investment matures.
     */
-     private LocalDate investedAt;
+    @Column(name = "investedAt", nullable = false)
+    private LocalDate investedAt;
     /**
     * The date when the investment was last updated.
     */
@@ -64,8 +72,12 @@ public class Investment {
      */
     private Double currentValue;
 
-    // Which portfolio model (LOW/MEDIUM/HIGH)
+    /** Which portfolio model (LOW/MEDIUM/HIGH)*/
     private Long portfolioModelId;
+/**
+     * The date associated with the asset.
+     */
+    private LocalDateTime assetDate;
 
 }
 
