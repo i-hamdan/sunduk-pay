@@ -125,6 +125,7 @@ public interface TransactionRepository
             @Param("walletId") String walletId,
             Pageable pageable);
 
+
     /**
      * Method for fetching transactions.
      * find transactions by user UUID,
@@ -163,15 +164,18 @@ public interface TransactionRepository
      */
 
     @Query("""
-                SELECT t FROM Transaction t
-                WHERE t.user.uuid = :uuid
-                  AND (
-                    (t.fromWalletId = :walletId AND t.transactionType =
+        SELECT t FROM Transaction t
+        WHERE t.user.uuid = :uuid
+          AND t.isInvestment = false
+          AND (
+                (t.fromWalletId = :walletId
+                    AND t.transactionType =
                     com.bxb.sunduk_pay.util.TransactionType.DEBIT)
-                    OR (t.toWalletId = :walletId AND t.transactionType =
-                     com.bxb.sunduk_pay.util.TransactionType.CREDIT)
-                  )
-            """)
+             OR (t.toWalletId = :walletId
+                    AND t.transactionType =
+                    com.bxb.sunduk_pay.util.TransactionType.CREDIT)
+          )
+    """)
     List<Transaction> findAllByUserUuidAndWalletId(
             @Param("uuid") String uuid,
             @Param("walletId") String walletId);

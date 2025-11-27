@@ -50,7 +50,7 @@ private static final int DEFAULT_SIZE = 10;
 /** Action type for Updating pot (e.g., RENAME_POT,
     GOAL_AMOUNT,
     GOAL_DATE). */
-    private ActionType actionType;
+    private UpdateWalletActionType actionType;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
     /** Tag used in transaction*/

@@ -3,6 +3,10 @@ package com.bxb.sunduk_pay.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 /**
  * InvestmentResponse represents the response structure for
  * investment-related API calls.
@@ -39,10 +43,8 @@ public class InvestmentResponse {
      */
     private Double profitLossPercent;
 
-    /**
-     * Last month increase/decrease in portfolio (displayed above graph)
-     */
-    private Double lastMonthChange;
+    /**Graph data for investment performance over time.*/
+    private Map<String, List<InvestmentGraphDataDTO>> monthlyGraphData;
 
     /**response message.*/
     private String message;

@@ -27,6 +27,6 @@ public interface WalletMapper {
                                          List<SubWallet> subWallets);
 
 
-     SubWalletResponse toSubWalletResponses(SubWallet subWallet);
+     SubWalletResponse toSubWalletResponse(SubWallet subWallet);
 }
 

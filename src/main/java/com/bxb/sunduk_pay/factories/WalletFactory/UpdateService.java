@@ -10,7 +10,7 @@ import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.util.ActionType;
+import com.bxb.sunduk_pay.util.UpdateWalletActionType;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -99,7 +99,7 @@ public class UpdateService implements WalletOperation {
                 ? subWallet.getTargetDate() : null;
 
 
-        if (mainWalletRequest.getActionType() == ActionType.RENAME_POT) {
+        if (mainWalletRequest.getActionType() == UpdateWalletActionType.RENAME_POT) {
             if (subWallet != null) {
                 log.info(
           "Attempting to rename SubWallet [{}] under MainWallet [{}]",
@@ -149,7 +149,7 @@ public class UpdateService implements WalletOperation {
                 );
             }
         }
-        if (mainWalletRequest.getActionType() == ActionType.GOAL_AMOUNT) {
+        if (mainWalletRequest.getActionType() == UpdateWalletActionType.GOAL_AMOUNT) {
             if (subWallet != null) {
                 log.info(
            "Updating goal amount of SubWallet [{}] under MainWallet [{}]",
@@ -185,7 +185,7 @@ public class UpdateService implements WalletOperation {
                 );
             }
         }
-        if (mainWalletRequest.getActionType() == ActionType.GOAL_DATE) {
+        if (mainWalletRequest.getActionType() == UpdateWalletActionType.GOAL_DATE) {
             if (subWallet != null) {
                 log.info(
                "Updating goal date of SubWallet [{}] under MainWallet [{}]",

@@ -15,8 +15,10 @@ import lombok.Setter;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import java.time.LocalDateTime;
+
 /**
  * Represents a financial transaction in the system.
  */
@@ -32,6 +34,7 @@ public class Transaction {
      */
     @Id
     private String transactionId;
+
     /**
      * User associated with the transaction.
      */
@@ -44,11 +47,13 @@ public class Transaction {
      */
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
+
     /**
      * Level of the transaction.
      */
     @Enumerated(EnumType.STRING)
     private TransactionLevel transactionLevel;
+
     /**
      * Payment method used in the transaction.
      */
@@ -58,6 +63,11 @@ public class Transaction {
      * Amount involved in the transaction.
      */
     private Double amount;
+
+    /**
+     * Remaining balance after the transaction.
+     */
+    private Double remainingBalance;
     /**
      * Description of the transaction.
      */
@@ -83,7 +93,9 @@ public class Transaction {
     @Column(nullable = false)
     private Boolean isMaster;
 
-    /** The Tag of the transaction.*/
+    /**
+     * The Tag of the transaction.
+     */
     private String paymentTag;
     /**
      * Name of the sender in the transaction.
@@ -113,4 +125,11 @@ public class Transaction {
      * UPI ID of the recipient in the transaction.
      */
     private String recipientUpiId;
+
+    /**
+     * Indicates if the associated sub-wallet
+     * is invested.
+     */
+    @Column(nullable = false)
+    private Boolean isInvestment;
 }

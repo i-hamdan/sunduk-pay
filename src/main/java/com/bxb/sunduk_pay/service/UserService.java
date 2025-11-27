@@ -18,5 +18,11 @@ public interface UserService {
      */
     User userLogin(UserResponse response);
 
+    /**
+     * Performs various user operations based on the provided request.
+     *
+     * @param request The request object containing operation details.
+     * @return The response object containing the result of the operation.
+     */
     UserResponse userOperations(UserRequest request);
 }

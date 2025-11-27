@@ -79,5 +79,15 @@ public class Investment {
      */
     private LocalDateTime assetDate;
 
+    /**
+     * The profit or loss from the investment.
+     */
+    private Double profitLoss;
+
+    /**
+     * The profit or loss percentage from the investment.
+     */
+    private Double profitLossPercentage;
+
 }
 

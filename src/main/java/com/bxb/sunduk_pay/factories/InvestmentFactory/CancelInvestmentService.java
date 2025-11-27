@@ -90,6 +90,7 @@ public class CancelInvestmentService implements InvestmentOperation {
                         .transactionId(UUID.randomUUID().toString())
                         .user(user)
                         .isMaster(false)
+                        .isInvestment(true)
                         .amount(subWallet.getBalance())
                         .transactionType(TransactionType.CREDIT)
                         .transactionLevel(TransactionLevel.INVESTED)

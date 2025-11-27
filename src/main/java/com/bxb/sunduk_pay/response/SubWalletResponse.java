@@ -26,6 +26,6 @@ public class SubWalletResponse {
     /** The creation timestamp of the sub-wallet. */
     private String createdAt;
     /** The risk level associated with the sub-wallet. */
-    private boolean isInvested;
+    private Boolean isInvested;
 }
 

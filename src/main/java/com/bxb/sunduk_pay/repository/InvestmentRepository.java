@@ -26,4 +26,12 @@ public interface InvestmentRepository extends
 
     List<Investment> findByIsActiveTrue();
 
+    /**
+     * Finds all investments associated with a user's UUID.
+     *
+     * @param uuid the UUID of the user
+     * @return a list of Investments associated with the user
+     */
+    List<Investment>findByUserUuid(String uuid);
+
 }

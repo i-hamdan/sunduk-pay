@@ -37,20 +37,6 @@ public class WalletMapperImpl implements WalletMapper {
         return response;
     }
 
-    @Override
-    public SubWalletResponse toSubWalletResponses(SubWallet subWallet) {
-      SubWalletResponse subWalletResponse = new SubWalletResponse();
-        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
-        subWalletResponse.setBalance(subWallet.getBalance());
-        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
-        subWalletResponse.setTargetDate(subWallet.getTargetDate().toString());
-        subWalletResponse.setIcon(subWallet.getIcon());
-        subWalletResponse.setInvested(subWallet.getIsInvested());
-
-        return subWalletResponse;
-    }
-
-
     /**
      * Converts a list of SubWallet entities into
      * a list of SubWalletResponse DTOs.
@@ -71,20 +57,22 @@ public class WalletMapperImpl implements WalletMapper {
      * @param subWallet the SubWallet entity
      * @return a SubWalletResponse containing the mapped fields
      */
-   private SubWalletResponse toSubWalletResponse(
-           final SubWallet subWallet) {
-       DateTimeFormatter formatter = DateTimeFormatter
-               .ofPattern("dd MMM yyyy");
-       SubWalletResponse subWalletResponse = new SubWalletResponse();
-       subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
-       subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
-       subWalletResponse.setBalance(subWallet.getBalance());
-       subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
-       subWalletResponse.setTargetDate(subWallet.getTargetDate()
-               .format(formatter));
-       subWalletResponse.setIcon(subWallet.getIcon());
-       subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
-               .format(formatter));
-       return subWalletResponse;
-   }
+    @Override
+    public SubWalletResponse toSubWalletResponse(SubWallet subWallet) {
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd MMM yyyy");
+        SubWalletResponse subWalletResponse = new SubWalletResponse();
+        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
+        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
+        subWalletResponse.setBalance(subWallet.getBalance());
+        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
+        subWalletResponse.setTargetDate(subWallet.getTargetDate()
+                .format(formatter));
+        subWalletResponse.setIcon(subWallet.getIcon());
+        subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
+                .format(formatter));
+        subWalletResponse.setIsInvested(subWallet.getIsInvested());
+        return subWalletResponse;
+    }
+
 }

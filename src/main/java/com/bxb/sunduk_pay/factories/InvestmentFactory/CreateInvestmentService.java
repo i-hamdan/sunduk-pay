@@ -184,6 +184,7 @@ public class CreateInvestmentService implements InvestmentOperation {
                     .fromWallet(subWallet.getSubWalletName())
                     .fromWalletId(subWallet.getSubWalletId())
                     .toWallet("Investment")
+                    .isInvestment(true)
                     .isMaster(false)
                     .build();
 

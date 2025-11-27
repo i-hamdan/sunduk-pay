@@ -127,6 +127,7 @@ public class WalletServiceImpl implements WalletService {
                 .toWallet("Some external source")
                 .toWalletId(UUID.randomUUID().toString())
                 .isMaster(true)
+                .isInvestment(false)
                 .build();
 
         transactions.add(masterWalletTxn);
@@ -137,6 +138,7 @@ public class WalletServiceImpl implements WalletService {
                     request.getAmount());
             sourcesubWallet.setBalance(
                     sourcesubWallet.getBalance() - request.getAmount());
+            Double newSourceWalletBalance = sourcesubWallet.getBalance();
             log.info(
                     "Deducted {} from SubWallet [{}]. New balance: {}",
                     request.getAmount(), sourcesubWallet.getSubWalletName(),
@@ -145,10 +147,12 @@ public class WalletServiceImpl implements WalletService {
             debitTxn = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .amount(request.getAmount())
+                    .remainingBalance(newSourceWalletBalance)
                     .transactionType(TransactionType.DEBIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
                     .isMaster(false)
+                    .isInvestment(false)
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
@@ -179,6 +183,7 @@ public class WalletServiceImpl implements WalletService {
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
                     .isMaster(false)
+                    .isInvestment(false)
                     .status("SUCCESS")
                     .description("Deducted from main wallet")
                     .dateTime(LocalDateTime.now())
@@ -280,6 +285,7 @@ public class WalletServiceImpl implements WalletService {
                 .toWallet("Master wallet")
                 .toWalletId(masterWallet.getMasterWalletId())
                 .isMaster(true)
+                .isInvestment(false)
                 .build();
         transactions.add(masterWalletTxn);
 
@@ -299,10 +305,12 @@ public class WalletServiceImpl implements WalletService {
                     .transactionId(UUID.randomUUID().toString())
                     .user(user)
                     .amount(mainWalletRequest.getAmount())
+                    .remainingBalance(newTargetWalletBalance)
                     .transactionType(TransactionType.CREDIT)
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
                     .isMaster(false)
+                    .isInvestment(false)
                     .status("SUCCESS")
                     .description("Credited to sub wallet : "
                             + subWallet.getSubWalletName())
@@ -334,6 +342,7 @@ public class WalletServiceImpl implements WalletService {
                     .transactionLevel(TransactionLevel.EXTERNAL)
                     .paymentMethod(PaymentMethod.CARD)
                     .isMaster(false)
+                    .isInvestment(false)
                     .status("SUCCESS")
                     .description("Credited to main wallet.")
                     .dateTime(LocalDateTime.now())
@@ -409,6 +418,7 @@ public class WalletServiceImpl implements WalletService {
                 .paymentMethod(request.getPaymentMethod())
                 .dateTime(LocalDateTime.now())
                 .isMaster(false)
+                .isInvestment(false)
                 .toWallet("Dummy Wallet")
                 .toWalletId(UUID.randomUUID().toString())
                 .fromWallet("Dummy Wallet")
