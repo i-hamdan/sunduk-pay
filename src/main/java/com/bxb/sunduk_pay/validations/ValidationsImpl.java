@@ -444,7 +444,7 @@ private static final int WALLET_SIZE = 19;
     }
 
 
-/** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public void validatePorfilePhoto(MultipartFile photo) {
         // Check if file is null or empty
@@ -468,4 +468,16 @@ private static final int WALLET_SIZE = 19;
         }
 
     }
+    /** {@inheritDoc} */
+    @Override
+    public void validateSubWalletForInvestment(SubWallet subWallet) {
+        if (subWallet.getIsInvested()){
+            log.error("SubWallet is already invested: {}",
+                    subWallet.getSubWalletId());
+            throw new InvestmentException(
+                    "SubWallet is already invested: "
+                            + subWallet.getSubWalletId());
+        }
+    }
+
 }

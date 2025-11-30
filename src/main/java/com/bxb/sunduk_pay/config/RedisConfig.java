@@ -131,6 +131,13 @@ public class RedisConfig {
         return template;
     }
 
+    /**
+     * Configures and returns a RedisTemplate specifically
+     * for TransactionResponse objects with custom serializers.
+     *
+     * @param connectionFactory the RedisConnectionFactory to use
+     * @return a configured RedisTemplate for TransactionResponse
+     */
     @Bean
     public RedisTemplate<String, TransactionResponse> chatTransactionRedisTemplate(
             RedisConnectionFactory connectionFactory) {

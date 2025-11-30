@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.util.RiskLevel;
 import jakarta.persistence.*;
 import lombok.*;
@@ -77,7 +76,7 @@ public class Investment {
 /**
      * The date associated with the asset.
      */
-    private LocalDateTime assetDate;
+    private LocalDateTime UnitPurchaseDate;
 
     /**
      * The profit or loss from the investment.

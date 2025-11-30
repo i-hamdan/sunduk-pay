@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.factories.InvestmentFactory.CreateInvestmentService;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
 import com.bxb.sunduk_pay.service.InvestmentService;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+
 public class InvestmentController {
     /** Service for handling investment operations. **/
 

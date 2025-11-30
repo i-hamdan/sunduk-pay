@@ -160,7 +160,12 @@ public interface Validations {
      * @return {@link User}
      */
     User getUserByPhoneNumber(String phoneNumber);
+/**
+     * Validates a sub-wallet for investment operations.
+     *
+     * @param subWallet the sub-wallet to validate
+     */
 
-
+  void validateSubWalletForInvestment(SubWallet subWallet);
 
 }

@@ -456,6 +456,21 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
     }
 
+    @ExceptionHandler(value = InvestmentException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleInvestException(
+            final ChatProcessingException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                "Investment processing failed!",
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+
+
+
     /**
      * Handles {@link HttpMessageNotReadableException}
      * for invalid JSON payloads.

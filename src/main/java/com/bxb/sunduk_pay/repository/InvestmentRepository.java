@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.Investment;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,4 +35,11 @@ public interface InvestmentRepository extends
      */
     List<Investment>findByUserUuid(String uuid);
 
+/**
+     * Retrieves all active investments.
+     *
+     * @return a list of active Investment entities
+     */
+    @Query("SELECT i FROM Investment i WHERE i.isActive = true")
+    List<Investment> findAllActiveInvestments();
 }
