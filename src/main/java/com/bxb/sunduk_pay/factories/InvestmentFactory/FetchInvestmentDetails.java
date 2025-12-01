@@ -13,7 +13,7 @@ import com.bxb.sunduk_pay.response.InvestmentResponse;
 import com.bxb.sunduk_pay.util.FetchInvestmentActionType;
 import com.bxb.sunduk_pay.util.InvestmentGraphData;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
-import com.bxb.sunduk_pay.validations.StockValidation;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,7 +33,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
     /**
      * Stock-related validations.
      **/
-    private final StockValidation stockValidation;
+    private final InvestmentValidation stockValidation;
     /**
      * Validations utility for input validation and data retrieval.
      **/

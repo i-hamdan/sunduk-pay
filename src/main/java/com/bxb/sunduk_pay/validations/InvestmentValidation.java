@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface for stock-related validations.
  */
-public interface StockValidation {
+public interface InvestmentValidation {
 
 
     /** Validates if the balance is sufficient for investment.

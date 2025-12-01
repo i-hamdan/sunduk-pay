@@ -8,7 +8,7 @@ import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentDailyHistoryRepository;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.SubWalletRepository;
-import com.bxb.sunduk_pay.validations.StockValidation;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,12 +24,12 @@ import java.util.List;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-public class InvestmentScheduler {
+public class ProfitAndLossCalculator {
 
     private final InvestmentRepository investmentRepository;
     private final SubWalletRepository subWalletRepository;
     private final InvestmentDailyHistoryRepository historyRepository;
-    private final StockValidation stockValidation;
+    private final InvestmentValidation stockValidation;
 
     /**
      * DAILY P/L UPDATE based on NEXT AVAILABLE NAV (UNIT VALUE)
@@ -54,7 +54,7 @@ public class InvestmentScheduler {
             PortfolioModel model = new PortfolioModel();
             model.setId(modelId);
 
-            //  USE assetDate → REAL UNIT PURCHASE DATE
+            //  USE Unit purchase date → REAL UNIT PURCHASE DATE
             LocalDate purchaseUnitDate = inv.getUnitPurchaseDate().toLocalDate();
 
             log.info("Unit Purchase Date  = {}", purchaseUnitDate);
@@ -69,12 +69,13 @@ public class InvestmentScheduler {
             }
 
             LocalDate NextUnitDate = nextUnit.getDate();
+
             double NextDateUnitValue = nextUnit.getCombinedValue().doubleValue();
 
             log.info("Next Unit Date = {} | Next Unit Value = {}",
                     NextUnitDate, NextDateUnitValue);
 
-            // CALCULATE NEW VALUE USING NAV
+            // CALCULATE NEW VALUE
             double unitsHeld = inv.getUnits();
             double newValue = unitsHeld * NextDateUnitValue;
 
@@ -83,8 +84,8 @@ public class InvestmentScheduler {
             double profit = newValue - investedAmount;
             double profitPct = (profit / investedAmount) * 100;
 
-            log.info("Units Held = {}", unitsHeld);
 
+            log.info("Units Held = {}", unitsHeld);
             log.info("Amount After p/l = {}", newValue);
             log.info("Profit = {}", profit);
             log.info("Profit % = {}", profitPct);

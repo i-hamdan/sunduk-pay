@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.model.Investment;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
@@ -10,14 +9,12 @@ import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
-import com.bxb.sunduk_pay.postgress.repository.PortfolioModelRepository;
-import com.bxb.sunduk_pay.postgress.repository.UnitsRepository;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
-import com.bxb.sunduk_pay.validations.StockValidation;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,14 +33,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Log4j2
 public class CreateInvestmentService implements InvestmentOperation {
-
+    /** validations class for subWallet.*/
     private final Validations validations;
-    private final StockValidation stockValidation;
+    /** validation for investment Validations. */
+    private final InvestmentValidation stockValidation;
+    /** subWallet repository for saved flag. */
     private final SubWalletRepository subWalletRepository;
+    /** Investment repository for saved mark as subWallet is invested. */
     private final InvestmentRepository investmentRepository;
+    /** Transaction repository for saved transaction. */
     private final TransactionRepository transactionRepository;
-    private final PortfolioModelRepository portfolioModelRepository;
-    private final UnitsRepository unitsRepository;
+
 
     @Override
     public InvestmentRequestType getInvestmentRequestType() {
@@ -70,10 +70,8 @@ public class CreateInvestmentService implements InvestmentOperation {
         stockValidation.ValidateBalanceForInvestment(subWallet.getBalance());
 
         // 4) Ensure subwallet is not already invested
-        if (subWallet.getIsInvested()) {
-            throw new ResourceNotFoundException
-                    ("This sub-wallet is already invested.");
-        }
+        validations.validateSubWalletForInvestment(subWallet);
+
 
         // 5) Fetch portfolio model by risk level
         PortfolioModel portfolioModel =
@@ -88,11 +86,10 @@ public class CreateInvestmentService implements InvestmentOperation {
         // 6)  BUY using 10-MONTH OLD UNIT VALUE
         LocalDate unitPurchaseDate = LocalDate.now().minusMonths(10);
 
-        // validate Units of date
+        // get Units of date
         Units unitRecord =
                stockValidation.getUnitsForDate(portfolioModel,unitPurchaseDate);
 
-        log.info("");
 
         double unitValue = unitRecord.getCombinedValue().doubleValue();
 

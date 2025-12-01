@@ -8,7 +8,8 @@ import java.util.Optional;
 /**
  * Repository interface for managing Asset entities in the database.
  */
-public interface AssetRepository extends JpaRepository<Asset, Long> {
+public interface
+AssetRepository extends JpaRepository<Asset, Long> {
 
     /**
      * Finds an asset by its symbol.

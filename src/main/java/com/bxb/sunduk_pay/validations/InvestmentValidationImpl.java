@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 @Log4j2
 @RequiredArgsConstructor
-public class StockValidationsImpl implements StockValidation {
+public class InvestmentValidationImpl implements InvestmentValidation {
     /**
      * Repository for investment data access.
      */
