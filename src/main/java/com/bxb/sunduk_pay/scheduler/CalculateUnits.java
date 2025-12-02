@@ -115,7 +115,7 @@ public class CalculateUnits {
                     model.getName(), date, totalUnit);
 
 
-            // 6️MULTIPLY BY 1000 BEFORE SAVING
+            // ️MULTIPLY BY 1000 BEFORE SAVING
             BigDecimal finalUnit = totalUnit.multiply(BigDecimal.valueOf(1000));
 
             log.info(" FINAL UNIT (unit × 1000) = {}", finalUnit);
@@ -142,21 +142,35 @@ public class CalculateUnits {
      * Run for all dates in asset_price table
      */
     //@Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 0 18 * * *") // run every Day At 6 pm
     public void calculateForAllDates() {
+        log.info(" Checking for NEW asset prices...");
 
-        List<LocalDate> dates = assetPriceRepository.findAllUniqueDates()
-                        .stream()
+        List<LocalDate> priceDates = assetPriceRepository.findAllUniqueDates()
+                .stream()
                 .map(java.sql.Date::toLocalDate)
-                        .toList();
+                .toList();
 
-        log.info("Found {} unique dates", dates.size());
+        boolean newRatesFound = false;
 
-        for (LocalDate d : dates) {
-            calculateUnitForDate(d);
+        for (LocalDate date : priceDates) {
+
+            boolean exists = unitRepository.existsByDate(date);
+
+            if (!exists) {
+                newRatesFound = true;
+                log.info(" NEW PRICE DATE FOUND: {} → Calculating Unit…", date);
+                calculateUnitForDate(date);
+            }
         }
 
-        log.info(" All normalized unit calculations completed.");
+        if (!newRatesFound) {
+            log.warn(" No NEW rate found for asset price.");
+        }
+
+        log.info(" Unit calculation completed.");
+    }
     }
 
 
-}
+

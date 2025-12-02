@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
  * that the price for a specific date is only persisted once
  * (idempotency) using SLF4J logging.
  */
+
 @Component
 public class DailyPriceScheduler {
 
@@ -41,11 +42,11 @@ public class DailyPriceScheduler {
     // --- CONFIGURATION FOR API DOJO/RAPIDAPI (v2/get-chart) ---
     private static final String API_URL_TEMPLATE =
             "https://apidojo-yahoo-finance-v1.p.rapidapi.com/" +
-                    "stock/v2/get-chart?interval=1d&range=1d&symbol=%s&region=";
+               "stock/v2/get-chart?interval=1d&range=1d&symbol=%s&region=US";
 
     // !!! REPLACE WITH YOUR ACTUAL KEYS OR USE application.properties !!!
     private static final String API_KEY =
-            "ad73556864msh3a621d64cf35d9ep1b7ccbjsn9591f1b3749b";
+            "21a4d18818msh2926b0371623a42p1aada5jsn628be3bc0b00";
     private static final String API_HOST =
             "apidojo-yahoo-finance-v1.p.rapidapi.com";
 
@@ -71,7 +72,7 @@ public class DailyPriceScheduler {
      * configured assets. The cron expression "0 0 17 * * MON-FRI"
      * runs at 5:00 PM (17:00) every weekday.
      */
-    @Scheduled(cron = "0 0 17 * * MON-FRI")
+   @Scheduled(cron = "0 0 17 * * MON-FRI")
     //@Scheduled(cron = "0 */2 * * * *")
 
     public void runDailyPriceFetch() {

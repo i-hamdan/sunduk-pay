@@ -32,4 +32,5 @@ public interface UnitsRepository extends JpaRepository<Units, Long> {
     List<Units> findNextAfterDate(PortfolioModel model, LocalDate date);
 
 
+    boolean existsByDate(LocalDate date);
 }

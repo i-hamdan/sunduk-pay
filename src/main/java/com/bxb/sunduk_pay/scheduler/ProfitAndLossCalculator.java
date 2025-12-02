@@ -34,7 +34,7 @@ public class ProfitAndLossCalculator {
     /**
      * DAILY P/L UPDATE based on NEXT AVAILABLE NAV (UNIT VALUE)
      */
-    @Scheduled(cron = "0 */2 * * * *")
+    //@Scheduled(cron = "0 */2 * * * *")
     @Transactional
     public void calculateDailyprofitLoss() {
 
@@ -95,7 +95,7 @@ public class ProfitAndLossCalculator {
             inv.setProfitLoss(profit);
             inv.setProfitLossPercentage(profitPct);
 
-            // IMPORTANT → move assetDate forward
+            // IMPORTANT → move Unit forward
             inv.setUnitPurchaseDate(NextUnitDate.atStartOfDay());
 
             inv.setUpdatedAt(LocalDateTime.now());
