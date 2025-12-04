@@ -30,6 +30,14 @@ public class WalletWrapper {
         this.mainWallet = null;
     }
 
+    // Check type
+    public boolean isMainWallet() {
+        return mainWallet != null;
+    }
+    public boolean isInvested(){
+        return subWallet != null && subWallet.getIsInvested();
+    }
+
 
     /** Gets the ID of the underlying wallet.
      * @return the ID of the MainWallet or SubWallet
@@ -77,4 +85,5 @@ public class WalletWrapper {
             subWallet.setBalance(newBalance);
         }
     }
+
 }

@@ -102,6 +102,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
             // Save the chat message in redis
             saveMessage(chatMessage);
+
             // Persist the chat message in the database
             chatMessageRepository.save(chatMessage);
             log.info("saved chat message with ID: {}",
@@ -132,9 +133,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
      */
     @Override
     public void saveMessage(final ChatMessage message) {
+
         try {
-
-
             // Generate Redis key based on sender and receiver IDs
             String key = generateKeyUtil.generateChatKey(message.getSenderId(),
                     message.getReceiverId());

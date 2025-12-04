@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.postgress.repository.PortfolioModelRepository;
 import com.bxb.sunduk_pay.postgress.repository.UnitsRepository;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
+import com.bxb.sunduk_pay.util.RiskLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -125,5 +126,51 @@ public class InvestmentValidationImpl implements InvestmentValidation {
 
         return nextUnit;
 
+    }
+
+    /**
+     * Find unit by exact date.
+     *
+     * @param modelId PortfolioModel
+     * @param date    LocalDate
+     * @return Units
+     */
+    @Override
+    public Units findUnitByDate(Long modelId, LocalDate date){
+        try {
+            return unitsRepository.findByPortfolioModelAndDate(modelId, date);
+        } catch (Exception e){
+            log.error(
+                    "Error fetching unit for model on date {}: {}",
+                    date, e.getMessage());
+            throw new InvestmentException(
+                    "Error fetching unit for model on date: "
+                            + e.getMessage());
+        }
+    }
+
+    @Override
+    public RiskLevel validateRiskLevel(String investmentRiskLevel, String riskLevel) {
+        if (riskLevel.equalsIgnoreCase(investmentRiskLevel)){
+            throw new InvestmentException("No changes detected: "
+                    + "the provided value is identical to the current value.");
+        }
+        else if (riskLevel.equalsIgnoreCase(RiskLevel.LOW.toString())){
+            return RiskLevel.LOW;
+        } else if (riskLevel.equalsIgnoreCase(RiskLevel.MEDIUM.toString())){
+            return RiskLevel.MEDIUM;
+        } else if (riskLevel.equalsIgnoreCase(RiskLevel.HIGH.toString())){
+            return RiskLevel.HIGH;
+        } else {
+            throw new InvestmentException(
+                    "Invalid risk level: " + riskLevel);
+        }
+    }
+
+    @Override
+    public PortfolioModel getPortfolioModelByRiskLevel(String riskLevel) {
+        return portfolioModelRepository.findByName(riskLevel).orElseThrow(
+        ()-> new InvestmentException("No portfolio model found for risk level: "
+                        + riskLevel));
     }
 }

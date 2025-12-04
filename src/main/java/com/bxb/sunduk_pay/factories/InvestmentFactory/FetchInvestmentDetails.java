@@ -2,25 +2,29 @@ package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
 import com.bxb.sunduk_pay.Mappers.InvestmentMapper;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
-import com.bxb.sunduk_pay.model.Investment;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.InvestmentDailyHistoryRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentGraphDataDTO;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
-import com.bxb.sunduk_pay.util.FetchInvestmentActionType;
+import com.bxb.sunduk_pay.util.InvestmentsFetchType;
 import com.bxb.sunduk_pay.util.InvestmentGraphData;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
+import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Service for fetching investment details.
@@ -55,6 +59,11 @@ public class FetchInvestmentDetails implements InvestmentOperation {
     private final TransactionRepository transactionRepository;
 
     /**
+     * Repository for investment daily history data access.
+     **/
+    private final InvestmentDailyHistoryRepository investmentHistoryRepository;
+
+    /**
      * Returns the investment request type handled by this service.
      */
     @Override
@@ -71,12 +80,12 @@ public class FetchInvestmentDetails implements InvestmentOperation {
                 investmentRequest.getUuid());
         User user = validations.getUserInfo(investmentRequest.getUuid());
 
-        if (investmentRequest.getFetchInvestmentActionType()
-                .equals(FetchInvestmentActionType.POT_INVESTMENTS)) {
+        if (investmentRequest.getInvestmentsFetchType()
+                .equals(InvestmentsFetchType.POT_INVESTMENTS)) {
             return fetchPotInvestments(user,
                     investmentRequest.getSubWalletId());
-        } else if (investmentRequest.getFetchInvestmentActionType()
-                .equals(FetchInvestmentActionType.ALL_INVESTMENTS)) {
+        } else if (investmentRequest.getInvestmentsFetchType()
+                .equals(InvestmentsFetchType.ALL_INVESTMENTS)) {
             return fetchAllInvestments(user);
         } else throw new InvalidPayloadException(
                 "Invalid fetch investment action type provided."
@@ -114,14 +123,23 @@ public class FetchInvestmentDetails implements InvestmentOperation {
                 subWallet.getSubWalletId());
         log.info("Investment fetched successfully");
 
-        Map<String, List<InvestmentGraphDataDTO>> monthlyGraphData =
+        Map<String, List<InvestmentGraphDataDTO>> trendsGraphData =
                 investmentGraphData
-                .getMonthlyGraphData(transactionRepository
+                .withdrawalTrendsGraphData(transactionRepository
                 .findAllByUserUuidAndWalletId(user.getUuid(),
                         subWallet.getSubWalletId()));
 
+        Map<String, List<InvestmentGraphDataDTO>> dailyInvestmentGraphData =
+                investmentGraphData
+                        .dailyInvestmentGraphData(
+                     investmentHistoryRepository.findByInvestmentInvestmentId(
+                             investment.getInvestmentId()));
+
         InvestmentResponse investmentResponse = investmentMapper
-                .toInvestmentResponse(investment,monthlyGraphData);
+                .toInvestmentResponse(
+                        investment,
+                        trendsGraphData,
+                        dailyInvestmentGraphData);
 
         investmentResponse.setMessage("Pot investment fetched successfully.");
         log.info(
@@ -130,6 +148,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         return investmentResponse;
     }
 
+
     /**
      * Fetch all investments for the user.
      *
@@ -137,12 +156,140 @@ public class FetchInvestmentDetails implements InvestmentOperation {
      * @Param user the user whose investments are to be fetched
      */
     private InvestmentResponse fetchAllInvestments(final User user) {
-        List<Investment> investments = stockValidation
-                .getInvestmentsByUserUuid(user.getUuid());
+
+        List<Investment> investments =
+                stockValidation.getInvestmentsByUserUuid(user.getUuid());
+
+        if (investments.isEmpty()) {
+            return InvestmentResponse.builder()
+                    .totalInvestedAmount(0.0)
+                    .totalCurrentValue(0.0)
+                    .totalNetProfitLoss(0.0)
+                    .gain1MonthPercent(0.0)
+                    .gain6MonthsPercent(0.0)
+                    .build();
+        }
 
 
-        return new InvestmentResponse();
+        double totalInvested = investments.stream()
+                .mapToDouble(Investment::getInvestmentAmount)
+                .sum();
+
+        double totalCurrentValue = investments.stream()
+                .mapToDouble(Investment::getCurrentValue)
+                .sum();
+
+        //  Net profit or loss
+        double totalNetProfitLoss = totalCurrentValue - totalInvested;
+
+        LocalDate today = LocalDate.now();
+        LocalDate sixMonthsAgo = today.minusMonths(6);
+
+        List<InvestmentDailyHistory> history =
+                investmentHistoryRepository
+                        .findByUserUuidAndSnapshotDateBetween(
+                                user.getUuid(),
+                                sixMonthsAgo,
+                                today
+                        );
+
+        // If no history is found, return default response
+        if (history == null || history.isEmpty()) {
+            return InvestmentResponse.builder()
+                    .totalInvestedAmount(totalInvested)
+                    .totalCurrentValue(totalCurrentValue)
+                    .totalNetProfitLoss(totalNetProfitLoss)
+                    .gain1MonthPercent(0.0)
+                    .gain6MonthsPercent(0.0)
+                    .build();
+        }
+
+        Map<LocalDate, Double> portfolioHistory = history.stream()
+                .filter(h -> h.getInvestment().isActive())
+                .collect(Collectors.groupingBy(
+                        InvestmentDailyHistory::getSnapshotDate,
+                        TreeMap::new,
+                        Collectors.summingDouble(h -> h.getUnits() * h.getUnitPrice())
+                ));
+
+
+        // If portfolio history is empty, return default response
+        if (portfolioHistory.isEmpty()) {
+            return InvestmentResponse.builder()
+                    .totalInvestedAmount(totalInvested)
+                    .totalCurrentValue(totalCurrentValue)
+                    .totalNetProfitLoss(totalNetProfitLoss)
+                    .gain1MonthPercent(0.0)
+                    .gain6MonthsPercent(0.0)
+                    .build();
+        }
+
+        Map<String, List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData =
+                investmentGraphData.dailyCombinedInvestmentGraphData(
+                        portfolioHistory);
+
+
+        TreeMap<LocalDate, Double> sorted = new TreeMap<>(portfolioHistory);
+
+        double todayValue = sorted.lastEntry().getValue();
+
+
+        // ---- inside fetchAllInvestments after 'sorted' and todayValue ----
+        LocalDate oneMonthTarget = today.minusMonths(1);
+        LocalDate sixMonthsTarget = today.minusMonths(6);
+
+// try floorEntry for targets, else fallback to earliest entry
+        Double oneMonthValue = valueAtOrBefore(sorted, oneMonthTarget);
+        if (oneMonthValue == null) oneMonthValue = sorted.firstEntry().getValue();
+
+        Double sixMonthsValue = valueAtOrBefore(sorted, sixMonthsTarget);
+        if (sixMonthsValue == null) sixMonthsValue = sorted.firstEntry().getValue();
+
+        double gain1MonthPercent = (oneMonthValue == null || oneMonthValue <= 0) ? 0 :
+                ((todayValue - oneMonthValue) / oneMonthValue) * 100;
+
+        double gain6MonthsPercent = (sixMonthsValue == null || sixMonthsValue <= 0) ? 0 :
+                ((todayValue - sixMonthsValue) / sixMonthsValue) * 100;
+
+        return InvestmentResponse.builder()
+                .totalInvestedAmount(totalInvested)
+                .totalCurrentValue(todayValue)
+                .totalNetProfitLoss(totalNetProfitLoss)
+                .gain1MonthPercent(gain1MonthPercent)
+                .gain6MonthsPercent(gain6MonthsPercent)
+                .dailyInvestmentGraph(dailyCombinedInvestmentGraphData)
+                .build();
+
     }
+
+    /**
+     * Helper method to get the value at or before a specific date from a TreeMap.
+     *
+     * @param map    The TreeMap containing date-value pairs.
+     * @param target The target date to search for.
+     * @return The value at or before the target date, or null if none found.
+     */
+    private Double valueAtOrBefore(TreeMap<LocalDate, Double> map, LocalDate target) {
+        Map.Entry<LocalDate, Double> e = map.floorEntry(target);
+        return (e != null) ? e.getValue() : null;
+    }
+
+
+
+//    private double getNetCashflow(LocalDate start, LocalDate end, String userUuid) {
+//        List<Transaction> txns =
+//                transactionRepository.findByUserUuidAndDateTimeBetween(
+//                userUuid, start.atStartOfDay(), end.plusDays(1)
+//                .atStartOfDay());
+//
+//        return txns.stream()
+//                .mapToDouble(t ->
+//                        t.getTransactionType().equals(TransactionType.CREDIT)
+//                                ? t.getAmount()     // money added
+//                                : -t.getAmount()    // money removed
+//                )
+//                .sum();
+//    }
 
 
 }

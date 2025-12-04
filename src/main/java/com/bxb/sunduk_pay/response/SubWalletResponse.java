@@ -16,7 +16,7 @@ public class SubWalletResponse {
     /** The name of the sub-wallet. */
     private String subWalletName;
     /** The current balance of the sub-wallet. */
-    private Double balance;
+    private String balance;
     /** The target balance for the sub-wallet. */
     private Double targetBalance;
     /**The date by which the target balance should be achieved.*/

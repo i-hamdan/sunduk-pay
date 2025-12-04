@@ -1,10 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
@@ -51,6 +47,7 @@ public class MainWallet {
     /**
      * List of sub-wallets associated with the main wallet.
      */
-    @OneToMany(mappedBy = "mainWallet")
+    @OneToMany(mappedBy = "mainWallet",cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<SubWallet> subWallets = new ArrayList<>();
 }

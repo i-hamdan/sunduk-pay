@@ -13,9 +13,9 @@ public interface UnitsRepository extends JpaRepository<Units, Long> {
 
 // find exact date or before date of units
     @Query("""
-            SELECT u FROM Units u 
-            WHERE u.portfolioModel = :model 
-            AND u.date <= :date 
+            SELECT u FROM Units u
+            WHERE u.portfolioModel = :model
+            AND u.date <= :date
             ORDER BY u.date DESC
             """)
     List<Units> findLatestBeforeOrOnDate(PortfolioModel model, LocalDate date);
@@ -30,6 +30,13 @@ public interface UnitsRepository extends JpaRepository<Units, Long> {
     ORDER BY u.date ASC
     """)
     List<Units> findNextAfterDate(PortfolioModel model, LocalDate date);
+
+    @Query("""
+        SELECT u FROM Units u
+        WHERE u.portfolioModel.id = :modelId
+        AND u.date = :date
+        """)
+    Units findByPortfolioModelAndDate(Long modelId, LocalDate date);
 
 
     boolean existsByDate(LocalDate date);

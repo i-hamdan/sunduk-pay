@@ -1,20 +1,17 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
+import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.postgress.model.Units;
+import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.UserToUserTransferService;
-import com.bxb.sunduk_pay.util.GenerateKeyUtil;
-import com.bxb.sunduk_pay.util.PaymentMethod;
-import com.bxb.sunduk_pay.util.TransactionLevel;
-import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.*;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +55,19 @@ public class UserToUserTransferServiceImpl
      */
     private final GenerateKeyUtil generateKeyUtil;
 
+   /**  * InvestmentRepository for database operations on Investments.
+     */
+    private final InvestmentRepository investmentRepository;
+
+    /**
+     * InvestmentValidation for investment-related validations.
+     */
+    private final InvestmentValidation investmentValidation;
+
+    /**
+     * InvestmentUtil for investment-related utilities.
+     */
+    private final InvestmentUtil investmentUtil;
 
     /**
      * Transfers funds between two users wallets.
@@ -95,6 +105,8 @@ public class UserToUserTransferServiceImpl
         String key = generateKeyUtil.generateTransactionKey(user.getUuid(),
                 userByPhoneNumber.getUuid());
 
+        List<Transaction> transactions = new ArrayList<>();
+
 
         log.info("Validating sufficient balance in source wallet.");
         validations.validateBalance(senderWallet.getBalance(), amount);
@@ -104,16 +116,32 @@ public class UserToUserTransferServiceImpl
   senderMasterWallet.setBalance(senderMasterWallet.getBalance() - amount);
         senderWallet.setBalance(senderWallet.getBalance() - amount);
 
-        log.info("adding amount to target wallet");
-        receiverMasterWallet.setBalance(
-                receiverMasterWallet.getBalance() + amount);
-        receiverMainWallet.setBalance(
-                receiverMainWallet.getBalance() + amount);
+        if (senderWallet.isInvested()){
+            log.info("Updating investment details for invested sub-wallet.");
+            Investment investment = investmentValidation
+                    .getInvestmentBySubWalletId(senderWalletId);
 
-        List<Transaction> transactions = new ArrayList<>();
+            if (!investment.isActive()) {
+                log.error("Attempted to add money to an inactive investment.");
+                throw new InvestmentException(
+                        "Cannot process payment from an inactive investment.");
+            }
+
+            Units unit = investmentValidation.findUnitByDate(investment
+                            .getPortfolioModelId(),
+                    investment.getUnitPurchaseDate().toLocalDate());
+
+            Investment updatedInvestment =
+                    investmentUtil.updateInvestmentOnDebit(
+                    investment, unit, amount);
+
+            investmentRepository.save(updatedInvestment);
+
+            log.info("Investment details updated successfully.");
+        }
 
         log.info(
-            "Creating debit transaction for sourceMasterWallet={}",
+                "Creating debit transaction for sourceMasterWallet={}",
                 senderMasterWallet.getMasterWalletId());
         Transaction sourceMasterDebitTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
@@ -160,6 +188,13 @@ public class UserToUserTransferServiceImpl
         transactions.add(sourceDebitTxn);
         redisTemplate.opsForList().rightPush(key,
                 transactionMapper.toTransactionResponse(sourceDebitTxn));
+
+
+        log.info("adding amount to target wallet");
+        receiverMasterWallet.setBalance(
+                receiverMasterWallet.getBalance() + amount);
+        receiverMainWallet.setBalance(
+                receiverMainWallet.getBalance() + amount);
 
         log.info(
           "Creating credit transaction for targetMasterWallet={}",

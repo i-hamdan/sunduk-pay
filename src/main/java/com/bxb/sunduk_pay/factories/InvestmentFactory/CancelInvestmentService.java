@@ -84,7 +84,11 @@ public class CancelInvestmentService implements InvestmentOperation {
                 investment.setActive(false);
                 investment.setUpdatedAt(LocalDateTime.now());
 
+                double balanceToDeduct = subWallet.getBalance() * 0.0;
+                // cancellation fee
+
                 subWallet.setIsInvested(false);
+                subWallet.setBalance(subWallet.getBalance() - balanceToDeduct);
 
                 Transaction transaction = Transaction.builder()
                         .transactionId(UUID.randomUUID().toString())

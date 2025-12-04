@@ -3,16 +3,22 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 //import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.encryption.MpinValidations;
+import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.model.Investment;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.postgress.model.Units;
+import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.InternalTransferService;
+import com.bxb.sunduk_pay.util.InvestmentUtil;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +34,6 @@ import java.util.List;
 import java.util.UUID;
 
 
-
 /**
  * Service implementation for performing internal transfers between wallets.
  * Handles balance deduction, transaction creation, goal milestone checks, and
@@ -39,29 +44,63 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalTransferServiceImpl implements InternalTransferService {
 
-    /**50% as a decimal for calculations.*/
+    /**
+     * 50% as a decimal for calculations.
+     */
     private static final double FIFTY_PERCENT = 0.5;
-    /**Seveny-five percent as a decimal for calculations.*/
+    /**
+     * Seveny-five percent as a decimal for calculations.
+     */
     private static final double SEVENTY_FIVE_PERCENT = 0.75;
-    /** 50% goal completion threshold. */
+    /**
+     * 50% goal completion threshold.
+     */
     private static final int GOAL_50_PERCENT = 50;
-    /** 75% goal completion threshold. */
+    /**
+     * 75% goal completion threshold.
+     */
     private static final int GOAL_75_PERCENT = 75;
-    /** 100% goal completion threshold. */
+    /**
+     * 100% goal completion threshold.
+     */
     private static final int GOAL_100_PERCENT = 100;
-    /** Validations utility for MPIN checks. */
+    /**
+     * Validations utility for MPIN checks.
+     */
     private final MpinValidations mpinValidations;
-    /** Validations utility for business rule enforcement. */
+    /**
+     * Validations utility for business rule enforcement.
+     */
     private final Validations validations;
-    /** Repository for transaction persistence. */
+    /**
+     * Repository for transaction persistence.
+     */
     private final TransactionRepository transactionRepository;
-    /** Repository for main wallet persistence. */
+    /**
+     * Repository for main wallet persistence.
+     */
     private final MainWalletRepository mainWalletRepository;
-    /** Mapper for converting transactions to events. */
+    /**
+     * Mapper for converting transactions to events.
+     */
     private final TransactionMapper transactionMapper;
-   /** Kafka template for publishing transaction events. */
-   private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+    /**
+     * Kafka template for publishing transaction events.
+     */
+    private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
+    /**
+     * Repository for investment data access.
+     */
+    private final InvestmentRepository investmentRepository;
+    /**
+     * Validation for investment operations.
+     */
+    private final InvestmentValidation investmentValidation;
 
+    /**
+     * Utility for investment-related operations.
+     */
+    private final InvestmentUtil investmentUtil;
 
 
     /**
@@ -94,17 +133,13 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             List<Transaction> transactions = new ArrayList<>();
 
             log.debug(
-            "Validating source wallet balance: currentBalance="
-            + sourceWallet.getBalance()
-            + ", transferAmount=" + amount);
+                    "Validating source wallet balance: currentBalance="
+                            + sourceWallet.getBalance()
+                            + ", transferAmount=" + amount);
 
 
             validations.validateBalance(sourceWallet.getBalance(), amount);
             log.info("Balance validation successful");
-
-
-
-
 
             log.info(
                     "Deducting {} from source wallet {}",
@@ -113,6 +148,32 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Double newSourceWalletBalance = sourceWallet.getBalance();
             log.info("Updated source wallet balance: {}",
                     newSourceWalletBalance);
+
+            if (sourceWallet.isInvested()) {
+                log.info("Source wallet is an investment pot. "
+                        + "Updating investment details.");
+                Investment investment = investmentValidation
+                        .getInvestmentBySubWalletId(sourceWallet.getId());
+
+                if (!investment.isActive()) {
+                    log.error("Attempted to debit money from an inactive " +
+                            "investment.");
+                    throw new InvestmentException(
+                            "Cannot process payment from an inactive investment.");
+                }
+
+                Units unit = investmentValidation
+                        .findUnitByDate(investment.getPortfolioModelId(),
+                                investment.getUnitPurchaseDate().toLocalDate());
+                log.info("Fetched unit for investment update: {}", unit);
+
+                Investment updatedInvestment = investmentUtil.updateInvestmentOnDebit(investment, unit, amount);
+
+                investmentRepository.save(updatedInvestment);
+
+                log.info("Investment details updated successfully: {}", investment.getInvestmentId());
+
+            }
 
 
             log.info("Creating debit transaction for sourceWallet={}",
@@ -145,6 +206,31 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Double newTargetWalletBalance = targetWallet.getBalance();
             log.info("Updated target wallet balance: {}",
                     newTargetWalletBalance);
+
+            if (targetWallet.isInvested()) {
+                log.info("target wallet is an investment pot. "
+                        + "Updating investment details.");
+                Investment investment = investmentValidation
+                        .getInvestmentBySubWalletId(targetWallet.getId());
+
+                if (!investment.isActive()) {
+                    log.error("Attempted to add money to an inactive investment.");
+                    throw new InvestmentException(
+                            "Cannot process payment from an inactive investment.");
+                }
+
+                Units unit = investmentValidation
+                        .findUnitByDate(investment.getPortfolioModelId(),
+                                investment.getUnitPurchaseDate().toLocalDate());
+                log.info("Fetched unit for investment update: {}", unit);
+
+                Investment updatedInvestment = investmentUtil.updateInvestmentOnCredit(investment, unit, amount);
+
+                investmentRepository.save(updatedInvestment);
+
+                log.info("Investment details updated successfully: {}", investment.getInvestmentId());
+
+            }
 
 
             log.info("Creating credit transaction for targetWallet={}",
@@ -180,8 +266,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Main wallet updated successfully");
 
             log.info(
-         "Publishing transaction event to Kafka topic "
-                 + "'transaction-topic'");
+                    "Publishing transaction event to Kafka topic "
+                            + "'transaction-topic'");
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTransaction);
             kafkaTemplate.send("transaction-topic", transactionEvent);
@@ -202,7 +288,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .build();
         } catch (Exception e) {
             log.error(
-           "Internal transfer failed for user {}, amount {}, error: {}",
+                    "Internal transfer failed for user {}, amount {}, error: {}",
                     user.getUuid(), amount, e.getMessage(), e);
             throw e;
         }

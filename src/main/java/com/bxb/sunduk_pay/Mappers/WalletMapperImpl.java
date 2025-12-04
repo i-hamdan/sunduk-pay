@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.SubWalletResponse;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,10 @@ import java.util.List;
  */
 @Component
 public class WalletMapperImpl implements WalletMapper {
+
+    /** Decimal formatter for formatting balance values. */
+    private static final DecimalFormat decimalFormat =
+            new DecimalFormat("#,##0.00");
 
     /**
      * Converts a MainWallet entity and its associated SubWallets into
@@ -64,7 +69,7 @@ public class WalletMapperImpl implements WalletMapper {
         SubWalletResponse subWalletResponse = new SubWalletResponse();
         subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
         subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
-        subWalletResponse.setBalance(subWallet.getBalance());
+        subWalletResponse.setBalance(decimalFormat.format(subWallet.getBalance()));
         subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
         subWalletResponse.setTargetDate(subWallet.getTargetDate()
                 .format(formatter));

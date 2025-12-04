@@ -459,7 +459,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = InvestmentException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleInvestException(
-            final ChatProcessingException e,
+            final InvestmentException e,
             final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.FORBIDDEN.value(),

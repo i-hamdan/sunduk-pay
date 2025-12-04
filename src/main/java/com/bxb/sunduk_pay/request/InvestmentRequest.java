@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.util.FetchInvestmentActionType;
+import com.bxb.sunduk_pay.util.InvestmentsFetchType;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import com.bxb.sunduk_pay.util.RiskLevel;
 import lombok.Getter;
@@ -34,5 +34,5 @@ public class InvestmentRequest {
     private InvestmentRequestType requestType;
 
     /** Action type for fetching investments. */
-    private FetchInvestmentActionType fetchInvestmentActionType;
+    private InvestmentsFetchType investmentsFetchType;
 }

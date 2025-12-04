@@ -68,7 +68,6 @@ public class ChatMessageListener {
                 messageEvent.getReceiverId(),
                 messageEvent.getContent());
             handleNormalMessage(messageEvent);
-
     }
 
     /**
@@ -97,7 +96,6 @@ public class ChatMessageListener {
                     }, executor)
                     .thenAccept(response -> {
                         log.info(
-
    "[ThenAcceptThread: {}] Sending message to user...",
                                 Thread.currentThread().getName());
                         sendMessageToWebSocket(response);

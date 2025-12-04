@@ -3,7 +3,6 @@ package com.bxb.sunduk_pay.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -24,27 +23,55 @@ public class InvestmentResponse {
     private SubWalletResponse subWallet;
 
     /**
+     * Unique identifier for the investment.
+     */
+    private String investmentId;
+
+    /**
      * Total amount invested by the user.
      */
     private Double investedAmount; // same as pot balance
 
     /**
+     * Total amount invested including withdrawn amount
+     */
+    private Double totalInvestedAmount; // total amount invested
+
+    /**
      * Current investment value (inside the analytical circle)
      */
-    private Double currentValue; // how much amount is present in pot right now
+    private String currentValue; // how much amount is present in pot right now
 
+    /**
+     * Total current value including withdrawn amount
+     */
+    private Double totalCurrentValue; // total current value
     /**
      * Total profit or loss in currency (e.g., +8900 or -1200)
      */
-    private Double netProfitLoss;
+    private String netProfitLoss;
+
+    /**
+     * Total profit or loss including withdrawn amount
+     */
+    private Double totalNetProfitLoss;
 
     /**
      * Profit/Loss percentage (e.g., +12.3 or -4.1)
      */
-    private Double profitLossPercent;
+    private String profitLossPercent;
+
+    /**Gain or loss in the last 1-month period.*/
+    private Double gain1MonthPercent;
+
+    /**Gain or loss in the last 6-month period.*/
+    private Double gain6MonthsPercent;
 
     /**Graph data for investment performance over time.*/
-    private Map<String, List<InvestmentGraphDataDTO>> monthlyGraphData;
+    private Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraph;
+
+    /**Daily investment graph data.*/
+    private Map<String, List<InvestmentGraphDataDTO>> dailyInvestmentGraph;
 
     /**response message.*/
     private String message;

@@ -84,7 +84,7 @@ public class CreateInvestmentService implements InvestmentOperation {
         double potAmount = subWallet.getBalance();
 
         // 6)  BUY using 10-MONTH OLD UNIT VALUE
-        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(10);
+        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(6);
 
         // get Units of date
         Units unitRecord =

@@ -60,7 +60,8 @@ public class FetchReminderService implements WalletOperation{
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
         Page<Reminder> reminderPage =
-                reminderRepository.findByContactNumber(mainWalletRequest.getContactNumber(), pageable);
+                reminderRepository.findByContactNumber(
+                        mainWalletRequest.getContactNumber(), pageable);
 
         List<ReminderResponse> reminderResponses =
                 reminderPage.getContent().stream()

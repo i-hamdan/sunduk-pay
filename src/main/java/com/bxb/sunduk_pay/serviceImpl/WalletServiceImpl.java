@@ -1,23 +1,24 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
+import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperation;
 import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperationFactory;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.postgress.model.Units;
+import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.service.WalletService;
+import com.bxb.sunduk_pay.util.InvestmentUtil;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,36 +42,70 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class WalletServiceImpl implements WalletService {
-    /**Transaction type column index in Excel sheet.*/
+    /**
+     * Transaction type column index in Excel sheet.
+     */
     private static final int TRANSACTION_TYPE_COLUMN = 1;
-    /**Amount column index in Excel sheet.*/
+    /**
+     * Amount column index in Excel sheet.
+     */
     private static final int AMOUNT_COLUMN = 2;
-    /**Description column index in Excel sheet.*/
+    /**
+     * Description column index in Excel sheet.
+     */
     private static final int DESCRIPTION_COLUMN = 3;
-    /**Date column index in Excel sheet.*/
+    /**
+     * Date column index in Excel sheet.
+     */
     private static final int DATE_COLUMN = 4;
 
-    /**MasterWalletRepository for database operations on MasterWallets.*/
+    /**
+     * MasterWalletRepository for database operations on MasterWallets.
+     */
     private final MasterWalletRepository masterWalletRepository;
-    /**MainWalletRepository for database operations on MainWallets.*/
+    /**
+     * MainWalletRepository for database operations on MainWallets.
+     */
     private final MainWalletRepository mainWalletRepository;
-    /**TransactionRepository for database operations on Transactions.*/
+    /**
+     * TransactionRepository for database operations on Transactions.
+     */
     private final TransactionRepository transactionRepository;
-    /**TransactionMapper for mapping Transaction entities to DTOs.*/
+    /**
+     * TransactionMapper for mapping Transaction entities to DTOs.
+     */
     private final TransactionMapper transactionMapper;
-    /**KafkaTemplate for sending TransactionEvent messages to Kafka topics.*/
+    /**
+     * KafkaTemplate for sending TransactionEvent messages to Kafka topics.
+     */
     private final KafkaTemplate<String, TransactionEvent> kafkaTemplate;
-    /**Wallet operation implementations based on request type.*/
+    /**
+     * Wallet operation implementations based on request type.
+     */
     private final WalletOperationFactory walletOperationFactory;
-    /**Validations for performing various validation checks.*/
+    /**
+     * Validations for performing various validation checks.
+     */
     private final Validations validations;
+    /**
+     * Investment validations for investment-related checks.
+     */
+    private final InvestmentValidation investmentValidation;
+    /**
+     * InvestmentRepository for database operations on Investments.
+     */
+    private final InvestmentRepository investmentRepository;
+    /**
+     * Utility class for investment-related operations.
+     */
+    private final InvestmentUtil investmentUtil;
 
 
     /**
      * Deducts money from the user's wallet(s) and records the transaction.
      *
      * @param request The request containing amount,
-     *  source wallet, target wallet, and user UUID.
+     *                source wallet, target wallet, and user UUID.
      * @return MainWalletResponse containing
      * transaction details and updated balances.
      */
@@ -134,6 +169,29 @@ public class WalletServiceImpl implements WalletService {
 
         Transaction debitTxn = null;
         if (sourcesubWallet != null) {
+            if (Boolean.TRUE.equals(sourcesubWallet.getIsInvested())) {
+                Investment investment = investmentValidation
+             .getInvestmentBySubWalletId(sourcesubWallet.getSubWalletId());
+
+                if (!investment.isActive()){
+                    log.error("Attempted to process payment from an inactive investment.");
+                    throw new InvestmentException(
+  "Cannot process payment from an inactive investment.");
+                }
+                Units unit = investmentValidation.findUnitByDate(
+                        investment.getPortfolioModelId(),
+                        investment.getUnitPurchaseDate().toLocalDate()
+                );
+                Investment updatedInvestment = investmentUtil
+                        .updateInvestmentOnDebit(investment, unit,
+                        request.getAmount());
+
+
+                investmentRepository.save(updatedInvestment);
+                log.info("Updated investment [{}] after payment deduction.",
+                        investment.getInvestmentId());
+            }
+
             validations.validateBalance(sourcesubWallet.getBalance(),
                     request.getAmount());
             sourcesubWallet.setBalance(
@@ -211,7 +269,10 @@ public class WalletServiceImpl implements WalletService {
                 .previousSourceWalletBalance(
                         previousSourceWalletBalance)
                 .newSourceWalletBalance(
-                        mainWallet.getBalance())
+                        sourcesubWallet != null
+                                ? sourcesubWallet.getBalance()
+                                : mainWallet.getBalance()
+                )
                 .message("Transfer Successful")
                 .build();
 
@@ -219,6 +280,7 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
+
     /**
      * Adds money to the user's wallet(s) and records the transaction.
      *
@@ -292,6 +354,29 @@ public class WalletServiceImpl implements WalletService {
         Transaction creditTxn;
         Double newTargetWalletBalance = null;
         if (subWallet != null) {
+            if (Boolean.TRUE.equals(subWallet.getIsInvested())) {
+
+                Investment investment = investmentValidation
+                        .getInvestmentBySubWalletId(subWallet.getSubWalletId());
+
+                if (!investment.isActive()){
+                    log.error("Attempted to add money to an inactive investment.");
+                    throw new InvestmentException(
+                            "Cannot process payment from an inactive investment.");
+                }
+
+                Units unit = investmentValidation.findUnitByDate(
+                        investment.getPortfolioModelId(),
+                        investment.getUnitPurchaseDate().toLocalDate());
+
+                Investment updatedInvestment = investmentUtil
+                        .updateInvestmentOnCredit(investment, unit,
+                        mainWalletRequest.getAmount());
+
+                investmentRepository.save(updatedInvestment);
+                log.info("Updated investment [{}] after adding money.",
+                        investment.getInvestmentId());
+            }
 
             subWallet.setBalance(subWallet.getBalance()
                     + mainWalletRequest.getAmount());
@@ -381,6 +466,7 @@ public class WalletServiceImpl implements WalletService {
         log.debug("Response: {}", response);
         return response;
     }
+
     /**
      * Provides wallet-related operations such as CRUD operations.
      * And recording failed transactions,
@@ -400,8 +486,8 @@ public class WalletServiceImpl implements WalletService {
      * Records a dummy transaction in the database.
      *
      * @param request The request containing
-     *        transaction details such as source ,
-     *         target , amount , and type.
+     *                transaction details such as source ,
+     *                target , amount , and type.
      */
     @Override
     public void addDummy(final MainWalletRequest request) {

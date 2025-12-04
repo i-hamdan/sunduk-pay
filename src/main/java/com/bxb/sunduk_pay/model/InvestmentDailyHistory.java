@@ -16,24 +16,50 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InvestmentDailyHistory {
-/** * Unique identifier for the investment daily history record. */
+
+    /**
+     * Unique identifier for the investment daily history record.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-/** * The investment associated with this daily history record. */
+
+    /**
+     * The investment associated with this daily history record.
+     */
     @ManyToOne
     @JoinColumn(name = "investment_id", nullable = false)
     private Investment investment;
-/** * The date of the snapshot for this daily history record. */
+
+    /**
+     * The user associated with this daily history record.
+     */
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    /**
+     * The date of the snapshot for this daily history record.
+     */
     private LocalDate snapshotDate;
-/** * The number of units held on the snapshot date. */
+    /**
+     * The number of units held on the snapshot date.
+     */
     private Double units;
-/** * The unit price on the snapshot date. */
+    /**
+     * The unit price on the snapshot date.
+     */
     private Double unitPrice;
-/** * The total invested amount on the snapshot date. */
+    /**
+     * The total invested amount on the snapshot date.
+     */
     private Double currentValue;
-/** * The profit or loss in currency on the snapshot date. */
+    /**
+     * The profit or loss in currency on the snapshot date.
+     */
     private Double profitLoss;
-/** * The profit or loss percentage on the snapshot date. */
+    /**
+     * The profit or loss percentage on the snapshot date.
+     */
     private Double profitLossPercent;
 }

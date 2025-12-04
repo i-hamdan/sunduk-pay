@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.validations;
 import com.bxb.sunduk_pay.model.Investment;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
+import com.bxb.sunduk_pay.util.RiskLevel;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +35,11 @@ public interface InvestmentValidation {
 
     Units findNextUnit(PortfolioModel model, LocalDate date);
 
+    Units findUnitByDate(Long modelId, LocalDate date);
 
+    RiskLevel validateRiskLevel(String investmentRiskLevel, String riskLevel);
+
+    PortfolioModel getPortfolioModelByRiskLevel(String riskLevel);
 
 
 }

@@ -6,29 +6,40 @@ import com.bxb.sunduk_pay.response.InvestmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class InvestmentMapperImpl implements InvestmentMapper{
+public class InvestmentMapperImpl implements InvestmentMapper {
 
+    /**
+     * Formatter for decimal values.
+     */
+    private static final DecimalFormat formatter =
+            new DecimalFormat("#,##0.00");
     /**
      * Mapper for wallet-related operations.
      */
     private final WalletMapper walletMapper;
 
     @Override
-    public InvestmentResponse toInvestmentResponse(Investment investment ,
-   Map<String,List<InvestmentGraphDataDTO>> graphData) {
+    public InvestmentResponse toInvestmentResponse(
+            final Investment investment,
+            final Map<String, List<InvestmentGraphDataDTO>> graphData,
+            final Map<String,
+                    List<InvestmentGraphDataDTO>> dailyInvestmentData) {
         return InvestmentResponse.builder()
-                .subWallet(walletMapper.toSubWalletResponse(investment.getSubWallet()))
+                .subWallet(walletMapper.toSubWalletResponse(
+                        investment.getSubWallet()))
                 .investedAmount(investment.getInvestmentAmount())
-                .currentValue(investment.getCurrentValue())
-                .netProfitLoss(investment.getProfitLoss())
-                .profitLossPercent(investment.getProfitLossPercentage())
-                .monthlyGraphData(graphData)
+                .currentValue(formatter.format(investment.getCurrentValue()))
+                .netProfitLoss(formatter.format(investment.getProfitLoss()))
+                .profitLossPercent(formatter.format(
+                        investment.getProfitLossPercentage()))
+                .withdrawalTrendsGraph(graphData)
+                .dailyInvestmentGraph(dailyInvestmentData)
                 .build();
     }
 }

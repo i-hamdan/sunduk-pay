@@ -19,7 +19,8 @@ public interface InvestmentMapper {
      * @param investment The Investment entity to be converted.
      * @return The corresponding InvestmentResponse DTO.
      */
-    InvestmentResponse toInvestmentResponse(Investment investment,
-                                            Map<String,
-                                                    List<InvestmentGraphDataDTO>> graphData);
+    InvestmentResponse toInvestmentResponse(
+            Investment investment,
+            Map<String, List<InvestmentGraphDataDTO>> graphData,
+    Map<String, List<InvestmentGraphDataDTO>> dailyInvestmentGraphData);
 }
