@@ -55,7 +55,6 @@ public class SetMpinService implements MpinOperation{
                 .locked(false)
                 .lockedUntil(null)
                 .mpin(encryptMpin)
-
                 .build();
 
         repository.save(mpin);

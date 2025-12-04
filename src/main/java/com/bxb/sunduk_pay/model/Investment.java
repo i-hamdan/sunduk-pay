@@ -72,8 +72,9 @@ public class Investment {
     private Double currentValue;
 
     /** Which portfolio model (LOW/MEDIUM/HIGH)*/
+
     private Long portfolioModelId;
-/**
+    /**
      * The date associated with the asset.
      */
     private LocalDateTime UnitPurchaseDate;
