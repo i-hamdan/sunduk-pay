@@ -27,7 +27,7 @@ spring:
   config:
     import: classpath:queries.yml
 
-  #  datasource:
+    #  datasource:
     #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
   #    username: walletuser
   #    password: walletpass123
