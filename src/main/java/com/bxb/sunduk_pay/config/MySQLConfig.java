@@ -1,4 +1,4 @@
-package com.example.SundukPayHelper.config;
+package com.bxb.sunduk_pay.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
