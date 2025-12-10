@@ -7,8 +7,8 @@ spring:
   mail:
     host: smtp.hostinger.com
     port: 587
-    username: notifications@sundukpay.com
-    password: Sundukpay@25
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
@@ -28,7 +28,7 @@ spring:
     import: classpath:queries.yml
 
   #  datasource:
-  #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
+    #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
   #    username: walletuser
   #    password: walletpass123
   #    driver-class-name: com.mysql.cj.jdbc.Driver
