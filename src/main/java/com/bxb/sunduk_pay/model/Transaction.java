@@ -126,6 +126,17 @@ public class Transaction {
      * UPI ID of the recipient in the transaction.
      */
     private String recipientUpiId;
+    /**
+     *  Investment associated with the transaction.
+     */
+    @ManyToOne
+    @JoinColumn(name = "investment_id")
+    private Investment investment;
+    /**
+     * Monthly profit or loss associated
+     */
+    @Column
+    private Double monthlyProfitLoss;
 
     /**
      * Indicates if the associated sub-wallet
