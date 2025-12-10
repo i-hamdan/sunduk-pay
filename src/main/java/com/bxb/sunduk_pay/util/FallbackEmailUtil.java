@@ -124,7 +124,10 @@ public class FallbackEmailUtil {
                     + "Warm regards,\n"
                     + "SundukPay Team";
 
-            emailService.sendEmail(event.getEmail(), subject, body,
+            emailService.sendEmail(event.getEmail(),
+                    "transactions@sundukpay.com",
+                    subject,
+                    body,
                     false);
         } catch (Exception e) {
             log.error(

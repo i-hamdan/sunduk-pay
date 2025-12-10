@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.config;
+package com.example.SundukPayHelper.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.bxb.sunduk_pay.postgress.repository",
+        basePackages = "com.example.SundukPayHelper.postgress.repository",
         entityManagerFactoryRef = "postgresEntityManagerFactory",
         transactionManagerRef = "postgresTransactionManager"
 )
@@ -29,9 +29,9 @@ public class PostgresConfig {
     public DataSource postgresDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/stockdb");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("root123");
+        dataSource.setJdbcUrl("jdbc:postgresql://postgres_db:5432/stockdb");
+        dataSource.setUsername("sundukHelper123");
+        dataSource.setPassword("sundukHelper123");
         dataSource.setMaximumPoolSize(10);
         return dataSource;
     }
@@ -44,10 +44,11 @@ public class PostgresConfig {
         HashMap<String, Object> props = new HashMap<>();
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        props.put("hibernate.jdbc.time_zone", "Asia/Kolkata");
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.bxb.sunduk_pay.postgress.model")
+                .packages("com.example.SundukPayHelper.postgress.model")
                 .persistenceUnit("postgres")
                 .properties(props)
                 .build();

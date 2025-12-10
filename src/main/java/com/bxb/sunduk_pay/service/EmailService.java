@@ -23,7 +23,8 @@ public interface EmailService {
      * @param body    the body content of the email
      *@param isHtml  indicates if the body is in HTML format
      */
-    void sendEmail(String to, String subject, String body, Boolean isHtml);
+    void sendEmail(String to,String from, String subject, String body,
+                   Boolean isHtml);
 /**
      * Processes an OTP-related Kafka event to send an email.
      *

@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.util.RiskLevel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -45,7 +46,7 @@ public class InvestmentResponse {
     /**
      * Total current value including withdrawn amount
      */
-    private Double totalCurrentValue; // total current value
+    private String totalCurrentValue; // total current value
     /**
      * Total profit or loss in currency (e.g., +8900 or -1200)
      */
@@ -66,6 +67,9 @@ public class InvestmentResponse {
 
     /**Gain or loss in the last 6-month period.*/
     private Double gain6MonthsPercent;
+
+    /**Risk level of the investment*/
+    private RiskLevel riskLevel;
 
     /**Graph data for investment performance over time.*/
     private Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraph;

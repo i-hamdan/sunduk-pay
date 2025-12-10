@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Service implementation for handling external transfers
@@ -110,10 +111,11 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
 
             Transaction masterWalletTxn =
                     Transaction.builder()
+                            .transactionId(UUID.randomUUID().toString())
                             .user(user)
                             .amount(request.getAmount())
                             .recipientUpiId(request.getRecipientUpiId())
-                            .paymentMethod(PaymentMethod.UPI)
+                            .paymentMethod(PaymentMethod.PHONE_NUMBER)
                             .transactionType(TransactionType.DEBIT)
                             .transactionLevel(TransactionLevel.EXTERNAL)
                             .dateTime(LocalDateTime.now())
@@ -121,19 +123,23 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                             .description("Deducted from Master Wallet for" +
                                     " UPI transfer").fromWallet("Master Wallet")
                             .fromWalletId(masterWallet.getMasterWalletId())
+                            .isInvestment(false)
                             .isMaster(true).build();
 
             Transaction mainWalletTxn =
                     Transaction.builder().user(user).amount(request.getAmount())
+                            .transactionId(UUID.randomUUID().toString())
                             .recipientUpiId(request.getRecipientUpiId())
-                            .paymentMethod(PaymentMethod.UPI)
+                            .paymentMethod(PaymentMethod.PHONE_NUMBER)
                             .transactionType(TransactionType.DEBIT)
                             .transactionLevel(TransactionLevel.EXTERNAL)
                             .dateTime(LocalDateTime.now())
                             .status("SUCCESS")
+                            .paymentTag(request.getPaymentTag())
                             .description("Deducted from Main Wallet for" +
                                     " UPI transfer").fromWallet("Main Wallet")
                             .fromWalletId(mainWallet.getMainWalletId())
+                            .isInvestment(false)
                             .isMaster(false).build();
 
             transactions.add(masterWalletTxn);

@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
+import com.bxb.sunduk_pay.util.EmailCategory;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.cli.Digest;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -82,6 +83,11 @@ UserResponse userResponse = new UserResponse();
         kafkaEvent.setUuid(user.getUuid());
         kafkaEvent.setFullName(user.getFullName());
         kafkaEvent.setEventType(eventType);
+        if ((eventType.equals("LOGIN"))) {
+            kafkaEvent.setEmailCategory(EmailCategory.SECURITY);
+        } else {
+            kafkaEvent.setEmailCategory(EmailCategory.WELCOME);
+        }
         return kafkaEvent;
     }
 

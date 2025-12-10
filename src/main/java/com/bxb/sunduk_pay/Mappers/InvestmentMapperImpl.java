@@ -33,11 +33,12 @@ public class InvestmentMapperImpl implements InvestmentMapper {
         return InvestmentResponse.builder()
                 .subWallet(walletMapper.toSubWalletResponse(
                         investment.getSubWallet()))
+                .riskLevel(investment.getRiskLevel())
                 .investedAmount(investment.getInvestmentAmount())
                 .currentValue(formatter.format(investment.getCurrentValue()))
                 .netProfitLoss(formatter.format(investment.getProfitLoss()))
-                .profitLossPercent(formatter.format(
-                        investment.getProfitLossPercentage()))
+                .profitLossPercent(
+                        formatter.format(investment.getProfitLossPercentage()))
                 .withdrawalTrendsGraph(graphData)
                 .dailyInvestmentGraph(dailyInvestmentData)
                 .build();

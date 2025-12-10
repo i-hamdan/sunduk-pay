@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 //import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.EmailCategory;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -88,6 +89,9 @@ public class TransactionMapperImpl implements TransactionMapper {
                         transaction.getToWalletId()));
         transactionResponse.setRecipientUpiId(
                 transaction.getRecipientUpiId());
+        if (transaction.getRiskLevel()!=null){
+        transactionResponse.setRiskLevel(transaction.getRiskLevel().toString());
+        }
         return transactionResponse;
     }
 
@@ -136,6 +140,7 @@ public class TransactionMapperImpl implements TransactionMapper {
                     transaction.getUser().getFullName());
             transactionEvent.setPhoneNumber(
                     transaction.getUser().getPhoneNumber());
+            transactionEvent.setEmailCategory(EmailCategory.TRANSACTION);
 
             Double balance = null;
 

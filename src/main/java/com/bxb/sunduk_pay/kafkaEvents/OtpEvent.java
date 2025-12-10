@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.kafkaEvents;
 
+import com.bxb.sunduk_pay.util.EmailCategory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,4 +32,9 @@ public class OtpEvent {
      * The email of the user who achieved the milestone.
      */
     private String email;
+
+    /**
+     * The category of the email to be sent.
+     */
+    private EmailCategory emailCategory;
 }

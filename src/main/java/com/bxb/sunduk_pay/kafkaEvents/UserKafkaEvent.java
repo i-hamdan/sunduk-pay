@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.kafkaEvents;
 
+import com.bxb.sunduk_pay.util.EmailCategory;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,4 +33,9 @@ public class UserKafkaEvent {
      * Type of event, e.g., "LOGIN" or "SIGNUP".
      */
     private String eventType;
+
+    /**
+     * Category of the email to be sent.
+     */
+    private EmailCategory emailCategory;
 }

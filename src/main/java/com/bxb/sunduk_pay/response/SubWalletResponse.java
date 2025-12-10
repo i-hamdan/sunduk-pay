@@ -27,5 +27,7 @@ public class SubWalletResponse {
     private String createdAt;
     /** The risk level associated with the sub-wallet. */
     private Boolean isInvested;
+    /**Profit or loss percentage*/
+    private String gainOrLossPercentage;
 }
 

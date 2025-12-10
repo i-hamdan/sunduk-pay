@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.exception.EmailSendingException;
 import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.EmailService;
+import com.bxb.sunduk_pay.util.EmailCategory;
 import com.bxb.sunduk_pay.util.EmailMessageUtil;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -37,14 +38,19 @@ public class EmailServiceImpl implements EmailService {
     public void processEmailEvent(final UserKafkaEvent event) {
         String subject = emailMessageUtil.buildSubject(event);
         String body = emailMessageUtil.buildBody(event);
-        sendEmail(event.getEmail(), subject, body,false);
+        String from = getSenderByCategory(event.getEmailCategory());
+        sendEmail(event.getEmail(),from, subject, body,false);
     }
 
     @Override
     public void processOtpEvent(OtpEvent event) {
     String subject = emailMessageUtil.buildSubjectForOtp(event);
     String body = emailMessageUtil.buildBodyForOtp(event);
-    sendEmail(event.getEmail(), subject, body, true);
+    sendEmail(event.getEmail(),
+            "updates@sundukpay.com",
+            subject,
+            body,
+            true);
     }
 
 
@@ -58,6 +64,7 @@ public class EmailServiceImpl implements EmailService {
      * @throws EmailSendingException if sending fails.
      */
     public void sendEmail(final String to,
+                          final String from,
                           final String subject,
                           final String body,
                           final Boolean isHtml) {
@@ -69,6 +76,7 @@ public class EmailServiceImpl implements EmailService {
                         (message, true, "UTF-8");
 
                 helper.setTo(to);
+                helper.setFrom(from);
                 helper.setSubject(subject);
                 helper.setText(body, true);
 
@@ -81,6 +89,7 @@ public class EmailServiceImpl implements EmailService {
             else {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(to);
+                message.setFrom(from);
                 message.setSubject(subject);
                 message.setText(body);
                 mailSender.send(message);
@@ -90,6 +99,15 @@ public class EmailServiceImpl implements EmailService {
             throw new EmailSendingException("Failed to send email to: " + to);
         }
     }
+
+    private String getSenderByCategory(EmailCategory category) {
+        return switch (category) {
+            case WELCOME -> "welcome@sundukpay.com";
+            case SECURITY -> "updates@sundukpay.com";
+            case TRANSACTION -> "transactions@sundukpay.com";
+        };
+    }
+
 
 
 }

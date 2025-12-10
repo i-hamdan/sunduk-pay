@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.kafkaEvents;
 
+import com.bxb.sunduk_pay.util.EmailCategory;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.AllArgsConstructor;
@@ -89,4 +90,9 @@ public class TransactionEvent {
      * The user's phone number.
      */
     private String phoneNumber;
+
+    /**
+     * Category of email to be sent related to the transaction.
+     */
+    private EmailCategory emailCategory;
 }

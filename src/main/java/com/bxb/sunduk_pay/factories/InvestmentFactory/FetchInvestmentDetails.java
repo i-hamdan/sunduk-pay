@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -34,6 +35,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FetchInvestmentDetails implements InvestmentOperation {
 
+    private static final DecimalFormat decimalFormat =
+            new DecimalFormat("#,##0.00");
     /**
      * Stock-related validations.
      **/
@@ -163,7 +166,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (investments.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(0.0)
-                    .totalCurrentValue(0.0)
+                    .totalCurrentValue(decimalFormat.format(0.0))
                     .totalNetProfitLoss(0.0)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
@@ -197,7 +200,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (history == null || history.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(totalInvested)
-                    .totalCurrentValue(totalCurrentValue)
+                    .totalCurrentValue(decimalFormat.format(totalCurrentValue))
                     .totalNetProfitLoss(totalNetProfitLoss)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
@@ -205,7 +208,6 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         }
 
         Map<LocalDate, Double> portfolioHistory = history.stream()
-                .filter(h -> h.getInvestment().isActive())
                 .collect(Collectors.groupingBy(
                         InvestmentDailyHistory::getSnapshotDate,
                         TreeMap::new,
@@ -217,7 +219,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (portfolioHistory.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(totalInvested)
-                    .totalCurrentValue(totalCurrentValue)
+                    .totalCurrentValue(decimalFormat.format(totalCurrentValue))
                     .totalNetProfitLoss(totalNetProfitLoss)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
@@ -253,7 +255,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
         return InvestmentResponse.builder()
                 .totalInvestedAmount(totalInvested)
-                .totalCurrentValue(todayValue)
+                .totalCurrentValue(decimalFormat.format(totalCurrentValue))
                 .totalNetProfitLoss(totalNetProfitLoss)
                 .gain1MonthPercent(gain1MonthPercent)
                 .gain6MonthsPercent(gain6MonthsPercent)

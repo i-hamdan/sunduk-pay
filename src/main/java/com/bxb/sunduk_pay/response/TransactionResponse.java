@@ -72,5 +72,7 @@ public class TransactionResponse {
     /** UPI ID of the recipient
      *  in case of external transactions. */
     private String recipientUpiId;
+
+    private String RiskLevel;
 }
 

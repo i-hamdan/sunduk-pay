@@ -1,4 +1,4 @@
-package com.bxb.sunduk_pay.config;
+package com.example.SundukPayHelper.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.bxb.sunduk_pay.repository",
+        basePackages = "com.example.SundukPayHelper.repository",
         entityManagerFactoryRef = "mysqlEntityManagerFactory",
         transactionManagerRef = "mysqlTransactionManager"
 )
@@ -30,9 +30,9 @@ public class MySQLConfig {
     public DataSource mysqlDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/SundukPay");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root123");
+        dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/sundukpay");
+        dataSource.setUsername("walletuser");
+        dataSource.setPassword("walletpass123");
         dataSource.setMaximumPoolSize(10);
         return dataSource;
     }
@@ -49,7 +49,7 @@ public class MySQLConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.bxb.sunduk_pay.model")
+                .packages("com.example.SundukPayHelper.model")
                 .persistenceUnit("mysql")
                 .properties(props)
                 .build();

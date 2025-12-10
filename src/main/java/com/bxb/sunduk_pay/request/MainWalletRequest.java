@@ -11,6 +11,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class MainWalletRequest {
 
 /** Default pagination values. */

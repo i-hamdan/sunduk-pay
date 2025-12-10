@@ -77,6 +77,7 @@ public class WalletMapperImpl implements WalletMapper {
         subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
                 .format(formatter));
         subWalletResponse.setIsInvested(subWallet.getIsInvested());
+        subWalletResponse.setGainOrLossPercentage("0");
         return subWalletResponse;
     }
 

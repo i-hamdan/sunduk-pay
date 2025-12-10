@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.PaymentMethod;
+import com.bxb.sunduk_pay.util.RiskLevel;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import jakarta.persistence.Id;
@@ -132,4 +133,7 @@ public class Transaction {
      */
     @Column(nullable = false)
     private Boolean isInvestment;
+
+    /**Risk level of the investment*/
+    private RiskLevel riskLevel;
 }
