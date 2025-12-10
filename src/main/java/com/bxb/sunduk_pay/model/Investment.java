@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "investments")
 public class Investment {
     /**
      * Unique identifier for the investment.

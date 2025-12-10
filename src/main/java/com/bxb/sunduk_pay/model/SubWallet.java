@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Builder;
@@ -22,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "sub_wallets")
 public class SubWallet {
   /**
      * Unique identifier for the sub-wallet.

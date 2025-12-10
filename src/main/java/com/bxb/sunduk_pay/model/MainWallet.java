@@ -19,6 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@Table(name = "main_wallet")
 public class MainWallet {
     /**
      * Unique identifier for the main wallet.

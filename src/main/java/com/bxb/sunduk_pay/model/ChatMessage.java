@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Builder;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "chat_messages")
 public class ChatMessage {
     /**
      * Unique identifier for the chat message.
