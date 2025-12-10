@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.example.SundukPayHelper.postgress.repository",
+        basePackages = "com.bxb.sunduk_pay.postgress.repository",
         entityManagerFactoryRef = "postgresEntityManagerFactory",
         transactionManagerRef = "postgresTransactionManager"
 )
@@ -44,11 +44,10 @@ public class PostgresConfig {
         HashMap<String, Object> props = new HashMap<>();
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        props.put("hibernate.jdbc.time_zone", "Asia/Kolkata");
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.SundukPayHelper.postgress.model")
+                .packages("com.bxb.sunduk_pay.postgress.model")
                 .persistenceUnit("postgres")
                 .properties(props)
                 .build();

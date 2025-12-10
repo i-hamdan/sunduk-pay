@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.example.SundukPayHelper.repository",
+        basePackages = "com.bxb.sunduk_pay.repository",
         entityManagerFactoryRef = "mysqlEntityManagerFactory",
         transactionManagerRef = "mysqlTransactionManager"
 )
@@ -30,7 +30,7 @@ public class MySQLConfig {
     public DataSource mysqlDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/sundukpay");
+        dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/SundukPay");
         dataSource.setUsername("walletuser");
         dataSource.setPassword("walletpass123");
         dataSource.setMaximumPoolSize(10);
@@ -49,7 +49,7 @@ public class MySQLConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.SundukPayHelper.model")
+                .packages("com.bxb.sunduk_pay.model")
                 .persistenceUnit("mysql")
                 .properties(props)
                 .build();
