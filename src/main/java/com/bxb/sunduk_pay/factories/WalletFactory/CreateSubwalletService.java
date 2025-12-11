@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class CreateService implements WalletOperation {
+public class CreateSubwalletService implements WalletOperation {
     /** Dependencies for validations and main wallet repository. */
     private final Validations validations;
     /** Repository for MainWallet persistence. */

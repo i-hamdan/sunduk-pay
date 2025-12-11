@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.factories.WalletFactory;
 
 import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
@@ -15,10 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,7 +25,7 @@ class CreateServiceTest {
     @Autowired
     private MainWalletRepository mainWalletRepository;
     @Autowired
-    private CreateService createSubWalletService;
+    private CreateSubwalletService createSubWalletService;
 
 
     @Test

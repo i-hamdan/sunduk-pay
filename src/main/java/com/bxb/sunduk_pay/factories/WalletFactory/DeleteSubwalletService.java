@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class DeleteService implements WalletOperation {
+public class DeleteSubwalletService implements WalletOperation {
     /** Validations utility for checking user and wallet info. */
     private final Validations validations;
     /** Repository for accessing and modifying main wallet data. */

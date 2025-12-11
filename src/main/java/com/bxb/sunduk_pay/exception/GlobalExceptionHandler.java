@@ -468,7 +468,17 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
     }
 
-
+    @ExceptionHandler(value = MpinAlreadyExists.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse mpinAlreadyExists(
+            final MpinAlreadyExists e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                e.getMessage(),
+                e.getMessage(),
+                request.getRequestURI());
+    }
 
 
     /**

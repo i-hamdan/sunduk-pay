@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.encryption;
 
 import com.bxb.sunduk_pay.exception.InvalidMpinException;
+import com.bxb.sunduk_pay.exception.MpinAlreadyExists;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.Mpin;
 import com.bxb.sunduk_pay.model.User;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  * Implementation of MPIN validation logic.
@@ -159,6 +161,14 @@ public class MpinValidationImpl implements MpinValidations {
                     return new UserNotFoundException(
                             "this email is not registered with us");
                 });
+    }
+
+    @Override
+    public void mpinIsExists(String uuid) {
+        Optional<Mpin> byUserUuid = mpinRepository.findByUserUuid(uuid);
+        if (byUserUuid.isPresent()){
+            throw new MpinAlreadyExists("Mpin already exists for this User");
+        }
     }
 }
 

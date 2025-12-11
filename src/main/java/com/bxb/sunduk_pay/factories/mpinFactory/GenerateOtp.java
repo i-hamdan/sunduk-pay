@@ -16,7 +16,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
-public class GenrateOtp implements MpinOperation{
+public class GenerateOtp implements MpinOperation{
     /**
      * Mapper for MPIN-related data transformations.
      */

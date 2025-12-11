@@ -1,11 +1,13 @@
 package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.MpinRequestType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MpinRequest {
 
     private String uuid;

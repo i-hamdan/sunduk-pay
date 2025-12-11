@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.factories.mpinFactory;
 
 import com.bxb.sunduk_pay.encryption.MpinEncryption;
+import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.model.Mpin;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MpinRepository;
@@ -23,6 +24,8 @@ public class SetMpinService implements MpinOperation{
     private  final Validations validations;
     /** Repository for MPIN persistence. */
     private final MpinRepository repository;
+    /** validations for mpin*/
+    private final MpinValidations mpinValidations;
     /**
      * Returns the MpinRequestType handled by this service.
      *
@@ -40,14 +43,20 @@ public class SetMpinService implements MpinOperation{
      */
     @Override
     public MpinResponse perform(MpinRequest mpinRequest) {
-        // Encrypt the provided MPIN.
-        String encryptMpin = mpinEncryption
-                .encryptMpin(mpinRequest.getMpin());
         // Retrieve user information using UUID.
         User user = validations.
                 getUserInfo(mpinRequest.getUuid());
+
         log.info("Setting MPIN for user UUID: {}",
                 user.getUuid());
+
+        // check mpin is already exists for this user
+        mpinValidations.mpinIsExists(mpinRequest.getUuid());
+
+        // Encrypt the provided MPIN.
+        String encryptMpin = mpinEncryption
+                .encryptMpin(mpinRequest.getMpin());
+
         // Create a new MPIN entity.
         Mpin mpin = Mpin.builder()
                 .user(user)

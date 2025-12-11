@@ -69,7 +69,7 @@ public class WalletMapperImpl implements WalletMapper {
         SubWalletResponse subWalletResponse = new SubWalletResponse();
         subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
         subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
-        subWalletResponse.setBalance(decimalFormat.format(subWallet.getBalance()));
+        subWalletResponse.setBalance(subWallet.getBalance());
         subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
         subWalletResponse.setTargetDate(subWallet.getTargetDate()
                 .format(formatter));

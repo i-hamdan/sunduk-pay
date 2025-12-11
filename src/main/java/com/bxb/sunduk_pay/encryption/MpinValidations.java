@@ -30,4 +30,8 @@ public interface MpinValidations {
     **/
     User getUserEmailInfo(String email);
 
+
+
+    void mpinIsExists(String uuid);
+
 }
