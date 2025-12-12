@@ -26,29 +26,33 @@ public class UploadProfilePhoto implements PhotoOperation {
      * UserRepository for database operations.
      */
     private final UserRepository userRepository;
-   /**
+
+    /**
      * Returns the type of photo request this operation handles.
+     *
      * @return PhotoRequestType
      */
     @Override
     public PhotoRequestType getPhotoRequestType() {
         return PhotoRequestType.PROFILE_PHOTO;
     }
+
     /**
      * Performs the photo upload operation based on the provided request.
+     *
      * @param photoRequest
      * @return PhotoResponse
      */
     @Override
     public PhotoResponse perform(final PhotoRequest photoRequest) {
-            log.info("Uploading profile photo for user: "
-                    + photoRequest.getUuid());
+        log.info("Uploading profile photo for user: "
+                + photoRequest.getUuid());
 
-            log.info(photoRequest.getMultipartFile().getContentType());
+        log.info(photoRequest.getMultipartFile().getContentType());
 
-       try {
+        try {
 
-           validations.validatePorfilePhoto(photoRequest.getMultipartFile());
+            validations.validatePorfilePhoto(photoRequest.getMultipartFile());
             byte[] imageBytes = photoRequest.getMultipartFile().getBytes();
 
 
@@ -70,6 +74,6 @@ public class UploadProfilePhoto implements PhotoOperation {
         }
     }
 
-    }
+}
 
 

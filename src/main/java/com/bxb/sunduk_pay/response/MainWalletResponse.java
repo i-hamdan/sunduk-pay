@@ -45,6 +45,9 @@ public class MainWalletResponse {
      */
     private List<SubWalletResponse> subWallets;
 
+    /** ID of the newly created SubWallet */
+    private String createdSubWalletId;
+
     /**
      * Target balance for the main wallet.
      */

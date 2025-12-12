@@ -36,6 +36,7 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
         event.setSenderId(request.getSenderId());
         event.setReceiverId(request.getReceiverId());
         event.setContent(request.getContent());
+        event.setIsBlocked(request.getIsBlocked());
         return event;
     }
 
@@ -53,6 +54,7 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
                 .receiverId(event.getReceiverId())
                .status("SUCCESS")
                 .content(event.getContent())
+               .isBlocked(event.getIsBlocked())
                 .build();
     }
 
@@ -102,6 +104,7 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
                 .content(chatMessage.getContent())
                 .senderPhoneNumber(senderNo)
                 .receiverPhoneNumber(receiverNo)
+                .isBlocked(chatMessage.getIsBlocked())
                 .date(formattedDate)
                 .time(formattedTime)
                 .status(chatMessage.getStatus())

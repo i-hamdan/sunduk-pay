@@ -20,5 +20,5 @@ public class ChatMessageEvent {
     private String receiverId;
     /** Content of the chat message. */
     private String content;
-
+    private Boolean isBlocked;
 }

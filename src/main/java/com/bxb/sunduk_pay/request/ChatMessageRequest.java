@@ -14,5 +14,7 @@ import lombok.*;
     private String receiverId;
     /** The content of the chat message. */
     private String content;
- }
+
+    private Boolean isBlocked;
+    }
 

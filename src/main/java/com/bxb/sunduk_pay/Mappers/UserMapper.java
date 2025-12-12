@@ -31,7 +31,7 @@ public interface UserMapper {
     User toUser(UserResponse response);
 
 
-  //  UserResponse toUserResponse(User user);
+//    UserResponse toUserResponse(User user);
 
    /**
    * Converts a User entity into a Kafka event object for

@@ -31,4 +31,6 @@ public class ChatMessageResponse {
     private String date;
     /** Time when the message was sent. */
     private String time;
+
+    private Boolean isBlocked;
 }

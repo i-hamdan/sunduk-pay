@@ -110,7 +110,7 @@ public class User {
      */
     private String phoneNumberHash;
 
-
+    private Boolean isBlocked = false;
     /**
      * Indicates if the MPIN is created for the user.
      */
