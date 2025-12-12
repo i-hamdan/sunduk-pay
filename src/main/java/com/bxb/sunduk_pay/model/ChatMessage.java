@@ -48,4 +48,6 @@ public class ChatMessage {
      */
     private String status;
 
+    private boolean isBlocked;
+
 }

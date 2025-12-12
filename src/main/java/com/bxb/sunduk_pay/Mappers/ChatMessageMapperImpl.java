@@ -104,7 +104,7 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
                 .content(chatMessage.getContent())
                 .senderPhoneNumber(senderNo)
                 .receiverPhoneNumber(receiverNo)
-                .isBlocked(chatMessage.getIsBlocked())
+                .isBlocked(chatMessage.isBlocked())
                 .date(formattedDate)
                 .time(formattedTime)
                 .status(chatMessage.getStatus())
