@@ -24,9 +24,21 @@ public interface WalletMapper {
      *         and its sub-wallets
      */
      MainWalletResponse toWalletResponse(MainWallet wallet,
-                                         List<SubWallet> subWallets);
+                                         List<SubWalletResponse> subWallets);
 
 
+     /**     * Converts a list of SubWallet entities into
+     * a list of SubWalletResponse DTOs.
+     * @param subWallet the list of SubWallet entities
+     * @return list of SubWalletResponse DTOs
+     */
+    List<SubWalletResponse> toSubWalletResponseList(
+            final List<SubWallet> subWallet);
+
+     /**     * Converts a SubWallet entity into a SubWalletResponse DTO.
+     * @param subWallet the SubWallet entity
+     * @return a SubWalletResponse representing the sub-wallet
+     */
      SubWalletResponse toSubWalletResponse(SubWallet subWallet);
 }
 

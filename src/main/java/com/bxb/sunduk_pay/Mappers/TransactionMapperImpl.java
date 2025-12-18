@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 //import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.util.EmailCategory;
+import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ import java.util.Locale;
 @Component
 @RequiredArgsConstructor
 public class TransactionMapperImpl implements TransactionMapper {
-/** Validations utility for input validation and data retrieval. **/
+    /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
 
     /** Date formatter for "dd MMMM yyyy" pattern in English locale. */
@@ -63,13 +64,13 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setDate(
                 transaction.getDateTime().format(DATE_FORMATTER));
         transactionResponse.setDateTime(
-              transaction.getDateTime().format(DATETIME_FORMATTER));
+                transaction.getDateTime().format(DATETIME_FORMATTER));
         transactionResponse.setChatDateTime(transaction.getDateTime());
         transactionResponse.setTransactionLevel(
                 transaction.getTransactionLevel());
         if(transaction.getPaymentTag() != null){
-        transactionResponse.setPaymentTag(transaction
-                .getPaymentTag());
+            transactionResponse.setPaymentTag(transaction
+                    .getPaymentTag());
         }
         transactionResponse.setFromWallet(
                 transaction.getFromWallet());
@@ -77,20 +78,32 @@ public class TransactionMapperImpl implements TransactionMapper {
                 transaction.getFromWalletId());
         transactionResponse.setFromPhoneNumber(
                 transaction.getFromPhoneNumber());
-        transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
-                transaction.getUser().getMainWallet().getMainWalletId(),
-                        transaction.getFromWalletId()));
+        if (transaction.getIsInvestment()
+                && transaction.getTransactionLevel() == TransactionLevel.INVESTED
+                && transaction.getTransactionType()==TransactionType.CREDIT){
+            transactionResponse.setFromWalletIcon("Investment");
+        } else {
+            transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
+                    transaction.getUser().getMainWallet().getMainWalletId(),
+                    transaction.getFromWalletId()));
+        }
         transactionResponse.setToWallet(transaction.getToWallet());
         transactionResponse.setToWalletId(transaction.getToWalletId());
-        transactionResponse.setToPhoneNumber(
-                transaction.getToPhoneNumber());
-        transactionResponse.setToWalletIcon(validations.
-                getToIconOfTxn(transaction.getUser().getMainWallet().getMainWalletId(),
-                        transaction.getToWalletId()));
+        transactionResponse.setToPhoneNumber(transaction.getToPhoneNumber());
+        if (transaction.getIsInvestment()
+                && transaction.getTransactionLevel() == TransactionLevel.INVESTED
+                && transaction.getTransactionType()==TransactionType.DEBIT){
+            transactionResponse.setToWalletIcon("Investment");
+        } else {
+            transactionResponse.setToWalletIcon(validations.
+                    getToIconOfTxn(transaction.getUser()
+                                    .getMainWallet().getMainWalletId(),
+                            transaction.getToWalletId()));
+        }
         transactionResponse.setRecipientUpiId(
                 transaction.getRecipientUpiId());
         if (transaction.getRiskLevel()!=null){
-        transactionResponse.setRiskLevel(transaction.getRiskLevel().toString());
+            transactionResponse.setRiskLevel(transaction.getRiskLevel().toString());
         }
         return transactionResponse;
     }
@@ -107,93 +120,93 @@ public class TransactionMapperImpl implements TransactionMapper {
         return responses;
     }
 
-        /** {@inheritDoc} */
-        public TransactionEvent toTransactionEvent(
-        final Transaction transaction) {
-            TransactionEvent transactionEvent = new TransactionEvent();
-            transactionEvent.setWalletId(
-                 transaction.getUser()
-                       .getMainWallet().getMainWalletId());
-            transactionEvent.setTransactionId(
-                    transaction.getTransactionId());
-            transactionEvent.setTransactionType(
-                    transaction.getTransactionType());
-            transactionEvent.setTransactionLevel(
-                    transaction.getTransactionLevel());
-            transactionEvent.setFromWallet(
-                    transaction.getFromWallet());
-            transactionEvent.setFromWalletId(
-                    transaction.getFromWalletId());
-            transactionEvent.setToWallet(
-                    transaction.getToWallet());
-            transactionEvent.setToWalletId(
-                    transaction.getToWalletId());
-            transactionEvent.setAmount(
-                    transaction.getAmount());
-            transactionEvent.setDateTime(
-                    transaction.getDateTime().format(DATETIME_FORMATTER));
-            transactionEvent.setEmail(
-                    transaction.getUser().getEmail());
-            transactionEvent.setUuid(
-                    transaction.getUser().getUuid());
-            transactionEvent.setFullName(
-                    transaction.getUser().getFullName());
-            transactionEvent.setPhoneNumber(
-                    transaction.getUser().getPhoneNumber());
-            transactionEvent.setEmailCategory(EmailCategory.TRANSACTION);
+    /** {@inheritDoc} */
+    public TransactionEvent toTransactionEvent(
+            final Transaction transaction) {
+        TransactionEvent transactionEvent = new TransactionEvent();
+        transactionEvent.setWalletId(
+                transaction.getUser()
+                        .getMainWallet().getMainWalletId());
+        transactionEvent.setTransactionId(
+                transaction.getTransactionId());
+        transactionEvent.setTransactionType(
+                transaction.getTransactionType());
+        transactionEvent.setTransactionLevel(
+                transaction.getTransactionLevel());
+        transactionEvent.setFromWallet(
+                transaction.getFromWallet());
+        transactionEvent.setFromWalletId(
+                transaction.getFromWalletId());
+        transactionEvent.setToWallet(
+                transaction.getToWallet());
+        transactionEvent.setToWalletId(
+                transaction.getToWalletId());
+        transactionEvent.setAmount(
+                transaction.getAmount());
+        transactionEvent.setDateTime(
+                transaction.getDateTime().format(DATETIME_FORMATTER));
+        transactionEvent.setEmail(
+                transaction.getUser().getEmail());
+        transactionEvent.setUuid(
+                transaction.getUser().getUuid());
+        transactionEvent.setFullName(
+                transaction.getUser().getFullName());
+        transactionEvent.setPhoneNumber(
+                transaction.getUser().getPhoneNumber());
+        transactionEvent.setEmailCategory(EmailCategory.TRANSACTION);
 
-            Double balance = null;
+        Double balance = null;
 
-            try {
-                if (transaction.getTransactionType() == TransactionType.CREDIT) {
-                    if (transaction.getToWalletId() != null
-                            && transaction.getToWalletId()
-                .equals(transaction.getUser()
-                        .getMainWallet().getMainWalletId())) {
-                        balance = transaction.getUser()
-                                .getMainWallet().getBalance();
-                    } else if (transaction.getToWalletId() != null) {
-                        SubWallet subWallet = validations.findSubWalletIfExists(
-                                transaction.getUser()
-                                     .getMainWallet().getMainWalletId(),
-                                transaction.getToWalletId()
-                        );
-                        if (subWallet != null) {
-                            balance = subWallet.getBalance();
-                        }
-                    }
-
-                } else if (transaction
-                        .getTransactionType() == TransactionType.DEBIT) {
-                    if (transaction.getFromWalletId() != null
-                            && transaction.getFromWalletId().equals(transaction
-                            .getUser().getMainWallet().getMainWalletId())) {
-                        balance = transaction.getUser()
-                                .getMainWallet().getBalance();
-                    } else if (transaction.getFromWalletId() != null) {
-                        SubWallet subWallet = validations.findSubWalletIfExists(
-                                transaction.getUser()
-                                        .getMainWallet().getMainWalletId(),
-                                transaction.getFromWalletId()
-                        );
-                        if (subWallet != null) {
-                            balance = subWallet.getBalance();
-                        }
+        try {
+            if (transaction.getTransactionType() == TransactionType.CREDIT) {
+                if (transaction.getToWalletId() != null
+                        && transaction.getToWalletId()
+                        .equals(transaction.getUser()
+                                .getMainWallet().getMainWalletId())) {
+                    balance = transaction.getUser()
+                            .getMainWallet().getBalance();
+                } else if (transaction.getToWalletId() != null) {
+                    SubWallet subWallet = validations.findSubWalletIfExists(
+                            transaction.getUser()
+                                    .getMainWallet().getMainWalletId(),
+                            transaction.getToWalletId()
+                    );
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
                     }
                 }
-            } catch (Exception e) {
-                // fallback if something goes wrong
-                balance = transaction.getUser()
-                        .getMainWallet().getBalance();
-                log.warn(
-                        "Balance resolution failed for txn={}"
-                                + ", falling back to mainWallet balance",
-                        transaction.getTransactionId(), e);
-            }
 
-            transactionEvent.setRemainingBalance(balance);
-            return transactionEvent;
+            } else if (transaction
+                    .getTransactionType() == TransactionType.DEBIT) {
+                if (transaction.getFromWalletId() != null
+                        && transaction.getFromWalletId().equals(transaction
+                        .getUser().getMainWallet().getMainWalletId())) {
+                    balance = transaction.getUser()
+                            .getMainWallet().getBalance();
+                } else if (transaction.getFromWalletId() != null) {
+                    SubWallet subWallet = validations.findSubWalletIfExists(
+                            transaction.getUser()
+                                    .getMainWallet().getMainWalletId(),
+                            transaction.getFromWalletId()
+                    );
+                    if (subWallet != null) {
+                        balance = subWallet.getBalance();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // fallback if something goes wrong
+            balance = transaction.getUser()
+                    .getMainWallet().getBalance();
+            log.warn(
+                    "Balance resolution failed for txn={}"
+                            + ", falling back to mainWallet balance",
+                    transaction.getTransactionId(), e);
         }
+
+        transactionEvent.setRemainingBalance(balance);
+        return transactionEvent;
+    }
 }
 
 
