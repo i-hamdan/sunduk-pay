@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
+import com.bxb.sunduk_pay.util.RiskLevel;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -69,5 +70,8 @@ public class SubWallet {
     @ManyToOne
     @JoinColumn(name = "main_wallet_id")
     private MainWallet mainWallet;
+
+
+    private RiskLevel riskLevel;
 
 }

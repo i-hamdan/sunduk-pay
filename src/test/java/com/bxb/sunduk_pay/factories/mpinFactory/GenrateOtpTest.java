@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.factories.mpinFactory;
 
 import com.bxb.sunduk_pay.Mappers.MpinMapper;
 import com.bxb.sunduk_pay.encryption.MpinValidations;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.MpinRequest;
@@ -35,10 +36,8 @@ class GenrateOtpTest {
 
     @Test
     void testGetMpinRequestType_ShouldReturnOTP() {
-        // Act
         MpinRequestType type = service.getMpinRequestType();
 
-        // Assert
         assertEquals(MpinRequestType.OTP, type,
                 "GenerateOtp should return OTP request type");
     }
@@ -79,5 +78,25 @@ class GenrateOtpTest {
 
         verify(kafkaTemplate, times(1)).send(eq("otp-topic"), any(OtpEvent.class));
     }
+
+
+    @Test
+    void testingUserNotFoundWithEmail(){
+    MpinRequest request = MpinRequest.builder()
+                .email("kanbhhh")
+                .build();
+
+    when(mpinValidations.getUserEmailInfo(anyString()))
+                .thenThrow(new UserNotFoundException("this email is not registered with us"));
+
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class,
+                () -> service.perform(request));
+
+        assertTrue(ex.getMessage().contains("email"));
+
+
+
+    }
+
 
 }

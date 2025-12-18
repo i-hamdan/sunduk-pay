@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-//import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
 import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
@@ -23,7 +22,6 @@ import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

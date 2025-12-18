@@ -2,10 +2,14 @@ package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
 import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.model.Investment;
+import com.bxb.sunduk_pay.model.InvestmentDailyHistory;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
+import com.bxb.sunduk_pay.postgress.model.Units;
+import com.bxb.sunduk_pay.repository.InvestmentDailyHistoryRepository;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
 import com.bxb.sunduk_pay.response.InvestmentResponse;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
@@ -15,6 +19,8 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 /**
  * Service to handle updating the risk level of an investment.
@@ -38,6 +44,14 @@ public class UpdateRiskLevelService implements InvestmentOperation {
      * Repository for investment persistence.
      */
     private final InvestmentRepository investmentRepository;
+    /**
+     *
+     */
+
+    private final InvestmentDailyHistoryRepository dailyHistory;
+
+
+    private final SubWalletRepository subWalletRepository;
 
 
     /**
@@ -61,15 +75,23 @@ public class UpdateRiskLevelService implements InvestmentOperation {
     public InvestmentResponse perform(InvestmentRequest investmentRequest) {
 
         User user = validations.getUserInfo(investmentRequest.getUuid());
+            log.info("User validation successful for UUID: {}",
+                    investmentRequest.getUuid());
 
         SubWallet subWallet = validations.findSubWalletIfExists(
                 user.getMainWallet().getMainWalletId(),
                 investmentRequest.getSubWalletId());
+        log.info("SubWallet validation successful for ID: {}",
+                investmentRequest.getSubWalletId());
+
 
         Investment investment = investmentValidation.
                 getInvestmentBySubWalletId(subWallet.getSubWalletId());
 
-        if (Boolean.TRUE.equals(!subWallet.getIsInvested())
+        log.info("Investment retrieval successful for SubWallet ID: {}",
+                investmentRequest.getSubWalletId());
+
+        if (!subWallet.getIsInvested()
                 || !investment.isActive()){
             throw new InvestmentException(
                     "Cannot change risk level for inactive investment.");
@@ -81,14 +103,50 @@ public class UpdateRiskLevelService implements InvestmentOperation {
                         investmentRequest.getRiskLevel()
                         .toString());
 
+
+        subWallet.setRiskLevel(riskLevel);
+
+        log.info("Risk level validation successful. Changing from {} to {}",
+                investment.getRiskLevel().toString(),
+                investmentRequest.getRiskLevel().toString());
+
         PortfolioModel portfolioModel = investmentValidation
                 .getPortfolioModelByRiskLevel(riskLevel.toString());
+        log.info("Portfolio model retrieval successful for risk level: {}",
+                riskLevel.toString());
 
+
+        InvestmentDailyHistory lastSnapshot =
+                dailyHistory.findTopByInvestmentOrderBySnapshotDateDesc(investment);
+
+        if (lastSnapshot == null) {
+            throw new InvestmentException(
+                    "Cannot change risk level before first P/L snapshot"
+            );
+        }
+
+        LocalDate snapshotDate = lastSnapshot.getSnapshotDate();
+        log.info("Using snapshot date for NAV alignment: {}", snapshotDate);
+
+
+        Units newModelUnit = investmentValidation
+                .getUnitsForDate(portfolioModel, snapshotDate);
+
+        double newUnitValue = newModelUnit.getCombinedValue().doubleValue();
+
+        log.info("New model NAV on {} = {}", snapshotDate, newUnitValue);
+
+
+        double currentValue = investment.getCurrentValue();
+        double recalculatedUnit = currentValue/newUnitValue;
+
+
+        investment.setUnits(recalculatedUnit);
         investment.setPortfolioModelId(portfolioModel.getId());
         investment.setRiskLevel(riskLevel);
 
         investmentRepository.save(investment);
-
+        subWalletRepository.save(subWallet);
         return InvestmentResponse.builder()
                 .message("Risk level updated successfully to "
                         + investmentRequest.getRiskLevel()

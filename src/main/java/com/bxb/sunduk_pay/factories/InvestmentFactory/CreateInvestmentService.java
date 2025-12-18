@@ -27,7 +27,7 @@ import java.util.UUID;
 
 /**
  * NEW INVESTMENT CREATION LOGIC USING:
- * 🔥 10-month old UNIT VALUE instead of today's NAV
+ * 10-month old UNIT VALUE instead of today's NAV
  */
 @Service
 @RequiredArgsConstructor
@@ -36,7 +36,7 @@ public class CreateInvestmentService implements InvestmentOperation {
     /** validations class for subWallet.*/
     private final Validations validations;
     /** validation for investment Validations. */
-    private final InvestmentValidation stockValidation;
+    private final InvestmentValidation investmentValidations;
     /** subWallet repository for saved flag. */
     private final SubWalletRepository subWalletRepository;
     /** Investment repository for saved mark as subWallet is invested. */
@@ -67,7 +67,7 @@ public class CreateInvestmentService implements InvestmentOperation {
         log.info("Verifying sub-wallet: {}", subWallet);
 
         // 3) Balance validation
-        stockValidation.ValidateBalanceForInvestment(subWallet.getBalance());
+        investmentValidations.ValidateBalanceForInvestment(subWallet.getBalance());
 
         // 4) Ensure subwallet is not already invested
         validations.validateSubWalletForInvestment(subWallet);
@@ -75,7 +75,7 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         // 5) Fetch portfolio model by risk level
         PortfolioModel portfolioModel =
-                stockValidation.validatePortfolioModelByName
+                investmentValidations.validatePortfolioModelByName
                         (request.getRiskLevel().name());
 
         log.info("Fetched Portfolio Model: {}", portfolioModel.getName());
@@ -84,11 +84,11 @@ public class CreateInvestmentService implements InvestmentOperation {
         double potAmount = subWallet.getBalance();
 
         // 6)  BUY using 6-MONTH OLD UNIT VALUE
-        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(6);
+        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(10);
 
         // get Units of date
         Units unitRecord =
-               stockValidation.getUnitsForDate(portfolioModel,unitPurchaseDate);
+               investmentValidations.getUnitsForDate(portfolioModel,unitPurchaseDate);
 
 
         double unitValue = unitRecord.getCombinedValue().doubleValue();
@@ -113,9 +113,9 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .unitPriceAtPurchase(unitValue)
                 .units(unitsPurchased)
                 .investedAt(LocalDate.now())
-                .UnitPurchaseDate(unitPurchaseDate.atStartOfDay()) // record purpose
+                .UnitPurchaseDate(unitPurchaseDate.atStartOfDay())
                 .updatedAt(LocalDateTime.now())
-                .currentValue(potAmount)   // initial value same as invested
+                .currentValue(potAmount)
                 .profitLoss(0.0)
                 .profitLossPercentage(0.0)
                 .isActive(true)
@@ -125,6 +125,8 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         // 9) Mark wallet as invested
         subWallet.setIsInvested(true);
+        subWallet.setRiskLevel(request.getRiskLevel());
+
         subWalletRepository.save(subWallet);
 
         // 10) Create transaction history

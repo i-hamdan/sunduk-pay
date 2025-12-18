@@ -73,7 +73,7 @@ class MpinResetTest {
         verify(repository, times(1)).save(any());
     }
 
-    // testing user validatios
+    // testing  validatios
     @Test
     void testMpinNotFound() {
         MpinRequest request = MpinRequest.builder()

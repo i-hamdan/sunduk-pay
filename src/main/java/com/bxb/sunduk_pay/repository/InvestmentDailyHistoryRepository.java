@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.repository;
 
+import com.bxb.sunduk_pay.model.Investment;
 import com.bxb.sunduk_pay.model.InvestmentDailyHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -33,6 +34,12 @@ public interface InvestmentDailyHistoryRepository
      * @return list of InvestmentDailyHistory records
      */
     List<InvestmentDailyHistory> findByInvestmentInvestmentId(String investmentId);
-
+    /**
+     * Fetch latest snapshot entry for a given investment
+     * (most recent snapshotDate)
+     */
+    InvestmentDailyHistory findTopByInvestmentOrderBySnapshotDateDesc(
+            Investment investment
+    );
 
 }

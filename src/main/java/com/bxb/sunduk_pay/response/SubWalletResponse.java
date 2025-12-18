@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.util.RiskLevel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,5 +30,7 @@ public class SubWalletResponse {
     private Boolean isInvested;
     /**Profit or loss percentage*/
     private String gainOrLossPercentage;
+
+    private RiskLevel riskLevel;
 }
 
