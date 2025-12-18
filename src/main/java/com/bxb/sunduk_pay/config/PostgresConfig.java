@@ -19,7 +19,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = "com.example.SundukPayHelper.postgress.repository",
+        basePackages = "com.bxb.sunduk_pay.postgress.repository",
         entityManagerFactoryRef = "postgresEntityManagerFactory",
         transactionManagerRef = "postgresTransactionManager"
 )
@@ -48,7 +48,7 @@ public class PostgresConfig {
 
         return builder
                 .dataSource(dataSource)
-                .packages("com.example.SundukPayHelper.postgress.model")
+                .packages("com.bxb.sunduk_pay.postgress.model")
                 .persistenceUnit("postgres")
                 .properties(props)
                 .build();
