@@ -63,8 +63,6 @@ public class UserServiceImpl implements UserService {
      * Repository for contact data access.
      */
 
-    private final ContactRepository contactRepository;
-
 
     /**
      * Handles OAuth login for a user.
