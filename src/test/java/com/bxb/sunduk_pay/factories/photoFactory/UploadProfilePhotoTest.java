@@ -1,7 +1,6 @@
-package com.bxb.sunduk_pay.photoFactory;
+package com.bxb.sunduk_pay.factories.photoFactory;
 
 import com.bxb.sunduk_pay.exception.InvalidPhotoException;
-import com.bxb.sunduk_pay.factories.photoFactory.UploadProfilePhoto;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.PhotoRequest;
@@ -72,7 +71,9 @@ public class UploadProfilePhotoTest {
         when(validations.getUserInfo(TEST_UUID)).thenReturn(user);
         doNothing().when(validations).validatePorfilePhoto(multipartFile);
 
+        assertNotNull(photoRequest.getMultipartFile());
         PhotoResponse response = uploadProfilePhoto.perform(photoRequest);
+
 
         assertNotNull(response);
         assertTrue(response.getMessage().contains(TEST_UUID));
