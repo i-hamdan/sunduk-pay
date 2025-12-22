@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.model.Investment;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
@@ -160,8 +161,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                             "Cannot process payment from an inactive investment.");
                 }
 
+                PortfolioModel portfolioModel = investmentValidation.getPortfolioModelById(investment.getPortfolioModelId());
+
                 Units unit = investmentValidation
-                        .findUnitByDate(investment.getPortfolioModelId(),
+                        .findNextUnit(portfolioModel,
                                 investment.getUnitPurchaseDate().toLocalDate());
                 log.info("Fetched unit for investment update: {}", unit);
 
@@ -217,16 +220,21 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                             "Cannot process payment from an inactive investment.");
                 }
 
+                PortfolioModel portfolioModel = investmentValidation
+                        .getPortfolioModelById(investment.getPortfolioModelId());
+
                 Units unit = investmentValidation
-                        .findUnitByDate(investment.getPortfolioModelId(),
+                        .findNextUnit(portfolioModel,
                                 investment.getUnitPurchaseDate().toLocalDate());
                 log.info("Fetched unit for investment update: {}", unit);
 
-                Investment updatedInvestment = investmentUtil.updateInvestmentOnCredit(investment, unit, amount);
+                Investment updatedInvestment = investmentUtil.updateInvestmentOnCredit(
+                        investment, unit, amount);
 
                 investmentRepository.save(updatedInvestment);
 
-                log.info("Investment details updated successfully: {}", investment.getInvestmentId());
+                log.info("Investment details updated successfully: {}",
+                        investment.getInvestmentId());
 
             }
 

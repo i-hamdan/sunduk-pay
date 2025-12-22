@@ -41,5 +41,5 @@ public interface InvestmentValidation {
 
     PortfolioModel getPortfolioModelByRiskLevel(String riskLevel);
 
-
+    PortfolioModel getPortfolioModelById(Long id);
 }

@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
@@ -127,9 +128,12 @@ public class UserToUserTransferServiceImpl
                         "Cannot process payment from an inactive investment.");
             }
 
-            Units unit = investmentValidation.findUnitByDate(investment
-                            .getPortfolioModelId(),
-                    investment.getUnitPurchaseDate().toLocalDate());
+            PortfolioModel portfolioModel = investmentValidation
+                    .getPortfolioModelById(investment.getPortfolioModelId());
+
+            Units unit = investmentValidation
+                    .findNextUnit(portfolioModel,
+                            investment.getUnitPurchaseDate().toLocalDate());
 
             Investment updatedInvestment =
                     investmentUtil.updateInvestmentOnDebit(
