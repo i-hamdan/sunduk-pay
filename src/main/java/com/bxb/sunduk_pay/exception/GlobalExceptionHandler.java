@@ -525,6 +525,16 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
     }
+    @ExceptionHandler(value = GlobalPotNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGlobalPotNotFoundException(
+            final GlobalPotNotFoundException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
 
 
 

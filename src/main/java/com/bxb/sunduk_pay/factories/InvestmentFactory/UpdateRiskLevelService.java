@@ -119,18 +119,30 @@ public class UpdateRiskLevelService implements InvestmentOperation {
         InvestmentDailyHistory lastSnapshot =
                 dailyHistory.findTopByInvestmentOrderBySnapshotDateDesc(investment);
 
-        if (lastSnapshot == null) {
-            throw new InvestmentException(
-                    "Cannot change risk level before first P/L snapshot"
+
+        LocalDate snapshotDate;
+
+        if (lastSnapshot != null) {
+            snapshotDate = lastSnapshot.getSnapshotDate();
+            log.info("Using last P/L snapshot date: {}", snapshotDate);
+        }
+        else {
+            snapshotDate = investment.getCreatedAt().toLocalDate();
+            log.info(
+                    "No P/L snapshot found. Using investment creation date: {}",
+                    snapshotDate
             );
         }
 
-        LocalDate snapshotDate = lastSnapshot.getSnapshotDate();
+
         log.info("Using snapshot date for NAV alignment: {}", snapshotDate);
 
 
         Units newModelUnit = investmentValidation
                 .getUnitsForDate(portfolioModel, snapshotDate);
+
+
+
 
         double newUnitValue = newModelUnit.getCombinedValue().doubleValue();
 

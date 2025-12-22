@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperation;
 import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperationFactory;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
@@ -178,10 +179,12 @@ public class WalletServiceImpl implements WalletService {
                     throw new InvestmentException(
   "Cannot process payment from an inactive investment.");
                 }
-                Units unit = investmentValidation.findUnitByDate(
-                        investment.getPortfolioModelId(),
-                        investment.getUnitPurchaseDate().toLocalDate()
-                );
+                PortfolioModel portfolioModel = investmentValidation
+                        .getPortfolioModelById(investment.getPortfolioModelId());
+
+                Units unit = investmentValidation
+                        .findNextUnit(portfolioModel,
+                                investment.getUnitPurchaseDate().toLocalDate());
                 Investment updatedInvestment = investmentUtil
                         .updateInvestmentOnDebit(investment, unit,
                         request.getAmount());
@@ -365,9 +368,12 @@ public class WalletServiceImpl implements WalletService {
                             "Cannot process payment from an inactive investment.");
                 }
 
-                Units unit = investmentValidation.findUnitByDate(
-                        investment.getPortfolioModelId(),
-                        investment.getUnitPurchaseDate().toLocalDate());
+                PortfolioModel portfolioModel = investmentValidation
+                        .getPortfolioModelById(investment.getPortfolioModelId());
+
+                Units unit = investmentValidation
+                        .findNextUnit(portfolioModel,
+                                investment.getUnitPurchaseDate().toLocalDate());
 
                 Investment updatedInvestment = investmentUtil
                         .updateInvestmentOnCredit(investment, unit,
@@ -463,7 +469,6 @@ public class WalletServiceImpl implements WalletService {
                 .build();
 
         log.info(" === Add Money Request Completed Successfully === ");
-        log.debug("Response: {}", response);
         return response;
     }
 

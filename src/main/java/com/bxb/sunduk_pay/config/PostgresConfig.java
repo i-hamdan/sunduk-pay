@@ -29,9 +29,9 @@ public class PostgresConfig {
     public DataSource postgresDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/stockdb");
-        dataSource.setUsername("postgres");
-        dataSource.setPassword("root123");
+        dataSource.setJdbcUrl("jdbc:postgresql://postgres_db:5432/stockdb");
+        dataSource.setUsername("sundukHelper123");
+        dataSource.setPassword("sundukHelper123");
         dataSource.setMaximumPoolSize(10);
         return dataSource;
     }
@@ -44,6 +44,7 @@ public class PostgresConfig {
         HashMap<String, Object> props = new HashMap<>();
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        props.put("hibernate.jdbc.time_zone", "Asia/Kolkata");
 
         return builder
                 .dataSource(dataSource)

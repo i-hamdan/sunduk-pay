@@ -173,4 +173,11 @@ public class InvestmentValidationImpl implements InvestmentValidation {
         ()-> new InvestmentException("No portfolio model found for risk level: "
                         + riskLevel));
     }
+
+    @Override
+    public PortfolioModel getPortfolioModelById(Long id) {
+        return portfolioModelRepository.findById(id)
+                .orElseThrow(()->new InvestmentException(
+                        "No portfolio model found for id: " + id));
+    }
 }

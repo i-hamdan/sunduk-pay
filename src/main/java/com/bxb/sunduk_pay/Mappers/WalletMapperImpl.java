@@ -33,12 +33,12 @@ public class WalletMapperImpl implements WalletMapper {
     @Override
     public MainWalletResponse toWalletResponse(
             final MainWallet wallet,
-            final List<SubWallet> subWallets) {
+            final List<SubWalletResponse> subWallets) {
         MainWalletResponse response = new MainWalletResponse();
         response.setMainWalletId(wallet.getMainWalletId());
         response.setBalance(wallet.getBalance());
         response.setUuid(wallet.getUser().getUuid());
-        response.setSubWallets(toSubWalletResponseList(subWallets));
+        response.setSubWallets(subWallets);
         return response;
     }
 
@@ -48,7 +48,7 @@ public class WalletMapperImpl implements WalletMapper {
      * @param subWallet the list of SubWallet entities
      * @return list of SubWalletResponse DTOs
      */
-    private List<SubWalletResponse> toSubWalletResponseList(
+    public List<SubWalletResponse> toSubWalletResponseList(
             final List<SubWallet> subWallet) {
        List<SubWalletResponse> list = new ArrayList<>();
        for (SubWallet subWallet1 : subWallet) {
@@ -77,8 +77,6 @@ public class WalletMapperImpl implements WalletMapper {
         subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
                 .format(formatter));
         subWalletResponse.setIsInvested(subWallet.getIsInvested());
-        subWalletResponse.setRiskLevel(subWallet.getRiskLevel());
-        subWalletResponse.setGainOrLossPercentage("0");
         return subWalletResponse;
     }
 

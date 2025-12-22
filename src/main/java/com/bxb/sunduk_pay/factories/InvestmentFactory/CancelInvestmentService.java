@@ -82,7 +82,7 @@ public class CancelInvestmentService implements InvestmentOperation {
                                 () -> new InvestmentNotFoundException(
                                  "Investment not found for cancellation"));
                 investment.setActive(false);
-                investment.setUpdatedAt(LocalDateTime.now());
+                investment.setCreatedAt(LocalDateTime.now());
 
                 double balanceToDeduct = subWallet.getBalance() * 0.0;
                 // cancellation fee

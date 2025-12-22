@@ -56,6 +56,7 @@ public class CreateSubwalletService implements WalletOperation {
                 mainWalletRequest.getUuid());
       try {
         validations.getUserInfo(mainWalletRequest.getUuid());
+
         log.debug("User validation successful for UUID: {}",
                 mainWalletRequest.getUuid());
 
@@ -65,14 +66,17 @@ public class CreateSubwalletService implements WalletOperation {
                 mainWalletRequest.getUuid());
 
         validations.findSubWalletByName(
-                mainWalletRequest.getSubWalletName(),mainWallet.getMainWalletId());
+                mainWalletRequest.getSubWalletName().trim(),
+                mainWallet.getMainWalletId());
         log.debug("SubWallet name validation passed for name: {}",
                 mainWalletRequest.getSubWalletName());
 
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
                 .filter(sw -> !sw.getIsDeleted()).
                 collect(Collectors.toList());
+
         int size = subWallets.size();
+
         validations.validateNumberOfSubWallets(size);
         log.debug("SubWallet count validation passed. Current size: {}",
                 size);

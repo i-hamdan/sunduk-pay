@@ -14,6 +14,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
 /**
  * Service implementation for sending SMS using Twilio.
  * Falls back to sending emails if SMS fails.
@@ -43,12 +44,12 @@ public class SmsServiceImpl implements SmsService {
     public void initTwilio() {
         try {
             Twilio.init(
-            twilioConfig.getAccountSid(),
-           twilioConfig.getAuthToken());
+                    twilioConfig.getAccountSid(),
+                    twilioConfig.getAuthToken());
             log.info("Twilio initialized successfully.");
         } catch (Exception e) {
             log.error(
-           "Error initializing Twilio: {}", e.getMessage());
+                    "Error initializing Twilio: {}", e.getMessage());
             throw new SmsServiceException("Twilio initialization failed.");
         }
     }
@@ -62,17 +63,18 @@ public class SmsServiceImpl implements SmsService {
      */
     @Override
     public void processSmsEvent(final TransactionEvent event) {
- String message = smsMessageUtil.buildTransactionSms(event);
- try {
-     sendSms(event.getPhoneNumber(), message);
-     log.info("SMS sent for Txn ID: {}", event.getTransactionId());
- } catch (SmsServiceException e) {
-     log.error("SMS failed for Txn ID {}: {}", event.getTransactionId(),
-             e.getMessage());
-     fallbackEmailUtil.sendFallbackTransactionEmail(event);
- }
+        String message = smsMessageUtil.buildTransactionSms(event);
+        try {
+            sendSms(event.getPhoneNumber(), message);
+            log.info("SMS sent for Txn ID: {}", event.getTransactionId());
+        } catch (SmsServiceException e) {
+            log.error("SMS failed for Txn ID {}: {}", event.getTransactionId(),
+                    e.getMessage());
+            fallbackEmailUtil.sendFallbackTransactionEmail(event);
+        }
 
- }
+    }
+
     /**
      * Sends an SMS to the specified phone number.
      *
@@ -84,7 +86,8 @@ public class SmsServiceImpl implements SmsService {
         try {
             Message.creator(new PhoneNumber(to),
                     new PhoneNumber(twilioConfig.getFromNumber()),
-                    message).create();
+                    message
+            ).create();
         } catch (Exception e) {
             log.error("Error while sending SMS to {}: {}",
                     to, e.getMessage());
