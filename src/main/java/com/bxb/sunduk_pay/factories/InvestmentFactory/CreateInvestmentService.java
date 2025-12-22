@@ -114,7 +114,7 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .units(unitsPurchased)
                 .investedAt(LocalDate.now())
                 .UnitPurchaseDate(unitPurchaseDate.atStartOfDay())
-                .updatedAt(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .currentValue(potAmount)
                 .profitLoss(0.0)
                 .profitLossPercentage(0.0)
@@ -126,6 +126,7 @@ public class CreateInvestmentService implements InvestmentOperation {
         // 9) Mark wallet as invested
         subWallet.setIsInvested(true);
         subWallet.setRiskLevel(request.getRiskLevel());
+
 
         subWalletRepository.save(subWallet);
 

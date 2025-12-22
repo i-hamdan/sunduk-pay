@@ -62,7 +62,7 @@ public class Investment {
     /**
     * The date when the investment was last updated.
     */
-    private LocalDateTime updatedAt;
+    private LocalDateTime createdAt;
     /**
      * Indicates whether the investment is currently active.
      */
@@ -89,6 +89,8 @@ public class Investment {
      * The profit or loss percentage from the investment.
      */
     private Double profitLossPercentage;
+
+
 
 }
 

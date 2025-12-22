@@ -92,6 +92,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
         log.debug("Converting amount {} with exchange rate {}",
                 currencyRequest.getAmount(), exchangeRate);
+
         double converted = currencyRequest.getAmount() * exchangeRate;
         log.debug("Converted amount = {}", converted);
 
