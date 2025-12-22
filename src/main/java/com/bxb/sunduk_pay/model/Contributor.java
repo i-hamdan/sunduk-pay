@@ -11,15 +11,15 @@ import java.time.LocalDateTime;
 @Table(name = "contributers")
 @Data
 
-public class Contributer {
+public class Contributor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String contributerId;
+    private String contributorId;
 
-    @OneToOne
-    @JoinColumn(name = "user_contributer_id")
-    private User userContributer;
+    @ManyToOne
+    @JoinColumn(name = "user_contributor_id")
+    private User userContributor;
 
     @ManyToOne
     @JoinColumn(name = "global_pot_id")

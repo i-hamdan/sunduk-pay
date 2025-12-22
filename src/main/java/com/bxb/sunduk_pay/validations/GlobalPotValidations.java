@@ -4,5 +4,5 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 
 public interface GlobalPotValidations {
 
-    void validateIsVerified(String globalPotId);
+    GlobalPot validateGlobalPot(String globalPotId);
 }

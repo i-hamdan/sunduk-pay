@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.Mappers;
 
+import com.bxb.sunduk_pay.model.Contributor;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalWallet;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
@@ -13,4 +14,6 @@ public interface GlobalPotMapper {
     GlobalPotResponse toResponse(GlobalPot pot);
     GlobalPotResponse toResponse(GlobalWallet wallet);
     GlobalWallet toEntityWallet(final GlobalPotRequest request);
+    Contributor toContributerEntity(GlobalPotRequest request, GlobalPot pot);
+    GlobalPotResponse toResponse();
 }

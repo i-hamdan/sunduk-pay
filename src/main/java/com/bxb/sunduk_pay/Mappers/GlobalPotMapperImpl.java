@@ -8,7 +8,6 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -139,10 +138,42 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
 
         wallet.setBalance(0.0);
         wallet.setIsActive(true);
-        wallet.setCreatedAt(LocalDateTime.now());
 
         return wallet;
     }
+
+    /**
+     * @param request
+     */
+    @Override
+    public Contributor toContributerEntity(GlobalPotRequest request,
+                                           GlobalPot pot) {
+        Contributor contributor = new Contributor();
+        contributor.setName(request.getContributorName());
+        contributor.setAmountContributed(request.getAmountContributed());
+        contributor.setIsAnonymous(request.getIsAnonymous());
+        contributor.setUserContributor(userRepository
+                .findById(request.getUserContributorId())
+                .orElseThrow(()-> new UserNotFoundException(
+                        "User not found with ID: "
+                                + request.getUserContributorId())));
+        contributor.setProfileImage(request.getContributorImage());
+        contributor.setIsUser(request.getIsUser());
+        contributor.setGlobalPot(pot);
+        return contributor;
+    }
+
+    /**
+     * @param
+     * @return
+     */
+    @Override
+    public GlobalPotResponse toResponse() {
+        GlobalPotResponse res = new GlobalPotResponse();
+        res.setStatus("Contributer added successfully");
+        return res;
+    }
+
     private void mapMedia(GlobalPot pot, GlobalPotRequest request) {
         pot.setPrimaryImage(request.getPrimaryImage());
         pot.setSecondaryImage(request.getSecondaryImage());

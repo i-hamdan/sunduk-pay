@@ -5,13 +5,14 @@ public enum GlobalPotRequestType {
     UPDATE_POT,
     DELETE_POT,
     FETCH_POTS,
+    VERIFY_POT,
 
     CREATE_WALLET,
     UPDATE_WALLET,
     DELETE_WALLET,
     FETCH_WALLETS,
 
-    ADD_CONTRIBUTION, // Handled by AddContributorService
+    ADD_CONTRIBUTER, // Handled by AddContributorService
     FOLLOW_POT,       // Handled by FollowPotService
     ADD_TESTIMONIAL
 

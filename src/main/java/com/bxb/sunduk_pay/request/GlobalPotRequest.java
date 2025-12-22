@@ -57,4 +57,11 @@ public class GlobalPotRequest {
 
     private GlobalPotRequestType globalPotRequestType;
     private String globalPotId;
+
+    private String contributorName;
+    private Double amountContributed;
+    private String userContributorId;
+    private Boolean isAnonymous;
+    private Boolean isUser;
+    private byte[] contributorImage;
 }

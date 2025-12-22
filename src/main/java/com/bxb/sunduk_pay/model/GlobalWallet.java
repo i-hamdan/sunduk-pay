@@ -1,9 +1,9 @@
 package com.bxb.sunduk_pay.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -16,8 +16,16 @@ public class GlobalWallet {
     private String globalWalletId;
 
     private Double balance;
-    private LocalDateTime createdAt;
     private Boolean isActive;
 
+    @OneToOne(mappedBy = "globalWallet")
+    private GlobalPot globalPot;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
 }

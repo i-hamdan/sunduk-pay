@@ -136,7 +136,7 @@ public class GlobalPot {
     // --- 6. COLLECTIONS (Bidirectional) ---
 
     @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL)
-    private List<Contributer> contributors;
+    private List<Contributor> contributors;
 
     @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL)
     @ToStringExclude
