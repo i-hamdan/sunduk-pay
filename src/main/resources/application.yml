@@ -1,4 +1,3 @@
-
 twilio:
   account-sid: ACdf2676753d81814c50b7115c5617a9a4
   auth-token: b94932d45ef4af3f720d5096a94f9f19
@@ -8,15 +7,16 @@ spring:
   mail:
     host: smtp.hostinger.com
     port: 587
-    username: notifications@sundukpay.com
-    password: Sundukpay@25
+    username: ${SMTP_USERNAME}
+    password: ${SMTP_PASSWORD}
     properties:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
   redis:
-    host: localhost
+    host: redis
     port: 6379
+    timeout: 60000
     lettuce:
       pool:
         max-active: 16
@@ -26,6 +26,12 @@ spring:
 
   config:
     import: classpath:queries.yml
+
+    #  datasource:
+    #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
+  #    username: walletuser
+  #    password: walletpass123
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -48,7 +54,12 @@ spring:
 
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
+    properties:
+      security.protocol: PLAINTEXT
+      session.timeout.ms: 45000
+      request.timeout.ms: 60000
+      retry.backoff.ms: 5000
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -76,9 +87,8 @@ spring:
               - openid
               - profile
               - email
+            redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
 
-            redirect-uri: "{baseUrl}/login/oauth2/code/google"
-        #            redirect-uri: "https://85ccfd41348f.ngrok-free.app/api/sunduk-service/login/oauth2/code/google"
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
@@ -92,7 +102,7 @@ server:
   servlet:
     context-path: /api/sunduk-service
     session:
-      timeout: 30d
+      timeout: 60m
       cookie:
         same-site: none
         secure: true
@@ -114,13 +124,14 @@ sunduk:
 
 exchange:
   api:
-    url: https://v6.exchangerate-api.com/v6/09a314fc07e168435db69de3
+    url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
 stripe:
   key:
-    secret: sk_test_51RpVpD95xk3wBgccWhhepgDwxZwDAt4QM8huVR4W0kYhivEUljSw2untlADI2TJsMVBatxVpcCPCoLQft89NkwoO00bGWRE8xR
+    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
 
   webhook:
-    secret: whsec_3e927c453a257e87bdd1e7955b41653afb52feec4282321a0235ecb5c8dde6a6
+    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+
 
 resilience4j:
   circuitbreaker:
