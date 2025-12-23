@@ -3,6 +3,8 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,7 +14,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "global_pots")
 public class GlobalPot {
 
@@ -77,9 +80,9 @@ public class GlobalPot {
 
     private Double goalAmount;
 
-    private Double contributedBalance = 0.0;
+    private Double contributedBalance;
 
-    private Double currentBalance = 0.0;
+    private Double currentBalance;
 
     private LocalDate goalDate;
 

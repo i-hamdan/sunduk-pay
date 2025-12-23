@@ -75,7 +75,7 @@ public class FetchWalletService implements WalletOperation {
 
         List<SubWalletResponse> list = subWalletResponseList.stream()
                 .map(subWallet -> {
-                    if (subWallet.getIsInvested()) {
+                    if(subWallet.getIsInvested()) {
                         Investment investment = investmentValidation
                                 .getInvestmentBySubWalletId(subWallet.getSubWalletId());
                         subWallet.setGainOrLossPercentage(investment.getProfitLossPercentage()

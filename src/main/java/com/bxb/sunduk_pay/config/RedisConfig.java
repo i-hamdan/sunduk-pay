@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.config;
 
 import com.bxb.sunduk_pay.model.ChatMessage;
+import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -161,6 +162,30 @@ public class RedisConfig {
 
         template.afterPropertiesSet();
 
+        return template;
+    }
+
+    @Bean
+    public RedisTemplate<String, GlobalPotResponse>
+    globalPotResponseRedisTemplate(RedisConnectionFactory connectionFactory){
+        RedisTemplate<String,GlobalPotResponse> template =
+                new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        Jackson2JsonRedisSerializer<GlobalPotResponse> serializer
+                = new Jackson2JsonRedisSerializer<>(
+                objectMapper,GlobalPotResponse.class);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(serializer);
+        template.setHashValueSerializer(serializer);
+
+        template.afterPropertiesSet();
         return template;
     }
 

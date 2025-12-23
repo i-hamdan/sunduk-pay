@@ -85,5 +85,14 @@ public class GenerateKeyUtil {
         return transactionKey;
     }
 
+    public String getGlobalPotKey(String globalPotId){
+        if (globalPotId == null ) {
+            throw new InvalidPayloadException(
+                    "Sender and Receiver IDs cannot be null");
+        }
+        String key = globalPotId.substring(0, SIX);
+        return "GLOBAL_POT_" + key;
+    }
+
 }
 

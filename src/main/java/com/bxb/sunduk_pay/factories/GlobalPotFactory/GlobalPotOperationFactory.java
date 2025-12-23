@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class GlobalPotOperationFactory {
      * * @param request The incoming GlobalPotRequest containing the RequestType.
      * @return The response from the specific operation handler.
      */
-    public GlobalPotResponse performOperation(GlobalPotRequest request) {
+    public GlobalPotResponse performOperation(GlobalPotRequest request) throws IOException {
         GlobalPotRequestType requestType = request.getGlobalPotRequestType();
 
         GlobalPotOperation operation = getOperation(requestType);

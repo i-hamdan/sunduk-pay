@@ -1,9 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -12,7 +10,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "followers")
-@Data
+@Getter
+@Setter
 @Builder
 public class Follower {
 

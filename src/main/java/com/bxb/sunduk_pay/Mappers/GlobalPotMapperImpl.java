@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     /**
      * Converts the incoming request into a persistence-ready Entity.
      */
-    public GlobalPot toEntity(GlobalPotRequest request) {
+    public GlobalPot toEntity(GlobalPotRequest request) throws IOException {
         if (request == null) return null;
 
         GlobalPot pot = new GlobalPot();
@@ -114,11 +115,33 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-    public GlobalPotResponse toResponse(GlobalPot pot) {
+    public GlobalPotResponse toGlobalPotResponse(GlobalPot pot) {
 
-        GlobalPotResponse res = new GlobalPotResponse();
-        res.setStatus("Global Pot created successfully");
-        return res;
+        return GlobalPotResponse.builder()
+                .globalPotId(pot.getGlobalPotId())
+                .caseTitle(pot.getCaseTitle())
+                .caseCategory(pot.getCaseCategory().toString())
+                .caseRequirementType(pot.getCaseRequirementType().toString())
+                .potScope(pot.getPotScope().toString())
+                .description(pot.getDescription())
+
+                .address(pot.getAddress())
+                .city(pot.getCity())
+                .country(pot.getCountry())
+
+                .goalAmount(pot.getGoalAmount())
+                .contributedBalance(pot.getContributedBalance())
+                .currentBalance(pot.getCurrentBalance())
+                .goalDate(pot.getGoalDate())
+
+                .beneficiaryName(pot.getBeneficiaryName())
+                .relationToBeneficiary(pot.getRelationToBeneficiary())
+
+                .isVerified(false)
+
+                .isActive(pot.getIsActive())
+
+                .message("Global Pot created successfully").build();
     }
 
     /**
@@ -126,7 +149,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
      * @return
      */
     @Override
-    public GlobalPotResponse toResponse(GlobalWallet wallet) {
+    public GlobalPotResponse toGlobalPotResponse(GlobalWallet wallet) {
        GlobalPotResponse res = new GlobalPotResponse();
        res.setStatus("Global Wallet created successfully");
        return res;
@@ -147,7 +170,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
      */
     @Override
     public Contributor toContributerEntity(GlobalPotRequest request,
-                                           GlobalPot pot) {
+                                           GlobalPot pot) throws IOException {
         Contributor contributor = new Contributor();
         contributor.setName(request.getContributorName());
         contributor.setAmountContributed(request.getAmountContributed());
@@ -157,7 +180,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .orElseThrow(()-> new UserNotFoundException(
                         "User not found with ID: "
                                 + request.getUserContributorId())));
-        contributor.setProfileImage(request.getContributorImage());
+        contributor.setProfileImage(request.getContributorImage().getBytes());
         contributor.setIsUser(request.getIsUser());
         contributor.setGlobalPot(pot);
         return contributor;
@@ -168,26 +191,26 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
      * @return
      */
     @Override
-    public GlobalPotResponse toResponse() {
+    public GlobalPotResponse toGlobalPotResponse() {
         GlobalPotResponse res = new GlobalPotResponse();
         res.setStatus("Contributer added successfully");
         return res;
     }
 
-    private void mapMedia(GlobalPot pot, GlobalPotRequest request) {
-        pot.setPrimaryImage(request.getPrimaryImage());
-        pot.setSecondaryImage(request.getSecondaryImage());
+    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+        pot.setPrimaryImage(request.getPrimaryImage().getBytes());
+        pot.setSecondaryImage(request.getSecondaryImage().getBytes());
 
-        pot.setKycDocument(request.getKycDocument());
+        pot.setKycDocument(request.getKycDocument().getBytes());
         pot.setKycDocumentTitle(request.getKycDocumentTitle());
 
-        pot.setInstitutionDocument(request.getInstitutionDocument());
+        pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
         pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
 
-        pot.setSupportingDocument(request.getSupportingDocument());
+        pot.setSupportingDocument(request.getSupportingDocument().getBytes());
         pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
 
-        pot.setCustomDocument(request.getCustomDocument());
+        pot.setCustomDocument(request.getCustomDocument().getBytes());
         pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
     }
 }

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 public class GlobalPotController {
 
@@ -23,8 +25,10 @@ public class GlobalPotController {
 
 
     @PostMapping("/global-pot")
-    public ResponseEntity<GlobalPotResponse> globalPotApi(@ModelAttribute GlobalPotRequest request) {
-        return ResponseEntity.ok(globalPotOperationFactory.performOperation(request)
+    public ResponseEntity<GlobalPotResponse> globalPotApi(
+            @ModelAttribute GlobalPotRequest request) throws IOException {
+        return ResponseEntity.ok(globalPotOperationFactory
+                .performOperation(request)
 );
     }
 }

@@ -45,7 +45,7 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
     public GlobalPotResponse perform(GlobalPotRequest request) {
 
         // 1. Fetch and Validate the Pot existence
-        GlobalPot globalPot = globalPotValidations.validateGlobalPot(request.getGlobalPotId());
+        GlobalPot globalPot = globalPotValidations.getGlobalPot(request.getGlobalPotId());
         GlobalWallet globalWallet = new GlobalWallet();
 
         // 2. Logic: Ensure a wallet is created or retrieved
@@ -65,6 +65,6 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
         }
 
         // 3. Return the specialized Wallet Response
-        return globalPotMapper.toResponse(globalWallet);
+        return globalPotMapper.toGlobalPotResponse(globalWallet);
     }
 }

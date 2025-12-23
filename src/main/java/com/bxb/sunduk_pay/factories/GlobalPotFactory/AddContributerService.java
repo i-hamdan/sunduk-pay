@@ -11,6 +11,8 @@ import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 public class AddContributerService implements GlobalPotOperation{
 
@@ -28,7 +30,7 @@ public class AddContributerService implements GlobalPotOperation{
      */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
-        return GlobalPotRequestType.ADD_CONTRIBUTER;
+        return GlobalPotRequestType.ADD_CONTRIBUTOR;
     }
 
     /**
@@ -37,12 +39,12 @@ public class AddContributerService implements GlobalPotOperation{
      */
     @Override
     @Transactional
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
         GlobalPot globalPot=
-                globalPotValidations.validateGlobalPot(request.getGlobalPotId());
+                globalPotValidations.getGlobalPot(request.getGlobalPotId());
         Contributor contributor =globalPotMapper.toContributerEntity(request,
                 globalPot);
         contributerRepository.save(contributor);
-        return globalPotMapper.toResponse();
+        return globalPotMapper.toGlobalPotResponse();
     }
 }

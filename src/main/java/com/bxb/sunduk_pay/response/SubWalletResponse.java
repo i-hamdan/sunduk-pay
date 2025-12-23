@@ -1,8 +1,7 @@
 package com.bxb.sunduk_pay.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Response object representing a sub-wallet with its details.
@@ -10,6 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SubWalletResponse {
     /** The unique identifier of the sub-wallet. */
     private String subWalletId;

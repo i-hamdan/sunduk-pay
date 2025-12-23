@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+
 @Service
 public class CreateGlobalPotService implements GlobalPotOperation{
 
@@ -38,9 +40,9 @@ public class CreateGlobalPotService implements GlobalPotOperation{
      */
     @Override
     @Transactional
-    public GlobalPotResponse perform(GlobalPotRequest request) {
-        GlobalPot newPot=mapper.toEntity(request);
-        GlobalPot savedPot=repository.save(newPot);
-        return mapper.toResponse(savedPot);
+    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
+        GlobalPot newPot = mapper.toEntity(request);
+        GlobalPot savedPot = repository.save(newPot);
+        return mapper.toGlobalPotResponse(savedPot);
     }
 }

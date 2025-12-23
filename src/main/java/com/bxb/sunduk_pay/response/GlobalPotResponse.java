@@ -1,11 +1,14 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.model.Testimonial;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor // Added for Jackson deserialization
 @Builder
@@ -21,7 +24,7 @@ public class GlobalPotResponse {
     private String caseRequirementType;
     private String potStatus;
     private String description;
-
+    private List<Testimonial> testimonials;
     private String primaryImage;
     private String secondaryImage;
 
@@ -45,7 +48,7 @@ public class GlobalPotResponse {
 
 
     private Integer contributorCount;
-    private Long followerCount;
+    private Integer followerCount;
 
     // --- Status Message ---
     private String message;

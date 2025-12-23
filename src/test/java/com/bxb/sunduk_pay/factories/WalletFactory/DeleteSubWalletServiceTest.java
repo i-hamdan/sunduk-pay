@@ -68,6 +68,70 @@ class DeleteSubWalletServiceTest {
 
         verify(mainWalletRepository,times(1)).save(mainWallet);
 
+    }
+
+    @Test
+    public void deleteSubWalletWithNonZeroBalanceTest() {
+
+        MainWalletRequest request = MainWalletRequest
+                .builder().mainWalletId(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID().toString())
+                .subWalletId(UUID.randomUUID().toString())
+                .requestType(RequestType.DELETE)
+                .build();
+
+        User user = User.builder().uuid(UUID.randomUUID().toString())
+                .fullName("zaid").build();
+
+        MainWallet mainWallet = MainWallet.builder()
+                .user(user).mainWalletId(UUID.randomUUID().toString())
+                .subWallets(new ArrayList<>()).build();
+
+        SubWallet subWallet = SubWallet.builder()
+                .subWalletId(UUID.randomUUID().toString())
+                .mainWallet(mainWallet)
+                .subWalletName("car")
+                .balance(100d)
+                .isDeleted(false)
+                .build();
+
+        when(validations.getUserInfo(anyString())).thenReturn(user);
+
+        when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
+
+        when(validations.getMainWalletByWalletId(anyString())).thenReturn(mainWallet);
+
+        when(validations.findSubWalletIfExists(anyString(),anyString())).thenReturn(subWallet);
+
+        assertThrows(Exception.class,()->{
+            deleteSubWalletService.perform(request);
+        });
 
     }
+
+    @Test
+    public void deleteNonExistentSubWalletTest() {
+
+        MainWalletRequest request = MainWalletRequest
+                .builder().mainWalletId(UUID.randomUUID().toString())
+                .uuid(UUID.randomUUID().toString())
+                .subWalletId(UUID.randomUUID().toString())
+                .requestType(RequestType.DELETE)
+                .build();
+
+        User user = User.builder().uuid(UUID.randomUUID().toString())
+                .fullName("zaid").build();
+
+        MainWallet mainWallet = MainWallet.builder()
+                .user(user).mainWalletId(UUID.randomUUID().toString())
+                .subWallets(new ArrayList<>()).build();
+        when(validations.getUserInfo(anyString())).thenReturn(user);
+        when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
+        when(validations.getMainWalletByWalletId(anyString())).thenReturn(mainWallet);
+        when(validations.findSubWalletIfExists(anyString(),anyString())).thenReturn(null);
+
+        assertThrows(Exception.class,()->{
+            deleteSubWalletService.perform(request);
+        });
+}
 }

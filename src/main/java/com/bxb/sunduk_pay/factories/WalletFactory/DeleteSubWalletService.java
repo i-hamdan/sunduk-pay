@@ -107,9 +107,9 @@ public class DeleteSubWalletService implements WalletOperation {
                                 + ". Please transfer or withdraw the funds first."
                 );
             }
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new CannotDeleteWalletException(
-                    "Invalid input: " + e.getMessage());
+                    e.getMessage());
         }
 
     }

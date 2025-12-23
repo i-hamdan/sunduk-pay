@@ -11,11 +11,18 @@ import java.io.IOException;
 public interface GlobalPotMapper {
 
     GlobalPot toEntity(GlobalPotRequest request) throws IOException;
+
     void updateEntity(GlobalPot pot, GlobalPotRequest request);
+
     GlobalPotRequest toRequest(GlobalPot pot);
-    GlobalPotResponse toResponse(GlobalPot pot);
-    GlobalPotResponse toResponse(GlobalWallet wallet);
+
+    GlobalPotResponse toGlobalPotResponse(GlobalPot pot);
+
+    GlobalPotResponse toGlobalPotResponse(GlobalWallet wallet);
+
     GlobalWallet toEntityWallet(final GlobalPotRequest request);
-    Contributor toContributerEntity(GlobalPotRequest request, GlobalPot pot);
-    GlobalPotResponse toResponse();
+
+    Contributor toContributerEntity(GlobalPotRequest request, GlobalPot pot) throws IOException;
+
+    GlobalPotResponse toGlobalPotResponse();
 }
