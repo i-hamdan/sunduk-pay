@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,12 +38,12 @@ public class GlobalPotRequest {
     private String customDocumentTitle;
 
     // --- Binary Media (Images & Docs) ---
-    private byte[] primaryImage;
-    private byte[] secondaryImage;
-    private byte[] kycDocument;
-    private byte[] institutionDocument;
-    private byte[] supportingDocument;
-    private byte[] customDocument;
+    private MultipartFile primaryImage;
+    private MultipartFile secondaryImage;
+    private MultipartFile kycDocument;
+    private MultipartFile institutionDocument;
+    private MultipartFile supportingDocument;
+    private MultipartFile customDocument;
 
     // --- Audit & Ownership ---
     private Boolean isVerified;
