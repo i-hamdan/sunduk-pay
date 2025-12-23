@@ -64,5 +64,5 @@ public class GlobalPotRequest {
     private String userContributorId;
     private Boolean isAnonymous;
     private Boolean isUser;
-    private byte[] contributorImage;
+    private MultipartFile contributorImage;
 }

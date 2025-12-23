@@ -45,7 +45,7 @@ public class GlobalPotResponse {
 
 
     private Integer contributorCount;
-    private Integer followerCount;
+    private Long followerCount;
 
     // --- Status Message ---
     private String message;
