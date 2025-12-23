@@ -9,7 +9,4 @@ public interface FollowerRepository extends JpaRepository<Follower, String> {
 
     // check already followed
     boolean existsByFollowerUserAndGlobalPot(User followerUser, GlobalPot globalPot);
-
-    // count followers of a pot
-    long countByGlobalPot(GlobalPot globalPot);
 }
