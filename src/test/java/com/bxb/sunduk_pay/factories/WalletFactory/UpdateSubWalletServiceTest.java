@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.factories.WalletFactory;
 
 import com.bxb.sunduk_pay.exception.CannotUpdateWalletException;
+import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.User;
@@ -28,80 +29,185 @@ class UpdateSubWalletServiceTest {
 
     @Mock
     private MainWalletRepository mainWalletRepository;
+
     @Mock
     private Validations validations;
+
     @InjectMocks
     private UpdateSubWalletService updateSubWalletService;
 
     @Test
-    public void runUpdateTargetBalanceTest() {
-        MainWalletRequest request = MainWalletRequest.builder().uuid(UUID.randomUUID().toString())
-                .mainWalletId(UUID.randomUUID().toString())
-                .subWalletId(UUID.randomUUID().toString())
+    void runUpdateTargetBalanceTest() {
+
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("sub-1")
                 .actionType(UpdateWalletActionType.GOAL_AMOUNT)
                 .targetBalance(2000d)
-                .requestType(RequestType.UPDATE).build();
+                .requestType(RequestType.UPDATE)
+                .build();
 
-        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-        MainWallet mainWallet =  MainWallet.builder().mainWalletId(UUID.randomUUID().toString()).build();
-        SubWallet subWallet = SubWallet.builder().subWalletName("Savings")
-                .subWalletId(UUID.randomUUID().toString())
-                .targetBalance(1500d).updatedAt(LocalDateTime.now()).build();
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
+        SubWallet subWallet = SubWallet.builder()
+                .subWalletId("sub-1")
+                .subWalletName("Savings")
+                .targetBalance(1500d)
+                .build();
 
         when(validations.getUserInfo(anyString())).thenReturn(user);
         when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
-        when(validations.getMainWalletByWalletId(anyString())).thenReturn(mainWallet);
-        when(validations.findSubWalletIfExists(anyString(),anyString())).thenReturn(subWallet);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(subWallet);
 
-        MainWalletResponse response = updateSubWalletService.perform(request);
+        MainWalletResponse response =
+                updateSubWalletService.perform(request);
+
         assertNotNull(response);
+        verify(mainWalletRepository).save(mainWallet);
     }
 
     @Test
-    public void runUpdateTargetDateTest(){
-        MainWalletRequest request = MainWalletRequest.builder().uuid(UUID.randomUUID().toString())
-                .mainWalletId(UUID.randomUUID().toString())
-                .subWalletId(UUID.randomUUID().toString())
+    void runUpdateTargetDateTest() {
+
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("sub-1")
                 .actionType(UpdateWalletActionType.GOAL_DATE)
-                .targetDate(LocalDate.of(2025,12,16))
-                .requestType(RequestType.UPDATE).build();
+                .targetDate(LocalDate.of(2025, 12, 16))
+                .requestType(RequestType.UPDATE)
+                .build();
 
-        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-        MainWallet mainWallet =  MainWallet.builder().mainWalletId(UUID.randomUUID().toString()).build();
-        SubWallet subWallet = SubWallet.builder().subWalletName("Savings")
-                .subWalletId(UUID.randomUUID().toString())
-                .targetDate(LocalDate.of(2025,11,29)).updatedAt(LocalDateTime.now()).build();
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
+        SubWallet subWallet = SubWallet.builder()
+                .subWalletId("sub-1")
+                .subWalletName("Savings")
+                .targetDate(LocalDate.of(2025, 11, 29))
+                .build();
 
         when(validations.getUserInfo(anyString())).thenReturn(user);
         when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
-        when(validations.getMainWalletByWalletId(anyString())).thenReturn(mainWallet);
-        when(validations.findSubWalletIfExists(anyString(),anyString())).thenReturn(subWallet);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(subWallet);
 
-        MainWalletResponse response = updateSubWalletService.perform(request);
+        MainWalletResponse response =
+                updateSubWalletService.perform(request);
+
         assertNotNull(response);
-
+        verify(mainWalletRepository).save(mainWallet);
     }
 
     @Test
-    public void runUpdateSubWalletWithoutSubWallet(){
-        MainWalletRequest request = MainWalletRequest.builder().uuid(UUID.randomUUID().toString())
-                .mainWalletId(UUID.randomUUID().toString())
-                .subWalletId(UUID.randomUUID().toString())
+    void runUpdateSubWalletWithoutSubWalletTargetBalance() {
+
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("invalid-sub")
                 .actionType(UpdateWalletActionType.GOAL_AMOUNT)
                 .targetBalance(2000d)
-                .requestType(RequestType.UPDATE).build();
+                .requestType(RequestType.UPDATE)
+                .build();
 
-        User user = User.builder().uuid(UUID.randomUUID().toString()).build();
-        MainWallet mainWallet =  MainWallet.builder().mainWalletId(UUID.randomUUID().toString()).build();
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
 
         when(validations.getUserInfo(anyString())).thenReturn(user);
         when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
-        when(validations.getMainWalletByWalletId(anyString())).thenReturn(mainWallet);
-        when(validations.findSubWalletIfExists(anyString(),anyString())).thenReturn(null);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(null);
 
-//        MainWalletResponse response = updateSubWalletService.perform(request);
-  assertThrows(CannotUpdateWalletException.class, ()->
-          updateSubWalletService.perform(request));
+        assertThrows(CannotUpdateWalletException.class,
+                () -> updateSubWalletService.perform(request));
+
+        verify(mainWalletRepository, never()).save(any());
     }
 
+    @Test
+    void updateSubWalletTargetDateWithoutSubWallet() {
+
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("invalid-sub")
+                .actionType(UpdateWalletActionType.GOAL_DATE)
+                .targetDate(LocalDate.of(2025, 12, 16))
+                .requestType(RequestType.UPDATE)
+                .build();
+
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
+
+        when(validations.getUserInfo(anyString())).thenReturn(user);
+        when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(null);
+
+        assertThrows(CannotUpdateWalletException.class,
+                () -> updateSubWalletService.perform(request));
+
+        verify(mainWalletRepository, never()).save(any());
+    }
+
+    @Test
+    void runUpdateSubWalletWithInvalidTargetBalance() {
+
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("sub-1")
+                .actionType(UpdateWalletActionType.GOAL_AMOUNT)
+                .targetBalance(0d)
+                .requestType(RequestType.UPDATE)
+                .build();
+
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
+        SubWallet subWallet = SubWallet.builder()
+                .subWalletId("sub-1")
+                .subWalletName("Savings")
+                .targetBalance(1500d)
+                .build();
+
+        when(validations.getUserInfo(anyString())).thenReturn(user);
+        when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(subWallet);
+
+        assertThrows(InvalidPayloadException.class,
+                () -> updateSubWalletService.perform(request));
+
+        verify(mainWalletRepository, never()).save(any());
+    }
+
+
+    @Test
+    void updateSubWalletWithInvalidActionType(){
+        MainWalletRequest request = MainWalletRequest.builder()
+                .uuid("user-1")
+                .subWalletId("sub-1")
+                .actionType(UpdateWalletActionType.RENAME_POT)
+                .targetBalance(0d)
+                .requestType(RequestType.UPDATE)
+                .build();
+
+
+        User user = User.builder().uuid("user-1").build();
+        MainWallet mainWallet = MainWallet.builder().mainWalletId("main-1").build();
+        SubWallet subWallet = SubWallet.builder()
+                .subWalletId("sub-1")
+                .subWalletName("Savings")
+                .targetBalance(1500d)
+                .build();
+
+        when(validations.getUserInfo(anyString())).thenReturn(user);
+        when(validations.getMainWalletInfo(anyString())).thenReturn(mainWallet);
+        when(validations.findSubWalletIfExists(anyString(), anyString()))
+                .thenReturn(subWallet);
+
+
+        assertThrows(InvalidPayloadException.class,
+                ()->updateSubWalletService.perform(request));
+
+
+
+    }
 }

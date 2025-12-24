@@ -52,6 +52,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         // --- 3. Financials & Dates ---
         pot.setContributedBalance(0.0);
         pot.setCurrentBalance(0.0);
+        pot.setGoalDate(request.getGoalDate());
         pot.setGoalAmount(request.getGoalAmount());
 
         // --- 4. Media Mapping (Private Helper) ---
@@ -122,7 +123,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .caseRequirementType(pot.getCaseRequirementType().toString())
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
-
+                .primaryImage(toBase64(pot.getPrimaryImage()))
+                .secondaryImage(toBase64(pot.getSecondaryImage()))
+                .kycDocumentTitle(pot.getKycDocumentTitle())
+                .kycDocument(toBase64(pot.getKycDocument()))
+                .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
+                .institutionDocument(toBase64(pot.getInstitutionDocument()))
+                .supportingDocumentTitle(pot.getSupportingDocumentTitle())
+                .supportingDocument(toBase64(pot.getSupportingDocument()))
+                .customDocumentTitle(pot.getCustomDocumentTitle())
+                .customDocument(toBase64(pot.getCustomDocument()))
                 .address(pot.getAddress())
                 .city(pot.getCity())
                 .country(pot.getCountry())

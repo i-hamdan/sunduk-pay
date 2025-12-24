@@ -28,6 +28,14 @@ public class GlobalPotResponse {
     private List<Testimonial> testimonials;
     private String primaryImage;
     private String secondaryImage;
+    private String kycDocumentTitle;
+    private String kycDocument;
+    private String institutionDocumentTitle;
+    private String institutionDocument;
+    private String supportingDocumentTitle;
+    private String supportingDocument;
+    private String customDocumentTitle;
+    private String customDocument;
 
     // --- Geolocation ---
     private String address;
