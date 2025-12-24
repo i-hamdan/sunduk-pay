@@ -75,6 +75,7 @@ public class DeleteSubWalletService implements WalletOperation {
                                 + mainWalletRequest.getSubWalletId()
                                 + " does not exist.");
             }
+
             log.debug(
                     "Found SubWallet. subWalletId={}, subWalletName={}, balance={}",
                     subWallet.getSubWalletId(), subWallet.getSubWalletName(),

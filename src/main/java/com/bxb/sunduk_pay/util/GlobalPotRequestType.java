@@ -15,6 +15,7 @@ public enum GlobalPotRequestType {
 
     ADD_CONTRIBUTOR, // Handled by AddContributorService
     FOLLOW_POT,       // Handled by FollowPotService
-    ADD_TESTIMONIAL
+    ADD_TESTIMONIAL,
+    FETCH_GLOBAL_POT
 
 }

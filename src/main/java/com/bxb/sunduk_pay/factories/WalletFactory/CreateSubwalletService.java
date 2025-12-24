@@ -55,22 +55,28 @@ public class CreateSubwalletService implements WalletOperation {
         log.info("Starting SubWallet creation for User UUID: {}",
                 mainWalletRequest.getUuid());
       try {
+          // validating user
         validations.getUserInfo(mainWalletRequest.getUuid());
 
         log.debug("User validation successful for UUID: {}",
                 mainWalletRequest.getUuid());
 
+        // validation main wallet
         MainWallet mainWallet = validations.getMainWalletInfo(
                 mainWalletRequest.getUuid());
-        log.debug("MainWallet fetched successfully for UUID: {}",
+
+          log.debug("MainWallet fetched successfully for UUID: {}",
                 mainWalletRequest.getUuid());
 
+          // validation pot name
         validations.findSubWalletByName(
                 mainWalletRequest.getSubWalletName().trim(),
                 mainWallet.getMainWalletId());
+
         log.debug("SubWallet name validation passed for name: {}",
                 mainWalletRequest.getSubWalletName());
 
+        // validating size of subwallets
         List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
                 .filter(sw -> !sw.getIsDeleted()).
                 collect(Collectors.toList());
@@ -81,6 +87,7 @@ public class CreateSubwalletService implements WalletOperation {
         log.debug("SubWallet count validation passed. Current size: {}",
                 size);
 
+        // creating new subWallet
         SubWallet subWallet = SubWallet.builder()
                 .subWalletId(UUID.randomUUID().toString())
                 .balance(0d)
@@ -93,20 +100,24 @@ public class CreateSubwalletService implements WalletOperation {
                 .createdAt(LocalDateTime.now())
                 .mainWallet(mainWallet)
                 .build();
+
         log.info("New SubWallet built with name={} and targetBalance={}",
                 subWallet.getSubWalletName(), subWallet.getTargetBalance());
 
         subWalletRepository.save(subWallet);
+
 
         mainWallet.getSubWallets().add(subWallet);
         mainWalletRepository.save(mainWallet);
         log.info("SubWallet saved successfully for User UUID: {}",
                 mainWalletRequest.getUuid());
 
+
         return MainWalletResponse.builder()
                 .message("Sub wallet created successfully")
                 .build();
-    } catch (Exception e) {
+    }
+      catch (Exception e) {
     log.error("Failed to create SubWallet for User UUID: {}. "
             + "Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
     throw e;

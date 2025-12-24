@@ -63,8 +63,10 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
         try {
             log.info("Fetching details for Global Pot ID: {}",
                     request.getGlobalPotId());
+
             String redisKey = generateKeyUtil
                     .getGlobalPotKey(request.getGlobalPotId());
+
             log.info("Generated Redis Key: {}", redisKey);
 
             GlobalPotResponse redisGlobalPotResponse = redisTemplate

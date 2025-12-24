@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.Mappers;
 
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -72,6 +75,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
 
         return pot;
     }
+
+
 
 
     public void updateEntity(GlobalPot pot, GlobalPotRequest request) {
@@ -137,6 +142,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .message("Global Pot created successfully").build();
     }
 
+    /**
+     * @param wallet
+     * @return
+     */
+    @Override
+    public GlobalPotResponse toGlobalWalletResponse(GlobalWallet wallet) {
+        GlobalPotResponse res = new GlobalPotResponse();
+        res.setStatus("Global Wallet created successfully");
+        return res;
+    }
 
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
 
@@ -169,6 +184,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         return contributor;
     }
 
+    /**
+     * @param
+     * @return
+     */
+    @Override
+    public GlobalPotResponse toGlobalPotResponse() {
+        GlobalPotResponse res = new GlobalPotResponse();
+        res.setStatus("Contributer added successfully");
+        return res;
+    }
 
     private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
 
@@ -200,4 +225,65 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
             pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
         }
     }
+
+    @Override
+    public GlobalPotTileDto toTileDto(GlobalPot pot) {
+
+        GlobalPotTileDto dto = new GlobalPotTileDto();
+
+        dto.setGlobalPotId(pot.getGlobalPotId());
+        dto.setCaseTitle(pot.getCaseTitle());
+        dto.setCaseCategory(
+                pot.getCaseCategory() != null
+                        ? pot.getCaseCategory().name()
+                        : null
+        );        dto.setPrimaryImage(toBase64(pot.getPrimaryImage()));
+
+        dto.setSecondaryImage(toBase64(pot.getSecondaryImage()));
+        dto.setTertiaryImage(toBase64(pot.getSupportingDocument()));
+
+        dto.setCity(pot.getCity());
+        dto.setCountry(pot.getCountry());
+
+        dto.setCurrentBalance(pot.getCurrentBalance());
+        dto.setGoalAmount(pot.getGoalAmount());
+
+        dto.setContributorCount(
+                pot.getContributors() != null
+                        ? pot.getContributors().size()
+                        : 0
+        );
+        dto.setFollowerCount(
+                pot.getFollowers() != null
+                        ? pot.getFollowers().size()
+                        : 0
+        );
+
+        return dto;
+    }
+
+    // method to add list on that
+    public List<GlobalPotTileDto> toTileDtos(List<GlobalPot> pots) {
+
+        List<GlobalPotTileDto> responses = new ArrayList<>();
+
+        for (GlobalPot pot : pots) {
+            responses.add(toTileDto(pot));
+        }
+        return responses;
+    }
+
+
+    // helper method to  set images into base 64
+    private String toBase64(byte[] image) {
+        if (image == null) return null;
+        return Base64.getEncoder().encodeToString(image);
+    }
+
+
+
+
+
+
+
 }
