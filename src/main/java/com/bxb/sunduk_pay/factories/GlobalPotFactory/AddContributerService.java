@@ -45,6 +45,6 @@ public class AddContributerService implements GlobalPotOperation{
         Contributor contributor =globalPotMapper.toContributerEntity(request,
                 globalPot);
         contributerRepository.save(contributor);
-        return globalPotMapper.toGlobalPotResponse();
+        return globalPotMapper.toGlobalPotResponse(globalPot);
     }
 }

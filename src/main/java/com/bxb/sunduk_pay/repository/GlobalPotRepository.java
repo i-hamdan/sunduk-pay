@@ -1,11 +1,26 @@
 package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.util.CaseCategory;
+import com.bxb.sunduk_pay.util.PotScope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface GlobalPotRepository extends JpaRepository<GlobalPot, String> {
+
+
+
+    List<GlobalPot> findByPotScope(PotScope potScope);
+
+
+    List<GlobalPot>findByCaseCategoryAndPotScope(
+            CaseCategory caseCategory,
+            PotScope potScope
+    );
+
 
 
     /**

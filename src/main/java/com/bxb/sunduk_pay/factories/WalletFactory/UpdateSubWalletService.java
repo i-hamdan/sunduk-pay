@@ -74,23 +74,24 @@ public class UpdateSubWalletService implements WalletOperation {
             final MainWalletRequest mainWalletRequest) {
         log.info("Performing action [{}]",
                 mainWalletRequest.getActionType());
+
+        // validating User
         User user = validations.getUserInfo(
                 mainWalletRequest.getUuid());
         log.debug("Fetched user details for UUID: {}",
                 user.getUuid());
-        validations.getMainWalletInfo(user.getUuid());
+
+        // validation mainwallet info
+        MainWallet mainWallet = validations.getMainWalletInfo(user.getUuid());
         log.debug("Validated main wallet info for user UUID: {}",
                 user.getUuid());
 
-        MainWallet mainWallet = validations.getMainWalletByWalletId(
-                mainWalletRequest.getMainWalletId());
-        log.debug("Retrieved MainWallet with ID: {}",
-                mainWallet.getMainWalletId());
-
+        // find all active pots
         SubWallet subWallet = validations.findSubWalletIfExists(
                 mainWallet.getMainWalletId(),
                 mainWalletRequest.getSubWalletId());
 
+        // checking subwallets name
         String oldName = (subWallet != null)
                 ? subWallet.getSubWalletName() : null;
         Double oldTargetBalance = (subWallet != null)
@@ -149,6 +150,10 @@ public class UpdateSubWalletService implements WalletOperation {
 //                );
 //            }
 //        }
+
+
+
+
         if (mainWalletRequest.getActionType() == UpdateWalletActionType.GOAL_AMOUNT) {
             if (subWallet != null) {
                 log.info(

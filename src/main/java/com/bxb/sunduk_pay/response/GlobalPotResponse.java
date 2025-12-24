@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.response;
 
 import com.bxb.sunduk_pay.model.Testimonial;
+import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -53,4 +54,10 @@ public class GlobalPotResponse {
     // --- Status Message ---
     private String message;
     private String status;
+
+
+// this is list where we show on tile page;
+    private List<GlobalPotTileDto> globalPotsTiles;
+
+
 }

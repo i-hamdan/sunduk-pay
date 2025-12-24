@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class PhotoRequest {
     private String uuid;
+
     private PhotoRequestType photoRequestType;
     private MultipartFile multipartFile;
 }

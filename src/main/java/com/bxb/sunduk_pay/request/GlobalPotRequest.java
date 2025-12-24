@@ -65,4 +65,7 @@ public class GlobalPotRequest {
     private Boolean isUser;
     private MultipartFile contributorImage;
     private String followerUser;
+
+    private PotStatus potStatus;
+
 }

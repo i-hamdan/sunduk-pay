@@ -158,6 +158,8 @@ UserResponse userResponse = new UserResponse();
 
         String photoBase64 = (user.getProfilePhoto() != null &&
                 user.getProfilePhoto().length > 0)
+
+
                 ? "data:image/jpeg;base64," + Base64.getEncoder()
                 .encodeToString(user.getProfilePhoto())
                 : "";
