@@ -83,12 +83,12 @@ public class FetchInvestmentDetails implements InvestmentOperation {
                 investmentRequest.getUuid());
         User user = validations.getUserInfo(investmentRequest.getUuid());
 
-        if (investmentRequest.getInvestmentsFetchType()
-                .equals(InvestmentsFetchType.POT_INVESTMENTS)) {
+        if (InvestmentsFetchType.POT_INVESTMENTS
+                .equals(investmentRequest.getInvestmentsFetchType())) {
             return fetchPotInvestments(user,
                     investmentRequest.getSubWalletId());
-        } else if (investmentRequest.getInvestmentsFetchType()
-                .equals(InvestmentsFetchType.ALL_INVESTMENTS)) {
+        } else if ((InvestmentsFetchType.ALL_INVESTMENTS
+                .equals(investmentRequest.getInvestmentsFetchType()))) {
             return fetchAllInvestments(user);
         } else throw new InvalidPayloadException(
                 "Invalid fetch investment action type provided."

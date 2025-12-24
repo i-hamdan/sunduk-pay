@@ -75,8 +75,8 @@ public class UpdateRiskLevelService implements InvestmentOperation {
     public InvestmentResponse perform(InvestmentRequest investmentRequest) {
 
         User user = validations.getUserInfo(investmentRequest.getUuid());
-            log.info("User validation successful for UUID: {}",
-                    investmentRequest.getUuid());
+        log.info("User validation successful for UUID: {}",
+                investmentRequest.getUuid());
 
         SubWallet subWallet = validations.findSubWalletIfExists(
                 user.getMainWallet().getMainWalletId(),

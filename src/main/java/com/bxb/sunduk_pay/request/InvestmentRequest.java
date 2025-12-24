@@ -3,8 +3,7 @@ package com.bxb.sunduk_pay.request;
 import com.bxb.sunduk_pay.util.InvestmentsFetchType;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import com.bxb.sunduk_pay.util.RiskLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -13,6 +12,9 @@ import java.time.LocalDate;
  */
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class InvestmentRequest {
     /*** UUID of the user. */
     private String uuid;
