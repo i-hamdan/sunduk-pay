@@ -1,0 +1,12 @@
+2025-12-22 15:02:50 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: user-123
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: user-123
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: user-123
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: user-123
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: user-123
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Main Wallet fetched successfully
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Sub Wallet with ID: sub-1
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Sub Wallet fetched successfully
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Investment for Sub Wallet ID: sub-1
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Investment fetched successfully
+2025-12-22 15:12:24 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Pot investments fetched successfully for User UUID: user-123
+2025-12-22 23:52:58 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: user-123
