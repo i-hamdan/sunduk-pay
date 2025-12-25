@@ -43,17 +43,6 @@ public class ChatMessageListener {
     private final ChatMessageService messageService;
 
     /**
-     * Service for handling user-to-user transfers.
-     */
-    private final UserToUserTransferService userTransferService;
-
-    /**
-     * Mapper for converting between chat message events and models.
-     */
-    private final ChatMessageMapper chatMessageMapper;
-
-
-    /**
      * Consumes chat message events from the "chat-messages" Kafka topic,
      * saves them to the database, and forwards them to the appropriate
      * WebSocket destination.
@@ -67,17 +56,17 @@ public class ChatMessageListener {
                 messageEvent.getSenderId(),
                 messageEvent.getReceiverId(),
                 messageEvent.getContent());
-            handleNormalMessage(messageEvent);
+                processAsync(messageEvent);
     }
 
-    /**
-     * Handles normal chat messages by processing them asynchronously.
-     *
-     * @param messageEvent the chat message event to be processed
-     */
-    private void handleNormalMessage(ChatMessageEvent messageEvent) {
-        processAsync(messageEvent);
-    }
+//    /**
+//     * Handles normal chat messages by processing them asynchronously.
+//     *
+//     * @param messageEvent the chat message event to be processed
+//     */
+//    private void handleNormalMessage(ChatMessageEvent messageEvent) {
+//        processAsync(messageEvent);
+//    }
 
     /**
      * Processes the chat message event asynchronously.
@@ -89,20 +78,19 @@ public class ChatMessageListener {
             CompletableFuture
                     .supplyAsync(() -> {
                         log.info(
-
-            "[AsyncThread: {}] Starting message processing...",
+                                "[AsyncThread: {}] Starting message processing...",
                                 Thread.currentThread().getName());
                         return messageService.processMessage(messageEvent);
                     }, executor)
                     .thenAccept(response -> {
                         log.info(
-   "[ThenAcceptThread: {}] Sending message to user...",
+                                "[ThenAcceptThread: {}] Sending message to user...",
                                 Thread.currentThread().getName());
                         sendMessageToWebSocket(response);
                     })
                     .exceptionally(ex -> {
                         log.error("[ErrorThread: {}] Exception: {}",
-                 Thread.currentThread().getName(), ex.getMessage());
+                                Thread.currentThread().getName(), ex.getMessage());
                         return null;
                     });
         } catch (Exception e) {
@@ -126,7 +114,7 @@ public class ChatMessageListener {
                     "/queue/" + response.getReceiverId(),
                     response);
             log.info(
-        "Forwarded chat message to WebSocket destination /queue/{}",
+                    "Forwarded chat message to WebSocket destination /queue/{}",
                     response.getReceiverId());
         } catch (Exception e) {
             log.error("Failed to send message to WebSocket: "

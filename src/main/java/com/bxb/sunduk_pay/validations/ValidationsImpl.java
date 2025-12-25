@@ -197,7 +197,6 @@ private static final int WALLET_SIZE = 19;
                  uuid, walletId, TransactionType.CREDIT, pageable);
                 }
             }
-
             // Case 1c: No transaction type filter
             else {
                 if (hasMethod) {
@@ -453,7 +452,6 @@ private static final int WALLET_SIZE = 19;
             throw new InvalidPhotoException
                     ("Please upload a valid JPEG photo.");
         }
-
 
         // Check MIME type
         String contentType = photo.getContentType();

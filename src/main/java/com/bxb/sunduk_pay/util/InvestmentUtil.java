@@ -5,9 +5,21 @@ import com.bxb.sunduk_pay.postgress.model.Units;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+/**
+ * Utility class for updating Investment details
+ * based on debit and credit transactions.
+ */
 @Component
 @Log4j2
 public class InvestmentUtil {
+    /**
+     * Updates the Investment details on a debit transaction.
+     *
+     * @param investment the Investment to update
+     * @param unit       the Units containing NAV information
+     * @param amount     the amount to debit
+     * @return the updated Investment
+     */
     public Investment updateInvestmentOnDebit(Investment investment,
                                               Units unit , Double amount) {
         double netAssetValue = unit.getCombinedValue().doubleValue();
@@ -47,6 +59,14 @@ public class InvestmentUtil {
 
     }
 
+    /**
+     * Updates the Investment details on a credit transaction.
+     *
+     * @param investment the Investment to update
+     * @param unit       the Units containing NAV information
+     * @param amount     the amount to credit
+     * @return the updated Investment
+     */
     public Investment updateInvestmentOnCredit(Investment investment,
                                                Units unit , Double amount) {
         double netAssetValue = unit.getCombinedValue().doubleValue();

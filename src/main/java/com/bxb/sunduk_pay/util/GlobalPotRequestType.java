@@ -1,21 +1,93 @@
 package com.bxb.sunduk_pay.util;
 
+/**
+ * Represents the type of request that can be performed on a Global Pot.
+ * <p>
+ * This enum is used to route incoming requests to the appropriate
+ * service or handler based on the requested operation.
+ * </p>
+ */
 public enum GlobalPotRequestType {
+
+    /* ---------- Pot Operations ---------- */
+
+    /**
+     * Creates a new global pot.
+     */
     CREATE_POT,
+
+    /**
+     * Updates the details of an existing global pot.
+     */
     UPDATE_POT,
+
+    /**
+     * Deletes an existing global pot.
+     */
     DELETE_POT,
+
+    /**
+     * Fetches a list of global pots.
+     */
     FETCH_POTS,
+
+    /**
+     * Fetches detailed information for a specific global pot.
+     */
     FETCH_POT_DETAILS,
+
+    /**
+     * Verifies a global pot for authenticity or compliance.
+     */
     VERIFY_POT,
 
+    /* ---------- Wallet Operations ---------- */
+
+    /**
+     * Creates a wallet associated with a global pot.
+     */
     CREATE_WALLET,
+
+    /**
+     * Updates an existing global pot wallet.
+     */
     UPDATE_WALLET,
+
+    /**
+     * Deletes a wallet associated with a global pot.
+     */
     DELETE_WALLET,
+
+    /**
+     * Fetches wallets associated with global pots.
+     */
     FETCH_WALLETS,
 
-    ADD_CONTRIBUTOR, // Handled by AddContributorService
-    FOLLOW_POT,       // Handled by FollowPotService
-    ADD_TESTIMONIAL,
-    FETCH_GLOBAL_POT
+    /* ---------- Contributor & Engagement Operations ---------- */
 
+    /**
+     * Adds a contributor to a global pot.
+     * <p>
+     * Handled by {@code AddContributorService}.
+     * </p>
+     */
+    ADD_CONTRIBUTOR,
+
+    /**
+     * Allows a user to follow a global pot.
+     * <p>
+     * Handled by {@code FollowPotService}.
+     * </p>
+     */
+    FOLLOW_POT,
+
+    /**
+     * Adds a testimonial to a global pot.
+     */
+    ADD_TESTIMONIAL,
+
+    /**
+     * Fetches a specific global pot by identifier.
+     */
+    FETCH_GLOBAL_POT
 }

@@ -64,7 +64,7 @@ public class FetchTransactionsService implements WalletOperation {
                 mainWalletRequest.getUuid());
         try {
             Sort.Direction direction;
-            if ("ASC".equalsIgnoreCase(mainWalletRequest.getSortDirection())) {
+     if ("ASC".equalsIgnoreCase(mainWalletRequest.getSortDirection())) {
                 direction = Sort.Direction.ASC;
             } else {
                 direction = Sort.Direction.DESC;
@@ -76,8 +76,10 @@ public class FetchTransactionsService implements WalletOperation {
 
             Page<Transaction> transactions;
 
-            if (mainWalletRequest.getRecipientUpiId() != null && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
-                transactions = transactionRepository.findByRecipientUpiIdAndIsMasterFalse(
+            if (mainWalletRequest.getRecipientUpiId() != null
+                    && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
+                transactions = transactionRepository
+                        .findByRecipientUpiIdAndIsMasterFalse(
                         mainWalletRequest.getRecipientUpiId(), pageable);
             } else {
                 transactions = validations
@@ -91,7 +93,7 @@ public class FetchTransactionsService implements WalletOperation {
             }
 
             log.info(
-                "Returning {} transactions for uuid ID:{} And SubWallet ID: {}",
+ "Returning {} transactions for uuid ID:{} And SubWallet ID: {}",
                     transactions.getNumberOfElements(),
                     mainWalletRequest.getUuid(),
                     mainWalletRequest.getWalletId());
@@ -109,7 +111,7 @@ public class FetchTransactionsService implements WalletOperation {
         } catch (Exception e) {
             log.error(
                     "Cannot retrieve transactions for UUID : {},"
-                    + " error {}", mainWalletRequest.getUuid(), e.getMessage());
+             + " error {}", mainWalletRequest.getUuid(), e.getMessage());
             throw new TransactionProcessingException(
                     "Unable to fetch transactions for UUID: "
                             + mainWalletRequest.getUuid()

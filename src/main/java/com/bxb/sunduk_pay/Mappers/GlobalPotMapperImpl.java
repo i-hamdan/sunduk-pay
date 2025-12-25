@@ -194,16 +194,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         return contributor;
     }
 
-    /**
-     * @param
-     * @return
-     */
-    @Override
-    public GlobalPotResponse toGlobalPotResponse() {
-        GlobalPotResponse res = new GlobalPotResponse();
-        res.setStatus("Contributer added successfully");
-        return res;
-    }
 
     private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
 

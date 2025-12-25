@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Implementation of MessageValidations for validating and processing chat messages.
+ * Implementation of MessageValidations for validating and
+ * processing chat messages.
  */
 @Component
 @Log4j2
@@ -28,6 +29,15 @@ public class MesageValidationsImpl implements MessageValidations {
      */
     private final ChatMessageRepository chatMessageRepository;
 
+    /**
+     * Retrieves chat messages between a sender and receiver from the database.
+     *
+     * @param senderId   the ID of the sender
+     * @param receiverId the ID of the receiver
+     * @return a list of ChatMessage objects between the sender and receiver
+     * @throws CannotFetchMessagesException
+     * if there is an error fetching messages
+     */
     @Override
     public List<ChatMessage> getMessagesFromDb(
             final String senderId,

@@ -33,7 +33,9 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      */
     private final PortfolioModelRepository portfolioModelRepository;
 
-
+    /**
+     * Repository for units data access.
+     */
     private final UnitsRepository unitsRepository;
 
 
@@ -45,31 +47,49 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      * @param balance the balance to validate
      */
     @Override
-    public void ValidateBalanceForInvestment(Double balance) {
+    public void ValidateBalanceForInvestment(final Double balance) {
         if (balance <= 0 || balance == null) {
             throw new InsufficientBalanceException
                     ("Insufficient balance for investment.");
         }
     }
 
+    /**
+     * Validates and retrieves a PortfolioModel by its name.
+     *
+     * @param name the name of the portfolio model
+     * @return the validated PortfolioModel
+     */
     @Override
-    public PortfolioModel validatePortfolioModelByName(String name) {
+    public PortfolioModel validatePortfolioModelByName(final String name) {
         return portfolioModelRepository.findByName(name).orElseThrow(() ->
                 new ResourceNotFoundException("Portfolio model not found with" +
                         " name: "
                         + name));
     }
 
+    /**
+     * Retrieves an active Investment by sub-wallet ID.
+     *
+     * @param subWalletId the sub-wallet ID
+     * @return the active Investment
+     */
    @Override
-    public Investment getInvestmentBySubWalletId(String subWalletId) {
+    public Investment getInvestmentBySubWalletId(final String subWalletId) {
         return investmentRepository.findBySubWalletSubWalletIdAndIsActiveTrue(
                 subWalletId).orElseThrow(
                 () -> new InvestmentException("Cannot find active "
                         + "investment for this pot!"));
     }
 
+    /**
+     * Retrieves investments by user UUID.
+     *
+     * @param uuid the user UUID
+     * @return list of investments for the user
+     */
     @Override
-    public List<Investment> getInvestmentsByUserUuid(String uuid) {
+    public List<Investment> getInvestmentsByUserUuid(final String uuid) {
         try {
             log.info("Fetching investments for user UUID: {}", uuid);
             List<Investment> investments = investmentRepository
@@ -93,8 +113,16 @@ public class InvestmentValidationImpl implements InvestmentValidation {
         }
     }
 
+    /**
+     * Retrieves the Units for a given PortfolioModel and date.
+     *
+     * @param model the PortfolioModel
+     * @param date  the date to retrieve units for
+     * @return the Units for the specified date
+     */
     @Override
-    public Units getUnitsForDate(PortfolioModel model, LocalDate date) {
+    public Units getUnitsForDate(final PortfolioModel model,
+                                 final LocalDate date) {
      // Try exact or nearest previous date
      List<Units> list = unitsRepository
                 .findLatestBeforeOrOnDate(model, date);
@@ -111,11 +139,19 @@ public class InvestmentValidationImpl implements InvestmentValidation {
         return list.get(0);
     }
 
+    /**
+     * Finds the next available Units after a given date.
+     *
+     * @param model the PortfolioModel
+     * @param date  the date to find the next units after
+     * @return the next Units after the specified date
+     */
     @Override
     public Units findNextUnit(PortfolioModel model, LocalDate date) {
         List<Units> list = unitsRepository.findNextAfterDate(model, date);
         if (list.isEmpty()) {
-            log.error("No unit value found for {} or any date before it",
+            log.error(
+                    "No unit value found for {} or any date before it",
                     date);
            return null;
         }
@@ -136,7 +172,8 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      * @return Units
      */
     @Override
-    public Units findUnitByDate(Long modelId, LocalDate date){
+    public Units findUnitByDate(final Long modelId,
+                                LocalDate date){
         try {
             return unitsRepository.findByPortfolioModelAndDate(modelId, date);
         } catch (Exception e){
@@ -149,8 +186,17 @@ public class InvestmentValidationImpl implements InvestmentValidation {
         }
     }
 
+    /**
+     * Validates the provided risk level against
+     * the current investment risk level.
+     *
+     * @param investmentRiskLevel the current investment risk level
+     * @param riskLevel           the new risk level to validate
+     * @return the validated RiskLevel
+     */
     @Override
-    public RiskLevel validateRiskLevel(String investmentRiskLevel, String riskLevel) {
+    public RiskLevel validateRiskLevel(final String investmentRiskLevel,
+                                       final String riskLevel) {
         if (riskLevel.equalsIgnoreCase(investmentRiskLevel)){
             throw new InvestmentException("No changes detected: "
                     + "the provided value is identical to the current value.");
@@ -167,15 +213,28 @@ public class InvestmentValidationImpl implements InvestmentValidation {
         }
     }
 
+    /**
+     * Retrieves a PortfolioModel by risk level.
+     *
+     * @param riskLevel the risk level
+     * @return the PortfolioModel for the specified risk level
+     */
     @Override
-    public PortfolioModel getPortfolioModelByRiskLevel(String riskLevel) {
+    public PortfolioModel getPortfolioModelByRiskLevel(
+            final String riskLevel) {
         return portfolioModelRepository.findByName(riskLevel).orElseThrow(
-        ()-> new InvestmentException("No portfolio model found for risk level: "
+        ()-> new InvestmentException("No portfolio model found for risk level:"
                         + riskLevel));
     }
 
+    /**
+     * Retrieves a PortfolioModel by its ID.
+     *
+     * @param id the ID of the PortfolioModel
+     * @return the PortfolioModel with the specified ID
+     */
     @Override
-    public PortfolioModel getPortfolioModelById(Long id) {
+    public PortfolioModel getPortfolioModelById(final Long id) {
         return portfolioModelRepository.findById(id)
                 .orElseThrow(()->new InvestmentException(
                         "No portfolio model found for id: " + id));

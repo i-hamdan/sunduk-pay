@@ -59,14 +59,16 @@ public class ChatController {
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload final ChatMessageRequest request) {
 
+        // Fetch receiver user details
         User receivingUser = messageService
                 .getReceiverUserDetails(request.getReceiverId());
-
         request.setReceiverId(receivingUser.getUuid());
 
+        // Map ChatMessageRequest to ChatMessageEvent
         ChatMessageEvent messageEvent = chatMessageMapper
                 .toMessageEvent(request);
 
+        // Generate a key for Kafka partitioning
         String key = generateKeyUtil.generateChatKey(
                 request.getSenderId(),
                 request.getReceiverId());
@@ -75,6 +77,7 @@ public class ChatController {
                 request.getSenderId(),
                 request.getReceiverId(),
                 request.getContent());
+        // Send the message event to Kafka topic "chat-messages"
         kafkaTemplate.send("chat-messages", key, messageEvent);
     }
 

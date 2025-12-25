@@ -32,10 +32,12 @@ public class InvestmentGraphData {
 public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
         List<Transaction> transactions) {
 
-    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm:ss")
+    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
+            "dd MMMM yyyy HH:mm:ss")
             .withLocale(Locale.ENGLISH);
 
-    Map<Integer, TreeMap<LocalDateTime, List<InvestmentGraphDataDTO>>> tempMap = new TreeMap<>();
+    Map<Integer, TreeMap<LocalDateTime, List<InvestmentGraphDataDTO>>> tempMap
+            = new TreeMap<>();
 
     for (Transaction txn : transactions) {
         int monthNumber = txn.getDateTime().getMonthValue();
@@ -57,16 +59,20 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
     Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
 
     tempMap.forEach((month, dateMap) -> {
-        String monthName = LocalDate.of(LocalDate.now().getYear(), month, 1)
+        String monthName = LocalDate.of(
+                LocalDate.now().getYear(), month, 1)
                 .format(DateTimeFormatter.ofPattern("MMM"));
 
         List<InvestmentGraphDataDTO> dtoList = new ArrayList<>();
-        dateMap.forEach((dt, list) -> dtoList.addAll(list));
+        dateMap.forEach((dt,
+        list) -> dtoList.addAll(list));
 
-        // final deterministic sort: by exact timestamp, then by balance (or any tie-breaker)
+        // final deterministic sort: by exact timestamp,
+        // then by balance (or any tie-breaker)
         dtoList.sort(Comparator
                 .comparing(InvestmentGraphDataDTO::getRawDateTime)
-                .thenComparing(Comparator.comparingDouble(d -> d.getBalance() == null ? 0.0 : d.getBalance()))
+                .thenComparing(Comparator.comparingDouble(
+ d -> d.getBalance() == null ? 0.0 : d.getBalance()))
         );
 
         finalMap.put(monthName, dtoList);
@@ -100,7 +106,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(DATE_FORMATTER))   // formatted for frontend
+                    .date(rawDate.format(DATE_FORMATTER))
                     .balance(history.getCurrentValue())
                     .build();
 
@@ -109,7 +115,8 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
         }
 
         // Final map with month names
-        Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
+        Map<String, List<InvestmentGraphDataDTO>> finalMap
+                = new LinkedHashMap<>();
 
         for (Map.Entry<Integer, TreeMap<LocalDate,
                 InvestmentGraphDataDTO>> entry : tempMap.entrySet()) {
@@ -121,7 +128,8 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
             finalMap.put(
                     monthName,
                     entry.getValue().values().stream()
-                            .sorted(Comparator.comparing(InvestmentGraphDataDTO::getRawDate))
+                            .sorted(Comparator.comparing(
+                                    InvestmentGraphDataDTO::getRawDate))
                             .toList()
             );
 
@@ -138,14 +146,16 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
      * @return a map with month names as keys and lists of
  * InvestmentGraphDataDTO as values
      */
-    public Map<String, List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData(
+    public Map<String,
+  List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData(
             Map<LocalDate, Double> portfolioHistory) {
 
         // Temporary: monthNumber → (date → DTO)
         Map<Integer, TreeMap<LocalDate, InvestmentGraphDataDTO>> tempMap =
                 new TreeMap<>();
 
-        for (Map.Entry<LocalDate, Double> entry : portfolioHistory.entrySet()) {
+        for (Map.Entry<LocalDate,
+                Double> entry : portfolioHistory.entrySet()) {
 
             LocalDate rawDate = entry.getKey();
             Double totalBalance = entry.getValue();
@@ -163,20 +173,23 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
         }
 
         // Final: "Jan" → list of sorted DTOs
-        Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
+        Map<String,
+                List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
 
-        for (Map.Entry<Integer, TreeMap<LocalDate, InvestmentGraphDataDTO>> entry
-                : tempMap.entrySet()) {
+        for (Map.Entry<Integer, TreeMap<LocalDate,
+                InvestmentGraphDataDTO>> entry : tempMap.entrySet()) {
 
             int monthNumber = entry.getKey();
 
-            String monthName = LocalDate.of(LocalDate.now().getYear(), monthNumber, 1)
+            String monthName = LocalDate.of(LocalDate.now().getYear(),
+                            monthNumber, 1)
                     .format(DateTimeFormatter.ofPattern("MMM"));
 
             finalMap.put(
                     monthName,
                     entry.getValue().values().stream()
-                            .sorted(Comparator.comparing(InvestmentGraphDataDTO::getRawDate))
+                            .sorted(Comparator.comparing(
+                                    InvestmentGraphDataDTO::getRawDate))
                             .toList()
             );
 
