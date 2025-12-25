@@ -32,7 +32,7 @@ public class ValidateOtp implements MpinOperation{
      * @return MpinResponse containing the result of the operation.
      */
     @Override
-    public MpinResponse perform(MpinRequest mpinRequest) {
+    public MpinResponse perform(final MpinRequest mpinRequest) {
      // retrieve saved otp email cache
         String savedOtp = otpCache.getIfPresent(mpinRequest.getEmail());
         // validate otp

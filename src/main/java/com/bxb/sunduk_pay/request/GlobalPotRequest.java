@@ -68,4 +68,7 @@ public class GlobalPotRequest {
 
     private PotStatus potStatus;
 
+    private int pageNumber;
+    private int pageSize;
+
 }

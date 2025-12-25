@@ -3,6 +3,8 @@ package com.bxb.sunduk_pay.repository;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.util.CaseCategory;
 import com.bxb.sunduk_pay.util.PotScope;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,12 +15,13 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot, String> {
 
 
 
-    List<GlobalPot> findByPotScope(PotScope potScope);
+    Page<GlobalPot> findByPotScope(PotScope potScope,Pageable pageable);
 
 
-    List<GlobalPot>findByCaseCategoryAndPotScope(
+    Page<GlobalPot> findByCaseCategoryAndPotScope(
             CaseCategory caseCategory,
-            PotScope potScope
+            PotScope potScope,
+            Pageable pageable
     );
 
 

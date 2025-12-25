@@ -79,5 +79,8 @@ public class InvestmentResponse {
 
     /**response message.*/
     private String message;
+
+    /**Indicates if the investment is canceled.*/
+    private Boolean isCancelInvestment;
 }
 

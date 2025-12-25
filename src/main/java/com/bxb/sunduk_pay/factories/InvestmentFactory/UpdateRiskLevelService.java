@@ -44,13 +44,14 @@ public class UpdateRiskLevelService implements InvestmentOperation {
      * Repository for investment persistence.
      */
     private final InvestmentRepository investmentRepository;
-    /**
-     *
+ /**
+     * Repository for investment daily history persistence.
      */
-
     private final InvestmentDailyHistoryRepository dailyHistory;
 
-
+/**
+     * Repository for sub-wallet persistence.
+     */
     private final SubWalletRepository subWalletRepository;
 
 
@@ -72,7 +73,7 @@ public class UpdateRiskLevelService implements InvestmentOperation {
      * @return response indicating success
      */
     @Override
-    public InvestmentResponse perform(InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
 
         User user = validations.getUserInfo(investmentRequest.getUuid());
         log.info("User validation successful for UUID: {}",

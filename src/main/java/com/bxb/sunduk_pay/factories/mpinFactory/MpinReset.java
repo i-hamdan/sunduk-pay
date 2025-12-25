@@ -28,7 +28,7 @@ public class MpinReset implements MpinOperation{
     }
 
     @Override
-    public MpinResponse perform(MpinRequest mpinRequest) {
+    public MpinResponse perform(final MpinRequest mpinRequest) {
         // Validate the UUID and retrieve the corresponding MPIN record.
         Mpin mpin = mpinValidations.findMpinByUuid(mpinRequest.getUuid());
        // Validate the existing MPIN.

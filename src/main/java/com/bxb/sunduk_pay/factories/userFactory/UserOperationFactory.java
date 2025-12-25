@@ -39,7 +39,7 @@ private Map<UserRequestType,UserOperation> userServiceMap = new HashMap<>();
      * @param userRequestType the type of user request
      * @return UserOperation
      */
-public UserOperation getUserOperations(UserRequestType userRequestType){
+public UserOperation getUserOperations(final UserRequestType userRequestType){
     return userServiceMap.get(userRequestType);
 }
 }

@@ -226,6 +226,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         }
     }
 
+
+
     @Override
     public GlobalPotTileDto toTileDto(GlobalPot pot) {
 
@@ -242,12 +244,13 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         dto.setSecondaryImage(toBase64(pot.getSecondaryImage()));
         dto.setTertiaryImage(toBase64(pot.getSupportingDocument()));
 
+        dto.setIsActive(pot.getIsActive());
         dto.setCity(pot.getCity());
         dto.setCountry(pot.getCountry());
 
         dto.setCurrentBalance(pot.getCurrentBalance());
         dto.setGoalAmount(pot.getGoalAmount());
-
+        dto.setIsVerified(false);
         dto.setContributorCount(
                 pot.getContributors() != null
                         ? pot.getContributors().size()

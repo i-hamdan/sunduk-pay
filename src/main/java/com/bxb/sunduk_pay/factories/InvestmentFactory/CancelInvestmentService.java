@@ -66,7 +66,7 @@ public class CancelInvestmentService implements InvestmentOperation {
      * @return InvestmentResponse indicating the result of the cancellation
      */
     @Override
-    public InvestmentResponse perform(InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
         try {
             // Validate user information before proceeding with cancellation
             User user = validations.getUserInfo(investmentRequest.getUuid());
@@ -88,6 +88,7 @@ public class CancelInvestmentService implements InvestmentOperation {
                 // cancellation fee
 
                 subWallet.setIsInvested(false);
+                subWallet.setIsCancelInvestment(true);
                 subWallet.setBalance(subWallet.getBalance() - balanceToDeduct);
 
                 Transaction transaction = Transaction.builder()
@@ -115,6 +116,7 @@ public class CancelInvestmentService implements InvestmentOperation {
             return InvestmentResponse.builder()
                     .message("Investment cancelled successfully for pot "
                             + subWallet.getSubWalletName())
+                    .isCancelInvestment(true)
                     .build();
         } catch (Exception e) {
             throw new InvestmentException(

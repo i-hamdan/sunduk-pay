@@ -49,7 +49,7 @@ public class GenerateOtp implements MpinOperation{
  * @return MpinResponse containing the result of the operation.
      */
     @Override
-    public MpinResponse perform(MpinRequest mpinRequest) {
+    public MpinResponse perform(final MpinRequest mpinRequest) {
         // validate user email
         User user = validations.
                 getUserEmailInfo(mpinRequest.getEmail());

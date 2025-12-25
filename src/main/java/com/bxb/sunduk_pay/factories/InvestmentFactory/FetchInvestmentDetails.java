@@ -78,7 +78,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
      * Fetch investment details method
      */
     @Override
-    public InvestmentResponse perform(InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
         log.info("Fetching investment details for User UUID: {}",
                 investmentRequest.getUuid());
         User user = validations.getUserInfo(investmentRequest.getUuid());

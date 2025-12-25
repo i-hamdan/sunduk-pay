@@ -23,7 +23,7 @@ public class VerifyMpinForUpdate implements UserOperation{
     }
 
     @Override
-    public UserResponse perform(UserRequest userRequest) {
+    public UserResponse perform(final UserRequest userRequest) {
         User user = validations.getUserInfo(userRequest.getUuid());
         mpinValidations.validateMpin(user.getUuid(), userRequest.getMpin());
         return UserResponse.builder()

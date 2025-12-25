@@ -28,7 +28,7 @@ private final UserMapper mapper;
     }
 
     @Override
-    public UserResponse perform(UserRequest userRequest) {
+    public UserResponse perform(final UserRequest userRequest) {
 
         User user = validations.getUserInfo(userRequest.getUuid());
 

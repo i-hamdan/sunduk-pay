@@ -77,11 +77,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     public CurrencyResponse convertCurrency(
             final CurrencyRequest currencyRequest) {
 
-        double exchangeRate = fetchExchangeRate(
-                currencyRequest.getFromCurrency(),
-                currencyRequest.getToCurrency());
-        log.debug("Exchange rate fetched successfully: {}",
-                exchangeRate);
 
         if (currencyRequest.getAmount() == null) {
             log.error("Invalid amount received in request: {}",
@@ -89,6 +84,13 @@ public class CurrencyServiceImpl implements CurrencyService {
             throw new NullAmountException(
                     "Amount Cannot Be null !" + currencyRequest.getAmount());
         }
+
+        double exchangeRate = fetchExchangeRate(
+                currencyRequest.getFromCurrency(),
+                currencyRequest.getToCurrency());
+        log.debug("Exchange rate fetched successfully: {}",
+                exchangeRate);
+
 
         log.debug("Converting amount {} with exchange rate {}",
                 currencyRequest.getAmount(), exchangeRate);

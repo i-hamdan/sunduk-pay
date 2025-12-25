@@ -70,8 +70,16 @@ public class SubWallet {
     @ManyToOne
     @JoinColumn(name = "main_wallet_id")
     private MainWallet mainWallet;
-
-
-    private RiskLevel riskLevel;
-
+    /**
+     * Risk level associated with the sub-wallet.
+     */
+     private RiskLevel riskLevel;
+    /**
+     * Indicates if investment cancellation is requested
+     * If the subWallet is never invested then this field is null initially.
+     * If the subWallet is invested then this field is false initially.
+     * When user requests to cancel investment, this field is set to true.
+     */
+    @Column(nullable = true)
+     private Boolean isCancelInvestment = null;
 }

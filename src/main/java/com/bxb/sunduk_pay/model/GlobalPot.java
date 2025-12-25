@@ -52,7 +52,8 @@ public class GlobalPot {
     @JoinColumn(name = "admin_user_id")
     private User admin;
 
-    /** The digital wallet associated with this pot for transaction and balance management. */
+    /** The digital wallet associated with this
+     *  pot for transaction and balance management. */
     @OneToOne
     @JoinColumn(name = "global_wallet_id")
     private GlobalWallet globalWallet;
@@ -68,7 +69,8 @@ public class GlobalPot {
     @Column(nullable = false)
     private CaseCategory caseCategory;
 
-    /** The geographical or social reach of the pot (Local, National, or Global). */
+    /** The geographical or social reach of the pot
+     *  (Local, National, or Global). */
     @Enumerated(EnumType.STRING)
     private PotScope potScope;
 
@@ -77,11 +79,13 @@ public class GlobalPot {
     @Column(nullable = false)
     private CaseRequirementType caseRequirementType;
 
-    /** The lifecycle status of the pot (e.g., PENDING_VERIFICATION, ACTIVE, COMPLETED). */
+    /** The lifecycle status of the pot
+     *  (e.g., PENDING_VERIFICATION, ACTIVE, COMPLETED). */
     @Enumerated(EnumType.STRING)
     private PotStatus potStatus = PotStatus.PENDING_VERIFICATION;
 
-    /** Comprehensive description providing details about the fundraising cause. */
+    /** Comprehensive description providing details about
+     *  the fundraising cause. */
     @Column(length = 3000, columnDefinition = "TEXT")
     private String description;
 
@@ -113,10 +117,11 @@ public class GlobalPot {
     private Double goalAmount;
 
     /** Cumulative amount contributed by all participants. */
-    private Double contributedBalance = 0.0;
+    private Double contributedBalance;
 
-    /** Current available balance within the pot (contributed minus withdrawals). */
-    private Double currentBalance = 0.0;
+    /** Current available balance within
+     *  the pot (contributed minus withdrawals). */
+    private Double currentBalance;
 
     /** The deadline date by which the goal amount should ideally be reached. */
     private LocalDate goalDate;
@@ -206,10 +211,12 @@ public class GlobalPot {
 
     // --- 8. AUDIT & METADATA ---
 
-    /** Flag indicating if the pot is currently visible and accepting contributions. */
-    private Boolean isActive = true;
+    /** Flag indicating if the pot is currently
+     * visible and accepting contributions. */
+    private Boolean isActive;
 
-    /** Internal notes provided by system administrators regarding the pot's validity. */
+    /** Internal notes provided by system
+     *  administrators regarding the pot's validity. */
     private String adminNote;
 
     /** Automatic timestamp of when the pot record was first created. */

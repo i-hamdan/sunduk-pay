@@ -40,7 +40,7 @@ public class FogetMpinReset implements MpinOperation{
      */
 
     @Override
-    public MpinResponse perform(MpinRequest mpinRequest) {
+    public MpinResponse perform(final MpinRequest mpinRequest) {
         //Validate the UUID and retrieve the corresponding MPIN record.
         Mpin mpin = validations.findMpinByUuid(mpinRequest.getUuid());
         // Encrypt the new MPIN.

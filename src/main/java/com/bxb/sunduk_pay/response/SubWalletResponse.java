@@ -33,5 +33,8 @@ public class SubWalletResponse {
     private String gainOrLossPercentage;
     /** The risk level associated with the sub-wallet. */
     private String riskLevel;
+    /**Indicates if the investment is canceled.*/
+    private Boolean isCancelInvestment;
+
 }
 

@@ -49,7 +49,7 @@ public class UpdateUserService implements UserOperation {
      * @return UserResponse
      */
     @Override
-    public UserResponse perform(UserRequest userRequest) {
+    public UserResponse perform(final UserRequest userRequest) {
 
         User user = validations.getUserInfo(userRequest.getUuid());
 

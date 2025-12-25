@@ -52,7 +52,7 @@ public class CreateInvestmentService implements InvestmentOperation {
 
     @Transactional
     @Override
-    public InvestmentResponse perform(InvestmentRequest request) {
+    public InvestmentResponse perform(final InvestmentRequest request) {
 
         // 1) User fetch
         User user = validations.getUserInfo(request.getUuid());
@@ -125,6 +125,7 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         // 9) Mark wallet as invested
         subWallet.setIsInvested(true);
+        subWallet.setIsCancelInvestment(false);
         subWallet.setRiskLevel(request.getRiskLevel());
 
 
@@ -152,6 +153,7 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         return InvestmentResponse.builder()
                 .message("Great Job! Your investment is now active and growing.")
+                .isCancelInvestment(false)
                 .build();
     }
 }

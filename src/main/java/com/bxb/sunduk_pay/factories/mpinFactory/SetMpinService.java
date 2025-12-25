@@ -42,7 +42,7 @@ public class SetMpinService implements MpinOperation{
      * @return response indicating success
      */
     @Override
-    public MpinResponse perform(MpinRequest mpinRequest) {
+    public MpinResponse perform(final MpinRequest mpinRequest) {
         // Retrieve user information using UUID.
         User user = validations.
                 getUserInfo(mpinRequest.getUuid());

@@ -94,5 +94,13 @@ public class GenerateKeyUtil {
         return "GLOBAL_POT_" + key;
     }
 
+    public String getGlobalPotTilesKey(String caseCategory){
+        if (caseCategory == null ) {
+          return "key_" + CaseCategory.ALL.toString();
+        }
+        return "key_" + caseCategory;
+
+    }
+
 }
 

@@ -1,14 +1,27 @@
 package com.bxb.sunduk_pay.postgress.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Represents the daily closing price for a specific asset at a given point in time.
- * This entity is crucial for tracking historical price data used for valuation and reporting.
+ * Represents the daily closing price for a specific asset at
+ * a given point in time.
+ * This entity is crucial for tracking historical price data
+ * used for valuation and reporting.
  */
 @Entity
 @Table(name = "asset_prices")
@@ -28,7 +41,8 @@ public class AssetPrice {
 
     /**
      * The exact date and time the price was recorded (e.g., market close time).
-     * This field is often used in combination with the asset to ensure price uniqueness for a day.
+     * This field is often used in combination with the
+     * asset to ensure price uniqueness for a day.
      */
     @Column(name = "effective_at")
     private LocalDateTime effectiveAt; // CRITICAL: This field name must match

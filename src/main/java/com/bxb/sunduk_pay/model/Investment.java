@@ -89,8 +89,5 @@ public class Investment {
      * The profit or loss percentage from the investment.
      */
     private Double profitLossPercentage;
-
-
-
 }
 

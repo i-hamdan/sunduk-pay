@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -7,14 +8,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GlobalPotTileDto {
 
     private String globalPotId;
     private String caseTitle;
     private String caseCategory;
 
-  //  private Boolean isUrgent;
     private Boolean isVerified;
+    private Boolean isActive;
 
     // Images (BLOB → Base64)
     private String primaryImage;
@@ -29,6 +31,6 @@ public class GlobalPotTileDto {
     private Double currentBalance;
     private Double goalAmount;
 
-    private Integer contributorCount;
-    private Integer followerCount;
+    private int contributorCount;
+    private int followerCount;
 }
