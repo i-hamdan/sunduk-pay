@@ -129,20 +129,21 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
 
-                .primaryImage(pot.getPrimaryImage())
-                .secondaryImage(pot.getSecondaryImage())
+                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
+                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
 
                 .kycDocumentTitle(pot.getKycDocumentTitle())
-                .kycDocument(pot.getKycDocument())
+                .kycDocument(buildPublicUrl(pot.getKycDocument()))
 
                 .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
-                .institutionDocument(pot.getInstitutionDocument())
+                .institutionDocument(buildPublicUrl(pot.getInstitutionDocument()))
 
                 .supportingDocumentTitle(pot.getSupportingDocumentTitle())
-                .supportingDocument(pot.getSupportingDocument())
+                .supportingDocument(buildPublicUrl(pot.getSupportingDocument()))
 
                 .customDocumentTitle(pot.getCustomDocumentTitle())
-                .customDocument(pot.getCustomDocument())
+                .customDocument(buildPublicUrl(pot.getCustomDocument()))
+
 
                 .address(pot.getAddress())
                 .city(pot.getCity())
@@ -279,6 +280,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
             responses.add(toTileDto(pot));
         }
         return responses;
+    }
+
+
+    private String buildPublicUrl(String relativePath) {
+
+        if (relativePath == null || relativePath.isBlank()) {
+            return null;
+        }
+
+        return mediaBaseUrl + relativePath;
     }
 
 
