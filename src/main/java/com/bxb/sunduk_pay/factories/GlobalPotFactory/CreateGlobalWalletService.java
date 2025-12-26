@@ -65,6 +65,9 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
         }
 
         // 3. Return the specialized Wallet Response
-        return globalPotMapper.toGlobalWalletResponse(globalWallet);
+        return GlobalPotResponse.builder()
+                .message("Global Wallet verified/created successfully")
+                .status("SUCCESS")
+                .build();
     }
 }

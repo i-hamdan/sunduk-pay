@@ -3,6 +3,8 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,7 +18,8 @@ import java.util.List;
  * Stores campaign details, financial progress, and associated verification documents.
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "global_pots", indexes = {
         @Index(name = "idx_case_title", columnList = "caseTitle"),
         @Index(name = "idx_description", columnList = "description"),
@@ -129,16 +132,12 @@ public class GlobalPot {
     // --- 5. MEDIA & VISUALS ---
 
     /** Primary display image for the campaign. Stored as binary data. */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] primaryImage;
+
+    private String primaryImage;
 
     /** Secondary gallery image for the campaign. Stored as binary data. */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] secondaryImage;
+
+    private String secondaryImage;
 
     // --- 6. VERIFICATION DOCUMENTS (KYC & COMPLIANCE) ---
 
@@ -150,10 +149,8 @@ public class GlobalPot {
     private DocumentStatus kycDocumentStatus = DocumentStatus.PENDING;
 
     /** Binary data for the Identity/KYC document (PDF or Image). */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] kycDocument;
+
+    private String kycDocument;
 
     /** Title for institutional or organizational proof. */
     private String institutionDocumentTitle;
@@ -163,10 +160,8 @@ public class GlobalPot {
     private DocumentStatus institutionDocumentStatus = DocumentStatus.PENDING;
 
     /** Binary data for the institutional document. */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] institutionDocument;
+
+    private String institutionDocument;
 
     /** Title for additional supporting evidence. */
     private String supportingDocumentTitle;
@@ -176,10 +171,8 @@ public class GlobalPot {
     private DocumentStatus supportingDocumentStatus = DocumentStatus.PENDING;
 
     /** Binary data for general supporting documents. */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] supportingDocument;
+
+    private String supportingDocument;
 
     /** Title for any custom or miscellaneous requirement. */
     private String customDocumentTitle;
@@ -189,10 +182,8 @@ public class GlobalPot {
     private DocumentStatus customDocumentStatus = DocumentStatus.PENDING;
 
     /** Binary data for custom documents. */
-    @Lob
-    @Column(columnDefinition = "LONGBLOB")
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] customDocument;
+
+    private String customDocument;
 
     // --- 7. COLLECTIONS (BIDIRECTIONAL) ---
 

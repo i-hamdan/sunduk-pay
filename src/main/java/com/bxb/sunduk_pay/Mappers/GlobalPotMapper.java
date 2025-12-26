@@ -17,7 +17,6 @@ public interface GlobalPotMapper {
 
     GlobalPotResponse toGlobalPotResponse(GlobalPot pot);
 
-    GlobalPotResponse toGlobalWalletResponse(GlobalWallet wallet);
 
     GlobalWallet toEntityWallet(final GlobalPotRequest request);
 

@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -18,9 +19,13 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class GlobalPotMapperImpl implements GlobalPotMapper{
-
     private final TestimonialMapper testimonialMapper;
     private final UserRepository userRepository;
+
+
+
+    @Value("${media.base-url}")
+    private String mediaBaseUrl;
 
     /**
      * Converts the incoming request into a persistence-ready Entity.
@@ -55,8 +60,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         pot.setGoalDate(request.getGoalDate());
         pot.setGoalAmount(request.getGoalAmount());
 
-        // --- 4. Media Mapping (Private Helper) ---
-        mapMedia(pot, request);
+//        // --- 4. Media Mapping (Private Helper) ---
+//        mapMedia(pot, request);
 
         // --- 5. Empty List Initialization (Defensive) ---
 //        pot.setContributors(new ArrayList<>());
@@ -123,16 +128,22 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .caseRequirementType(pot.getCaseRequirementType().toString())
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
-                .primaryImage(toBase64(pot.getPrimaryImage()))
-                .secondaryImage(toBase64(pot.getSecondaryImage()))
+
+                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
+                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
+
                 .kycDocumentTitle(pot.getKycDocumentTitle())
-                .kycDocument(toBase64(pot.getKycDocument()))
+                .kycDocument(buildPublicUrl(pot.getKycDocument()))
+
                 .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
-                .institutionDocument(toBase64(pot.getInstitutionDocument()))
+                .institutionDocument(buildPublicUrl(pot.getInstitutionDocument()))
+
                 .supportingDocumentTitle(pot.getSupportingDocumentTitle())
-                .supportingDocument(toBase64(pot.getSupportingDocument()))
+                .supportingDocument(buildPublicUrl(pot.getSupportingDocument()))
+
                 .customDocumentTitle(pot.getCustomDocumentTitle())
-                .customDocument(toBase64(pot.getCustomDocument()))
+                .customDocument(buildPublicUrl(pot.getCustomDocument()))
+
                 .address(pot.getAddress())
                 .city(pot.getCity())
                 .country(pot.getCountry())
@@ -152,16 +163,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .message("Global Pot created successfully").build();
     }
 
-    /**
-     * @param wallet
-     * @return
-     */
-    @Override
-    public GlobalPotResponse toGlobalWalletResponse(GlobalWallet wallet) {
-        GlobalPotResponse res = new GlobalPotResponse();
-        res.setStatus("Global Wallet created successfully");
-        return res;
-    }
+
 
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
 
@@ -195,74 +197,77 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
-
-        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
-            pot.setPrimaryImage(request.getPrimaryImage().getBytes());
-        }
-
-        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
-            pot.setSecondaryImage(request.getSecondaryImage().getBytes());
-        }
-
-        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
-            pot.setKycDocument(request.getKycDocument().getBytes());
-            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-        }
-
-        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
-            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
-            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
-        }
-
-        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
-            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
-            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
-        }
-
-        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
-            pot.setCustomDocument(request.getCustomDocument().getBytes());
-            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
-        }
-    }
+//    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+//
+//        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
+//            pot.setPrimaryImage(request.getPrimaryImage().getBytes());
+//        }
+//
+//        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
+//            pot.setSecondaryImage(request.getSecondaryImage().getBytes());
+//        }
+//
+//        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
+//            pot.setKycDocument(request.getKycDocument().getBytes());
+//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
+//        }
+//
+//        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
+//            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
+//            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
+//        }
+//
+//        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
+//            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
+//            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
+//        }
+//
+//        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
+//            pot.setCustomDocument(request.getCustomDocument().getBytes());
+//            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
+//        }
+//    }
 
 
 
     @Override
     public GlobalPotTileDto toTileDto(GlobalPot pot) {
 
-        GlobalPotTileDto dto = new GlobalPotTileDto();
+        return GlobalPotTileDto.builder()
+                .globalPotId(pot.getGlobalPotId())
+                .caseTitle(pot.getCaseTitle())
+                .caseCategory(
+                        pot.getCaseCategory() != null
+                                ? pot.getCaseCategory().name()
+                                : null
+                )
+                .isVerified(false)
+                .isActive(pot.getIsActive())
 
-        dto.setGlobalPotId(pot.getGlobalPotId());
-        dto.setCaseTitle(pot.getCaseTitle());
-        dto.setCaseCategory(
-                pot.getCaseCategory() != null
-                        ? pot.getCaseCategory().name()
-                        : null
-        );        dto.setPrimaryImage(toBase64(pot.getPrimaryImage()));
+                // --- Public Images ---
+                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
+                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
+                .tertiaryImage(null) // future ready
 
-        dto.setSecondaryImage(toBase64(pot.getSecondaryImage()));
-        dto.setTertiaryImage(toBase64(pot.getSupportingDocument()));
+                // --- Location ---
+                .city(pot.getCity())
+                .country(pot.getCountry())
 
-        dto.setIsActive(pot.getIsActive());
-        dto.setCity(pot.getCity());
-        dto.setCountry(pot.getCountry());
+                // --- Financials ---
+                .currentBalance(pot.getCurrentBalance())
+                .goalAmount(pot.getGoalAmount())
 
-        dto.setCurrentBalance(pot.getCurrentBalance());
-        dto.setGoalAmount(pot.getGoalAmount());
-        dto.setIsVerified(false);
-        dto.setContributorCount(
-                pot.getContributors() != null
-                        ? pot.getContributors().size()
-                        : 0
-        );
-        dto.setFollowerCount(
-                pot.getFollowers() != null
-                        ? pot.getFollowers().size()
-                        : 0
-        );
-
-        return dto;
+                .contributorCount(
+                        pot.getContributors() != null
+                                ? pot.getContributors().size()
+                                : 0
+                )
+                .followerCount(
+                        pot.getFollowers() != null
+                                ? pot.getFollowers().size()
+                                : 0
+                )
+                .build();
     }
 
     // method to add list on that
@@ -277,12 +282,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-    // helper method to  set images into base 64
-    private String toBase64(byte[] image) {
-        if (image == null) return null;
-        return Base64.getEncoder().encodeToString(image);
-    }
+    private String buildPublicUrl(String relativePath) {
 
+        if (relativePath == null || relativePath.isBlank()) {
+            return null;
+        }
+
+        return mediaBaseUrl + "/media/public/" + relativePath;
+    }
 
 
 
