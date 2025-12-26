@@ -4,11 +4,10 @@ twilio:
   from-number: "+19136751850"
 
 media:
-  # LOCAL
   root: ${MEDIA_ROOT:/media}
   base-url: ${MEDIA_BASE_URL:https://wallet.sundukpay.com/media}
 
-
+spring:
   mail:
     host: smtp.hostinger.com
     port: 587
