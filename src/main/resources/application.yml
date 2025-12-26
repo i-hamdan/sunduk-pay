@@ -5,7 +5,7 @@ twilio:
 
 media:
   root: ${MEDIA_ROOT:/media}
-  base-url: ${MEDIA_BASE_URL:https://wallet.sundukpay.com/media}
+  base-url: ${MEDIA_BASE_URL:https://wallet.sundukpay.com/media/}
 
 spring:
   mail:
@@ -18,7 +18,7 @@ spring:
       mail.smtp.starttls.enable: true
 
   redis:
-    host: localhost
+    host: redis
     port: 6379
     timeout: 60000
     lettuce:
@@ -56,7 +56,7 @@ spring:
     time-zone: Asia/Kolkata
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
     properties:
       security.protocol: PLAINTEXT
       session.timeout.ms: 45000
