@@ -3,7 +3,12 @@ twilio:
   auth-token: b94932d45ef4af3f720d5096a94f9f19
   from-number: "+19136751850"
 
-spring:
+media:
+  # LOCAL
+  root: ${MEDIA_ROOT:/media}
+  base-url: ${MEDIA_BASE_URL:https://wallet.sundukpay.com/media}
+
+
   mail:
     host: smtp.hostinger.com
     port: 587
