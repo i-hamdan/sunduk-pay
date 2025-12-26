@@ -129,20 +129,20 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
 
-                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
-                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
+                .primaryImage(pot.getPrimaryImage())
+                .secondaryImage(pot.getSecondaryImage())
 
                 .kycDocumentTitle(pot.getKycDocumentTitle())
-                .kycDocument(buildPublicUrl(pot.getKycDocument()))
+                .kycDocument(pot.getKycDocument())
 
                 .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
-                .institutionDocument(buildPublicUrl(pot.getInstitutionDocument()))
+                .institutionDocument(pot.getInstitutionDocument())
 
                 .supportingDocumentTitle(pot.getSupportingDocumentTitle())
-                .supportingDocument(buildPublicUrl(pot.getSupportingDocument()))
+                .supportingDocument(pot.getSupportingDocument())
 
                 .customDocumentTitle(pot.getCustomDocumentTitle())
-                .customDocument(buildPublicUrl(pot.getCustomDocument()))
+                .customDocument(pot.getCustomDocument())
 
                 .address(pot.getAddress())
                 .city(pot.getCity())
@@ -245,8 +245,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .isActive(pot.getIsActive())
 
                 // --- Public Images ---
-                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
-                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
+                .primaryImage(pot.getPrimaryImage())
+                .secondaryImage(pot.getSecondaryImage())
                 .tertiaryImage(null) // future ready
 
                 // --- Location ---
@@ -280,20 +280,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         }
         return responses;
     }
-
-
-    private String buildPublicUrl(String relativePath) {
-
-        if (relativePath == null || relativePath.isBlank()) {
-            return null;
-        }
-
-        return mediaBaseUrl + "/media/public/" + relativePath;
-    }
-
-
-
-
 
 
 }
