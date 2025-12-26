@@ -31,11 +31,11 @@ spring:
   config:
     import: classpath:queries.yml
 
-    #  datasource:
-    #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
-  #    username: walletuser
-  #    password: walletpass123
-  #    driver-class-name: com.mysql.cj.jdbc.Driver
+  # datasource:
+  #   url: jdbc:mysql://walletapp-mysql:3306/sundukpay
+  #   username: walletuser
+  #   password: walletpass123
+  #   driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -55,8 +55,6 @@ spring:
   jackson:
     time-zone: Asia/Kolkata
 
-
-
   kafka:
     bootstrap-servers: localhost:9092
     properties:
@@ -75,9 +73,7 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: '*'
-
-
+        spring.json.trusted.packages: "*"
 
   security:
     oauth2:
@@ -86,20 +82,17 @@ spring:
           google:
             client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
             client-secret: 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
-
             scope:
               - openid
               - profile
               - email
             redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
-
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
-
 
 server:
   port: 8080
@@ -124,18 +117,15 @@ sunduk:
       - /api/sunduk-service/webhook
       - /api/sunduk-service/ws
 
-
-
 exchange:
   api:
     url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
+
 stripe:
   key:
     secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
-
   webhook:
     secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
-
 
 resilience4j:
   circuitbreaker:
