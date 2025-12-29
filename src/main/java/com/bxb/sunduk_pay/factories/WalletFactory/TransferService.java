@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class TransferService implements WalletOperation {
+public class  TransferService implements WalletOperation {
 
     /**
      * internal transfer service for handling internal wallet transfers.

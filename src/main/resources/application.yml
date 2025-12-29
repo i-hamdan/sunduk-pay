@@ -3,10 +3,6 @@ twilio:
   auth-token: b94932d45ef4af3f720d5096a94f9f19
   from-number: "+19136751850"
 
-media:
-  root: ${MEDIA_ROOT:/media}
-  base-url: ${MEDIA_BASE_URL:https://wallet.sundukpay.com/media/}
-
 spring:
   mail:
     host: smtp.hostinger.com
@@ -18,7 +14,7 @@ spring:
       mail.smtp.starttls.enable: true
 
   redis:
-    host: redis
+    host: localhost
     port: 6379
     timeout: 60000
     lettuce:
@@ -31,11 +27,11 @@ spring:
   config:
     import: classpath:queries.yml
 
-  # datasource:
-  #   url: jdbc:mysql://walletapp-mysql:3306/sundukpay
-  #   username: walletuser
-  #   password: walletpass123
-  #   driver-class-name: com.mysql.cj.jdbc.Driver
+    #  datasource:
+    #    url: jdbc:mysql://walletapp-mysql:3306/sundukpay
+  #    username: walletuser
+  #    password: walletpass123
+  #    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -55,8 +51,10 @@ spring:
   jackson:
     time-zone: Asia/Kolkata
 
+
+
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     properties:
       security.protocol: PLAINTEXT
       session.timeout.ms: 45000
@@ -73,26 +71,31 @@ spring:
       properties:
         spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
         spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: '*'
+
+
 
   security:
     oauth2:
       client:
         registration:
           google:
-            client-id: 19887003498-6uum0ho83vf44vkm7m68tqts5judp0n4.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 933552633110-jjr2n5oflje22sknc7o7pk98ju224kto.apps.googleusercontent.com
+            client-secret: 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
+
             scope:
               - openid
               - profile
               - email
             redirect-uri: "https://wallet.sundukpay.com/api/sunduk-service/login/oauth2/code/google"
+
         provider:
           google:
             authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
             token-uri: https://oauth2.googleapis.com/token
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
+
 
 server:
   port: 8080
@@ -117,15 +120,18 @@ sunduk:
       - /api/sunduk-service/webhook
       - /api/sunduk-service/ws
 
+
+
 exchange:
   api:
     url: https://v6.exchangerate-api.com/v6/3d6bbeb9e345c98a7aee2cc8
-
 stripe:
   key:
-    secret: sk_test_51RllO2RtVUmZDaeAQD8EgU4isJNFmcCO33V7XCtnBVcbJrDytBGSH1VqkFIBwfSeXPfwAGFjP8hJZZPf5rOiemJY00WWedfCvv
+    secret: sk_test_51ShNbaKAUbfj2EOiuwDKYZgXKQLh2v5AGo0Ds550RpwOGAQoPkbgS6Tkr3mwXexxKGmtCoWeBlYF14fycpIcDwRN00sbE9vtMb
+
   webhook:
-    secret: whsec_576282eeb0973909ced8503bedd60fdff6411ce619de41a7a925ee41c5575555
+    secret: whsec_573a018f35004e579284282ba97c6184062c424bf0f18e658c9d0c176a17399c
+
 
 resilience4j:
   circuitbreaker:

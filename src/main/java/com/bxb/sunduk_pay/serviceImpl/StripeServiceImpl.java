@@ -111,7 +111,7 @@ try {
  userId, amount, transactionType, e.getMessage());
     throw new StripeSessionException(
      "Unexpected error during Stripe session creation.");
-}
+        }
     }
 
     /**
