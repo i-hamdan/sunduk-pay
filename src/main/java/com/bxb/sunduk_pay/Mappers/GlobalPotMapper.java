@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface GlobalPotMapper {
 
-    GlobalPot toEntity(GlobalPotRequest request) throws IOException;
+    GlobalPot  toEntity(GlobalPotRequest request) throws IOException;
 
 
     GlobalPotResponse toGlobalPotResponse(GlobalPot pot);

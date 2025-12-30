@@ -2,12 +2,11 @@ package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +18,9 @@ import java.util.List;
  */
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Table(name = "global_pots", indexes = {
         @Index(name = "idx_case_title", columnList = "caseTitle"),
@@ -150,7 +152,7 @@ public class GlobalPot {
 
     /** Binary data for the Identity/KYC document (PDF or Image). */
 
-    private String kycDocument;
+    private byte[] kycDocument;
 
     /** Title for institutional or organizational proof. */
     private String institutionDocumentTitle;
@@ -161,7 +163,7 @@ public class GlobalPot {
 
     /** Binary data for the institutional document. */
 
-    private String institutionDocument;
+    private byte[] institutionDocument;
 
     /** Title for additional supporting evidence. */
     private String supportingDocumentTitle;
@@ -172,7 +174,7 @@ public class GlobalPot {
 
     /** Binary data for general supporting documents. */
 
-    private String supportingDocument;
+    private byte[] supportingDocument;
 
     /** Title for any custom or miscellaneous requirement. */
     private String customDocumentTitle;
@@ -183,7 +185,7 @@ public class GlobalPot {
 
     /** Binary data for custom documents. */
 
-    private String customDocument;
+    private byte[] customDocument;
 
     // --- 7. COLLECTIONS (BIDIRECTIONAL) ---
 

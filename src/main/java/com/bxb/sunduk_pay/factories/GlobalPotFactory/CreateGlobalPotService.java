@@ -25,8 +25,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
 
     private final GlobalPotRepository repository;
     private final GlobalPotMapper mapper;
-    private final MediaStorageService mediaStorageService;
-    private final MediaPathUtil mediaPathUtil;
+
 
     /**
      * Identifies this operation as CREATE_POT.
@@ -54,16 +53,8 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         log.debug("Mapped GlobalPot entity from request");
 
         //  Save entity to generate GlobalPot ID
-        pot = repository.save(pot);
+       repository.save(pot);
         log.info("GlobalPot saved successfully with ID: {}",
-                pot.getGlobalPotId());
-
-        // Save media files and set paths on entity
-        saveMedia(pot, request);
-
-        //  Persist updated media paths immediately
-        pot = repository.saveAndFlush(pot);
-        log.info("Media paths persisted successfully for GlobalPot ID: {}",
                 pot.getGlobalPotId());
 
         //  Build response
@@ -72,99 +63,99 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                 .message("Global pot created successfully")
                 .build();
     }
-
-    /**
-     * Saves media files (images/documents) and updates entity with file paths.
-     *
-     * @param pot     Managed GlobalPot entity
-     * @param request Incoming request containing media
-     */
-    private void saveMedia(GlobalPot pot, GlobalPotRequest request) {
-
-        String potId = pot.getGlobalPotId();
-        log.debug("Saving media for GlobalPot ID: {}", potId);
-
-        // Primary Image
-        if (request.getPrimaryImage() != null &&
-                !request.getPrimaryImage().isEmpty()) {
-
-            String path = mediaPathUtil.potImage(potId, "primary.jpg");
-            mediaStorageService.savePublicFile(
-                    request.getPrimaryImage(), path);
-
-            pot.setPrimaryImage(path);
-            log.info("Primary image saved at path: {}", path);
-        }
-
-        // Secondary Image
-        if (request.getSecondaryImage() != null &&
-                !request.getSecondaryImage().isEmpty()) {
-
-            String path = mediaPathUtil.potImage(potId, "secondary.jpg");
-            mediaStorageService.savePublicFile(
-                    request.getSecondaryImage(), path);
-
-            pot.setSecondaryImage(path);
-            log.info("Secondary image saved at path: {}", path);
-        }
-
-        // KYC Document
-        if (request.getKycDocument() != null &&
-                !request.getKycDocument().isEmpty()) {
-
-            String path = mediaPathUtil.potDoc(potId, "kyc.pdf");
-            mediaStorageService.savePublicFile(
-                    request.getKycDocument(), path);
-
-            pot.setKycDocument(path);
-            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-
-            log.info("KYC document saved at path: {}", path);
-        }
-
-        //  Institution Document
-        if (request.getInstitutionDocument() != null &&
-                !request.getInstitutionDocument().isEmpty()) {
-
-            String path = mediaPathUtil.potDoc(potId, "institution.pdf");
-            mediaStorageService.savePublicFile(
-                    request.getInstitutionDocument(), path);
-
-            pot.setInstitutionDocument(path);
-            pot.setInstitutionDocumentTitle(
-                    request.getInstitutionDocumentTitle());
-
-            log.info("Institution document saved at path: {}", path);
-        }
-
-        //  Supporting Document
-        if (request.getSupportingDocument() != null &&
-                !request.getSupportingDocument().isEmpty()) {
-
-            String path = mediaPathUtil.potDoc(potId, "supporting.pdf");
-            mediaStorageService.savePublicFile(
-                    request.getSupportingDocument(), path);
-
-            pot.setSupportingDocument(path);
-            pot.setSupportingDocumentTitle(
-                    request.getSupportingDocumentTitle());
-
-            log.info("Supporting document saved at path: {}", path);
-        }
-
-        //  Custom Document
-        if (request.getCustomDocument() != null &&
-                !request.getCustomDocument().isEmpty()) {
-
-            String path = mediaPathUtil.potDoc(potId, "custom.pdf");
-            mediaStorageService.savePublicFile(
-                    request.getCustomDocument(), path);
-
-            pot.setCustomDocument(path);
-            pot.setCustomDocumentTitle(
-                    request.getCustomDocumentTitle());
-
-            log.info("Custom document saved at path: {}", path);
-        }
-    }
+//
+//    /**
+//     * Saves media files (images/documents) and updates entity with file paths.
+//     *
+//     * @param pot     Managed GlobalPot entity
+//     * @param request Incoming request containing media
+//     */
+//    private void saveMedia(GlobalPot pot, GlobalPotRequest request) {
+//
+//        String potId = pot.getGlobalPotId();
+//        log.debug("Saving media for GlobalPot ID: {}", potId);
+//
+//        // Primary Image
+//        if (request.getPrimaryImage() != null &&
+//                !request.getPrimaryImage().isEmpty()) {
+//
+//            String path = mediaPathUtil.potImage(potId, "primary.jpg");
+//            mediaStorageService.savePublicFile(
+//                    request.getPrimaryImage(), path);
+//
+//            pot.setPrimaryImage(path);
+//            log.info("Primary image saved at path: {}", path);
+//        }
+//
+//        // Secondary Image
+//        if (request.getSecondaryImage() != null &&
+//                !request.getSecondaryImage().isEmpty()) {
+//
+//            String path = mediaPathUtil.potImage(potId, "secondary.jpg");
+//            mediaStorageService.savePublicFile(
+//                    request.getSecondaryImage(), path);
+//
+//            pot.setSecondaryImage(path);
+//            log.info("Secondary image saved at path: {}", path);
+//        }
+//
+//        // KYC Document
+//        if (request.getKycDocument() != null &&
+//                !request.getKycDocument().isEmpty()) {
+//
+//            String path = mediaPathUtil.potDoc(potId, "kyc.pdf");
+//            mediaStorageService.savePublicFile(
+//                    request.getKycDocument(), path);
+//
+//            pot.setKycDocument(path);
+//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
+//
+//            log.info("KYC document saved at path: {}", path);
+//        }
+//
+//        //  Institution Document
+//        if (request.getInstitutionDocument() != null &&
+//                !request.getInstitutionDocument().isEmpty()) {
+//
+//            String path = mediaPathUtil.potDoc(potId, "institution.pdf");
+//            mediaStorageService.savePublicFile(
+//                    request.getInstitutionDocument(), path);
+//
+//            pot.setInstitutionDocument(path);
+//            pot.setInstitutionDocumentTitle(
+//                    request.getInstitutionDocumentTitle());
+//
+//            log.info("Institution document saved at path: {}", path);
+//        }
+//
+//        //  Supporting Document
+//        if (request.getSupportingDocument() != null &&
+//                !request.getSupportingDocument().isEmpty()) {
+//
+//            String path = mediaPathUtil.potDoc(potId, "supporting.pdf");
+//            mediaStorageService.savePublicFile(
+//                    request.getSupportingDocument(), path);
+//
+//            pot.setSupportingDocument(path);
+//            pot.setSupportingDocumentTitle(
+//                    request.getSupportingDocumentTitle());
+//
+//            log.info("Supporting document saved at path: {}", path);
+//        }
+//
+//        //  Custom Document
+//        if (request.getCustomDocument() != null &&
+//                !request.getCustomDocument().isEmpty()) {
+//
+//            String path = mediaPathUtil.potDoc(potId, "custom.pdf");
+//            mediaStorageService.savePublicFile(
+//                    request.getCustomDocument(), path);
+//
+//            pot.setCustomDocument(path);
+//            pot.setCustomDocumentTitle(
+//                    request.getCustomDocumentTitle());
+//
+//            log.info("Custom document saved at path: {}", path);
+//        }
+//    }
 }

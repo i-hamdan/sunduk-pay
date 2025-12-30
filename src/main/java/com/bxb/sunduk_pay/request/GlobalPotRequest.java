@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.*;
 import lombok.*;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class GlobalPotRequest {
@@ -37,8 +39,8 @@ public class GlobalPotRequest {
     private String customDocumentTitle;
 
     // --- Binary Media (Images & Docs) ---
-    private MultipartFile primaryImage;
-    private MultipartFile secondaryImage;
+    private String primaryImage;
+    private String secondaryImage;
     private MultipartFile kycDocument;
     private MultipartFile institutionDocument;
     private MultipartFile supportingDocument;

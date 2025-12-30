@@ -49,6 +49,9 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         pot.setBeneficiaryName(request.getBeneficiaryName());
         pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
 
+        // --- documents ----
+        mapMedia(pot,request);
+
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
         pot.setCity(request.getCity());
@@ -85,7 +88,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
 
 
 
-    public void updateEntity(GlobalPot pot, GlobalPotRequest request) {
+//    public void updateEntity(GlobalPot pot, GlobalPotRequest request) {
 
 //        pot.setCaseTitle(request.getCaseTitle());
 //        pot.setCategory(request.getCategory());
@@ -114,7 +117,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
 //        pot.setTestimonial(request.getTestimonial());
 //
 //        pot.setUpdatedAt(LocalDateTime.now());
-    }
+//    }
 
 
 
@@ -129,20 +132,20 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
 
-                .primaryImage(buildPublicUrl(pot.getPrimaryImage()))
-                .secondaryImage(buildPublicUrl(pot.getSecondaryImage()))
+                .primaryImage(pot.getPrimaryImage())
+                .secondaryImage(pot.getSecondaryImage())
 
                 .kycDocumentTitle(pot.getKycDocumentTitle())
-                .kycDocument(buildPublicUrl(pot.getKycDocument()))
+                .kycDocument(toBase64(pot.getKycDocument()))
 
                 .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
-                .institutionDocument(buildPublicUrl(pot.getInstitutionDocument()))
+                .institutionDocument(toBase64(pot.getInstitutionDocument()))
 
                 .supportingDocumentTitle(pot.getSupportingDocumentTitle())
-                .supportingDocument(buildPublicUrl(pot.getSupportingDocument()))
+                .supportingDocument(toBase64(pot.getSupportingDocument()))
 
                 .customDocumentTitle(pot.getCustomDocumentTitle())
-                .customDocument(buildPublicUrl(pot.getCustomDocument()))
+                .customDocument(toBase64(pot.getCustomDocument()))
 
 
                 .address(pot.getAddress())
@@ -198,38 +201,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-//    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
-//
-//        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
-//            pot.setPrimaryImage(request.getPrimaryImage().getBytes());
-//        }
-//
-//        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
-//            pot.setSecondaryImage(request.getSecondaryImage().getBytes());
-//        }
-//
-//        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
-//            pot.setKycDocument(request.getKycDocument().getBytes());
-//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-//        }
-//
-//        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
-//            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
-//            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
-//        }
-//
-//        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
-//            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
-//            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
-//        }
-//
-//        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
-//            pot.setCustomDocument(request.getCustomDocument().getBytes());
-//            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
-//        }
-//    }
-
-
 
     @Override
     public GlobalPotTileDto toTileDto(GlobalPot pot) {
@@ -283,14 +254,45 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-    private String buildPublicUrl(String relativePath) {
+    // helper method to  set images into base 64
+    private String toBase64(byte[] image) {
+        if (image == null) return null;
+        return Base64.getEncoder().encodeToString(image);
+    }
 
-        if (relativePath == null || relativePath.isBlank()) {
-            return null;
+
+        private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+
+        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
+            pot.setPrimaryImage(request.getPrimaryImage());
         }
 
-        return mediaBaseUrl + relativePath;
+        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
+            pot.setSecondaryImage(request.getSecondaryImage());
+        }
+
+        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
+            pot.setKycDocument(request.getKycDocument().getBytes());
+            pot.setKycDocumentTitle(request.getKycDocumentTitle());
+        }
+
+        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
+            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
+            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
+        }
+
+        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
+            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
+            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
+        }
+
+        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
+            pot.setCustomDocument(request.getCustomDocument().getBytes());
+            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
+        }
     }
+
+
 
 
 }
