@@ -173,8 +173,15 @@ UserResponse userResponse = new UserResponse();
                 .permanentAddress(permanentAddress)
                 .profilePhoto(photoBase64)
                 .build();
+    }
 
 
+    public UserResponse toUserResponse(User user){
+        return UserResponse.builder()
+                .uuid(user.getUuid())
+                .fullName(user.getFullName())
+                .email(user.getEmail())
+                .build();
     }
 }
 

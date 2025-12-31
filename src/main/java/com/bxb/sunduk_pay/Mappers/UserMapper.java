@@ -46,7 +46,16 @@ public interface UserMapper {
 
     User toUpdate(UserRequest request, User user);
 
+
     UserResponse getDetails(User user);
+
+    /**
+     * Converts a User entity into a UserResponse DTO.
+     *
+     * @param user the User entity
+     * @return a UserResponse DTO.
+     */
+    UserResponse toUserResponse(User user);
 
 }
 

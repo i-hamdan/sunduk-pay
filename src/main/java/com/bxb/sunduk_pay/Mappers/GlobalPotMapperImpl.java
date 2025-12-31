@@ -2,10 +2,13 @@ package com.bxb.sunduk_pay.Mappers;
 
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
+import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
+import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
+import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,10 +21,14 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class GlobalPotMapperImpl implements GlobalPotMapper{
+public class GlobalPotMapperImpl implements GlobalPotMapper {
     private final TestimonialMapper testimonialMapper;
     private final UserRepository userRepository;
 
+    /**
+     * Mapper for User entities.
+     */
+    private final UserMapper userMapper;
 
 
     @Value("${media.base-url}")
@@ -50,7 +57,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
 
         // --- documents ----
-        mapMedia(pot,request);
+        mapMedia(pot, request);
 
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
@@ -86,8 +93,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-
-
 //    public void updateEntity(GlobalPot pot, GlobalPotRequest request) {
 
 //        pot.setCaseTitle(request.getCaseTitle());
@@ -118,7 +123,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
 //
 //        pot.setUpdatedAt(LocalDateTime.now());
 //    }
-
 
 
     @Override
@@ -168,7 +172,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
 
         GlobalWallet wallet = new GlobalWallet();
@@ -191,7 +194,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         contributor.setIsAnonymous(request.getIsAnonymous());
         contributor.setUserContributor(userRepository
                 .findById(request.getUserContributorId())
-                .orElseThrow(()-> new UserNotFoundException(
+                .orElseThrow(() -> new UserNotFoundException(
                         "User not found with ID: "
                                 + request.getUserContributorId())));
         contributor.setProfileImage(request.getContributorImage().getBytes());
@@ -199,7 +202,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         contributor.setGlobalPot(pot);
         return contributor;
     }
-
 
 
     @Override
@@ -253,7 +255,45 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
         return responses;
     }
 
+    /**
+     * Converts a GroupChatMessageRequest to a GroupChatEvent.
+     *
+     * @param request the group chat message request
+     * @return the corresponding group chat event
+     */
+    @Override
+    public GroupChatEvent toGroupChatEvent(
+            final GroupChatMessageRequest request) {
+        return GroupChatEvent.builder().
+                senderId(request.getSenderId())
+                .globalPotId(request.getGlobalPotId())
+                .content(request.getContent()).
+                build();
+    }
 
+    /**
+     * Converts a GroupChatMessage to a GroupChatMessageResponse.
+     *
+     * @param groupChatMessage the group chat message model
+     * @return the corresponding group chat message response
+     */
+    @Override
+    public GroupChatMessageResponse toGroupChatMessageResponse(
+            final GroupChatMessage groupChatMessage) {
+        return GroupChatMessageResponse.builder()
+                .messageId(groupChatMessage.getMessageId())
+                .sender(userMapper.toUserResponse(groupChatMessage.getSender()))
+                .globalPotId(groupChatMessage.getGlobalPot().getGlobalPotId())
+                .content(groupChatMessage.getContent())
+                .timestamp(groupChatMessage.getTimestamp().toString()).build();
+    }
+
+
+    /**
+     * Private helper to convert byte array to base64 string.
+     * @param image
+     * @return
+     */
     // helper method to  set images into base 64
     private String toBase64(byte[] image) {
         if (image == null) return null;
@@ -261,7 +301,10 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
     }
 
 
-        private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+    /**
+     * Private helper to map media files from request to entity.
+     */
+    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
 
         if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
             pot.setPrimaryImage(request.getPrimaryImage());
@@ -291,8 +334,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper{
             pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
         }
     }
-
-
 
 
 }

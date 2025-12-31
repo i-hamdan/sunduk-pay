@@ -22,11 +22,10 @@ import java.util.List;
 
 
 /**
- * Controller for handling chat-related operations.
+ * Controller for handling one-to-one chat-related operations.
  * Manages sending chat messages via WebSocket
  * and fetching chat history between users.
  */
-@Controller
 @Log4j2
 @RequiredArgsConstructor
 @RestController
