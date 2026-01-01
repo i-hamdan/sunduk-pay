@@ -149,4 +149,8 @@ public class Transaction {
      */
 
     private RiskLevel riskLevel;
+
+    private String toGlobalPotId;
+
+    private String fromGlobalPotId;
 }

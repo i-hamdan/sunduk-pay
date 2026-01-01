@@ -31,4 +31,7 @@ public interface GlobalPotValidations {
      * @return the number of followers
      */
     int getFollowersCount(String globalPotId);
+
+    void validateAmountContributed(Double amountContributed);
+
 }

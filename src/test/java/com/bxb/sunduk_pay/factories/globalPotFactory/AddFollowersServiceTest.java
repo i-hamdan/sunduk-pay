@@ -38,10 +38,6 @@ public class AddFollowersServiceTest {
     @InjectMocks
     private AddFollowersService addFollowersService;
 
-    // -------------------------------
-    // TEST CASE 1:
-    // -------------------------------
-
     @Test
     void shouldReturnGlobalPotRequestType(){
 
@@ -49,15 +45,10 @@ public class AddFollowersServiceTest {
         Assertions.assertEquals(addFollowersService.getGlobalPotRequestType(),type);
     }
 
-
-    // -------------------------------
-    // TEST CASE 2: Already following
-    // -------------------------------
     @Test
     void shouldReturnAlreadyFollowingMessage_whenFollowerExists() {
 
-        // GIVEN ---------------------------------------
-
+        // GIVEN
         User followerUser = new User();
         followerUser.setUuid("user-123");
 
@@ -75,26 +66,22 @@ public class AddFollowersServiceTest {
         when(globalPotRepository.findById("globalPot-123"))
                 .thenReturn(Optional.of(globalPot));
 
-        when(followerRepository.existsByFollowerUserAndGlobalPot(followerUser, globalPot))
+        when(followerRepository.existsByFollowerUserAndGlobalPot(followerUser,
+                globalPot))
                 .thenReturn(true);
 
-
-        // WHEN ----------------------------------------
-
+        // WHEN
         GlobalPotResponse response = addFollowersService.perform(globalPotRequest);
 
-        // THEN ----------------------------------------
-        Assertions.assertEquals("Already following this Global Pot ", response.getMessage());
+        // THEN
+        Assertions.assertEquals("Already following this Global Pot ",
+                response.getMessage());
         verify(validations).getUserInfo("user-123");
         verify(globalPotRepository).findById("globalPot-123");
-        verify(followerRepository).existsByFollowerUserAndGlobalPot(followerUser, globalPot);
-
-
+        verify(followerRepository).existsByFollowerUserAndGlobalPot(followerUser,
+                globalPot);
     }
 
-    // -------------------------------
-    // TEST CASE 3: Follow successfully
-    // -------------------------------
     @Test
     void shouldFollowPotSuccessfully_WhenFollowerNotExists() {
 
@@ -123,10 +110,12 @@ public class AddFollowersServiceTest {
                 .thenReturn(newfollower);
 
         //When
-        GlobalPotResponse globalPotResponse = addFollowersService.perform(globalPotRequest);
+        GlobalPotResponse globalPotResponse =
+                addFollowersService.perform(globalPotRequest);
 
         //Then
-        Assertions.assertEquals("Gloable Pot Followed Successfully", globalPotResponse.getMessage());
+        Assertions.assertEquals("Gloable Pot Followed Successfully",
+                globalPotResponse.getMessage());
         verify(validations).getUserInfo("user-123");
         verify(globalPotRepository).findById("pot-123");
         verify(followerRepository).save(any(Follower.class));

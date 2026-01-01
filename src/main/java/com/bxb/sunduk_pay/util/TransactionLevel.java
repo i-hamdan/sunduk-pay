@@ -11,5 +11,7 @@ public enum TransactionLevel {
 /** Transaction involving an external party, such as a bank or another user. */
     EXTERNAL,
     /** Transaction that has been fully processed and settled. */
-    INVESTED
+    INVESTED,
+
+    GLOBAL_POT
 }

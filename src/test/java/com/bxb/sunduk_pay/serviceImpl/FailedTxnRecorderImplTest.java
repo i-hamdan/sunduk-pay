@@ -34,7 +34,7 @@ public class FailedTxnRecorderImplTest {
     @Test
     void shouldRecordFailedTransactionSuccessfully(){
 
-        // ===================== GIVEN =====================
+        //GIVEN
         MainWalletRequest mainWalletRequest = new MainWalletRequest();
         mainWalletRequest.setUuid("user-123");
         mainWalletRequest.setAmount(500.0);
@@ -54,7 +54,7 @@ public class FailedTxnRecorderImplTest {
         sourceSubWallet.setSubWalletId("MAIN-2");
         sourceSubWallet.setSubWalletName("Savings");
 
-        // ----- STUBS -----
+        //STUBS
         when(validations.getUserInfo("user-123"))
                 .thenReturn(user);
         when(validations.getMainWalletInfo("user-123"))
@@ -67,11 +67,11 @@ public class FailedTxnRecorderImplTest {
                 "SUB-1")).
                 thenReturn(sourceSubWallet);
 
-        // ===================== WHEN =====================
+        //WHEN
         MainWalletResponse mainWalletResponse =
                 failedTxnRecorderImpl.recordFailedTxn(mainWalletRequest);
 
-        // ===================== THEN =====================
+        //THEN
         Assertions.assertNotNull(mainWalletResponse);
         Assertions.assertEquals("Transaction failed!",
                 mainWalletResponse.getMessage());

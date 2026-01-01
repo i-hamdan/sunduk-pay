@@ -68,6 +68,8 @@ public class GlobalPotRequest {
     private MultipartFile contributorImage;
     private String followerUser;
 
+    private String sourceWalletId;
+
     private PotStatus potStatus;
 
     private int pageNumber;

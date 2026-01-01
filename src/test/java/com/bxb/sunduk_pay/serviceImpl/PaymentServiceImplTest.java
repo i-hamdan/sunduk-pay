@@ -29,8 +29,6 @@ public class PaymentServiceImplTest {
     @InjectMocks
     private PaymentServiceImpl paymentServiceImpl;
 
-
-    // -------------------- TEST 1 ---------------------
     @Test
     void shouldReturnCheckoutUrl_WhenStripeSessionCreated() throws Exception {
 
@@ -81,9 +79,6 @@ public class PaymentServiceImplTest {
 
     }
 
-
-    // -------------------- TEST 2 ---------------------
-
     @Test
     void shouldRuntimeException_WhenStripeFails() throws Exception {
 
@@ -103,7 +98,6 @@ public class PaymentServiceImplTest {
 
     }
 
-    // -------------------- TEST 1 ---------------------
     @Test
     void shouldRecordFailedTraction_WhenFallbackCall(){
 

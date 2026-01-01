@@ -1,8 +1,16 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
+import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
+import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -14,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @Component
 @RequiredArgsConstructor
-public class GlobalPotValidationsImpl implements GlobalPotValidations{
+public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
     /**
      * Repository for accessing Global Pot data.
@@ -33,7 +41,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations{
     public GlobalPot getGlobalPot(final String globalPotId) {
         GlobalPot globalPot =
                 globalPotRepository.findById(globalPotId).orElseThrow(
-                        ()-> new GlobalPotNotFoundException(
+                        () -> new GlobalPotNotFoundException(
                                 "Global Pot not found with ID: "
                                         + globalPotId));
         return globalPot;
@@ -63,4 +71,17 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations{
         return globalPotRepository
                 .getFollowersCountGlobalByPotId(globalPotId);
     }
+
+    @Override
+    public void validateAmountContributed(Double amountContributed) {
+
+        if (amountContributed == null || amountContributed <= 0) {
+            throw new InsufficientBalanceException(
+                    "Amount contributed is null or negative"
+            );
+        }
+
+    }
+
+
 }

@@ -40,7 +40,7 @@ public class UpdateUserServiceTest {
     @Test
     void shouldReturnUpdateUserRequestType() {
         UserRequestType type = updateUserService.getUserRequestType();
-        Assertions.assertEquals(type, UserRequestType.UPDATE);
+        Assertions.assertEquals(UserRequestType.UPDATE, type);
     }
 
     @Test
@@ -76,7 +76,8 @@ public class UpdateUserServiceTest {
 
         // then
         Assertions.assertNotNull(response);
-        Assertions.assertEquals("saved new info Successfully", response.getMessage());
+        Assertions.assertEquals("saved new info Successfully",
+                response.getMessage());
 
 
         verify(validations).getUserInfo("uuid-0000");

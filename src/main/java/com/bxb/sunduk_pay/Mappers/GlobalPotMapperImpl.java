@@ -56,9 +56,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setBeneficiaryName(request.getBeneficiaryName());
         pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
 
-        // --- documents ----
-        mapMedia(pot, request);
-
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
         pot.setCity(request.getCity());
@@ -172,6 +169,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     }
 
 
+
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
 
         GlobalWallet wallet = new GlobalWallet();
@@ -192,16 +190,50 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         contributor.setName(request.getContributorName());
         contributor.setAmountContributed(request.getAmountContributed());
         contributor.setIsAnonymous(request.getIsAnonymous());
-        contributor.setUserContributor(userRepository
-                .findById(request.getUserContributorId())
-                .orElseThrow(() -> new UserNotFoundException(
+        User userContributor = userRepository
+                .findById(request.getUserContributorId()).orElseThrow(() -> new UserNotFoundException(
                         "User not found with ID: "
-                                + request.getUserContributorId())));
-        contributor.setProfileImage(request.getContributorImage().getBytes());
+                                + request.getUserContributorId()));
+        contributor.setUserContributor(userContributor);
+
+//        contributor.setProfileImage(request.getContributorImage().getBytes());
         contributor.setIsUser(request.getIsUser());
         contributor.setGlobalPot(pot);
         return contributor;
     }
+
+
+//    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+//
+//        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
+//            pot.setPrimaryImage(request.getPrimaryImage().getBytes());
+//        }
+//
+//        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
+//            pot.setSecondaryImage(request.getSecondaryImage().getBytes());
+//        }
+//
+//        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
+//            pot.setKycDocument(request.getKycDocument().getBytes());
+//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
+//        }
+//
+//        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
+//            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
+//            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
+//        }
+//
+//        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
+//            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
+//            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
+//        }
+//
+//        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
+//            pot.setCustomDocument(request.getCustomDocument().getBytes());
+//            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
+//        }
+//    }
+
 
 
     @Override
