@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -10,15 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Entity representing a Global Pot fundraising campaign.
  * Stores campaign details, financial progress, and associated verification documents.
  */
+@Builder
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -40,7 +42,7 @@ import java.util.List;
         @Index(name = "idx_beneficiary_name", columnList = "beneficiaryName"),
         @Index(name = "idx_relation_to_beneficiary", columnList =
                 "relationToBeneficiary"),
-        @Index(name = "idx_created_by", columnList = "admin_user_id"),
+//        @Index(name = "idx_created_by", columnList = "admin_user_id"),
         @Index(name = "idx_created_at", columnList = "createdAt"),
 })
 public class GlobalPot {
@@ -51,11 +53,6 @@ public class GlobalPot {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String globalPotId;
-
-    /** The administrative user or creator who initiated and manages the pot. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_user_id")
-    private User admin;
 
     /** The digital wallet associated with this
      *  pot for transaction and balance management. */
@@ -132,61 +129,9 @@ public class GlobalPot {
     private LocalDate goalDate;
 
     // --- 5. MEDIA & VISUALS ---
-
-    /** Primary display image for the campaign. Stored as binary data. */
-
-    private String primaryImage;
-
-    /** Secondary gallery image for the campaign. Stored as binary data. */
-
-    private String secondaryImage;
-
-    // --- 6. VERIFICATION DOCUMENTS (KYC & COMPLIANCE) ---
-
-    /** Descriptive title for the Identity/KYC document. */
-    private String kycDocumentTitle;
-
-    /** Verification status of the KYC document. */
-    @Enumerated(EnumType.STRING)
-    private DocumentStatus kycDocumentStatus = DocumentStatus.PENDING;
-
-    /** Binary data for the Identity/KYC document (PDF or Image). */
-
-    private byte[] kycDocument;
-
-    /** Title for institutional or organizational proof. */
-    private String institutionDocumentTitle;
-
-    /** Verification status of the institution document. */
-    @Enumerated(EnumType.STRING)
-    private DocumentStatus institutionDocumentStatus = DocumentStatus.PENDING;
-
-    /** Binary data for the institutional document. */
-
-    private byte[] institutionDocument;
-
-    /** Title for additional supporting evidence. */
-    private String supportingDocumentTitle;
-
-    /** Verification status of the supporting document. */
-    @Enumerated(EnumType.STRING)
-    private DocumentStatus supportingDocumentStatus = DocumentStatus.PENDING;
-
-    /** Binary data for general supporting documents. */
-
-    private byte[] supportingDocument;
-
-    /** Title for any custom or miscellaneous requirement. */
-    private String customDocumentTitle;
-
-    /** Verification status of the custom document. */
-    @Enumerated(EnumType.STRING)
-    private DocumentStatus customDocumentStatus = DocumentStatus.PENDING;
-
-    /** Binary data for custom documents. */
-
-    private byte[] customDocument;
-
+    @Builder.Default
+    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GlobalPotDocument> globalPotDocuments = new ArrayList<>();
     // --- 7. COLLECTIONS (BIDIRECTIONAL) ---
 
     /** List of users who have donated to this specific pot. */
@@ -201,6 +146,16 @@ public class GlobalPot {
     /** List of users following this pot for updates. */
     @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL)
     private List<Follower> followers;
+
+    // --- 1. IDENTITY & OWNERSHIP ---
+
+    @ManyToMany
+    @JoinTable(
+            name = "pot_administrators",
+            joinColumns = @JoinColumn(name = "global_pot_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> administrators;
 
     // --- 8. AUDIT & METADATA ---
 
@@ -220,4 +175,12 @@ public class GlobalPot {
     /** Automatic timestamp of the last time the pot record was modified. */
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public void addDocument(GlobalPotDocument doc) {
+        if (doc != null) {
+            this.globalPotDocuments.add(doc);
+            doc.setGlobalPot(this);
+        }
+    }
+
 }

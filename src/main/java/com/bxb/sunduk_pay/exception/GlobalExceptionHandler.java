@@ -380,23 +380,23 @@ public class GlobalExceptionHandler {
      */
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ErrorResponse handleMaxUploadSizeExceededException(
             final MaxUploadSizeExceededException e,
             final HttpServletRequest request) {
-        log.error("File size exceeds the maximum limit!"
-                + " Please upload a 1 mb file.");
+
+        // Log the actual error
+        log.error("Multipart upload failed: {}", e.getMessage());
+
         return new ErrorResponse(
                 LocalDateTime.now(),
-                HttpStatus.FORBIDDEN.value(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(),
-                "File size exceeds the maximum limit!"
-                        + " Please upload a 1 mb file.",
+                HttpStatus.PAYLOAD_TOO_LARGE.value(),
+                HttpStatus.PAYLOAD_TOO_LARGE.getReasonPhrase(),
+                "File size exceeds the limit! Individual files" +
+                        " must be under 10MB and total request under 50MB.",
                 request.getRequestURI()
         );
-
     }
-
 
     /**
      * Handles {@link CannotFetchMessagesException}.
@@ -536,6 +536,16 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(value = GoalAmountBelowThresholdException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleGoalAmountBelowThresholdException(
+            final GoalAmountBelowThresholdException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
 
 
 }
