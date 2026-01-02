@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.encryption.HashUtil;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
@@ -12,10 +12,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -32,6 +28,10 @@ public class ValidationsImpl implements Validations {
     private final HashUtil hashUtil;
     /** Repository for accessing user data. */
     private final UserRepository userRepository;
+    /**
+     * Repository for Reminder Repository.
+     */
+    private final ReminderRepository reminderRepository;
     /** Repository for accessing main wallet data. */
     private final MainWalletRepository mainWalletRepository;
     /** Repository for accessing transaction data. */
@@ -476,6 +476,14 @@ private static final int WALLET_SIZE = 19;
                     "SubWallet is already invested: "
                             + subWallet.getSubWalletId());
         }
+
+
+    }
+
+    @Override
+    public Reminder getReminderById(String reminderId) {
+            return reminderRepository.findById(reminderId).orElseThrow(()->
+                    new RuntimeException("cannot find Reminder "));
     }
 
 }

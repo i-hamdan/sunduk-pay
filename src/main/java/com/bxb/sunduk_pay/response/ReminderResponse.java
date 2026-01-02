@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 /**
  * Response class representing a reminder.
  */
@@ -25,4 +27,11 @@ public class ReminderResponse {
     private long nextDue;
     /** Contact name associated with reminder. */
     private String contactName;
+    /** LocalDateTime associated with reminder. */
+    private LocalDateTime DateTime;
+    /**
+     * isAvailable associated with the reminder.
+     */
+    private Boolean isAvailable;
+    
 }

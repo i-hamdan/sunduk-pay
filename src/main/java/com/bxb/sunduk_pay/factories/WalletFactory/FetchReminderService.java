@@ -59,19 +59,15 @@ public class FetchReminderService implements WalletOperation{
                     mainWalletRequest.getSize(),
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
-        Page<Reminder> reminderPage =
-                reminderRepository.findByContactNumber(
-                        mainWalletRequest.getContactNumber(), pageable);
 
-        List<ReminderResponse> reminderResponses =
-                reminderPage.getContent().stream()
-                        .map(reminderMapper::toReminderResponse)
-                        .toList();
-        log.info("Fetched {} reminders for contact number: {}",
-                reminderResponses.size(), mainWalletRequest.getContactNumber());
+        List<Reminder> reminderList = reminderRepository.findByUser_UuidAndContactNumber(mainWalletRequest.getUuid(),
+                mainWalletRequest.getContactNumber());
+
+        List<ReminderResponse> list = reminderList.stream().map
+                (reminderMapper::toReminderResponse).toList();
 
         return MainWalletResponse.builder()
-                .reminders(reminderResponses)
+                .reminders(list)
                 .build();
     }
 }

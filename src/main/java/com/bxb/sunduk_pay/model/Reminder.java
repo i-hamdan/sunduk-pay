@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.Duration;
+import com.google.type.DateTime;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Model representing a reminder entity.
@@ -61,6 +63,22 @@ public class Reminder {
     /**
      * User associated with the reminder.
      */
+    /**
+     * localDateTime associated with the reminder.
+     */
+    private LocalDateTime localDateTime;
+    /**
+     * isPaid associated with the reminder.
+     */
+    private Boolean isPaid;
+    /**
+//     * DATE associated with the reminder.
+     */
+    private LocalDate date;
+    /**
+     * isAvailable associated with the reminder.
+     */
+    private Boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

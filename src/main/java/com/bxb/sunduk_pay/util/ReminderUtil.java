@@ -23,26 +23,26 @@ public class ReminderUtil {
      * @return number of days until the next due reminder
      */
     public static long calculateDaysUntilNextDue(final Reminder reminder) {
+
         if (reminder == null || reminder.getStartDate() == null
                 || reminder.getDuration() == null) {
             return 0;
         }
 
         LocalDate today = LocalDate.now();
-        LocalDate nextDueDate = reminder.getStartDate();
+        LocalDate dueDate = reminder.getDate();
 
-        // Move nextDueDate forward until it’s after today
-        while (!nextDueDate.isAfter(today)) {
-            nextDueDate = switch (reminder.getDuration().toString()) {
-                case "DAILY" -> nextDueDate.plusDays(1);
-                case "WEEKLY" -> nextDueDate.plusWeeks(1);
-                case "MONTHLY" -> nextDueDate.plusMonths(1);
-                case "YEARLY" -> nextDueDate.plusYears(1);
-                default -> nextDueDate;
-            };
+        // If reminder is in the past and NOT repeating
+        if (dueDate.isBefore(today)) {
+            return ChronoUnit.DAYS.between(today, dueDate); // negative value
         }
+//        if(reminder.getDuration().equals(Duration.WEEKLY)){
+//            ChronoUnit.DAYS.between(today.minusDays(7),dueDate);
+//        }
 
-        // Calculate days between today and next due date
-        return ChronoUnit.DAYS.between(today, nextDueDate);
+
+
+        return ChronoUnit.DAYS.between(today, dueDate);
     }
+
 }

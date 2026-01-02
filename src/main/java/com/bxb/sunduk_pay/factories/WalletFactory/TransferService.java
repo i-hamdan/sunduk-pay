@@ -95,7 +95,8 @@ public class  TransferService implements WalletOperation {
                         mainWalletRequest.getReceiverId(),
                         mainWalletRequest.getAmount(),
                         mainWalletRequest.getPaymentTag(),
-                        mainWalletRequest.getSourceWalletId()
+                        mainWalletRequest.getSourceWalletId(),
+                        mainWalletRequest.getReminderId()
                 );
             }
             if (mainWalletRequest.getAmount() == 0

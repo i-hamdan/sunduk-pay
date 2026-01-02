@@ -9,6 +9,11 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 /**
  * Service to handle adding reminders.
  */
@@ -46,7 +51,22 @@ public class AddReminderService implements WalletOperation {
                 .contactNumber(mainWalletRequest.getContactNumber())
                 .contactName(mainWalletRequest.getContactName())
                 .user(user)
+                .date(mainWalletRequest.getStartDate())
+                .isAvailable(true)
+                .isPaid(false)
                 .build();
+
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayHours12 = LocalDateTime.now().withHour(0).withMinute(0);
+        if(reminder.getStartDate().isEqual(today)){
+            reminder.setLocalDateTime(todayHours12);
+        }
+//        if (reminder.getStartDate().isEqual(today.plusDays(1)) && !reminder.getIsPaid()){
+//            reminder.setLocalDateTime(todayHours12);
+//        }
+//        if(reminder.getStartDate().isEqual(today.minusDays(1)) && !reminder.getIsPaid()){
+//            reminder.setLocalDateTime(todayHours12);
+//        }
 
         reminderRepository.save(reminder);
         MainWalletResponse mainWalletResponse= MainWalletResponse.builder()

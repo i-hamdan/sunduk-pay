@@ -19,6 +19,7 @@ public interface UserToUserTransferService {
              String receiverId,
              Double amount,
              String paymentTag,
-             String senderWalletId
+             String senderWalletId,
+             String reminderId
             );
 }

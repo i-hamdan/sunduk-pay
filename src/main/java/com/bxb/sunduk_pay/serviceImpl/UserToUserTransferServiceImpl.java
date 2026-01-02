@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
+import com.bxb.sunduk_pay.repository.ReminderRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
@@ -69,6 +70,10 @@ public class UserToUserTransferServiceImpl
      * InvestmentUtil for investment-related utilities.
      */
     private final InvestmentUtil investmentUtil;
+    /**
+     * Reminder for Fetch the Reminder.
+     */
+    private final ReminderRepository reminderRepository;
 
     /**
      * Transfers funds between two users wallets.
@@ -85,7 +90,8 @@ public class UserToUserTransferServiceImpl
             final String receiverId,
             final Double amount,
             final String paymentTag,
-            final String senderWalletId) {
+            final String senderWalletId,
+            final String reminderId) {
 
         User user = validations.getUserInfo(senderId);
         MainWallet senderMainWallet = validations
@@ -116,6 +122,13 @@ public class UserToUserTransferServiceImpl
         log.info("deducting amount from source wallet");
   senderMasterWallet.setBalance(senderMasterWallet.getBalance() - amount);
         senderWallet.setBalance(senderWallet.getBalance() - amount);
+
+        if(reminderId != null){
+            Reminder reminder = validations.getReminderById(reminderId);
+            reminder.setIsPaid(true);
+            reminder.setLocalDateTime(null);
+            reminderRepository.save(reminder);
+        }
 
         if (senderWallet.isInvested()){
             log.info("Updating investment details for invested sub-wallet.");

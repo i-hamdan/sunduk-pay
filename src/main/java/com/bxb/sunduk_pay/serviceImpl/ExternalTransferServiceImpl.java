@@ -1,12 +1,10 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
+import com.bxb.sunduk_pay.repository.ReminderRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
@@ -57,6 +55,10 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
      * Validations utility for business rule enforcement.
      */
     private final Validations validations;
+    /**
+     * Reminder for SAVE isPad and IsActive .
+     */
+    private final ReminderRepository reminderRepository;
 
     /**
      * Handles UPI transfer requests.
@@ -103,6 +105,13 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                     request.getAmount());
             mainWallet.setBalance(mainWallet.getBalance() -
                     request.getAmount());
+
+            if(request.getReminderId() != null){
+                Reminder reminder = validations.getReminderById(request.getReminderId());
+                reminder.setLocalDateTime(null);
+                reminder.setIsPaid(true);
+                reminderRepository.save(reminder);
+            }
 
             // Step 5: Create transactions
             log.info("Creating transaction records for UPI transfer...");
