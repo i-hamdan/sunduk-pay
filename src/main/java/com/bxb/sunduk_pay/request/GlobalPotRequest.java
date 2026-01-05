@@ -39,16 +39,12 @@ public class GlobalPotRequest {
     private String customDocumentTitle;
 
     // --- Binary Media (Images & Docs) ---
-    private String primaryImage;
-    private String secondaryImage;
-    private MultipartFile kycDocument;
-    private MultipartFile institutionDocument;
-    private MultipartFile supportingDocument;
-    private MultipartFile customDocument;
+    private List<DocumentWrapper> documentFiles;
 
     // --- Audit & Ownership ---
     private Boolean isVerified;
     private String admin;
+    private String adminNote;
     private String beneficiaryName;
     private String relationToBeneficiary;
 
@@ -69,8 +65,6 @@ public class GlobalPotRequest {
     private String followerUser;
 
     private String sourceWalletId;
-
-    private PotStatus potStatus;
 
     private int pageNumber;
     private int pageSize;

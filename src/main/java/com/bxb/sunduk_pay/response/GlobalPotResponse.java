@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.response;
 
 import com.bxb.sunduk_pay.model.Testimonial;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
+import com.bxb.sunduk_pay.model.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -26,16 +27,6 @@ public class GlobalPotResponse {
     private String potStatus;
     private String description;
     private List<Testimonial> testimonials;
-    private String primaryImage;
-    private String secondaryImage;
-    private String kycDocumentTitle;
-    private String kycDocument;
-    private String institutionDocumentTitle;
-    private String institutionDocument;
-    private String supportingDocumentTitle;
-    private String supportingDocument;
-    private String customDocumentTitle;
-    private String customDocument;
 
     // --- Geolocation ---
     private String address;
@@ -67,5 +58,6 @@ public class GlobalPotResponse {
 // this is list where we show on tile page;
     private List<GlobalPotTileDto> globalPotsTiles;
 
+    private List<User> adminList;
 
 }
