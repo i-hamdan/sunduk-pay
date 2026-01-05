@@ -48,6 +48,7 @@ public class FetchReminderService implements WalletOperation{
     @Override
     public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
 
+        // Determine sort direction
             Sort.Direction direction;
             if ("ASC".equalsIgnoreCase(mainWalletRequest.getSortDirection())) {
                 direction = Sort.Direction.ASC;
@@ -59,13 +60,15 @@ public class FetchReminderService implements WalletOperation{
                     mainWalletRequest.getSize(),
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
-
+            // Fetch reminders with pagination and sorting
         List<Reminder> reminderList = reminderRepository.findByUser_UuidAndContactNumber(mainWalletRequest.getUuid(),
-                mainWalletRequest.getContactNumber());
+                mainWalletRequest.getContactNumber(), pageable);
 
+        // Map Reminder entities to ReminderResponse DTOs
         List<ReminderResponse> list = reminderList.stream().map
                 (reminderMapper::toReminderResponse).toList();
 
+        // Build and return the response
         return MainWalletResponse.builder()
                 .reminders(list)
                 .build();

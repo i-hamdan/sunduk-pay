@@ -56,17 +56,12 @@ public class AddReminderService implements WalletOperation {
                 .isPaid(false)
                 .build();
 
+        // Set reminder time to 12:00 AM if start date is today
         LocalDate today = LocalDate.now();
         LocalDateTime todayHours12 = LocalDateTime.now().withHour(0).withMinute(0);
         if(reminder.getStartDate().isEqual(today)){
             reminder.setLocalDateTime(todayHours12);
         }
-//        if (reminder.getStartDate().isEqual(today.plusDays(1)) && !reminder.getIsPaid()){
-//            reminder.setLocalDateTime(todayHours12);
-//        }
-//        if(reminder.getStartDate().isEqual(today.minusDays(1)) && !reminder.getIsPaid()){
-//            reminder.setLocalDateTime(todayHours12);
-//        }
 
         reminderRepository.save(reminder);
         MainWalletResponse mainWalletResponse= MainWalletResponse.builder()
