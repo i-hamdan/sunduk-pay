@@ -49,10 +49,12 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setCaseRequirementType(request.getCaseRequirementType());
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
-        User admin = userRepository.findById(request.getAdmin())
-                .orElseThrow(() -> new UserNotFoundException("Admin user not " +
-                        "found with ID: " + request.getAdmin()));
-        pot.setAdmin(admin);
+//        User admin = userRepository.findById(request.getAdmin())
+//                .orElseThrow(() -> new UserNotFoundException("Admin user not " +
+//                        "found with ID: " + request.getAdmin()));
+//        pot.setAdmin(admin);
+        pot.setIsUserAdmin(request.getIsUserAdmin());
+        pot.set
         pot.setBeneficiaryName(request.getBeneficiaryName());
         pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
 
@@ -133,20 +135,20 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .potScope(pot.getPotScope().toString())
                 .description(pot.getDescription())
 
-                .primaryImage(pot.getPrimaryImage())
-                .secondaryImage(pot.getSecondaryImage())
-
-                .kycDocumentTitle(pot.getKycDocumentTitle())
-                .kycDocument(toBase64(pot.getKycDocument()))
-
-                .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
-                .institutionDocument(toBase64(pot.getInstitutionDocument()))
-
-                .supportingDocumentTitle(pot.getSupportingDocumentTitle())
-                .supportingDocument(toBase64(pot.getSupportingDocument()))
-
-                .customDocumentTitle(pot.getCustomDocumentTitle())
-                .customDocument(toBase64(pot.getCustomDocument()))
+//                .primaryImage(pot.getPrimaryImage())
+//                .secondaryImage(pot.getSecondaryImage())
+//
+//                .kycDocumentTitle(pot.getKycDocumentTitle())
+//                .kycDocument(toBase64(pot.getKycDocument()))
+//
+//                .institutionDocumentTitle(pot.getInstitutionDocumentTitle())
+//                .institutionDocument(toBase64(pot.getInstitutionDocument()))
+//
+//                .supportingDocumentTitle(pot.getSupportingDocumentTitle())
+//                .supportingDocument(toBase64(pot.getSupportingDocument()))
+//
+//                .customDocumentTitle(pot.getCustomDocumentTitle())
+//                .customDocument(toBase64(pot.getCustomDocument()))
 
 
                 .address(pot.getAddress())
@@ -251,11 +253,11 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .isActive(pot.getIsActive())
 
                 // --- Public Images ---
-                .primaryImage(pot.getPrimaryImage())
-                .secondaryImage(pot.getSecondaryImage())
-                .tertiaryImage(null) // future ready
-
-                // --- Location ---
+//                .primaryImage(pot.getPrimaryImage())
+//                .secondaryImage(pot.getSecondaryImage())
+//                .tertiaryImage(null) // future ready
+//
+//                // --- Location ---
                 .city(pot.getCity())
                 .country(pot.getCountry())
 
@@ -338,33 +340,33 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
      */
     private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
 
-        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
-            pot.setPrimaryImage(request.getPrimaryImage());
-        }
-
-        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
-            pot.setSecondaryImage(request.getSecondaryImage());
-        }
-
-        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
-            pot.setKycDocument(request.getKycDocument().getBytes());
-            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-        }
-
-        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
-            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
-            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
-        }
-
-        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
-            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
-            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
-        }
-
-        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
-            pot.setCustomDocument(request.getCustomDocument().getBytes());
-            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
-        }
+//        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
+//            pot.setPrimaryImage(request.getPrimaryImage());
+//        }
+//
+//        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
+//            pot.setSecondaryImage(request.getSecondaryImage());
+//        }
+//
+//        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
+//            pot.setKycDocument(request.getKycDocument().getBytes());
+//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
+//        }
+//
+//        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
+//            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
+//            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
+//        }
+//
+//        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
+//            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
+//            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
+//        }
+//
+//        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
+//            pot.setCustomDocument(request.getCustomDocument().getBytes());
+//            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
+//        }
     }
 
 
