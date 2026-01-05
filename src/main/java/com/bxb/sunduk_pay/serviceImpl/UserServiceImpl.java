@@ -15,6 +15,7 @@ import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
 import com.bxb.sunduk_pay.factories.userFactory.UserOperation;
 import com.bxb.sunduk_pay.factories.userFactory.UserOperationFactory;
+import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -85,6 +86,7 @@ public class UserServiceImpl implements UserService {
             user.setUuid(UUID.randomUUID().toString());
             user.setPhoneNumber(response.getPhoneNumber());
             user.setIsDeleted(false);
+            user.setUserRole(UserRoles.NORMAL_USER);
 
             user=userRepository.save(user);
 

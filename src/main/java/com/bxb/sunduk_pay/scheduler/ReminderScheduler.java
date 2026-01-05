@@ -37,8 +37,8 @@ public class ReminderScheduler {
 /**
      * Scheduled method to send reminder notifications based on their duration.
      */
-//    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
-    @Scheduled(cron = "0 * * * * *") // runs every 1 min
+  @Scheduled(cron = "0 0 0 * * *") // runs every 24h
+  //  @Scheduled(cron = "0 * * * * *") // runs every 1 min
     public void sendReminderNotifications() {
 
         // Get today's date and current date-time

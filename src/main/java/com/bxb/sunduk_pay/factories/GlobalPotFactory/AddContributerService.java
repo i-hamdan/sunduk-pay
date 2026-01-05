@@ -117,6 +117,7 @@ public class AddContributerService implements GlobalPotOperation {
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
         log.info("GlobalPot fetched | globalPotId={}", globalPot.getGlobalPotId());
 
+
         MasterWallet masterWallet = masterWalletRepository
                 .findByUserUuid(request.getUserContributorId())
                 .orElseThrow(() -> new WalletNotFoundException("MasterWallet not found"));

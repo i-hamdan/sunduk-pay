@@ -1,21 +1,12 @@
 package com.bxb.sunduk_pay.model;
-import jakarta.persistence.Entity;
+import com.bxb.sunduk_pay.util.UserRoles;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Column;
-import jakarta.persistence.Basic;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Transient;
+
 import java.util.List;
 
 
@@ -116,6 +107,9 @@ public class User {
      */
     @Transient
     private Boolean isMpinCreated;
+
+    @Enumerated(EnumType.STRING)
+    private UserRoles UserRole;
 
 
 

@@ -30,7 +30,7 @@ import java.util.UUID;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class UserToUserTransferServiceImpl
+public class   UserToUserTransferServiceImpl
         implements UserToUserTransferService {
 
     /**

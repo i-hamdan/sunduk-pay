@@ -176,6 +176,11 @@ public class GlobalPot {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+
+   @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "admin_user_id")
+    private User admin;
+
     public void addDocument(GlobalPotDocument doc) {
         if (doc != null) {
             this.globalPotDocuments.add(doc);
