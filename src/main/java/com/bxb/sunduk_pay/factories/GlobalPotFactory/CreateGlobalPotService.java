@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
@@ -11,15 +12,15 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.DocumentStatus;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.util.UserRoles;
+import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * this service is for creating GLobalPot
@@ -32,6 +33,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
     private final GlobalPotRepository repository;
     private final GlobalPotMapper mapper;
     private final UserRepository userRepository;
+    private final Validations validations;
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
 
 
@@ -82,8 +84,9 @@ public class CreateGlobalPotService implements GlobalPotOperation {
             }
         });
 
+       // saving pot
+        repository.save(pot);
 
-       repository.save(pot);
         log.info("GlobalPot saved successfully with ID: {}",
                 pot.getGlobalPotId());
 

@@ -181,6 +181,9 @@ public class GlobalPot {
     @JoinColumn(name = "admin_user_id")
     private User admin;
 
+
+
+
     public void addDocument(GlobalPotDocument doc) {
         if (doc != null) {
             this.globalPotDocuments.add(doc);

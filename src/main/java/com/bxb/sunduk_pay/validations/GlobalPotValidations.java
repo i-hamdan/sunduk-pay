@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.User;
 
 /**
  * Interface for validating global pot-related operations.
@@ -33,5 +34,12 @@ public interface GlobalPotValidations {
     int getFollowersCount(String globalPotId);
 
     void validateAmountContributed(Double amountContributed);
+
+
+    /**
+     * Validates the admin of the global pot.
+     * @param admin
+     */
+    void validateAdmin(User admin);
 
 }

@@ -11,6 +11,7 @@ import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -80,6 +81,23 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                     "Amount contributed is null or negative"
             );
         }
+
+    }
+
+    @Override
+    public void validateAdmin(User admin) {
+        if (admin == null) {
+            throw new UserNotFoundException(
+                    "Admin user not found for the Global Pot"
+            );
+        }
+
+            if (admin.getUserRole()!= UserRoles.GLOBALPOT_ADMIN) {
+            throw new UserNotFoundException(
+                    "User is not authorized as Global Pot Admin"
+            );
+        }
+
 
     }
 

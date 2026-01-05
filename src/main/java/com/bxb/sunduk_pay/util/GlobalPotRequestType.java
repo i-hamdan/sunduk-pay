@@ -87,6 +87,14 @@ public enum GlobalPotRequestType {
     ADD_TESTIMONIAL,
 
     /**
+     * Transfers ownership of a global pot to another user.
+     */
+    TRANSFER_OWNERSHIP,
+
+
+
+
+    /**
      * Fetches a specific global pot by identifier.
      */
     FETCH_GLOBAL_POT

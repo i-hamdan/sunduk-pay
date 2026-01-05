@@ -39,7 +39,7 @@ class CreateGlobalPotServiceTest {
     GlobalPotRequest request(){
         return GlobalPotRequest.builder()
                 .globalPotRequestType(CREATE_POT)
-                .admin("1aa695f5-f675-4726-8890-799f5873be71")
+                .adminUuid("1aa695f5-f675-4726-8890-799f5873be71")
                 .caseTitle("Masjid construction")
                 .caseCategory(COMMUNITY)
                 .potScope(PotScope.PUBLIC)

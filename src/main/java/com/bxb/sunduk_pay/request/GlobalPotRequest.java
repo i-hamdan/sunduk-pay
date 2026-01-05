@@ -2,7 +2,6 @@ package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.*;
 import lombok.*;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
@@ -43,7 +42,13 @@ public class GlobalPotRequest {
 
     // --- Audit & Ownership ---
     private Boolean isVerified;
-    private String admin;
+
+    // current admin user creating the pot
+    private String adminUuid;
+    // target user for transfering pot to user
+    private String targetUserForAdmin;
+
+
     private String adminNote;
     private String beneficiaryName;
     private String relationToBeneficiary;
