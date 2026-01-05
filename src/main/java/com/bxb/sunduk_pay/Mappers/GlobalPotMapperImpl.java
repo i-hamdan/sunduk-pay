@@ -319,33 +319,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
      */
     private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
 
-        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
-            pot.setPrimaryImage(request.getPrimaryImage());
-        }
-
-        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
-            pot.setSecondaryImage(request.getSecondaryImage());
-        }
-
-        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
-            pot.setKycDocument(request.getKycDocument().getBytes());
-            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-        }
-
-        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
-            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
-            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
-        }
-
-        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
-            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
-            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
-        }
-
-        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
-            pot.setCustomDocument(request.getCustomDocument().getBytes());
-            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
-        }
     }
 
 
