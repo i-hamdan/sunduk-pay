@@ -43,4 +43,6 @@ public interface GlobalPotMapper {
     GroupChatEvent toGroupChatEvent(GroupChatMessageRequest request);
 
     GroupChatMessageResponse toGroupChatMessageResponse(GroupChatMessage groupChatMessage);
+
+    String toBase64(byte[] data);
 }

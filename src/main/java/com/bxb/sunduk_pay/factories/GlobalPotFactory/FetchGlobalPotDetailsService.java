@@ -2,7 +2,10 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
+import com.bxb.sunduk_pay.response.GlobalPotDocumentResponse;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
@@ -13,6 +16,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service to fetch details of a global pot.
@@ -41,6 +46,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      * Utility for generating redis keys.
      */
     private final GenerateKeyUtil generateKeyUtil;
+
+    private final GlobalPotDocumentRepository globalPotDocumentRepository;
 
     /**
      * Specifies the type of request this service handles.
@@ -96,6 +103,30 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
 
                 globalPotResponse.setContributorCount(contributorsCount);
                 globalPotResponse.setFollowerCount(followersCount);
+
+                List<GlobalPotDocument> globalPotDocuments =
+                        globalPotDocumentRepository.findByGlobalPotGlobalPotId(
+                                request.getGlobalPotId());
+
+                List<GlobalPotDocumentResponse> globalPotDocumentList= new ArrayList<>();
+
+
+                globalPotDocuments.forEach(document -> {
+                    GlobalPotDocumentResponse documentResponse =
+                            new GlobalPotDocumentResponse();
+
+                    documentResponse.setDocumentHeading(
+                            document.getDocumentHeading());
+                    documentResponse.setDocumentTitle(
+                            document.getDocumentTitle());
+                     documentResponse.setDocument(globalPotMapper.toBase64(document.getDocument()));
+                    documentResponse.setDocumentStatus(
+                            document.getDocumentStatus().name());
+                    globalPotDocumentList.add(documentResponse);
+
+                });
+                globalPotResponse.setGlobalPotDocumentResponses(globalPotDocumentList);
+
 
                 redisTemplate.opsForValue()
                         .set(redisKey, globalPotResponse, Duration.ofMinutes(5));

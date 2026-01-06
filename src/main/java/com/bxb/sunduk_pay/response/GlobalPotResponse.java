@@ -60,4 +60,6 @@ public class GlobalPotResponse {
 
     private List<User> adminList;
 
+    private List<GlobalPotDocumentResponse> globalPotDocumentResponses;
+
 }

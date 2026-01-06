@@ -31,12 +31,6 @@ public class GlobalPotRequest {
     private Double goalAmount;
     private LocalDate goalDate;
 
-    // --- Document Titles ---
-    private String kycDocumentTitle;
-    private String institutionDocumentTitle;
-    private String supportingDocumentTitle;
-    private String customDocumentTitle;
-
     // --- Binary Media (Images & Docs) ---
     private List<DocumentWrapper> documentFiles;
 

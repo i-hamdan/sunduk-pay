@@ -20,7 +20,12 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
     private final GlobalPotMapper globalPotMapper;
     private final GlobalPotRepository globalPotRepository;
 
-    public CreateGlobalWalletService(GlobalWalletRepository globalWalletRepository, GlobalPotValidations globalPotValidations, GlobalPotMapper globalPotMapper, GlobalPotRepository globalPotRepository) {
+    public CreateGlobalWalletService(
+            GlobalWalletRepository globalWalletRepository,
+            GlobalPotValidations globalPotValidations,
+            GlobalPotMapper globalPotMapper,
+            GlobalPotRepository globalPotRepository
+    ) {
         this.globalWalletRepository = globalWalletRepository;
         this.globalPotValidations = globalPotValidations;
         this.globalPotMapper = globalPotMapper;

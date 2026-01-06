@@ -14,14 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 
-@ExtendWith(SpringExtension.class)
-class AddContributerServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class AddContributerServiceTest {
 
     @Mock
     private ContributerRepository contributerRepository;

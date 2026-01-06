@@ -44,7 +44,7 @@ class CreateGlobalPotServiceTest {
                 .caseCategory(COMMUNITY)
                 .potScope(PotScope.PUBLIC)
                 .caseRequirementType(CaseRequirementType.NORMAL)
-                .potStatus(PotStatus.PENDING_VERIFICATION)
+//                .potStatus(PotStatus.PENDING_VERIFICATION)
                 .description("Contribute to the construction of masjid kulsumbi, become a part of our community.")
                 .beneficiaryName("Masjid kulsumbi")
                 .relationToBeneficiary("member")
@@ -53,12 +53,6 @@ class CreateGlobalPotServiceTest {
                 .country("India")
                 .goalAmount(500000d)
                 .goalDate(LocalDate.parse("2026-03-01"))
-                .primaryImage("primary_image")
-                .secondaryImage("secondary_image")
-                .kycDocumentTitle("Adhaar card")
-                .institutionDocumentTitle("masjid registry")
-                .supportingDocumentTitle("water text reciept")
-                .customDocumentTitle("tax reciept")
                 .build();
     }
 

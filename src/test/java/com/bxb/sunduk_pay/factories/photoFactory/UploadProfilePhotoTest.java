@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)   //  FIX: remove unnecessary stubbing errors
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class UploadProfilePhotoTest {
 
     @Mock
