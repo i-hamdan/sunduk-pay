@@ -14,6 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class GlobalPotRequest {
 
+    // --- Identification ---
+    private String uuid;
+
     // --- Core Information ---
     private String caseTitle;
     private CaseCategory caseCategory;
@@ -67,5 +70,6 @@ public class GlobalPotRequest {
 
     private int pageNumber;
     private int pageSize;
+
 
 }

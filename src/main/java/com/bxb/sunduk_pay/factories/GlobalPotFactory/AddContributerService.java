@@ -1,22 +1,33 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
+import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
+import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
+import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
+import com.bxb.sunduk_pay.response.TransactionResponse;
+import com.bxb.sunduk_pay.service.AnonymousUserService;
+import com.bxb.sunduk_pay.util.GenerateKeyUtil;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +51,8 @@ import java.util.UUID;
  * of all wallet and transaction operations.</p>
  */
 @Service
-@Slf4j
+@Log4j2
+@RequiredArgsConstructor
 public class AddContributerService implements GlobalPotOperation {
 
     private final ContributerRepository contributerRepository;
@@ -53,30 +65,11 @@ public class AddContributerService implements GlobalPotOperation {
     private final TransactionRepository transactionRepository;
     private final SubWalletRepository subWalletRepository;
     private final GlobalPotRepository globalPotRepository;
-
-    public AddContributerService(
-            ContributerRepository contributerRepository,
-            GlobalPotValidations globalPotValidations,
-            GlobalPotMapper globalPotMapper,
-            Validations validations,
-            MainWalletRepository mainWalletRepository,
-            MasterWalletRepository masterWalletRepository,
-            GlobalWalletRepository globalWalletRepository,
-            TransactionRepository transactionRepository,
-            SubWalletRepository subWalletRepository,
-            GlobalPotRepository globalPotRepository
-    ) {
-        this.contributerRepository = contributerRepository;
-        this.globalPotValidations = globalPotValidations;
-        this.globalPotMapper = globalPotMapper;
-        this.validations = validations;
-        this.mainWalletRepository = mainWalletRepository;
-        this.masterWalletRepository = masterWalletRepository;
-        this.transactionRepository = transactionRepository;
-        this.globalWalletRepository = globalWalletRepository;
-        this.subWalletRepository = subWalletRepository;
-        this.globalPotRepository = globalPotRepository;
-    }
+    private final RedisTemplate<String, TransactionResponse> redisTemplate;
+    private final GenerateKeyUtil generateKeyUtil;
+    private final TransactionMapper transactionMapper;
+    private final AnonymousUserService anonymousUserService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     /**
      * Returns the {@link GlobalPotRequestType} handled by this service.
@@ -113,14 +106,44 @@ public class AddContributerService implements GlobalPotOperation {
         User user = validations.getUserInfo(request.getUserContributorId());
         log.info("User fetched successfully | userId={}", user.getUuid());
 
+        MainWallet mainWallet =
+                validations.getMainWalletInfo(request.getUserContributorId());
+
+        MasterWallet masterWallet = validations.getMasterWalletInfo(request.getUserContributorId());
+
+        SubWallet subWallet =
+                validations.findSubWalletIfExists(
+                        mainWallet.getMainWalletId(),
+                        request.getSourceWalletId()
+                );
+
+
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
         log.info("GlobalPot fetched | globalPotId={}", globalPot.getGlobalPotId());
 
+        GlobalWallet globalWallet =
+                globalWalletRepository.findById(
+                        globalPot.getGlobalWallet().getGlobalWalletId()
+                ).orElseThrow(() -> new WalletNotFoundException("GlobalWallet not found"));
 
-        MasterWallet masterWallet = masterWalletRepository
-                .findByUserUuid(request.getUserContributorId())
-                .orElseThrow(() -> new WalletNotFoundException("MasterWallet not found"));
+        String groupTransactionRedisKey = generateKeyUtil
+                .getGroupTransactionKey(request.getGlobalPotId());
+        log.info("Generated Redis key for group transactions: {}",
+                groupTransactionRedisKey);
+
+        Boolean isAnonymous = request.getIsAnonymous() != null
+                ? request.getIsAnonymous() : null;
+
+        AnonymousIdentityDTO identity = null;
+
+        if (Boolean.TRUE.equals(isAnonymous)) {
+            log.info("Anonymous boolean flag found as true,"
+                    + " masking transaction as anonymous.");
+            identity = anonymousUserService
+                    .getOrCreateAnonymousColor(user, globalPot);
+        }
+
 
         log.info("MasterWallet balance before deduction={}",
                 masterWallet.getBalance());
@@ -143,7 +166,7 @@ public class AddContributerService implements GlobalPotOperation {
                 .transactionId(UUID.randomUUID().toString())
                 .isMaster(true)
                 .isInvestment(false)
-                .transactionLevel(TransactionLevel.GLOBAL_POT)
+                .transactionLevel(TransactionLevel.CONTRIBUTOR)
                 .amount(request.getAmountContributed())
                 .transactionType(TransactionType.DEBIT)
                 .status("SUCCESS")
@@ -151,38 +174,16 @@ public class AddContributerService implements GlobalPotOperation {
                 .dateTime(LocalDateTime.now())
                 .user(user)
                 .fromWallet("Master Wallet")
-                .fromWalletId(request.getSourceWalletId())
+                .fromWalletId(masterWallet.getMasterWalletId())
+                .toGlobalPotId(globalPot.getGlobalPotId())
+                .isAnonymous(isAnonymous)
+                .anonymousId(
+                        identity != null ? identity.getAnonymousId() : null)
+                .anonymousColor(
+                        identity != null ? identity.getAnonymousColor() : null)
                 .build();
 
         transactions.add(masterWalletTxn);
-
-        GlobalWallet globalWallet =
-                globalWalletRepository.findById(
-                        globalPot.getGlobalWallet().getGlobalWalletId()
-                ).orElseThrow(() -> new WalletNotFoundException("GlobalWallet not found"));
-
-        log.info("GlobalWallet balance before credit={}",
-                globalWallet.getBalance());
-
-        globalWallet.setBalance(
-                globalWallet.getBalance() + request.getAmountContributed()
-        );
-
-        log.info("GlobalWallet balance after credit={}",
-                globalWallet.getBalance());
-
-        MainWallet mainWallet =
-                mainWalletRepository.findByUserUuid(request.getUserContributorId())
-                        .orElseThrow(() ->
-                                new WalletNotFoundException("Main wallet not found"));
-
-        String mainWalletId = mainWallet.getMainWalletId();
-
-        SubWallet subWallet =
-                validations.findSubWalletIfExists(
-                        mainWalletId,
-                        request.getSourceWalletId()
-                );
 
         if (subWallet != null) {
 
@@ -208,24 +209,38 @@ public class AddContributerService implements GlobalPotOperation {
                     .transactionId(UUID.randomUUID().toString())
                     .isMaster(false)
                     .isInvestment(false)
-                    .transactionLevel(TransactionLevel.GLOBAL_POT)
+                    .transactionLevel(TransactionLevel.CONTRIBUTOR)
                     .amount(request.getAmountContributed())
                     .transactionType(TransactionType.DEBIT)
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
                     .dateTime(LocalDateTime.now())
                     .user(user)
-                    .fromWallet("Sub Wallet")
+                    .fromWallet(subWallet.getSubWalletName())
                     .fromWalletId(request.getSourceWalletId())
+                    .toGlobalPotId(globalPot.getGlobalPotId())
+                    .isAnonymous(isAnonymous)
+                    .anonymousId(
+                            identity != null ? identity.getAnonymousId() : null)
+                    .anonymousColor(
+                            identity != null ? identity.getAnonymousColor() : null)
                     .build();
-
+            // Create TransactionResponse for Redis and WebSocket forwarding
+            TransactionResponse transactionResponse = transactionMapper
+                    .toTransactionResponse(subWalletTxn);
+            // Push to Redis list for group transactions
+            redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
+                    transactionResponse);
             transactions.add(subWalletTxn);
             subWalletRepository.save(subWallet);
+            // Forward the transaction message to WebSocket clients
+            forwardMessageToWebSocket(globalPot.getGlobalPotId(),
+                    transactionResponse);
 
         } else {
 
             log.info("No SubWallet found, using MainWallet | mainWalletId={}",
-                    mainWalletId);
+                    mainWallet.getMainWalletId());
 
             log.info("MainWallet balance before deduction={}",
                     mainWallet.getBalance());
@@ -246,7 +261,7 @@ public class AddContributerService implements GlobalPotOperation {
                     .transactionId(UUID.randomUUID().toString())
                     .isMaster(false)
                     .isInvestment(false)
-                    .transactionLevel(TransactionLevel.GLOBAL_POT)
+                    .transactionLevel(TransactionLevel.CONTRIBUTOR)
                     .amount(request.getAmountContributed())
                     .transactionType(TransactionType.DEBIT)
                     .status("SUCCESS")
@@ -255,11 +270,36 @@ public class AddContributerService implements GlobalPotOperation {
                     .user(user)
                     .fromWallet("Main Wallet")
                     .fromWalletId(request.getSourceWalletId())
+                    .toGlobalPotId(globalPot.getGlobalPotId())
+                    .isAnonymous(isAnonymous)
+                    .anonymousId(
+                            identity != null ? identity.getAnonymousId() : null)
+                    .anonymousColor(
+                            identity != null ? identity.getAnonymousColor() : null)
                     .build();
 
+            // Create TransactionResponse for Redis and WebSocket forwarding
+            TransactionResponse transactionResponse = transactionMapper
+                    .toTransactionResponse(mainWalletTxn);
+            // Push to Redis list for group transactions
+            redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
+                    transactionResponse);
             transactions.add(mainWalletTxn);
             mainWalletRepository.save(mainWallet);
+            // Forward the transaction message to WebSocket clients
+            forwardMessageToWebSocket(globalPot.getGlobalPotId(),
+                    transactionResponse);
         }
+
+        log.info("GlobalWallet balance before credit={}",
+                globalWallet.getBalance());
+
+        globalWallet.setBalance(
+                globalWallet.getBalance() + request.getAmountContributed()
+        );
+
+        log.info("GlobalWallet balance after credit={}",
+                globalWallet.getBalance());
 
         log.info("GlobalPot contributedBalance before update={}",
                 globalPot.getContributedBalance());
@@ -274,13 +314,15 @@ public class AddContributerService implements GlobalPotOperation {
         Contributor contributor =
                 globalPotMapper.toContributerEntity(request, globalPot);
 
+        redisTemplate.expire(groupTransactionRedisKey, Duration.ofMinutes(5));
         masterWalletRepository.save(masterWallet);
         transactionRepository.saveAll(transactions);
         globalWalletRepository.save(globalWallet);
         globalPotRepository.save(globalPot);
         contributerRepository.save(contributor);
 
-        log.info("Contributor added successfully | userId={} globalPotId={} amount={}",
+        log.info(
+"Contributor added successfully | userId={} globalPotId={} amount={}",
                 request.getUserContributorId(),
                 request.getGlobalPotId(),
                 request.getAmountContributed());
@@ -288,5 +330,26 @@ public class AddContributerService implements GlobalPotOperation {
         return GlobalPotResponse.builder()
                 .message("Contributor added successfully")
                 .build();
+    }
+
+    /**
+     * Forwards the transaction message to WebSocket clients
+     * subscribed to the specified Global Pot.
+     *
+     * @param globalPotId the ID of the Global Pot
+     * @param response    the transaction response to forward
+     */
+    private void forwardMessageToWebSocket(String globalPotId,
+                                           TransactionResponse response) {
+        // Implementation for forwarding message to WebSocket clients
+        messagingTemplate.convertAndSend(
+                "/topic/group/" + globalPotId,
+                response);
+        log.info(
+                "Forwarded global pot contribution transaction "
+                        + "to WebSocket for group {}",
+                globalPotId);
+        log.info(
+        "=========== Finished processing group chat message ===========");
     }
 }

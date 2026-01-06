@@ -48,4 +48,18 @@ public class GroupChatMessage {
      * Timestamp when the message was sent.
      */
     private Instant timestamp;
+
+    /**
+     * Indicates if the sender is anonymous.
+     */
+    private boolean isAnonymous;
+
+    /**
+     * Identifier for the anonymous sender.
+     */
+    private String anonymousId;
+    /**
+     * Color associated with the anonymous sender.
+     */
+    private String anonymousColor;
 }

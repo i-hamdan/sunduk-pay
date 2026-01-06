@@ -76,8 +76,10 @@ public class FetchTransactionsService implements WalletOperation {
 
             Page<Transaction> transactions;
 
-            if (mainWalletRequest.getRecipientUpiId() != null && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
-                transactions = transactionRepository.findByRecipientUpiIdAndIsMasterFalse(
+            if (mainWalletRequest.getRecipientUpiId() != null
+                    && !mainWalletRequest.getRecipientUpiId().isEmpty()) {
+                transactions = transactionRepository
+                        .findByRecipientUpiIdAndIsMasterFalse(
                         mainWalletRequest.getRecipientUpiId(), pageable);
             } else {
                 transactions = validations

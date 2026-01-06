@@ -66,7 +66,8 @@ public class GroupChatMessageListener {
     private void processGroupMessageAsync(GroupChatEvent groupChatEvent) {
         CompletableFuture.supplyAsync(() ->
                         groupChatMessageService
-                                .processGroupChatMessage(groupChatEvent), executor)
+                                .processGroupChatMessage(
+                                        groupChatEvent), executor)
                 .thenAccept(response -> {
                     log.info(
                             "[ThenAcceptThread: {}] Sending message to group...",

@@ -4,3 +4,7 @@
 # Environment-dependent path to Maven home directory
 /mavenHomeManager.xml
 /target
+.idea/compiler.xml
+.idea/.name
+.idea/misc.xml
+.idea/workspace.xml

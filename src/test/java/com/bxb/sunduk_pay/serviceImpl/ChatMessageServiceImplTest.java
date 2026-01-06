@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.RedisOperationException;
 import com.bxb.sunduk_pay.kafkaEvents.ChatMessageEvent;
 import com.bxb.sunduk_pay.model.ChatMessage;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.ChatMessageRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.ChatMessageResponse;
@@ -20,6 +21,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,13 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ChatMessageServiceImplTest {
 
     @Mock
-    private MessageValidations messageValidations;
-
-    @Mock
     private RedisTemplate<String, ChatMessage> chatMessageRedisTemplate;
-
-    @Mock
-    private RedisTemplate<String, TransactionResponse> transactionRedisTemplate;
 
     @Mock
     private ChatMessageRepository chatMessageRepository;
@@ -45,16 +43,13 @@ class ChatMessageServiceImplTest {
     private Validations validations;
 
     @Mock
-    private TransactionRepository transactionRepository;
+    private MessageValidations messageValidations;
 
     @Mock
     private GenerateKeyUtil generateKeyUtil;
 
     @Mock
     private ChatMessageMapper chatMessageMapper;
-
-    @Mock
-    private TransactionMapper transactionMapper;
 
     @Mock
     private ListOperations<String, ChatMessage> listOperations;
@@ -79,12 +74,18 @@ class ChatMessageServiceImplTest {
                 .build();
     }
 
+    private User user(){
+        return User.builder().uuid(UUID.randomUUID().toString())
+                .phoneNumber("9856468489").build();
+    }
+
 
     @Test
     void processMessage_success() {
         // Arrange
         ChatMessageEvent event = chatMessageEvent();
         ChatMessage chatMessage = chatMessage();
+        User user = user();
 
         String redisKey = "chat:sender-uuid:receiver-uuid";
 
@@ -97,6 +98,8 @@ class ChatMessageServiceImplTest {
         when(chatMessageRedisTemplate.hasKey(redisKey)).thenReturn(true);
         when(chatMessageRedisTemplate.opsForList())
                 .thenReturn(listOperations);
+
+        when(validations.getUserInfo(anyString())).thenReturn(user);
 
         when(chatMessageMapper.toChatMessageResponse(
                 any(ChatMessage.class),
@@ -138,6 +141,44 @@ class ChatMessageServiceImplTest {
         // Assert
         verify(listOperations).rightPush(redisKey, message);
         verify(chatMessageRedisTemplate).expire(eq(redisKey), any());
+    }
+
+    @Test
+    void saveMessage_keyNotExists_createsNewKey() {
+        // Arrange
+        ChatMessage newMessage = chatMessage();
+        String redisKey = "chat:sender-uuid:receiver-uuid";
+
+        // Sample old messages from DB
+        List<ChatMessage> dbMessages = List.of(
+                new ChatMessage(),
+                new ChatMessage()
+        );
+
+        when(generateKeyUtil.generateChatKey(
+                newMessage.getSenderId(),
+                newMessage.getReceiverId()))
+                .thenReturn(redisKey);
+
+        when(chatMessageRedisTemplate.hasKey(redisKey)).thenReturn(false);
+        when(messageValidations.getMessagesFromDb(anyString(), anyString()))
+                .thenReturn(dbMessages);
+
+        when(chatMessageRedisTemplate.opsForList()).thenReturn(listOperations);
+
+        // Act
+        chatMessageService.saveMessage(newMessage);
+
+        verify(listOperations).rightPushAll(redisKey, dbMessages);
+
+        verify(listOperations).rightPush(redisKey, newMessage);
+
+        verify(chatMessageRedisTemplate)
+                .expire(eq(redisKey), any(Duration.class));
+
+        verify(messageValidations).getMessagesFromDb(
+                newMessage.getSenderId(), newMessage.getReceiverId()
+        );
     }
 
 

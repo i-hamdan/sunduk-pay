@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
+import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
 import com.bxb.sunduk_pay.model.User;
@@ -62,29 +63,36 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         GlobalPot pot = mapper.toEntity(request);
         log.debug("Mapped GlobalPot entity from request");
 
-        List<DocumentWrapper> mediaFiles=request.getDocumentFiles();
+        List<DocumentWrapper> mediaFiles = request.getDocumentFiles();
+        if (mediaFiles == null) throw new InvalidPayloadException(
+                "Document files list cannot be null");
         log.info("Saving media files for GlobalPot ID: {}",
                 pot.getGlobalPotId());
-        mediaFiles.forEach((wrapper)-> {
+        mediaFiles.forEach((wrapper) -> {
             GlobalPotDocument globalPotDocument;
             if (wrapper != null && wrapper.getDocumentFile() != null
                     && !wrapper.getDocumentFile().isEmpty()) {
                 try {
                     globalPotDocument =
-                            GlobalPotDocument.builder().documentHeading(wrapper.getDocumentHeading()).documentTitle(wrapper.getDocumentTitle()).document(wrapper.getDocumentFile().getBytes()).documentStatus(DocumentStatus.PENDING).globalPot(pot).build();
+                            GlobalPotDocument.builder()
+                                    .documentHeading(
+                                            wrapper.getDocumentHeading())
+                                    .documentTitle(wrapper.getDocumentTitle())
+                                    .document(wrapper.getDocumentFile().getBytes())
+                                    .documentStatus(DocumentStatus.PENDING)
+                                    .globalPot(pot).build();
                     pot.addDocument(globalPotDocument);
                     log.info("Saved document: {}", wrapper.getDocumentHeading());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else {
+            } else {
                 log.warn("Skipping document '{}' - No file content found in " +
                         "request", wrapper.getDocumentHeading());
             }
         });
 
-       // saving pot
+        // saving pot
         repository.save(pot);
 
         log.info("GlobalPot saved successfully with ID: {}",

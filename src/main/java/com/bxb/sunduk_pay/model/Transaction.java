@@ -83,10 +83,12 @@ public class Transaction {
      * with the transaction.
      */
     private String stripePaymentIntentId;
+
     /**
      * Timestamp when the transaction was created.
      */
     private LocalDateTime dateTime;
+
     /**
      * Indicates if the transaction is
      * associated with a master wallet.
@@ -110,28 +112,34 @@ public class Transaction {
      * Phone number of the sender in the transaction.
      */
     private String fromPhoneNumber;
+
     /**
      * Name of the receiver in the transaction.
      */
     private String toWallet;
+
     /**
      * ID of the receiver's wallet in the transaction.
      */
     private String toWalletId;
+
     /**
      * Phone number of the recipient in the transaction.
      */
     private String toPhoneNumber;
+
     /**
      * UPI ID of the recipient in the transaction.
      */
     private String recipientUpiId;
+
     /**
      *  Investment associated with the transaction.
      */
     @ManyToOne
     @JoinColumn(name = "investment_id")
     private Investment investment;
+
     /**
      * Monthly profit or loss associated
      */
@@ -144,10 +152,29 @@ public class Transaction {
      */
     @Column(nullable = false)
     private Boolean isInvestment;
+
+    //---fields for anonymous masking of transactions---//
+    /**
+     * Indicates if the transaction is anonymous.
+     * can be null
+     */
+    @Column(nullable = true)
+    private Boolean isAnonymous;
+
+    /**
+     * Indicates the Id of the anonymous sender.
+     * Can only be non-null in case of anonymous transaction*/
+    private String anonymousId;
+
+    /**
+     * Indicates the unique color tag of the anonymous sender.
+     * Can only be non-null in case of anonymous transaction
+     */
+    private String anonymousColor;
+
     /**
      * Risk level associated with the transaction.
      */
-
     private RiskLevel riskLevel;
 
     private String toGlobalPotId;

@@ -8,13 +8,14 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
+import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
+import com.bxb.sunduk_pay.service.AnonymousUserService;
 import com.bxb.sunduk_pay.service.GroupChatMessageService;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.ctc.wstx.shaded.msv_core.datatype.xsd.FinalComponent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -22,9 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the GroupChatMessageService interface.
@@ -62,15 +61,14 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             GroupChatMessageResponse> messageResponseRedisTemplate;
 
     /**
-     * Redis template for caching transaction responses.
-     */
-    private final RedisTemplate<String,
-            TransactionResponse> transactionResponseRedisTemplate;
-
-    /**
      * Utility for generating keys.
      */
     private final GenerateKeyUtil generateKeyUtil;
+
+    /**
+     * Service for handling anonymous user features.
+     */
+    private final AnonymousUserService anonymousUserService;
 
     /**
      * Processes a group chat message event.
@@ -82,39 +80,67 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     public GroupChatMessageResponse processGroupChatMessage(
             final GroupChatEvent event) {
         try {
-            log.info(
-                    "Processing group chat message in service for pot {}",
+            log.info("Processing group chat message for pot {}",
                     event.getGlobalPotId());
 
             User user = validations.getUserInfo(event.getSenderId());
-            log.info("Validated sender user: {}", user.getUuid());
+            log.info("Fetched user info for sender ID {}: {}",
+                    event.getSenderId(), user.getUuid());
+            GlobalPot globalPot =
+                    globalPotValidations.getGlobalPot(event.getGlobalPotId());
+            log.info("Fetched global pot info for pot ID {}: {}",
+                    event.getGlobalPotId(), globalPot.getGlobalPotId());
 
-            GlobalPot globalPot = globalPotValidations
-                    .getGlobalPot(event.getGlobalPotId());
-            log.info("Validated GlobalPot: {}", globalPot.getGlobalPotId());
+            boolean isAnonymous = event.isAnonymous();
+            log.info("Is the message anonymous? {}", isAnonymous);
+            AnonymousIdentityDTO anonymousUser = null;
+            String anonymousColor = null;
+            String anonymousId = null;
 
+            if (isAnonymous) {
+                log.info(
+   "Fetching or creating anonymous identity for user {} in pot {}",
+                        user.getUuid(), globalPot.getGlobalPotId());
+                 anonymousUser = anonymousUserService
+                        .getOrCreateAnonymousColor(user, globalPot);
+                 if (anonymousUser!=null){
+                     log.info(
+                  "Obtained anonymous identity: ID={}, Color={}",
+                             anonymousUser.getAnonymousId(),
+                             anonymousUser.getAnonymousColor());
+                     anonymousColor = anonymousUser.getAnonymousColor();
+                     anonymousId = anonymousUser.getAnonymousId();
+                 }
+            }
 
+            log.info("Creating group chat message entity...");
             GroupChatMessage message = GroupChatMessage.builder()
                     .sender(user)
                     .globalPot(globalPot)
                     .content(event.getContent())
                     .timestamp(Instant.now())
+                    .isAnonymous(isAnonymous)
+                    .anonymousId(anonymousId)
+                    .anonymousColor(anonymousColor)
                     .build();
 
-            // Save the message in Redis cache
+            // Persist FIRST
+            groupChatMessageRepository.save(message);
+            log.info("Saved group chat message with ID {} to database.",
+                    message.getMessageId());
+
+            // Map AFTER persistence
+            GroupChatMessageResponse response =
+                    globalPotMapper.toGroupChatMessageResponse(message);
+            log.info("Mapped group chat message to response DTO.");
+
+            // Cache AFTER DB
             saveMessageInRedisCache(message);
-            log.info(
-                    "Saved group chat message in Redis cache for pot {}",
+            log.info("Group chat message processing completed for pot {}",
                     event.getGlobalPotId());
 
-            // Persist the message in the database
-            groupChatMessageRepository.save(message);
-            log.info(
-                    "Persisted group chat message to DB for pot {}",
-                    event.getGlobalPotId()
+            return response;
 
-            );
-            return globalPotMapper.toGroupChatMessageResponse(message);
         } catch (Exception e){
             log.error("Error processing group chat message: {}",
                     e.getMessage());
@@ -137,6 +163,9 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             // are already cached in Redis
             String groupChatKey = generateKeyUtil.getGroupChatKey(
                     message.getGlobalPot().getGlobalPotId());
+            log.info(
+                    "Generated Redis key for group chat: {}",
+                    groupChatKey);
 
             // If not cached, load existing messages from DB and cache them
             if (!messageResponseRedisTemplate.hasKey(groupChatKey)) {
@@ -178,7 +207,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             // Push the new message to the end of the list
             messageResponseRedisTemplate.opsForList().rightPush(groupChatKey,
                     groupChatMessageResponse);
-            messageResponseRedisTemplate.expire(groupChatKey, Duration.ofHours(1));
+            messageResponseRedisTemplate.expire(groupChatKey, Duration.ofMinutes(5));
         } catch(Exception e){
             log.error("Error saving group chat message in Redis cache: {}",
                     e.getMessage());

@@ -271,11 +271,12 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             mainWalletRepository.save(mainWallet);
             log.info("Main wallet updated successfully");
 
-            log.info(
-                    "Publishing transaction event to Kafka topic "
+            log.info("Publishing transaction event to Kafka topic "
                             + "'transaction-topic'");
+
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTransaction);
+
             kafkaTemplate.send("transaction-topic", transactionEvent);
             log.info("Transaction event published to Kafka successfully");
 

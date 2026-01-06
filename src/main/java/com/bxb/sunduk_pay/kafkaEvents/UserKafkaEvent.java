@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserKafkaEvent {
+
     /**
      * Unique identifier for the user.
      */

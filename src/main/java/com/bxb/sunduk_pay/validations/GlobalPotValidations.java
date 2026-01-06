@@ -1,7 +1,10 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.model.User;
+
+import java.util.List;
 
 /**
  * Interface for validating global pot-related operations.
@@ -41,5 +44,7 @@ public interface GlobalPotValidations {
      * @param admin
      */
     void validateAdmin(User admin);
+
+    List<GroupChatMessage> getGroupChatMessagesFromDB(String globalPotId);
 
 }

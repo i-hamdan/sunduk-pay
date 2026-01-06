@@ -203,6 +203,7 @@ public class   UserToUserTransferServiceImpl
                 .toWalletId(receiverMainWallet.getMainWalletId())
                 .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
         transactions.add(sourceDebitTxn);
+
         redisTemplate.opsForList().rightPush(key,
                 transactionMapper.toTransactionResponse(sourceDebitTxn));
 

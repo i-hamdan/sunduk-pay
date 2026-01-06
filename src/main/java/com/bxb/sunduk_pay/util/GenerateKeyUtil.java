@@ -111,5 +111,14 @@ public class GenerateKeyUtil {
         return "GLOBAL_POT_CHAT_" + key;
     }
 
+    public String getGroupTransactionKey(String globalPotId){
+        if (globalPotId == null ) {
+          throw new InvalidPayloadException(
+                    "Global Pot ID cannot be null");
+        }
+        String key = globalPotId.substring(0, SIX);
+        return "GLOBAL_POT_TXN_" + key;
+    }
+
 }
 

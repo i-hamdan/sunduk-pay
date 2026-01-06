@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
+import com.bxb.sunduk_pay.util.ChatDtoDataType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class ChatAndTransactionUnifiedDTO {
 
     /** Specifies the type of data — either "CHAT" or "TRANSACTION". */
-    private String type;
+    private ChatDtoDataType type;
 
     /** The timestamp indicating when the chat or transaction occurred. */
     private LocalDateTime dateTime;

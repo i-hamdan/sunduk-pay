@@ -33,8 +33,7 @@ public class EmailListener {
      *event containing email details
      */
     @KafkaListener(topics = "user-topic",
-            groupId = "email-service-group",
-            concurrency = "3")
+            groupId = "email-service-group")
     public void consumeEmailEvent(final UserKafkaEvent userKafkaEvent) {
         log.info("Received email event for user: {}",
                 userKafkaEvent.getEmail());

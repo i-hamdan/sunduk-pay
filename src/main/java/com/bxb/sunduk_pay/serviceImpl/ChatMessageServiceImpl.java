@@ -20,6 +20,7 @@ import com.bxb.sunduk_pay.response.ChatAndTransactionUnifiedDTO;
 import com.bxb.sunduk_pay.response.ChatMessageResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.ChatMessageService;
+import com.bxb.sunduk_pay.util.ChatDtoDataType;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.validations.MessageValidations;
@@ -86,8 +87,12 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final TransactionMapper transactionMapper;
 
 
-
-
+    /**
+     * Processes an incoming chat message event.
+     *
+     * @param messageEvent the chat message event to be processed
+     * @return the response containing details of the processed chat message
+     */
     @Override
     public ChatMessageResponse processMessage(ChatMessageEvent messageEvent) {
         log.info("Processing chat message from {} to {}: {}",
@@ -110,8 +115,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
             return chatMessageMapper
                     .toChatMessageResponse(chatMessage,
-                        getPhoneNumberbyUuid(chatMessage.getSenderId()),
-                      getPhoneNumberbyUuid(chatMessage.getReceiverId()));
+                            getPhoneNumberbyUuid(chatMessage.getSenderId()),
+                            getPhoneNumberbyUuid(chatMessage.getReceiverId()));
 
         } catch (RedisOperationException e) {
             log.error("Failed to process message due to Redis error: "
@@ -127,7 +132,6 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     /**
      * Saves a chat message to Redis.
-     *
      * @param message the chat message to be saved
      * @return the Redis key where the message is stored
      */
@@ -135,6 +139,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     public void saveMessage(final ChatMessage message) {
 
         try {
+
             // Generate Redis key based on sender and receiver IDs
             String key = generateKeyUtil.generateChatKey(message.getSenderId(),
                     message.getReceiverId());
@@ -142,20 +147,20 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             // Check if Redis key exists
             if (Boolean.FALSE.equals(chatMessageRedisTemplate.hasKey(key))) {
                 log.warn(
- "Redis key expired or not found for key: {}. Reloading from DB...",
+                        "Redis key expired or not found for key: {}. Reloading from DB...",
                         key);
 
                 // Fetch existing chat history from DB
                 List<ChatMessage> dbMessages = messageValidations
                         .getMessagesFromDb(
-                        message.getSenderId(),
-                        message.getReceiverId());
+                                message.getSenderId(),
+                                message.getReceiverId());
 
                 if (!dbMessages.isEmpty()) {
                     chatMessageRedisTemplate.opsForList().rightPushAll(
                             key, dbMessages);
                     log.info(
-     "Rehydrated Redis with {} old messages for key: {}",
+                            "Rehydrated Redis with {} old messages for key: {}",
                             dbMessages.size(), key);
                 }
             }
@@ -186,12 +191,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
         User receiver = getReceiverUserDetails(messageRequest.getReceiverId());
 
-log.info(
-   "Fetching chat & transaction history for Sender: {} Receiver: {}",
+        log.info(
+                "Fetching chat & transaction history for Sender: {} Receiver: {}",
                 messageRequest.getSenderId(), receiver.getUuid());
 
         User sendingUser = validations.getUserInfo(
                 messageRequest.getSenderId());
+
         User receivingUser =
                 validations.getUserInfo(receiver.getUuid());
 
@@ -204,11 +210,11 @@ log.info(
                 receiver.getUuid());
 
         log.debug(
- "Generated Redis keys -> chatKey: {}, transactionKey: {}",
+                "Generated Redis keys -> chatKey: {}, transactionKey: {}",
                 chatKey, transactionKey);
 
 
-        // 1. Load chat messages from Redis or DB
+        // 1. Load chat messages from Redis
         List<ChatMessage> chatMessages = chatMessageRedisTemplate.opsForList()
                 .range(chatKey, 0, -1);
 
@@ -227,7 +233,8 @@ log.info(
                 log.info("Chat loaded into Redis & TTL set (24 hours)");
 
             }
-        }else log.info("Chat loaded from Redis. Total messages: {}",
+
+        } else log.info("Chat loaded from Redis. Total messages: {}",
                 chatMessages.size());
 
         List<TransactionResponse> transactions = transactionRedisTemplate
@@ -270,19 +277,19 @@ log.info(
         // Convert chat messages to unified DTO
         List<ChatAndTransactionUnifiedDTO> chatItems = chatMessages.stream()
                 .map(msg -> ChatAndTransactionUnifiedDTO.builder()
-                        .type("CHAT")
+                        .type(ChatDtoDataType.CHAT_MESSAGE)
                         .dateTime(msg.getTimestamp())
                         .data(chatMessageMapper.toChatMessageResponse(msg,
-                                null ,null ))
+                                null, null))
                         .build())
                 .toList();
 
 
- List<ChatAndTransactionUnifiedDTO> transactionItems = senderTransactions
+        List<ChatAndTransactionUnifiedDTO> transactionItems = senderTransactions
                 .stream().map(
-       transaction -> ChatAndTransactionUnifiedDTO
+                        transaction -> ChatAndTransactionUnifiedDTO
                                 .builder()
-                                .type("TRANSACTION")
+                                .type(ChatDtoDataType.TRANSACTION_MESSAGE)
                                 .dateTime(transaction.getChatDateTime())
                                 .data(transaction)
                                 .build()).toList();
@@ -301,24 +308,36 @@ log.info(
         return unifiedList;
     }
 
-        @Override
-        public User getReceiverUserDetails(String receiverId) {
-            try {
-                log.info("Finding user by phoneNumber : {}",
-                       "****"+receiverId.substring(9,13));
-                return validations.getUserByPhoneNumber(receiverId);
-            } catch (UserNotFoundException e) {
-                throw new WebSocketUserNotFoundException(
-                        "This user in not registered on " +
-                        "sundukpay!");
-            }
+    /**
+     * Retrieves user details based on receiver ID (phone number).
+     *
+     * @param receiverId
+     * @return
+     */
+    @Override
+    public User getReceiverUserDetails(String receiverId) {
+        try {
+            log.info("Finding user by phoneNumber : {}",
+                    "****" + receiverId.substring(9, 13));
+            return validations.getUserByPhoneNumber(receiverId);
+        } catch (UserNotFoundException e) {
+            throw new WebSocketUserNotFoundException(
+                    "This user in not registered on " +
+                            "sundukpay!");
         }
+    }
 
+    /**
+     * Retrieves phone number by user UUID with caching.
+     *
+     * @param uuid the user UUID
+     * @return the phone number associated with the UUID
+     */
     @Cacheable(value = "userPhoneCache", key = "#uuid")
-        private String getPhoneNumberbyUuid(String uuid){
-            User user = validations.getUserInfo(uuid);
-            return user.getPhoneNumber();
-        }
+    private String getPhoneNumberbyUuid(String uuid) {
+        User user = validations.getUserInfo(uuid);
+        return user.getPhoneNumber();
+    }
 
 }
 

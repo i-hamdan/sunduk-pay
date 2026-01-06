@@ -60,6 +60,13 @@ public class GlobalPotResponse {
 
     private List<User> adminList;
 
+    /**
+     * List of group chat history associated with the global pot.
+     * contains messages and transactions related to the pot.
+     * messages and transactions both are represented by this DTO.
+     */
+    private List<GroupChatUnifiedDTO> groupChatHistory;
+
     private List<GlobalPotDocumentResponse> globalPotDocumentResponses;
 
 }

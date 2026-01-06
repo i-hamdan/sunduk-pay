@@ -27,7 +27,7 @@ class FogetMpinResetTest {
  private  MpinRepository repository;
 
  @InjectMocks
-    private FogetMpinReset service;
+    private ForgetMpinReset service;
 
     @Test
     void testGetForgotMpinRequestType_ShouldReturnForgotMpinReset() {

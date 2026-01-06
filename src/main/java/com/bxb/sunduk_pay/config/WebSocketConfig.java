@@ -24,6 +24,7 @@ import java.util.Map;
 @Log4j2
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+
 //    /**
 //     * Interceptor for chat messages.
 //     */
@@ -38,6 +39,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //    public void configureClientInboundChannel(ChannelRegistration registration) {
 //        registration.interceptors(chatMessageInterceptor);
 //    }
+
 
     /**
      * Registers STOMP endpoints for WebSocket connections.

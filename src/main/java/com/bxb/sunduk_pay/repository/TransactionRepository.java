@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.util.PaymentMethod;
+import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -302,5 +303,17 @@ public interface TransactionRepository
     Page<Transaction> findByRecipientUpiIdAndIsMasterFalse(
             String recipientUpiId,
             Pageable pageable);
+
+    /**
+     * Method for fetching transactions.
+     * find transactions by transaction level,
+     * to global pot ID and isMaster false.
+     *
+     * @return list of transactions
+     */
+    List<Transaction> findByTransactionLevelAndToGlobalPotIdAndIsMasterFalse(
+            TransactionLevel transactionLevel,
+            String toGlobalPotId
+    );
 
 }

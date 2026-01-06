@@ -396,7 +396,9 @@ public class GlobalExceptionHandler {
                         " must be under 10MB and total request under 50MB.",
                 request.getRequestURI()
         );
+
     }
+
 
     /**
      * Handles {@link CannotFetchMessagesException}.
@@ -544,6 +546,16 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+    @ExceptionHandler(value = CannotCreateAnonymousUserException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleCannotCreateAnonymousUserException(
+            final CannotCreateAnonymousUserException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
 

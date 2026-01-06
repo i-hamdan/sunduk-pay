@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
+import com.bxb.sunduk_pay.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -134,7 +135,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .description(pot.getDescription())
 
 
-
                 .address(pot.getAddress())
                 .city(pot.getCity())
                 .country(pot.getCountry())
@@ -153,7 +153,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
                 .message("Global Pot created successfully").build();
     }
-
 
 
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
@@ -187,39 +186,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         contributor.setGlobalPot(pot);
         return contributor;
     }
-
-
-//    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
-//
-//        if (request.getPrimaryImage() != null && !request.getPrimaryImage().isEmpty()) {
-//            pot.setPrimaryImage(request.getPrimaryImage().getBytes());
-//        }
-//
-//        if (request.getSecondaryImage() != null && !request.getSecondaryImage().isEmpty()) {
-//            pot.setSecondaryImage(request.getSecondaryImage().getBytes());
-//        }
-//
-//        if (request.getKycDocument() != null && !request.getKycDocument().isEmpty()) {
-//            pot.setKycDocument(request.getKycDocument().getBytes());
-//            pot.setKycDocumentTitle(request.getKycDocumentTitle());
-//        }
-//
-//        if (request.getInstitutionDocument() != null && !request.getInstitutionDocument().isEmpty()) {
-//            pot.setInstitutionDocument(request.getInstitutionDocument().getBytes());
-//            pot.setInstitutionDocumentTitle(request.getInstitutionDocumentTitle());
-//        }
-//
-//        if (request.getSupportingDocument() != null && !request.getSupportingDocument().isEmpty()) {
-//            pot.setSupportingDocument(request.getSupportingDocument().getBytes());
-//            pot.setSupportingDocumentTitle(request.getSupportingDocumentTitle());
-//        }
-//
-//        if (request.getCustomDocument() != null && !request.getCustomDocument().isEmpty()) {
-//            pot.setCustomDocument(request.getCustomDocument().getBytes());
-//            pot.setCustomDocumentTitle(request.getCustomDocumentTitle());
-//        }
-//    }
-
 
 
     @Override
@@ -280,8 +246,9 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         return GroupChatEvent.builder().
                 senderId(request.getSenderId())
                 .globalPotId(request.getGlobalPotId())
-                .content(request.getContent()).
-                build();
+                .content(request.getContent())
+                .isAnonymous(request.getIsAnonymous())
+                .build();
     }
 
     /**
@@ -293,22 +260,42 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     @Override
     public GroupChatMessageResponse toGroupChatMessageResponse(
             final GroupChatMessage groupChatMessage) {
-        return GroupChatMessageResponse.builder()
-                .messageId(groupChatMessage.getMessageId())
-                .sender(userMapper.toUserResponse(groupChatMessage.getSender()))
-                .globalPotId(groupChatMessage.getGlobalPot().getGlobalPotId())
-                .content(groupChatMessage.getContent())
-                .timestamp(groupChatMessage.getTimestamp().toString()).build();
+        GroupChatMessageResponse response = new GroupChatMessageResponse();
+        response.setMessageId(groupChatMessage.getMessageId());
+        if (groupChatMessage.isAnonymous()) {
+            response.setSender(anonymousSender());
+        } else {
+            response.setSender(userMapper
+                    .toUserResponse(groupChatMessage.getSender()));
+        }
+        response.setGlobalPotId(groupChatMessage.getGlobalPot().getGlobalPotId());
+        response.setContent(groupChatMessage.getContent());
+        response.setTimestamp(groupChatMessage.getTimestamp().toString());
+        response.setAnonymous(groupChatMessage.isAnonymous());
+        response.setAnonymousId(groupChatMessage.getAnonymousId());
+        response.setAnonymousColor(groupChatMessage.getAnonymousColor());
+
+        return response;
+    }
+
+    @Override
+    public List<GroupChatMessageResponse> toGroupChatMessageResponseList(
+            List<GroupChatMessage> groupChatMessage) {
+        return groupChatMessage
+                .stream()
+                .map(this::toGroupChatMessageResponse)
+                .collect(Collectors.toList());
     }
 
 
     /**
      * Private helper to convert byte array to base64 string.
+     *
      * @param image
      * @return
      */
     // helper method to  set images into base 64
-    private String toBase64(byte[] image) {
+    public String toBase64(byte[] image) {
         if (image == null) return null;
         return Base64.getEncoder().encodeToString(image);
     }
@@ -317,8 +304,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     /**
      * Private helper to map media files from request to entity.
      */
-    private void mapMedia(GlobalPot pot, GlobalPotRequest request) throws IOException {
+    private void mapMedia(GlobalPot pot, GlobalPotRequest request)
+            throws IOException {
 
+    }
+
+    private UserResponse anonymousSender() {
+        return UserResponse.builder()
+                .fullName("Anonymous user")
+                .email("anonymous@gmail.com")
+                .build();
     }
 
 

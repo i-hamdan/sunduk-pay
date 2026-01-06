@@ -47,7 +47,7 @@ public class SmsServiceImplTest {
 
         // sendSms ko spy se mock karenge (kyunki ye isi class me hai)
         SmsServiceImpl spyService = Mockito.spy(smsServiceImpl);
-        doNothing().when(spyService)
+            doNothing().when(spyService)
                 .sendSms(anyString(), anyString());
 
         //Act

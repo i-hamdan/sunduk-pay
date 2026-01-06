@@ -1,8 +1,7 @@
 package com.bxb.sunduk_pay.response;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.*;
 
 /**
  * Response object for group chat messages.
@@ -10,6 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupChatMessageResponse {
 
     /** Unique identifier for the message. */
@@ -26,4 +28,13 @@ public class GroupChatMessageResponse {
 
     /** Timestamp when the message was sent. */
     private String timestamp;
+
+    /** Indicates if the sender is anonymous. */
+    private boolean isAnonymous;
+
+    /** Identifier for the anonymous sender. */
+    private String anonymousId;
+
+    /** Color associated with the anonymous sender. */
+    private String anonymousColor;
 }

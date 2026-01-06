@@ -56,6 +56,8 @@ public class ChatMessageListener {
                 messageEvent.getSenderId(),
                 messageEvent.getReceiverId(),
                 messageEvent.getContent());
+
+        // Handle all messages asynchronously
                 processAsync(messageEvent);
     }
 
@@ -78,7 +80,7 @@ public class ChatMessageListener {
             CompletableFuture
                     .supplyAsync(() -> {
                         log.info(
-                                "[AsyncThread: {}] Starting message processing...",
+                "[AsyncThread: {}] Starting message processing...",
                                 Thread.currentThread().getName());
                         return messageService.processMessage(messageEvent);
                     }, executor)

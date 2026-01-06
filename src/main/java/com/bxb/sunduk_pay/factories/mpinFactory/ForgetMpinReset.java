@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class FogetMpinReset implements MpinOperation{
+public class ForgetMpinReset implements MpinOperation{
     /**
      * Utility for validations.
      */

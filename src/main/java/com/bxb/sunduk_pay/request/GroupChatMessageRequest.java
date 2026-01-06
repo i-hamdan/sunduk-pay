@@ -1,6 +1,8 @@
 package com.bxb.sunduk_pay.request;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 /**
@@ -21,4 +23,8 @@ public class GroupChatMessageRequest {
      * Content of the group chat message.
      */
     private String content;
+
+    /** Indicates if the message is sent anonymously. */
+    @NonNull
+    private Boolean isAnonymous;
 }

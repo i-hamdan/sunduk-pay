@@ -20,4 +20,7 @@ public class GroupChatEvent {
 
     /** The content of the group chat message. */
     private String content;
+
+    /** Indicates if the message was sent anonymously. */
+    private boolean isAnonymous;
 }

@@ -92,7 +92,10 @@ public enum GlobalPotRequestType {
     TRANSFER_OWNERSHIP,
 
 
-
+    /**
+     * Fetches the chat history associated with a global pot.
+     */
+    FETCH_GROUP_CHAT_HISTORY,
 
     /**
      * Fetches a specific global pot by identifier.

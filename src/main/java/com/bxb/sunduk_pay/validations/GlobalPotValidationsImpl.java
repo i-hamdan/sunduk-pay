@@ -3,18 +3,14 @@ package com.bxb.sunduk_pay.validations;
 import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
 import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.GlobalPotRepository;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.MasterWalletRepository;
-import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Implementation of Global Pot validations.
@@ -30,6 +26,11 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      */
     private final GlobalPotRepository globalPotRepository;
 
+    /**
+     * Repository for accessing Group Chat Message data.
+     */
+    private final GroupChatMessageRepository groupChatMessageRepository;
+
 
     /**
      * Validates the existence of a Global Pot by its ID.
@@ -40,12 +41,10 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      */
     @Override
     public GlobalPot getGlobalPot(final String globalPotId) {
-        GlobalPot globalPot =
-                globalPotRepository.findById(globalPotId).orElseThrow(
-                        () -> new GlobalPotNotFoundException(
-                                "Global Pot not found with ID: "
-                                        + globalPotId));
-        return globalPot;
+        return globalPotRepository.findById(globalPotId).orElseThrow(
+                () -> new GlobalPotNotFoundException(
+                        "Global Pot not found with ID: "
+                                + globalPotId));
 
     }
 
@@ -99,6 +98,11 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
 
 
+    }
+
+    @Override
+    public List<GroupChatMessage> getGroupChatMessagesFromDB(String globalPotId) {
+        return groupChatMessageRepository.findByGlobalPotGlobalPotId(globalPotId);
     }
 
 
