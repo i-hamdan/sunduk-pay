@@ -559,5 +559,17 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(value = UserIsBlocked.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleUserIsBlockedException(
+            final UserIsBlocked e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+
 
 }

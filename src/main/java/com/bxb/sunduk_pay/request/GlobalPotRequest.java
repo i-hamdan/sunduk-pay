@@ -46,7 +46,7 @@ public class GlobalPotRequest {
     // current admin user creating the pot
     private String adminUuid;
     // target user for transfering pot to user
-    private String targetUserForAdmin;
+    private String targetUserUuid;
 
 
     private String adminNote;

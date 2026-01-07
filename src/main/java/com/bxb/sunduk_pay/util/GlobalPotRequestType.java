@@ -110,5 +110,11 @@ public enum GlobalPotRequestType {
     /**
      * Admin can debit the amount from GlobalPot sub-wallet
      */
-    DEBIT_GLOBAL_POT_WALLET
+    DEBIT_GLOBAL_POT_WALLET,
+
+    /**
+     * for block Service
+     */
+    BLOCK_USER
+
 }

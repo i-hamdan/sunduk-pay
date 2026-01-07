@@ -29,7 +29,6 @@ public class PostgresConfig {
     public DataSource postgresDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-//        dataSource.setJdbcUrl("jdbc:postgresql://postgres_db:5432/stockdb");
         dataSource.setJdbcUrl("jdbc:postgresql://localhost:5432/stockdb");
         dataSource.setUsername("postgres");
         dataSource.setPassword("root123");

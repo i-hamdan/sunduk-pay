@@ -143,7 +143,8 @@ public class CreateInvestmentService implements InvestmentOperation {
                         " using model " + portfolioModel.getName())
                 .fromWallet(subWallet.getSubWalletName())
                 .fromWalletId(subWallet.getSubWalletId())
-                .toWallet("Investment")
+                .toWallet(
+                        "INVESTMENT")
                 .isInvestment(true)
                 .riskLevel(investment.getRiskLevel())
                 .isMaster(false)

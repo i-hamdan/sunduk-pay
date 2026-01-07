@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalPotBlockedUser;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.model.User;
 
@@ -45,6 +46,16 @@ public interface GlobalPotValidations {
      */
     void validateAdmin(User admin);
 
+
     List<GroupChatMessage> getGroupChatMessagesFromDB(String globalPotId);
+
+
+    void validateUserHasContributed(String globalPotId, String userUuid);
+
+    void validateNotAlreadyBlocked(String globalPotId, String userUuid);
+
+
+    void validateUserNotBlocked(String globalPotId, String userUuid);
+
 
 }

@@ -1,8 +1,6 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
-import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.UserRoles;
@@ -30,6 +28,15 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Repository for accessing Group Chat Message data.
      */
     private final GroupChatMessageRepository groupChatMessageRepository;
+
+    /**
+     * Repository for accessing Contributor data.
+     */
+    private final ContributerRepository contributerRepository;
+
+
+    private final GlobalPotBlockedUserRepository globalPotBlockedUserRepository;
+
 
 
     /**
@@ -106,4 +113,45 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
     }
 
 
+
+    @Override
+    public void validateUserHasContributed(String globalPotId, String userUuid) {
+        if (!contributerRepository
+                .existsByGlobalPot_GlobalPotIdAndUserContributor_Uuid(
+                        globalPotId, userUuid)) {
+
+            throw new ResourceNotFoundException(
+                    "Only contributors can be blocked"
+            );
+        }
+    }
+
+    @Override
+    public void validateNotAlreadyBlocked(String globalPotId, String userUuid) {
+        if (globalPotBlockedUserRepository
+                .existsByGlobalPotGlobalPotIdAndUserUuid(
+                        globalPotId, userUuid)) {
+
+            throw new ResourceNotFoundException(
+                    "User is already blocked in this Global Pot"
+            );
+        }
+    }
+
+    @Override
+    public void validateUserNotBlocked(String globalPotId, String userUuid) {
+        if (globalPotBlockedUserRepository
+                .existsByGlobalPotGlobalPotIdAndUserUuid(
+                        globalPotId, userUuid)) {
+
+            throw new UserIsBlocked(
+                    "user is blocked in this Global Pot" + userUuid
+            );
+        }
+    }
+
+
 }
+
+
+

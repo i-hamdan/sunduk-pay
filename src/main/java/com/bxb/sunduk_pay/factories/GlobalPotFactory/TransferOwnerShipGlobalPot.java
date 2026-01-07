@@ -39,7 +39,7 @@ public class TransferOwnerShipGlobalPot implements GlobalPotOperation {
 
         // checking new owner info
         User targetUser = validations.
-                getUserInfo(request.getTargetUserForAdmin());
+                getUserInfo(request.getTargetUserUuid());
         // transfering ownership
         targetUser.setUserRole(UserRoles.GLOBALPOT_ADMIN);
         // downgrading previous owner

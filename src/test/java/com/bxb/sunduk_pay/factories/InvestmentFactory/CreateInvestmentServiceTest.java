@@ -1,5 +1,6 @@
-package com.bxb.sunduk_pay.factories.InvestmentFactory;
+package com.bxb.sunduk_pay.factories.investmentFactory;
 
+import com.bxb.sunduk_pay.factories.InvestmentFactory.CreateInvestmentService;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
