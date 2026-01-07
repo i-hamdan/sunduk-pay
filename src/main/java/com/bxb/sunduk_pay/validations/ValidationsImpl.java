@@ -396,6 +396,16 @@ private static final int WALLET_SIZE = 19;
                     + "targetBalance. targetBalance="
                     + balance + " amount=" + amount);
         }
+
+        if(amount <= 0){
+            log.error("Validation failed: Given amount should not be " +
+                    "less than or equal to zero. Provided balance=" + balance
+            + " amount=" + amount);
+            throw new TransactionProcessingException(
+                    "Validation failed: Amount should be greater than zero."
+                    + " Provided balance=" + balance + " Amount=" + amount
+            );
+        }
         log.debug(
 "Validation successful:  targetBalance={}, Amount={}",
                 balance, amount);

@@ -96,9 +96,19 @@ public enum GlobalPotRequestType {
      * Fetches the chat history associated with a global pot.
      */
     FETCH_GROUP_CHAT_HISTORY,
+    /**
+     * Share ownership of a global pot to other users.
+     */
+    SHARE_OWNERSHIP,
+
 
     /**
      * Fetches a specific global pot by identifier.
      */
-    FETCH_GLOBAL_POT
+    FETCH_GLOBAL_POT,
+
+    /**
+     * Admin can debit the amount from GlobalPot sub-wallet
+     */
+    DEBIT_GLOBAL_POT_WALLET
 }

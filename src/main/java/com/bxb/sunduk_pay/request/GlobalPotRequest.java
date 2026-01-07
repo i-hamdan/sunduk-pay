@@ -24,6 +24,9 @@ public class GlobalPotRequest {
     private CaseRequirementType caseRequirementType;
     private PotStatus PotStatus;
     private String description;
+    private Double targetAmount;
+
+
 
     // --- Geolocation ---
     private String address;
