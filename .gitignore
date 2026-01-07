@@ -1,10 +1,20 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-# Environment-dependent path to Maven home directory
-/mavenHomeManager.xml
-/target
-.idea/compiler.xml
-.idea/.name
-.idea/misc.xml
-.idea/workspace.xml
+
+# Maven
+/target/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# Spring Boot config
+application.yml
+application-*.yml
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
