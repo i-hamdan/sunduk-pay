@@ -7,6 +7,9 @@ import lombok.*;
  */
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
     public class ChatMessageRequest {
     /** The ID of the sender of the message. */
     private String senderId;

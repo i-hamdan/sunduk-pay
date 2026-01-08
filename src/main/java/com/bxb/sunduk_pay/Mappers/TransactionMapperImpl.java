@@ -46,9 +46,9 @@ public class TransactionMapperImpl implements TransactionMapper {
     /** {@inheritDoc} */
     public TransactionResponse toTransactionResponse(
             final Transaction transaction) {
-        if (transaction.getIsAnonymous()!=null && transaction.getIsAnonymous()){
-            return toAnonymousTransactionResponse(transaction);
-        }
+//        if (transaction.getIsAnonymous()!=null && transaction.getIsAnonymous()){
+//            return toAnonymousTransactionResponse(transaction);
+//        }
         TransactionResponse transactionResponse = new TransactionResponse();
         transactionResponse.setTransactionId(
                 transaction.getTransactionId());
@@ -111,37 +111,40 @@ public class TransactionMapperImpl implements TransactionMapper {
         }
         transactionResponse.setFromGlobalPotId(transaction.getFromGlobalPotId());
         transactionResponse.setToGlobalPotId(transaction.getToGlobalPotId());
+        transactionResponse.setIsAnonymous(transaction.getIsAnonymous());
+        transactionResponse.setAnonymousId(transactionResponse.getAnonymousId());
+        transactionResponse.setAnonymousColor(transaction.getAnonymousColor());
         return transactionResponse;
     }
 
-    private TransactionResponse toAnonymousTransactionResponse(
-            Transaction transaction) {
-        TransactionResponse response = new TransactionResponse();
-
-        response.setTransactionId(transaction.getTransactionId());
-        response.setUuid(transaction.getUser().getUuid());
-
-        // Masked identity
-        response.setIsAnonymous(true);
-        response.setAnonymousId(transaction.getAnonymousId());
-        response.setAnonymousColor(transaction.getAnonymousColor());
-        response.setFullName("Anonymous user");
-
-        // Common fields
-        response.setTransactionType(transaction.getTransactionType());
-        response.setTransactionLevel(transaction.getTransactionLevel());
-        response.setPaymentMethod(transaction.getPaymentMethod());
-        response.setAmount(transaction.getAmount());
-        response.setDescription(transaction.getDescription());
-        response.setStatus(transaction.getStatus());
-        response.setDateTime(transaction.getDateTime().toString());
-        response.setChatDateTime(transaction.getDateTime());
-
-        response.setFromGlobalPotId(transaction.getFromGlobalPotId());
-        response.setToGlobalPotId(transaction.getToGlobalPotId());
-
-        return response;
-    }
+//    private TransactionResponse toAnonymousTransactionResponse(
+//            Transaction transaction) {
+//        TransactionResponse response = new TransactionResponse();
+//
+//        response.setTransactionId(transaction.getTransactionId());
+//        response.setUuid(transaction.getUser().getUuid());
+//
+//        // Masked identity
+//        response.setIsAnonymous(true);
+//        response.setAnonymousId(transaction.getAnonymousId());
+//        response.setAnonymousColor(transaction.getAnonymousColor());
+//        response.setFullName("Anonymous user");
+//
+//        // Common fields
+//        response.setTransactionType(transaction.getTransactionType());
+//        response.setTransactionLevel(transaction.getTransactionLevel());
+//        response.setPaymentMethod(transaction.getPaymentMethod());
+//        response.setAmount(transaction.getAmount());
+//        response.setDescription(transaction.getDescription());
+//        response.setStatus(transaction.getStatus());
+//        response.setDateTime(transaction.getDateTime().toString());
+//        response.setChatDateTime(transaction.getDateTime());
+//
+//        response.setFromGlobalPotId(transaction.getFromGlobalPotId());
+//        response.setToGlobalPotId(transaction.getToGlobalPotId());
+//
+//        return response;
+//    }
 
     /** {@inheritDoc} */
     @Override

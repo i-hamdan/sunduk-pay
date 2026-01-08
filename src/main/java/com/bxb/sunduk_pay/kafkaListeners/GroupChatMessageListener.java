@@ -2,7 +2,9 @@ package com.bxb.sunduk_pay.kafkaListeners;
 
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
+import com.bxb.sunduk_pay.response.GroupChatUnifiedDTO;
 import com.bxb.sunduk_pay.service.GroupChatMessageService;
+import com.bxb.sunduk_pay.util.ChatDtoDataType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
@@ -90,15 +92,31 @@ public class GroupChatMessageListener {
      *
      * @param response the processed group chat message response
      */
-    private void forwardMessageToWebSocket(GroupChatMessageResponse response) {
+    private void forwardMessageToWebSocket(
+            final GroupChatMessageResponse response) {
+
+        GroupChatUnifiedDTO chatDTO = getChatDTO(response);
         // Implementation for forwarding message to WebSocket clients
         messagingTemplate.convertAndSend(
                 "/topic/group/" + response.getGlobalPotId(),
-                response);
+                chatDTO);
         log.info(
                 "Forwarded group chat message to WebSocket for group {}",
                 response.getGlobalPotId());
         log.info("=========== Finished processing group chat message ===========");
+    }
+
+    /**
+     * Converts GroupChatMessageResponse to GroupChatUnifiedDTO.
+     * @param response the group chat message response
+     * @return the unified DTO representation
+     */
+    private GroupChatUnifiedDTO getChatDTO(GroupChatMessageResponse response){
+        return GroupChatUnifiedDTO.builder()
+                .dataType(ChatDtoDataType.CHAT_MESSAGE)
+                .timestamp(response.getTimestamp())
+                .data(response)
+                .build();
     }
 
 }

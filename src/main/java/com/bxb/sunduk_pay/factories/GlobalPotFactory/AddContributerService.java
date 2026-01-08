@@ -7,15 +7,9 @@ import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
-import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
-import com.bxb.sunduk_pay.response.GlobalPotResponse;
-import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
-import com.bxb.sunduk_pay.response.TransactionResponse;
+import com.bxb.sunduk_pay.response.*;
 import com.bxb.sunduk_pay.service.AnonymousUserService;
-import com.bxb.sunduk_pay.util.GenerateKeyUtil;
-import com.bxb.sunduk_pay.util.GlobalPotRequestType;
-import com.bxb.sunduk_pay.util.TransactionLevel;
-import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.*;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -233,6 +228,7 @@ public class AddContributerService implements GlobalPotOperation {
                     transactionResponse);
             transactions.add(subWalletTxn);
             subWalletRepository.save(subWallet);
+
             // Forward the transaction message to WebSocket clients
             forwardMessageToWebSocket(globalPot.getGlobalPotId(),
                     transactionResponse);
@@ -341,15 +337,34 @@ public class AddContributerService implements GlobalPotOperation {
      */
     private void forwardMessageToWebSocket(String globalPotId,
                                            TransactionResponse response) {
+
+        GroupChatUnifiedDTO transactionWebsocketDTO = getTransactionDTO(
+                response);
         // Implementation for forwarding message to WebSocket clients
         messagingTemplate.convertAndSend(
                 "/topic/group/" + globalPotId,
-                response);
+                transactionWebsocketDTO);
         log.info(
                 "Forwarded global pot contribution transaction "
                         + "to WebSocket for group {}",
                 globalPotId);
         log.info(
         "=========== Finished processing group chat message ===========");
+    }
+
+    /**
+     * Converts GroupChatMessageResponse to GroupChatUnifiedDTO.
+     * @param response the group chat message response
+     * @return the unified DTO representation
+     */
+    private GroupChatUnifiedDTO getTransactionDTO(TransactionResponse response){
+        return GroupChatUnifiedDTO.builder()
+                .dataType(ChatDtoDataType.TRANSACTION_MESSAGE)
+                .timestamp(response.getChatDateTime()
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toString())
+                .data(response)
+                .build();
     }
 }

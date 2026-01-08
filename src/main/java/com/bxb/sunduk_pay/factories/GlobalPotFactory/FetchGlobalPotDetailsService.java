@@ -119,7 +119,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                             document.getDocumentHeading());
                     documentResponse.setDocumentTitle(
                             document.getDocumentTitle());
-                     documentResponse.setDocument(globalPotMapper.toBase64(document.getDocument()));
+                     documentResponse.setDocument(globalPotMapper.toBase64(
+                             document.getDocument()));
                     documentResponse.setDocumentStatus(
                             document.getDocumentStatus().name());
                     globalPotDocumentList.add(documentResponse);

@@ -262,16 +262,16 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
             final GroupChatMessage groupChatMessage) {
         GroupChatMessageResponse response = new GroupChatMessageResponse();
         response.setMessageId(groupChatMessage.getMessageId());
-        if (groupChatMessage.isAnonymous()) {
-            response.setSender(anonymousSender());
-        } else {
-            response.setSender(userMapper
+//        if (groupChatMessage.isAnonymous()) {
+//            response.setSender(anonymousSender());
+//        } else {
+        response.setSender(userMapper
                     .toUserResponse(groupChatMessage.getSender()));
-        }
+//        }
         response.setGlobalPotId(groupChatMessage.getGlobalPot().getGlobalPotId());
         response.setContent(groupChatMessage.getContent());
         response.setTimestamp(groupChatMessage.getTimestamp().toString());
-        response.setAnonymous(groupChatMessage.isAnonymous());
+        response.setIsAnonymous(groupChatMessage.isAnonymous());
         response.setAnonymousId(groupChatMessage.getAnonymousId());
         response.setAnonymousColor(groupChatMessage.getAnonymousColor());
 

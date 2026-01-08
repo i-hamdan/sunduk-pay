@@ -4,9 +4,11 @@ import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.exception.ChatProcessingException;
 import com.bxb.sunduk_pay.exception.RedisOperationException;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
+import com.bxb.sunduk_pay.model.Follower;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.FollowerRepository;
 import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
 import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
@@ -14,6 +16,7 @@ import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.AnonymousUserService;
 import com.bxb.sunduk_pay.service.GroupChatMessageService;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
+import com.bxb.sunduk_pay.validations.FollowerValidations;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -66,6 +70,11 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final GenerateKeyUtil generateKeyUtil;
 
     /**
+     * Repository for follower relationships.
+     */
+    private final FollowerRepository followerRepository;
+
+    /**
      * Service for handling anonymous user features.
      */
     private final AnonymousUserService anonymousUserService;
@@ -90,6 +99,16 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     globalPotValidations.getGlobalPot(event.getGlobalPotId());
             log.info("Fetched global pot info for pot ID {}: {}",
                     event.getGlobalPotId(), globalPot.getGlobalPotId());
+
+            boolean isFollower = followerRepository
+                    .existsByFollowerUserAndGlobalPot(user, globalPot);
+
+            if (!isFollower){
+                log.info(
+   "User {} is not a follower of pot {}. Creating follower record.",
+                        user.getUuid(), globalPot.getGlobalPotId());
+               createFollowerRecord(user, globalPot);
+            }
 
             boolean isAnonymous = event.isAnonymous();
             log.info("Is the message anonymous? {}", isAnonymous);
@@ -150,13 +169,12 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         }
     }
 
-
     /**
      * Saves the group chat message in Redis cache.
      *
      * @param message the group chat message to be cached
      */
-    private void saveMessageInRedisCache(final GroupChatMessage message) {
+        protected void saveMessageInRedisCache(final GroupChatMessage message) {
 
         try {
             // First, check if the group chat messages for this pot
@@ -215,5 +233,23 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     "Error saving group chat message in Redis cache: "
                             + e.getMessage());
         }
+    }
+
+    /**
+     * Creates a new follower record for the user in the specified global pot.
+     *
+     * @param user the user who is following
+     * @param globalPot the global pot being followed
+     */
+    private void createFollowerRecord(User user, GlobalPot globalPot) {
+        log.info("Creating new follower record for user {} in pot {}",
+                user.getUuid(), globalPot.getGlobalPotId());
+        Follower follower = Follower.builder()
+                .followerUser(user)
+                .globalPot(globalPot)
+                .createdAt(LocalDateTime.now()).build();
+        followerRepository.save(follower);
+        log.info("Created new follower record for user {} in pot {}",
+                user.getUuid(), globalPot.getGlobalPotId());
     }
 }

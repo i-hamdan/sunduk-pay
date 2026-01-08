@@ -30,7 +30,7 @@ public class GroupChatMessageResponse {
     private String timestamp;
 
     /** Indicates if the sender is anonymous. */
-    private boolean isAnonymous;
+    private Boolean isAnonymous;
 
     /** Identifier for the anonymous sender. */
     private String anonymousId;
