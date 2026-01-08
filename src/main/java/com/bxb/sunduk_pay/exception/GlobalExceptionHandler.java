@@ -571,5 +571,17 @@ public class GlobalExceptionHandler {
     }
 
 
+    @ExceptionHandler(value = GlobalPotDocumentNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleGlobalPotDocumentNotFoundException(
+            final GlobalPotDocumentNotFoundException e,
+            final HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+
+    }
+
 
 }

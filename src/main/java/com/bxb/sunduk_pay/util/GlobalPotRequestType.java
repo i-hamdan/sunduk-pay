@@ -100,6 +100,16 @@ public enum GlobalPotRequestType {
      * Share ownership of a global pot to other users.
      */
     SHARE_OWNERSHIP,
+    
+    /**
+     * Request type used for document verification.
+     */
+    VERIFY_DOCUMENT,
+    
+    /**
+     * Request type for updating Global Pot details
+     */
+    Update_Global_Pot,
 
 
     /**

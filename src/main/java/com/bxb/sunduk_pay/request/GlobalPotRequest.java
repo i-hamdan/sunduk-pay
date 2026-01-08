@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.request;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -83,5 +84,7 @@ public class GlobalPotRequest {
     private String createdBy;
     private String location;
 
+
+    private String globalPotDocumentId;
 
 }
