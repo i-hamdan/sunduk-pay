@@ -10,14 +10,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-
+/**
+ * Repository interface for managing GlobalPot entities in the database.
+ */
 public interface GlobalPotRepository extends JpaRepository<GlobalPot, String> {
 
-
-
+    /**
+     * Finds GlobalPots by their PotScope with pagination.
+     *
+     * @param potScope the scope of the pot
+     * @param pageable pagination information
+     * @return a page of GlobalPots matching the specified PotScope
+     */
     Page<GlobalPot> findByPotScope(PotScope potScope,Pageable pageable);
 
-
+    /**
+     * Finds GlobalPots by their CaseCategory and PotScope with pagination.
+     *
+     * @param caseCategory the category of the case
+     * @param potScope the scope of the pot
+     * @param pageable pagination information
+     * @return a page of GlobalPots matching the specified CaseCategory and PotScope
+     */
     Page<GlobalPot> findByCaseCategoryAndPotScope(
             CaseCategory caseCategory,
             PotScope potScope,

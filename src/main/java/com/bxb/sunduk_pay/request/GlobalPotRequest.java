@@ -1,12 +1,15 @@
 package com.bxb.sunduk_pay.request;
 
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.*;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Request DTO for all operations in Global Pot.
+ */
 @Getter
 @Setter
 @Builder
@@ -42,6 +45,7 @@ public class GlobalPotRequest {
 
     // --- Audit & Ownership ---
     private Boolean isVerified;
+    private List<User> administrators;
 
     // current admin user creating the pot
     private String adminUuid;
@@ -73,6 +77,11 @@ public class GlobalPotRequest {
 
     private int pageNumber;
     private int pageSize;
+
+    private Boolean createdByAdmin;
+    private Boolean createdForSelf;
+    private String createdBy;
+    private String location;
 
 
 }

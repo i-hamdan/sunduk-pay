@@ -50,12 +50,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setCaseRequirementType(request.getCaseRequirementType());
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
-//        User admin = userRepository.findById(request.getAdmin())
-//                .orElseThrow(() -> new UserNotFoundException("Admin user not " +
-//                        "found with ID: " + request.getAdmin()));
-//        pot.setAdmin(admin);
-        pot.setBeneficiaryName(request.getBeneficiaryName());
-        pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
+
+       pot.setAdministrators(request.getAdministrators());
+       pot.setBeneficiaryName(request.getBeneficiaryName());
+       pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
+       pot.setCreatedByAdmin(request.getCreatedByAdmin());
+       pot.setCreatedForSelf(request.getCreatedForSelf());
+       pot.setCreatedBy(request.getCreatedBy());
+       pot.setLocation(request.getLocation());
 
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
@@ -67,9 +69,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setCurrentBalance(0.0);
         pot.setGoalDate(request.getGoalDate());
         pot.setGoalAmount(request.getGoalAmount());
-
-//        // --- 4. Media Mapping (Private Helper) ---
-//        mapMedia(pot, request);
 
         // --- 5. Empty List Initialization (Defensive) ---
 //        pot.setContributors(new ArrayList<>());
@@ -278,6 +277,13 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         return response;
     }
 
+
+    /**
+     * Converts a GroupChatMessage entity to a GroupChatMessageResponse DTO.
+     *
+     * @param groupChatMessage the group chat message entity
+     * @return the corresponding group chat message response DTO
+     */
     @Override
     public List<GroupChatMessageResponse> toGroupChatMessageResponseList(
             List<GroupChatMessage> groupChatMessage) {
@@ -298,15 +304,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     public String toBase64(byte[] image) {
         if (image == null) return null;
         return Base64.getEncoder().encodeToString(image);
-    }
-
-
-    /**
-     * Private helper to map media files from request to entity.
-     */
-    private void mapMedia(GlobalPot pot, GlobalPotRequest request)
-            throws IOException {
-
     }
 
     private UserResponse anonymousSender() {

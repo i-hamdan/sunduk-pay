@@ -1,11 +1,10 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
-import com.bxb.sunduk_pay.exception.InvalidPayloadException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.DocumentWrapper;
@@ -14,13 +13,13 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.DocumentStatus;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.util.UserRoles;
-import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -34,9 +33,6 @@ public class CreateGlobalPotService implements GlobalPotOperation {
     private final GlobalPotRepository repository;
     private final GlobalPotMapper mapper;
     private final UserRepository userRepository;
-    private final Validations validations;
-    private final GlobalPotDocumentRepository globalPotDocumentRepository;
-
 
     /**
      * Identifies this operation as CREATE_POT.
@@ -63,12 +59,11 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         GlobalPot pot = mapper.toEntity(request);
         log.debug("Mapped GlobalPot entity from request");
 
-        List<DocumentWrapper> mediaFiles = request.getDocumentFiles();
-        if (mediaFiles == null) throw new InvalidPayloadException(
-                "Document files list cannot be null");
+        // Handle Media Files
+        List<DocumentWrapper> mediaFiles=request.getDocumentFiles();
         log.info("Saving media files for GlobalPot ID: {}",
                 pot.getGlobalPotId());
-        mediaFiles.forEach((wrapper) -> {
+        mediaFiles.forEach((wrapper)-> {
             GlobalPotDocument globalPotDocument;
             if (wrapper != null && wrapper.getDocumentFile() != null
                     && !wrapper.getDocumentFile().isEmpty()) {
@@ -78,7 +73,8 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                                     .documentHeading(
                                             wrapper.getDocumentHeading())
                                     .documentTitle(wrapper.getDocumentTitle())
-                                    .document(wrapper.getDocumentFile().getBytes())
+                                    .document(wrapper.getDocumentFile()
+                                            .getBytes())
                                     .documentStatus(DocumentStatus.PENDING)
                                     .globalPot(pot).build();
                     pot.addDocument(globalPotDocument);
@@ -86,15 +82,31 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            } else {
+            }
+            else {
                 log.warn("Skipping document '{}' - No file content found in " +
                         "request", wrapper.getDocumentHeading());
             }
         });
 
-        // saving pot
-        repository.save(pot);
+        // Assign Administrators
+        List<User> admins=new ArrayList<>();
+        request.getAdministrators().forEach(admin ->{
+            User user=
+                    userRepository.findById(admin.getUuid())
+                            .orElseThrow(()->new UserNotFoundException(
+                                    "User not found with UUID: "
+                                            +admin.getUuid()));
+            if (!UserRoles.GLOBALPOT_ADMIN.equals(user.getUserRole())){
+                user.setUserRole(UserRoles.GLOBALPOT_ADMIN);
+                admins.add(user);
+            }
 
+        });
+        userRepository.saveAll(admins);
+        log.info("Assigned {} administrators to GlobalPot ID: {}",
+                admins.size(), pot.getGlobalPotId());
+       repository.save(pot);
         log.info("GlobalPot saved successfully with ID: {}",
                 pot.getGlobalPotId());
 

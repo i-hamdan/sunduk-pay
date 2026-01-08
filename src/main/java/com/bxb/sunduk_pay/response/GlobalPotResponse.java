@@ -58,7 +58,7 @@ public class GlobalPotResponse {
 // this is list where we show on tile page;
     private List<GlobalPotTileDto> globalPotsTiles;
 
-    private List<User> adminList;
+    private List<UserResponse> adminList;
 
     /**
      * List of group chat history associated with the global pot.

@@ -20,60 +20,37 @@ import java.util.List;
 public interface GlobalPotMapper {
 
     /**
-     * Converts a GlobalPotRequest to a GlobalPot entity.
-     *
-     * @param request the global pot request
-     * @return the corresponding global pot entity
-     * @throws IOException if an I/O error occurs during conversion
+     * Converts the incoming request into a persistence-ready Entity.
      */
-    GlobalPot  toEntity(GlobalPotRequest request) throws IOException;
-
+    GlobalPot toEntity(GlobalPotRequest request) throws IOException;
 
     /**
      * Converts a GlobalPot entity to a GlobalPotResponse DTO.
-     *
-     * @param pot the global pot entity
-     * @return the corresponding global pot response DTO
      */
     GlobalPotResponse toGlobalPotResponse(GlobalPot pot);
 
-
-    /**     * Converts a GlobalPotRequest to a GlobalWallet entity.
-     *
-     * @param request the global pot request
-     * @return the corresponding global wallet entity
+    /**
+     * Converts a GlobalPotRequest to a GlobalWallet entity.
      */
     GlobalWallet toEntityWallet(final GlobalPotRequest request);
 
-
-
-    /**     * Converts a GlobalPotRequest to a Contributor entity.
-     *
-     * @param request the global pot request
-     * @param pot the global pot entity
-     * @return the corresponding contributor entity
-     * @throws IOException if an I/O error occurs during conversion
+    /**
+     * Converts a GlobalPotRequest to a Contributor entity.
      */
-    Contributor toContributerEntity(GlobalPotRequest request, GlobalPot pot) throws IOException;
+    Contributor toContributerEntity(GlobalPotRequest request, GlobalPot pot)
+            throws IOException;
 
-
-/**
+    /**
      * Converts a GlobalPot entity to a GlobalPotTileDto.
-     *
-     * @param pot the global pot entity
-     * @return the corresponding global pot tile DTO
      */
     GlobalPotTileDto toTileDto(GlobalPot pot);
 
     /**
      * Converts a list of GlobalPot entities to a list of GlobalPotTileDto.
-     *
-     * @param pots the list of global pot entities
-     * @return the corresponding list of global pot tile DTOs
      */
-  List<GlobalPotTileDto> toTileDtos(List<GlobalPot> pots);
+    List<GlobalPotTileDto> toTileDtos(List<GlobalPot> pots);
 
-/**
+    /**
      * Converts a GroupChatMessageRequest to a GroupChatEvent.
      *
      * @param request the group chat message request
@@ -85,19 +62,8 @@ public interface GlobalPotMapper {
      * Converts a GroupChatMessage entity to a GroupChatMessageResponse DTO.
      *
      * @param groupChatMessage the group chat message entity
-     * @return the corresponding group chat message response DTO
+     * @return the corresponding group chat message response
      */
     GroupChatMessageResponse toGroupChatMessageResponse(
             GroupChatMessage groupChatMessage);
-
-    /**
-     * Converts a GroupChatMessage entity to a GroupChatMessageResponse DTO.
-     *
-     * @param groupChatMessage the group chat message entity
-     * @return the corresponding group chat message response DTO
-     */
-    List<GroupChatMessageResponse> toGroupChatMessageResponseList(
-            List<GroupChatMessage> groupChatMessage);
-
-     String toBase64(byte[] image);
 }

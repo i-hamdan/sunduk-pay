@@ -164,8 +164,20 @@ public class GlobalPot {
     private Boolean isActive;
 
     /** Internal notes provided by system
-     *  administrators regarding the pot's validity. */
+     *  administrators regarding the pot. */
     private String adminNote;
+
+    /** Indicates if the pot was created by an admin user. */
+    private Boolean createdByAdmin;
+
+    /** Indicates if the pot was created for the admin itself. */
+    private Boolean createdForSelf;
+
+    /** Name of the person who created the pot. */
+    private String createdBy;
+
+    /** Geographical location associated with the pot's creator */
+    private String location;
 
     /** Automatic timestamp of when the pot record was first created. */
     @CreationTimestamp
@@ -176,14 +188,7 @@ public class GlobalPot {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
-   @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_user_id")
-    private User admin;
-
-
-
-
+    /** Adds a document to the global pot and sets the bidirectional relationship. */
     public void addDocument(GlobalPotDocument doc) {
         if (doc != null) {
             this.globalPotDocuments.add(doc);
