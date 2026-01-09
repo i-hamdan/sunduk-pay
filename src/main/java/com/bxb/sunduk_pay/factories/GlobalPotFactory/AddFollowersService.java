@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class AddFollowersService implements GlobalPotOperation {
 
     private FollowerRepository followerRepository;
 
+    private final GlobalPotValidations globalPotValidations;
+
     /**
      * Constructs the AddFollowersService with required dependencies.
      *
@@ -39,10 +42,12 @@ public class AddFollowersService implements GlobalPotOperation {
      * @param globalPotRepository   repository for Global Pot data access
      * @param followerRepository    repository for follower persistence
      */
-    public AddFollowersService(Validations validations, GlobalPotRepository globalPotRepository, FollowerRepository followerRepository) {
+    public AddFollowersService(Validations validations, GlobalPotRepository globalPotRepository,
+                               FollowerRepository followerRepository, GlobalPotValidations globalPotValidations) {
         this.validations = validations;
         this.globalPotRepository = globalPotRepository;
         this.followerRepository = followerRepository;
+        this.globalPotValidations = globalPotValidations;
     }
 
     /**
@@ -90,6 +95,7 @@ public class AddFollowersService implements GlobalPotOperation {
                 .globalPot(globalPot)
                 .build();
         followerRepository.save(follower);
+        globalPotValidations.ensureUserIsMember(followerUser,globalPot);
 
         return GlobalPotResponse.builder()
                 .message("Gloable Pot Followed Successfully")

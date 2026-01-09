@@ -85,6 +85,10 @@ public class GlobalPotRequest {
     private String location;
 
 
+    private String targetUserToAdd;
+    private String targetUserToRemove;
+
+
     private String globalPotDocumentId;
 
 }

@@ -37,6 +37,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
     private final GlobalPotBlockedUserRepository globalPotBlockedUserRepository;
 
+    private final GlobalPotMembersRepository globalPotMembersRepository;
+
 
 
     /**
@@ -150,6 +152,25 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
     }
 
+    @Override
+    public void ensureUserIsMember(User userId, GlobalPot globalPotId) {
+
+        boolean isAlreadyMember =
+                globalPotMembersRepository
+                        .existsByUserIdAndGlobalPotId(userId, globalPotId);
+
+        if (isAlreadyMember) {
+
+            return;
+        }
+        GlobalPotMembers member = GlobalPotMembers.builder()
+                .userId(userId)
+                .globalPotId(globalPotId)
+                .userRoles(userId.getUserRole())
+                .build();
+
+        globalPotMembersRepository.save(member);
+    }
 
 }
 

@@ -131,6 +131,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoles userRole;
 
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GlobalPotMembers> globalPotMemberships;
 
 
 }

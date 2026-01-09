@@ -57,5 +57,5 @@ public interface GlobalPotValidations {
 
     void validateUserNotBlocked(String globalPotId, String userUuid);
 
-
+    void ensureUserIsMember(User userId, GlobalPot globalPotId);
 }

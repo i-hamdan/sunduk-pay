@@ -111,23 +111,31 @@ public enum GlobalPotRequestType {
      */
     Update_Global_Pot,
 
+
     /**
      * Fetches a specific global pot by identifier.
      */
     FETCH_GLOBAL_POT,
+
     /**
-     * Admin can debit the amount from GlobalPot sub-wallet.
+     * Admin can debit the amount from GlobalPot sub-wallet
      */
     DEBIT_GLOBAL_POT_WALLET,
 
     /**
-     * for block Service.
+     * for block Service
      */
     BLOCK_USER,
 
     /**
-     * Fetches the admins of a global pot.
+     * Admin can add member in global pot
      */
-    FETCH_ADMINS
+    ADD_MEMBER,
 
-}
+    /**
+     *  Admin can remove member in global pot
+     */
+    REMOVE_MEMBER
+
+
+    }
