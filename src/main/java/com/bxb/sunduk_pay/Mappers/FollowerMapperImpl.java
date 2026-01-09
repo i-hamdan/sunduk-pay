@@ -24,8 +24,11 @@
 //    public Follower toEntity(FollowerRequest request) {
 //        Follower follower = new Follower();
 //        if (request.getUuid()==null) return null;
-//        User user= userRepository.findById(
-//                        request.getUuid()).orElseThrow(()->new UserNotFoundException("User with id "+request.getUuid()+" not found"));
+//        User user =
+//        userRepository.findById(
+//        request.getUuid()).orElseThrow(()->
+//        new UserNotFoundException(
+//        "User with id "+request.getUuid()+" not found"));
 //        follower.setFollowerUser(user);
 //        return follower;
 //    }

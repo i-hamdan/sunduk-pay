@@ -33,7 +33,7 @@ public interface WalletMapper {
      * @return list of SubWalletResponse DTOs
      */
     List<SubWalletResponse> toSubWalletResponseList(
-            final List<SubWallet> subWallet);
+             List<SubWallet> subWallet);
 
      /**     * Converts a SubWallet entity into a SubWalletResponse DTO.
      * @param subWallet the SubWallet entity

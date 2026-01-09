@@ -1,13 +1,11 @@
 package com.bxb.sunduk_pay.Mappers;
 
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
@@ -27,7 +25,7 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * Decimal formatter for formatting final amounts with
      * two decimal places.
      */
-    private static final DecimalFormat formatter =
+    private static final DecimalFormat FORMATTER =
             new DecimalFormat("#,##0.00");
 
 
@@ -59,7 +57,7 @@ public class CurrencyMapperImpl implements CurrencyMapper {
         response.setConvertedAmount(converted);
         response.setConversionFee(fee);
 
-        response.setFinalAmount(formatter
+        response.setFinalAmount(FORMATTER
                 .format(finalAmount));
         response.setYearlyRates(yearlyRates);
         response.setMonthlyRates(monthlyRates);
@@ -85,10 +83,10 @@ public class CurrencyMapperImpl implements CurrencyMapper {
                 .stream().map(row -> {
             CurrencyRatesResponse r =
                     new CurrencyRatesResponse();
-            r.setDate(((java.sql.Date)row
+            r.setDate(((java.sql.Date) row
                     .get("date")).toLocalDate());
             r.setValue((Double) row.get("rate"));
-        switch (timeSeries){
+        switch (timeSeries) {
             case WEEK ->
                 r.setDay(r.getDate()
               .format(java.time.format
@@ -114,7 +112,8 @@ public class CurrencyMapperImpl implements CurrencyMapper {
      * Computes monthly average currency rates from a list of rate data.
      * @param currencyRates list of maps containing currency rate data
      * @param rateKey the key to extract the rate from each map
-     * @return a list of CurrencyRatesResponse objects representing monthly averages.
+     * @return a list of CurrencyRatesResponse objects representing monthly
+     * averages.
      */
 
     @Override

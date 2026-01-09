@@ -18,7 +18,7 @@ public class QueryConfig {
     /**
      * Map of modules containing query templates.
      */
-    private Map<String, Map<String,String>> modules;
+    private Map<String, Map<String, String>> modules;
 
     /**
      * Initializes the configuration after properties are set.

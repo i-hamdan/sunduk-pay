@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 /**
  * Utility class for Reminder-related calculations.
  */
-public class ReminderUtil {
+public final class ReminderUtil {
 
     /**
      * Private constructor to prevent instantiation.

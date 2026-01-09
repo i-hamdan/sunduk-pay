@@ -20,8 +20,8 @@ public class InvestmentUtil {
      * @param amount     the amount to debit
      * @return the updated Investment
      */
-    public Investment updateInvestmentOnDebit(Investment investment,
-                                              Units unit , Double amount) {
+    public Investment updateInvestmentOnDebit(
+            final Investment investment, Units unit ,Double amount) {
         double netAssetValue = unit.getCombinedValue().doubleValue();
         log.info("Current NAV for investment [{}] is {}",
                 investment.getInvestmentId(), netAssetValue);
@@ -30,7 +30,7 @@ public class InvestmentUtil {
             throw new IllegalStateException("Invalid NAV value");
         }
 
-        double unitsToDeduct = amount/ netAssetValue;
+        double unitsToDeduct = amount/netAssetValue;
         log.info("Units to deduct for payment of {} is {}",
                 amount, unitsToDeduct);
 
@@ -67,14 +67,15 @@ public class InvestmentUtil {
      * @param amount     the amount to credit
      * @return the updated Investment
      */
-    public Investment updateInvestmentOnCredit(Investment investment,
-                                               Units unit , Double amount) {
+    public Investment updateInvestmentOnCredit(
+            final Investment investment, Units unit, Double amount) {
         double netAssetValue = unit.getCombinedValue().doubleValue();
         log.info("Current NAV for investment [{}] is {}",
                 investment.getInvestmentId(), netAssetValue);
 
         if (netAssetValue <= 0) {
-            throw new IllegalStateException("Invalid NAV value");}
+            throw new IllegalStateException("Invalid NAV value");
+        }
 
 
         double unitsToAdd = amount / netAssetValue;

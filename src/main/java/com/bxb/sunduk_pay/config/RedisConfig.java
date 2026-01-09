@@ -30,16 +30,22 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Log4j2
 public class RedisConfig {
 
-
+    /**
+     * Redis server host.
+     */
     @Value("${spring.redis.host}")
     private String redisHost;
 
+    /**
+     * Redis server port.
+     */
     @Value("${spring.redis.port}")
     private int redisPort;
 
     /**
      * Manually configure the Redis connection factory so it doesn't
      * default to localhost.
+     *  @return LettuceConnectionFactory for Redis connections
      */
     @Bean
     public LettuceConnectionFactory redisConnectionFactory() {
@@ -51,8 +57,13 @@ public class RedisConfig {
     }
 
     //  Initialize after full context is ready (safe & no circular refs)
+    /**
+     * Verifies the Redis connection upon application context refresh.
+     *
+     * @param event the context refreshed event
+     */
     @EventListener(ContextRefreshedEvent.class)
-    public void verifyRedisConnection(ContextRefreshedEvent event) {
+    public void verifyRedisConnection(final ContextRefreshedEvent event) {
         try {
             RedisConnectionFactory factory = event
                     .getApplicationContext().getBean(
@@ -75,7 +86,7 @@ public class RedisConfig {
      */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(
-            RedisConnectionFactory connectionFactory) {
+            final RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
@@ -107,7 +118,7 @@ public class RedisConfig {
      */
     @Bean
     public RedisTemplate<String, ChatMessage> chatMessageRedisTemplate(
-            RedisConnectionFactory connectionFactory) {
+            final RedisConnectionFactory connectionFactory) {
 
         RedisTemplate<String, ChatMessage> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -119,7 +130,8 @@ public class RedisConfig {
 
         // Pass ObjectMapper in constructor (no deprecated setObjectMapper)
         Jackson2JsonRedisSerializer<ChatMessage> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, ChatMessage.class);
+                new Jackson2JsonRedisSerializer<>(objectMapper,
+                        ChatMessage.class);
 
         // Set serializers
         template.setKeySerializer(new StringRedisSerializer());
@@ -140,10 +152,12 @@ public class RedisConfig {
      * @return a configured RedisTemplate for TransactionResponse
      */
     @Bean
-    public RedisTemplate<String, TransactionResponse> chatTransactionRedisTemplate(
-            RedisConnectionFactory connectionFactory) {
+    public RedisTemplate<String, TransactionResponse>
+    chatTransactionRedisTemplate(
+            final RedisConnectionFactory connectionFactory) {
 
-        RedisTemplate<String, TransactionResponse> template = new RedisTemplate<>();
+        RedisTemplate<String, TransactionResponse> template =
+                new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
         // Configure ObjectMapper for LocalDateTime
@@ -153,7 +167,8 @@ public class RedisConfig {
 
         // Pass ObjectMapper in constructor (no deprecated setObjectMapper)
         Jackson2JsonRedisSerializer<TransactionResponse> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, TransactionResponse.class);
+                new Jackson2JsonRedisSerializer<>(objectMapper,
+                        TransactionResponse.class);
 
         // Set serializers
         template.setKeySerializer(new StringRedisSerializer());
@@ -166,10 +181,17 @@ public class RedisConfig {
         return template;
     }
 
+    /**
+     * Configures and returns a RedisTemplate specifically
+     * for GlobalPotResponse objects with custom serializers.
+     *
+     * @param connectionFactory the RedisConnectionFactory to use
+     * @return a configured RedisTemplate for GlobalPotResponse
+     */
     @Bean
     public RedisTemplate<String, GlobalPotResponse>
-    globalPotResponseRedisTemplate(RedisConnectionFactory connectionFactory){
-        RedisTemplate<String,GlobalPotResponse> template =
+    globalPotResponseRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, GlobalPotResponse> template =
                 new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
@@ -179,7 +201,7 @@ public class RedisConfig {
 
         Jackson2JsonRedisSerializer<GlobalPotResponse> serializer
                 = new Jackson2JsonRedisSerializer<>(
-                objectMapper,GlobalPotResponse.class);
+                objectMapper, GlobalPotResponse.class);
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
@@ -191,11 +213,18 @@ public class RedisConfig {
     }
 
 
+    /**
+     * Configures and returns a RedisTemplate specifically
+     * for GroupChatMessageResponse objects with custom serializers.
+     *
+     * @param connectionFactory the RedisConnectionFactory to use
+     * @return a configured RedisTemplate for GroupChatMessageResponse
+     */
     @Bean
     public RedisTemplate<String,
             GroupChatMessageResponse> groupChatResponseRedisTemplate(
-                    final RedisConnectionFactory connectionFactory){
-        RedisTemplate<String,GroupChatMessageResponse>
+                    final RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, GroupChatMessageResponse>
                 template = new RedisTemplate<>();
 
         template.setConnectionFactory(connectionFactory);
@@ -206,7 +235,7 @@ public class RedisConfig {
 
         Jackson2JsonRedisSerializer<GroupChatMessageResponse> serializer
                 = new Jackson2JsonRedisSerializer<>(
-                objectMapper,GroupChatMessageResponse.class);
+                objectMapper, GroupChatMessageResponse.class);
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());

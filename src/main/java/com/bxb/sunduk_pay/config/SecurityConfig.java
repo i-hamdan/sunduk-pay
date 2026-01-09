@@ -14,11 +14,6 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.List;
 
 /**
  * Spring Security configuration for the application.
@@ -75,13 +70,6 @@ public class SecurityConfig {
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
-
-    /**
-     * Configure allowed origins/headers/methods for cross-origin requests.
-     *
-     * @return {@link CorsConfigurationSource} with allowed settings
-     */
-
 
 //    @Bean
 //    /* we will be not needing this method once moved to domain**/

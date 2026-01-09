@@ -3,17 +3,10 @@ package com.bxb.sunduk_pay.config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.http.server.ServerHttpResponse;
-import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.config.annotation.*;
-import org.springframework.web.socket.server.HandshakeInterceptor;
-
-import java.util.List;
-import java.util.Map;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
  * Configuration class for WebSocket with STOMP support.
@@ -36,7 +29,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //     * @param registration
 //     */
 //    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
+//    public void configureClientInboundChannel(
+//    ChannelRegistration registration) {
 //        registration.interceptors(chatMessageInterceptor);
 //    }
 

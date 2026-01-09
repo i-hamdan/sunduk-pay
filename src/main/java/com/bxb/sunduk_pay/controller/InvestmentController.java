@@ -25,8 +25,8 @@ public class InvestmentController {
      * @return ResponseEntity containing the investment response
      */
 @PostMapping("/investments")
-    public ResponseEntity<InvestmentResponse>investmentApi
-        (@RequestBody InvestmentRequest request){
+    public ResponseEntity<InvestmentResponse> investmentApi(
+            @RequestBody final InvestmentRequest request) {
     return ResponseEntity.ok(investmentService.investmentApi(request));
 }
 }

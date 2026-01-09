@@ -9,7 +9,13 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Placeholder class for InvestmentGraphData.
@@ -18,8 +24,11 @@ import java.util.*;
 @Log4j2
 public class InvestmentGraphData {
 
+    private static final int YEAR = 2025;
+    private static final int DAY = 1;
+
     /** Date formatter for "dd MMMM yyyy" pattern in English locale. */
-    private static final DateTimeFormatter DATE_FORMATTER =
+    private static final DateTimeFormatter dateFormater =
             DateTimeFormatter.ofPattern("dd MMMM yyyy")
                     .withLocale(Locale.ENGLISH);
 
@@ -30,7 +39,7 @@ public class InvestmentGraphData {
  * InvestmentGraphDataDTO as values
      */
 public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
-        List<Transaction> transactions) {
+        final List<Transaction> transactions) {
 
     DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
             "dd MMMM yyyy HH:mm:ss")
@@ -60,7 +69,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
 
     tempMap.forEach((month, dateMap) -> {
         String monthName = LocalDate.of(
-                LocalDate.now().getYear(), month, 1)
+                LocalDate.now().getYear(), month, DAY)
                 .format(DateTimeFormatter.ofPattern("MMM"));
 
         List<InvestmentGraphDataDTO> dtoList = new ArrayList<>();
@@ -93,7 +102,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
  *InvestmentGraphDataDTO as values
      */
     public Map<String, List<InvestmentGraphDataDTO>> dailyInvestmentGraphData(
-            List<InvestmentDailyHistory> historyList) {
+            final List<InvestmentDailyHistory> historyList) {
 
         // AUTO-SORT months
         Map<Integer, TreeMap<LocalDate,
@@ -106,7 +115,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(DATE_FORMATTER))
+                    .date(rawDate.format(dateFormater))
                     .balance(history.getCurrentValue())
                     .build();
 
@@ -122,7 +131,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
                 InvestmentGraphDataDTO>> entry : tempMap.entrySet()) {
             int month = entry.getKey();
 
-            String monthName = LocalDate.of(2025, month, 1)
+            String monthName = LocalDate.of(YEAR, month, 5)
                     .format(DateTimeFormatter.ofPattern("MMM"));
 
             finalMap.put(
@@ -148,7 +157,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
      */
     public Map<String,
   List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData(
-            Map<LocalDate, Double> portfolioHistory) {
+            final Map<LocalDate, Double> portfolioHistory) {
 
         // Temporary: monthNumber → (date → DTO)
         Map<Integer, TreeMap<LocalDate, InvestmentGraphDataDTO>> tempMap =
@@ -164,7 +173,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(DATE_FORMATTER))  // "dd MMMM yyyy"
+                    .date(rawDate.format(dateFormater))  // "dd MMMM yyyy"
                     .balance(totalBalance)
                     .build();
 
@@ -182,7 +191,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
             int monthNumber = entry.getKey();
 
             String monthName = LocalDate.of(LocalDate.now().getYear(),
-                            monthNumber, 1)
+                            monthNumber, DAY)
                     .format(DateTimeFormatter.ofPattern("MMM"));
 
             finalMap.put(

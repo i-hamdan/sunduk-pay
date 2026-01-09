@@ -15,9 +15,9 @@ public class GenerateKeyUtil {
 
     /** Length of ID part to consider for key generation.
      */
-    private final Integer FOUR = 4;
+    private static final Integer FOUR = 4;
 
-    private final Integer SIX = 6;
+    private static final Integer SIX = 6;
     /**
      * Generates a Redis key for chat history between two users
      * based on the last 4 digits of their IDs.
@@ -85,8 +85,16 @@ public class GenerateKeyUtil {
         return transactionKey;
     }
 
-    public String getGlobalPotKey(String globalPotId){
-        if (globalPotId == null ) {
+    /**
+     * Generates a Redis key for global pot
+     * based on the global pot ID.
+     *
+     * @param globalPotId the ID of the global pot
+     * @return a string representing the Redis key for global pot
+     * @throws InvalidPayloadException if the global pot ID is null
+     */
+    public String getGlobalPotKey(final String globalPotId) {
+        if (globalPotId == null) {
             throw new InvalidPayloadException(
                     "Sender and Receiver IDs cannot be null");
         }
@@ -94,16 +102,31 @@ public class GenerateKeyUtil {
         return "GLOBAL_POT_" + key;
     }
 
-    public String getGlobalPotTilesKey(String caseCategory){
-        if (caseCategory == null ) {
+    /**
+     * Generates a Redis key for global pot tiles
+     * based on the case category.
+     *
+     * @param caseCategory the category of the case
+     * @return a string representing the Redis key for global pot tiles
+     */
+    public String getGlobalPotTilesKey(final String caseCategory) {
+        if (caseCategory == null) {
           return "key_" + CaseCategory.ALL.toString();
         }
         return "key_" + caseCategory;
 
     }
 
-    public String getGroupChatKey(String globalPotId){
-        if (globalPotId == null ) {
+    /**
+     * Generates a Redis key for group chat
+     * based on the global pot ID.
+     *
+     * @param globalPotId the ID of the global pot
+     * @return a string representing the Redis key for group chat
+     * @throws InvalidPayloadException if the global pot ID is null
+     */
+    public String getGroupChatKey(final String globalPotId) {
+        if (globalPotId == null) {
           throw new InvalidPayloadException(
                     "Global Pot ID cannot be null");
         }
@@ -111,8 +134,16 @@ public class GenerateKeyUtil {
         return "GLOBAL_POT_CHAT_" + key;
     }
 
-    public String getGroupTransactionKey(String globalPotId){
-        if (globalPotId == null ) {
+    /**
+     * Generates a Redis key for group transactions
+     * based on the global pot ID.
+     *
+     * @param globalPotId the ID of the global pot
+     * @return a string representing the Redis key for group transactions
+     * @throws InvalidPayloadException if the global pot ID is null
+     */
+    public String getGroupTransactionKey(final String globalPotId) {
+        if (globalPotId == null) {
           throw new InvalidPayloadException(
                     "Global Pot ID cannot be null");
         }

@@ -1,12 +1,9 @@
 package com.bxb.sunduk_pay.Mappers;
 
-//import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
-//import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.model.SubWallet;
 import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.response.TransactionResponse;
-//import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.util.EmailCategory;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
@@ -46,7 +43,8 @@ public class TransactionMapperImpl implements TransactionMapper {
     /** {@inheritDoc} */
     public TransactionResponse toTransactionResponse(
             final Transaction transaction) {
-//        if (transaction.getIsAnonymous()!=null && transaction.getIsAnonymous()){
+//        if (transaction.getIsAnonymous()!=null
+//        && transaction.getIsAnonymous()){
 //            return toAnonymousTransactionResponse(transaction);
 //        }
         TransactionResponse transactionResponse = new TransactionResponse();
@@ -72,7 +70,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setChatDateTime(transaction.getDateTime());
         transactionResponse.setTransactionLevel(
                 transaction.getTransactionLevel());
-        if(transaction.getPaymentTag() != null){
+        if (transaction.getPaymentTag() != null) {
             transactionResponse.setPaymentTag(transaction
                     .getPaymentTag());
         }
@@ -83,8 +81,9 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setFromPhoneNumber(
                 transaction.getFromPhoneNumber());
         if (transaction.getIsInvestment()
-                && transaction.getTransactionLevel() == TransactionLevel.INVESTED
-                && transaction.getTransactionType()==TransactionType.CREDIT){
+                && transaction.getTransactionLevel()
+                == TransactionLevel.INVESTED
+                && transaction.getTransactionType() == TransactionType.CREDIT){
             transactionResponse.setFromWalletIcon("Investment");
         } else {
             transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
@@ -95,8 +94,9 @@ public class TransactionMapperImpl implements TransactionMapper {
         transactionResponse.setToWalletId(transaction.getToWalletId());
         transactionResponse.setToPhoneNumber(transaction.getToPhoneNumber());
         if (transaction.getIsInvestment()
-                && transaction.getTransactionLevel() == TransactionLevel.INVESTED
-                && transaction.getTransactionType()==TransactionType.DEBIT){
+                && transaction.getTransactionLevel()
+                == TransactionLevel.INVESTED
+                && transaction.getTransactionType() == TransactionType.DEBIT) {
             transactionResponse.setToWalletIcon("Investment");
         } else {
             transactionResponse.setToWalletIcon(validations.
@@ -106,13 +106,16 @@ public class TransactionMapperImpl implements TransactionMapper {
         }
         transactionResponse.setRecipientUpiId(
                 transaction.getRecipientUpiId());
-        if (transaction.getRiskLevel()!=null){
-            transactionResponse.setRiskLevel(transaction.getRiskLevel().toString());
+        if (transaction.getRiskLevel() != null) {
+            transactionResponse.setRiskLevel(
+                    transaction.getRiskLevel().toString());
         }
-        transactionResponse.setFromGlobalPotId(transaction.getFromGlobalPotId());
+        transactionResponse.setFromGlobalPotId(
+                transaction.getFromGlobalPotId());
         transactionResponse.setToGlobalPotId(transaction.getToGlobalPotId());
         transactionResponse.setIsAnonymous(transaction.getIsAnonymous());
-        transactionResponse.setAnonymousId(transactionResponse.getAnonymousId());
+        transactionResponse.setAnonymousId(
+                transactionResponse.getAnonymousId());
         transactionResponse.setAnonymousColor(transaction.getAnonymousColor());
         return transactionResponse;
     }

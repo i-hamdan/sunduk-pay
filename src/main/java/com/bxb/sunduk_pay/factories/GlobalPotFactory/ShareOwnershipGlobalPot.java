@@ -44,7 +44,7 @@ public class ShareOwnershipGlobalPot implements GlobalPotOperation{
         globalPotValidations.validateAdmin(admin);
 
         //Checking new admin info
-        User targetUser = validations.getUserInfo(request.getTargetUserForAdmin());
+        User targetUser = validations.getUserInfo(request.getTargetUserUuid());
 
         //Share ownership with targeted user.
         targetUser.setUserRole(UserRoles.GLOBALPOT_ADMIN);

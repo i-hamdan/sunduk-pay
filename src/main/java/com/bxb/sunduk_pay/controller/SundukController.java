@@ -49,12 +49,15 @@ public class SundukController {
      */
     @GetMapping(value = "/custom-login",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserResponse> login(final HttpSession session, @AuthenticationPrincipal final OidcUser user,
+    public ResponseEntity<UserResponse> login(
+            final HttpSession session,
+            @AuthenticationPrincipal final OidcUser user,
             final HttpServletResponse httpServletResponse)
             throws IOException {
         UserResponse response = userMapper.getUser(user);
 
-        log.info("Session Id : " + session.getId() + " By: " + user.getFullName());
+        log.info("Session Id : " + session.getId() + " By: "
+                + user.getFullName());
 
         User dbUser = service.userLogin(response);
 

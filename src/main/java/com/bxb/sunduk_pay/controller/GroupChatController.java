@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.controller;
 
-import com.bxb.sunduk_pay.Mappers.ChatMessageMapper;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
@@ -44,7 +43,7 @@ public class GroupChatController {
      * @param request the group chat message request payload
      */
     @MessageMapping("/group-chat/sendMessage")
-    public void sendMessage(@Payload GroupChatMessageRequest request) {
+    public void sendMessage(@Payload final GroupChatMessageRequest request) {
         log.info("Received group chat message for pot {}",
                 request.getGlobalPotId());
 
@@ -55,6 +54,7 @@ public class GroupChatController {
         String key = generateKeyUtil.getGlobalPotKey(request.getGlobalPotId());
         log.info("Generated key for Kafka message: {}", key);
 
-        kafkaTemplate.send("group-chat-messages", key, groupChatEvent);
+        kafkaTemplate.send("group-chat-messages",
+                key, groupChatEvent);
     }
 }

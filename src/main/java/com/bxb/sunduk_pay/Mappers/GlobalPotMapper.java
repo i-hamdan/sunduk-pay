@@ -10,8 +10,10 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
+import com.fasterxml.jackson.databind.ser.Serializers;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -66,4 +68,9 @@ public interface GlobalPotMapper {
      */
     GroupChatMessageResponse toGroupChatMessageResponse(
             GroupChatMessage groupChatMessage);
+
+    List<GroupChatMessageResponse> toGroupChatMessageResponseList(
+            List<GroupChatMessage> groupChatMessage);
+
+    String toBase64(byte[] data);
 }

@@ -60,7 +60,7 @@ class TransferOwnerShipGlobalPotTest {
 
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-123")
-                .targetUserForAdmin("target-123")
+//                .targetUserForAdmin("target-123")
                 .build();
 
         when(validations.getUserInfo("admin-123"))
