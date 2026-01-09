@@ -63,6 +63,8 @@ public enum GlobalPotRequestType {
      */
     FETCH_WALLETS,
 
+    FETCH_ADMINS,
+
     /* ---------- Contributor & Engagement Operations ---------- */
 
     /**
