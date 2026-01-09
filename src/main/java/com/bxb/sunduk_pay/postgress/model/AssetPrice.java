@@ -32,6 +32,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AssetPrice {
 
+    private static final int PRECISION = 19;
+    private static final int SCALE = 4;
+
     /**
      * Unique identifier for the asset price record.
      */
@@ -51,10 +54,11 @@ public class AssetPrice {
 
     /**
      * The recorded closing price of the asset.
-     * Uses BigDecimal for high precision (19 total digits, 4 decimal places)
+     * Uses BigDecimal for high precision (19 total digits,
+     * 4 decimal places)
      * to avoid floating-point errors in financial calculations.
      */
-    @Column(name = "close_price", precision = 19, scale = 4) // Applied precision (19) and scale (4)
+    @Column(name = "close_price", precision = PRECISION, scale = SCALE)
     private BigDecimal closePrice;
 
     /**

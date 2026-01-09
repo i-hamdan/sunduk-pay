@@ -5,7 +5,6 @@ import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.repository.ReminderRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import com.bxb.sunduk_pay.response.ReminderResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +52,7 @@ public class FetchReminderServiceTest {
 
         Reminder reminder = new Reminder();
 
-        when(reminderRepository.findByUser_UuidAndContactNumber(
+        when(reminderRepository.findByUserUuidAndContactNumber(
                 request.getUuid(),
                 request.getContactNumber(),
                 PageRequest.of(0,10, Sort.Direction.ASC, "startDate")
@@ -67,7 +64,7 @@ public class FetchReminderServiceTest {
         assertNotNull(response.getReminders());
         assertEquals(1, response.getReminders().size());
 
-        verify(reminderRepository, times(1)).findByUser_UuidAndContactNumber(
+        verify(reminderRepository, times(1)).findByUserUuidAndContactNumber(
                 request.getUuid(),
                 request.getContactNumber(),
                 PageRequest.of(0,10, Sort.Direction.ASC, "startDate")

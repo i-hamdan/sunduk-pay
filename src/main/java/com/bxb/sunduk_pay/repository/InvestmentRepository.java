@@ -25,6 +25,11 @@ public interface InvestmentRepository extends
     Optional<Investment> findBySubWalletSubWalletIdAndIsActiveTrue(
             String subWalletId);
 
+    /**
+     * Finds all active investments.
+     *
+     * @return a list of active Investments
+     */
     List<Investment> findByIsActiveTrue();
 
     /**
@@ -33,7 +38,7 @@ public interface InvestmentRepository extends
      * @param uuid the UUID of the user
      * @return a list of Investments associated with the user
      */
-    List<Investment>findByUserUuid(String uuid);
+    List<Investment> findByUserUuid(String uuid);
 
 /**
      * Retrieves all active investments.

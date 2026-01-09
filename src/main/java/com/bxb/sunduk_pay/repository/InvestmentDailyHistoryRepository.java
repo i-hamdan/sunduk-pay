@@ -33,10 +33,14 @@ public interface InvestmentDailyHistoryRepository
      * @param investmentId the investment ID
      * @return list of InvestmentDailyHistory records
      */
-    List<InvestmentDailyHistory> findByInvestmentInvestmentId(String investmentId);
+    List<InvestmentDailyHistory> findByInvestmentInvestmentId(
+            String investmentId);
+
     /**
-     * Fetch latest snapshot entry for a given investment
+     * Fetch latest snapshot entry for a given investment.
      * (most recent snapshotDate)
+     * @param investment the investment entity
+     * @return the latest InvestmentDailyHistory record
      */
     InvestmentDailyHistory findTopByInvestmentOrderBySnapshotDateDesc(
             Investment investment

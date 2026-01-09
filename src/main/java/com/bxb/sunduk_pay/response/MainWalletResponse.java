@@ -45,7 +45,7 @@ public class MainWalletResponse {
      */
     private List<SubWalletResponse> subWallets;
 
-    /** ID of the newly created SubWallet */
+    /** ID of the newly created SubWallet. */
     private String createdSubWalletId;
 
     /**

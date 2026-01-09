@@ -52,17 +52,17 @@ class ShareOwnershipGlobalPotTest {
 
         User admin = User.builder()
                 .uuid("admin-123")
-                .UserRole(UserRoles.GLOBALPOT_ADMIN)
+                .userRole(UserRoles.GLOBALPOT_ADMIN)
                 .build();
 
         User targetUser = User.builder()
                 .uuid("target-123")
-                .UserRole(UserRoles.NORMAL_USER)
+                .userRole(UserRoles.NORMAL_USER)
                 .build();
 
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-123")
-//                .targetUserForAdmin("target-123")
+                .targetUserUuid("target-123")
                 .build();
 
         when(validations.getUserInfo("admin-123"))

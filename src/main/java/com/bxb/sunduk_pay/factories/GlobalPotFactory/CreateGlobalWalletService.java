@@ -34,7 +34,9 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
 
 
     /**
-     * @return
+     * Specifies the type of Global Pot request this service handles.
+     *
+     * @return the GlobalPotRequestType for verifying or creating a Global Wallet
      */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
@@ -42,8 +44,11 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
     }
 
     /**
-     * @param request
-     * @return
+     * Ensures that a Global Wallet exists for the specified Global Pot.
+     * If it does not exist, a new Global Wallet is created and linked to the Pot.
+     *
+     * @param request the request containing the Global Pot ID
+     * @return a response indicating the result of the operation
      */
     @Override
     @Transactional
@@ -71,7 +76,8 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
         }
 
         // 3. Return the specialized Wallet Response
-        return GlobalPotResponse.builder().message("Global Wallet verified/created successfully").status("SUCCESS").build();
+        return GlobalPotResponse.builder().message(
+                "Global Wallet verified/created successfully").status("SUCCESS").build();
     }
 
 

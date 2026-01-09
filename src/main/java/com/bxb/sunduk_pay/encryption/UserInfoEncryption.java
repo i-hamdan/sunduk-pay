@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public  final class  UserInfoEncryption {
+public final class  UserInfoEncryption {
 /**
  * * Key and salt for encryption.
  */

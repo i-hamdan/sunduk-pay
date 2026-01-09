@@ -1,13 +1,32 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.util.*;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import com.bxb.sunduk_pay.util.CaseCategory;
+import com.bxb.sunduk_pay.util.CaseRequirementType;
+import com.bxb.sunduk_pay.util.PotScope;
+import com.bxb.sunduk_pay.util.PotStatus;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Index;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.CascadeType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +35,8 @@ import java.util.List;
 
 /**
  * Entity representing a Global Pot fundraising campaign.
- * Stores campaign details, financial progress, and associated verification documents.
+ * Stores campaign details, financial progress,
+ * and associated verification documents.
  */
 @Builder
 @Entity
@@ -46,6 +66,12 @@ import java.util.List;
         @Index(name = "idx_created_at", columnList = "createdAt"),
 })
 public class GlobalPot {
+
+    /** Length constant for description field. */
+    private static final int LENGTH_3000 = 3000;
+
+    /** Length constant for case title field. */
+    private static final int LENGTH_120 = 120;
 
     // --- 1. IDENTITY & OWNERSHIP ---
 
@@ -88,7 +114,7 @@ public class GlobalPot {
 
     /** Comprehensive description providing details about
      *  the fundraising cause. */
-    @Column(length = 3000, columnDefinition = "TEXT")
+    @Column(length = LENGTH_3000, columnDefinition = "TEXT")
     private String description;
 
     // --- 3. BENEFICIARY & LOCATION ---
@@ -129,8 +155,11 @@ public class GlobalPot {
     private LocalDate goalDate;
 
     // --- 5. MEDIA & VISUALS ---
+    /** List of verification or supporting documents
+     *  associated with the pot. */
     @Builder.Default
-    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<GlobalPotDocument> globalPotDocuments = new ArrayList<>();
     // --- 7. COLLECTIONS (BIDIRECTIONAL) ---
 
@@ -149,6 +178,7 @@ public class GlobalPot {
 
     // --- 1. IDENTITY & OWNERSHIP ---
 
+    /** List of admin users managing this pot. */
     @ManyToMany
     @JoinTable(
             name = "pot_administrators",
@@ -176,7 +206,7 @@ public class GlobalPot {
     /** Name of the person who created the pot. */
     private String createdBy;
 
-    /** Geographical location associated with the pot's creator */
+    /** Geographical location associated with the pot's creator. */
     private String location;
 
     /** Automatic timestamp of when the pot record was first created. */
@@ -188,8 +218,12 @@ public class GlobalPot {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    /** Adds a document to the global pot and sets the bidirectional relationship. */
-    public void addDocument(GlobalPotDocument doc) {
+    /** Adds a document to the global pot and
+     *  sets the bidirectional relationship.
+     * @param doc The document to be added.
+     *  */
+    public void addDocument(
+            final GlobalPotDocument doc) {
         if (doc != null) {
             this.globalPotDocuments.add(doc);
             doc.setGlobalPot(this);

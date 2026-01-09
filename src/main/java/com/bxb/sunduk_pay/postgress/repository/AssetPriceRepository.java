@@ -17,7 +17,8 @@ import java.util.Optional;
 public interface AssetPriceRepository extends JpaRepository<AssetPrice, Long> {
 
     /**
-     * Finds an AssetPrice by the associated Asset and the effective date and time.
+     * Finds an AssetPrice by the associated Asset and the
+     * effective date and time.
      *
      * @param asset       the Asset entity
      * @param effectiveAt the effective date and time
@@ -28,12 +29,14 @@ public interface AssetPriceRepository extends JpaRepository<AssetPrice, Long> {
                                                    LocalDateTime effectiveAt);
 
 
+/**
+  * Finds the most recent AssetPrice before or on a
+ * given date for a specific Asset.
 
-
-
-
-
-    //  these three methods are used in units Scheduler
+     * @param assetId the ID of the Asset
+     * @param date    the specific date
+     * @return the most recent AssetPrice before or on the given date
+     */
     @Query(value = """
         SELECT *
         FROM asset_prices ap
@@ -47,14 +50,34 @@ public interface AssetPriceRepository extends JpaRepository<AssetPrice, Long> {
             @Param("date") LocalDate date);
 
 
+    /**     * Finds the earliest AssetPrice for a given Asset.
+     *
+     * @param asset the Asset entity
+     * @return the earliest AssetPrice for the given asset
+     */
     AssetPrice findTopByAssetOrderByEffectiveAtAsc(Asset asset);
 
-    @Query("SELECT DISTINCT CAST(a.effectiveAt AS date) FROM AssetPrice a ORDER BY CAST(a.effectiveAt AS date)")
+    /**
+     * Retrieves all unique dates on which asset prices were effective.
+     *
+     * @return a list of unique dates
+     */
+    @Query("SELECT DISTINCT CAST(a.effectiveAt AS date) "
+            + "FROM AssetPrice a ORDER BY CAST(a.effectiveAt AS date)")
     List<java.sql.Date> findAllUniqueDates();
 
 
 
-    @Query("SELECT a FROM AssetPrice a WHERE DATE(a.effectiveAt) = :date AND a.asset = :asset")
+    /**
+     * Finds an AssetPrice by the associated Asset and a specific date.
+     *
+     * @param asset the Asset entity
+     * @param date  the specific date
+     * @return the AssetPrice for the given asset and date
+     */
+    @Query(
+            "SELECT a FROM AssetPrice a WHERE DATE(a.effectiveAt)"
+                    + "= :date AND a.asset = :asset")
     AssetPrice findByAssetAndDate(Asset asset, LocalDate date);
 
 

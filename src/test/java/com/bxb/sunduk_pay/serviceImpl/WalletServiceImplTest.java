@@ -20,7 +20,6 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.google.api.client.util.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.kafka.core.KafkaTemplate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -153,7 +151,7 @@ class WalletServiceImplTest {
                 .investmentId("inv-1")
                 .isActive(true)
                 .portfolioModelId(1L)
-                .UnitPurchaseDate(LocalDateTime.now().minusDays(1))
+                .unitPurchaseDate(LocalDateTime.now().minusDays(1))
                 .build();
 
         PortfolioModel portfolioModel = new PortfolioModel();
@@ -329,7 +327,7 @@ class WalletServiceImplTest {
                 .investmentId("inv-1")
                 .isActive(true)
                 .portfolioModelId(1L)
-                .UnitPurchaseDate(LocalDateTime.now().minusDays(1))
+                .unitPurchaseDate(LocalDateTime.now().minusDays(1))
                 .build();
 
         PortfolioModel portfolioModel = new PortfolioModel();
@@ -378,7 +376,7 @@ class WalletServiceImplTest {
                 .investmentId("inv-1")
                 .isActive(false)
                 .portfolioModelId(1L)
-                .UnitPurchaseDate(LocalDateTime.now().minusDays(1))
+                .unitPurchaseDate(LocalDateTime.now().minusDays(1))
                 .build();
 
         MainWalletRequest request = MainWalletRequest.builder()

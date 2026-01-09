@@ -59,7 +59,7 @@ class DebitGlobalPotWalletServiceTest {
 
         User admin = User.builder()
                 .uuid("admin-123")
-                .UserRole(UserRoles.GLOBALPOT_ADMIN)
+                .userRole(UserRoles.GLOBALPOT_ADMIN)
                 .build();
 
         GlobalWallet globalWallet = GlobalWallet.builder()
@@ -106,7 +106,7 @@ class DebitGlobalPotWalletServiceTest {
 
         User admin = User.builder()
                 .uuid("admin-123")
-                .UserRole(UserRoles.GLOBALPOT_ADMIN)
+                .userRole(UserRoles.GLOBALPOT_ADMIN)
                 .build();
 
         GlobalWallet globalWallet = GlobalWallet.builder()
@@ -150,7 +150,7 @@ class DebitGlobalPotWalletServiceTest {
 
         User admin = User.builder()
                 .uuid("admin-123")
-                .UserRole(UserRoles.GLOBALPOT_ADMIN)
+                .userRole(UserRoles.GLOBALPOT_ADMIN)
                 .build();
 
         GlobalWallet globalWallet = GlobalWallet.builder()

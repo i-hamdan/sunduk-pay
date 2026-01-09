@@ -9,7 +9,7 @@ import com.bxb.sunduk_pay.model.User;
 
 public interface MpinValidations {
     /**
-     * Validates the MPIN for payment operations.;
+     * Validates the MPIN for payment operations.
      * @param uuid
      * @param inputMpin
      */
@@ -31,7 +31,11 @@ public interface MpinValidations {
     User getUserEmailInfo(String email);
 
 
-
+    /**
+     * Checks if an MPIN exists for the given user UUID.
+     *
+     * @param uuid the UUID of the user
+     */
     void mpinIsExists(String uuid);
 
 }

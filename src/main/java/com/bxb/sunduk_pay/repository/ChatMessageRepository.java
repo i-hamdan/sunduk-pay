@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface ChatMessageRepository extends
-        JpaRepository <ChatMessage, String> {
+        JpaRepository<ChatMessage, String> {
 
     /**
      * Finds chat messages between a sender and receiver,

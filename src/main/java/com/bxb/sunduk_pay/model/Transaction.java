@@ -16,8 +16,6 @@ import lombok.Setter;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.springframework.boot.context.properties.bind.DefaultValue;
-
 import java.time.LocalDateTime;
 
 /**
@@ -141,7 +139,7 @@ public class Transaction {
     private Investment investment;
 
     /**
-     * Monthly profit or loss associated
+     * Monthly profit or loss associated.
      */
     @Column
     private Double monthlyProfitLoss;
@@ -177,7 +175,13 @@ public class Transaction {
      */
     private RiskLevel riskLevel;
 
+    /**
+     * represents the global pot id to which the amount is sent.
+     */
     private String toGlobalPotId;
 
+    /**
+     * represents the global pot id from which the amount is sent.
+     */
     private String fromGlobalPotId;
 }

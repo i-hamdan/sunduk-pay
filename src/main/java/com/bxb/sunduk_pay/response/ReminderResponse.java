@@ -26,10 +26,9 @@ public class ReminderResponse {
     /** Contact name associated with reminder. */
     private String contactName;
     /** LocalDateTime associated with reminder. */
-    private LocalDateTime DateTime;
+    private LocalDateTime dateTime;
     /**
      * isAvailable associated with the reminder.
      */
     private Boolean isAvailable;
-    
 }

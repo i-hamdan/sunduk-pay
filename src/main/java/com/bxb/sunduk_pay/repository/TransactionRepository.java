@@ -308,7 +308,8 @@ public interface TransactionRepository
      * Method for fetching transactions.
      * find transactions by transaction level,
      * to global pot ID and isMaster false.
-     *
+     * @param transactionLevel transaction level
+     * @param toGlobalPotId    to global pot ID
      * @return list of transactions
      */
     List<Transaction> findByTransactionLevelAndToGlobalPotIdAndIsMasterFalse(

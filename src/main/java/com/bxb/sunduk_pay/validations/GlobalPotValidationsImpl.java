@@ -117,7 +117,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
     @Override
     public void validateUserHasContributed(String globalPotId, String userUuid) {
         if (!contributerRepository
-                .existsByGlobalPot_GlobalPotIdAndUserContributor_Uuid(
+                .existsByGlobalPotGlobalPotIdAndUserContributorUuid(
                         globalPotId, userUuid)) {
 
             throw new ResourceNotFoundException(

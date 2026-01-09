@@ -113,7 +113,7 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .unitPriceAtPurchase(unitValue)
                 .units(unitsPurchased)
                 .investedAt(LocalDate.now())
-                .UnitPurchaseDate(unitPurchaseDate.atStartOfDay())
+                .unitPurchaseDate(unitPurchaseDate.atStartOfDay())
                 .createdAt(LocalDateTime.now())
                 .currentValue(potAmount)
                 .profitLoss(0.0)

@@ -35,7 +35,6 @@ public class MpinValidationImpl implements MpinValidations {
      */
     private static final int MAX_FAILED_ATTEMPTS = 3;
 
-
     /**
      * Repository for MPIN operations.
      */
@@ -80,8 +79,8 @@ public class MpinValidationImpl implements MpinValidations {
 
                 long totalSeconds = remaining.getSeconds();
                 long hoursLeft = totalSeconds / ONE_HOUR_IN_SECONDS;
-                long minutesLeft = (totalSeconds % ONE_HOUR_IN_SECONDS) /
-                        ONE_MINUTE_IN_SECONDS;
+                long minutesLeft = (totalSeconds % ONE_HOUR_IN_SECONDS)
+                        / ONE_MINUTE_IN_SECONDS;
                 long secondsLeft = totalSeconds % ONE_MINUTE_IN_SECONDS;
                 throw new InvalidMpinException(
                         String.format("Your MPIN is blocked. Try again "
@@ -140,8 +139,8 @@ public class MpinValidationImpl implements MpinValidations {
     public Mpin findMpinByUuid(final String uuid) {
         return mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
-                        new UserNotFoundException
-                                ("MPIN not found for user: " + uuid));
+                        new UserNotFoundException(
+                                "MPIN not found for user: " + uuid));
     }
 
     /**
@@ -164,9 +163,9 @@ public class MpinValidationImpl implements MpinValidations {
     }
 
     @Override
-    public void mpinIsExists(String uuid) {
+    public void mpinIsExists(final String uuid) {
         Optional<Mpin> byUserUuid = mpinRepository.findByUserUuid(uuid);
-        if (byUserUuid.isPresent()){
+        if (byUserUuid.isPresent()) {
             throw new MpinAlreadyExists("Mpin already exists for this User");
         }
     }

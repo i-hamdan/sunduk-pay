@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Repository interface for managing GlobalWallet entities in the database.
  */
-public interface GlobalWalletRepository extends JpaRepository<GlobalWallet, String> {
+public interface GlobalWalletRepository
+        extends JpaRepository<GlobalWallet, String> {
 }

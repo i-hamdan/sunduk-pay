@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.Duration;
-import com.google.type.DateTime;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
@@ -60,9 +59,7 @@ public class Reminder {
     private String contactNumber;
     /** Contact name associated with reminder. */
     private String contactName;
-    /**
-     * User associated with the reminder.
-     */
+
     /**
      * localDateTime associated with the reminder.
      */
@@ -72,7 +69,7 @@ public class Reminder {
      */
     private Boolean isPaid;
     /**
-//     * DATE associated with the reminder.
+     * DATE associated with the reminder.
      */
     private LocalDate date;
     /**
@@ -80,6 +77,9 @@ public class Reminder {
      */
     private Boolean isAvailable;
 
+    /**
+     * User associated with the reminder.
+     */
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

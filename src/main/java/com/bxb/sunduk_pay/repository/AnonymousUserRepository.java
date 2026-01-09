@@ -18,7 +18,8 @@ public interface AnonymousUserRepository
      *
      * @param globalPotId the ID of the GlobalPot
      * @param userId      the UUID of the User
-     * @return an Optional containing the found AnonymousUser, or empty if not found
+     * @return an Optional containing the found AnonymousUser,
+     * or empty if not found
      */
     Optional<AnonymousUser>
     findByGlobalPotGlobalPotIdAndUserUuid(

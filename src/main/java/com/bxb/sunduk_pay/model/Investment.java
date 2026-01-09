@@ -1,8 +1,18 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.RiskLevel;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Column;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,11 +58,10 @@ public class Investment {
      * The unit price at the time of purchase.
      */
     private Double unitPriceAtPurchase;     // price on that date
-    /**
-     * The number of units purchased.
-     */
 
-    private Double units;// investedAmount / unitPriceAtPurchase
+    /** The number of units purchased.
+     */
+    private Double units;
 
     /**
     * The date when the investment matures.
@@ -72,13 +81,14 @@ public class Investment {
      */
     private Double currentValue;
 
-    /** Which portfolio model (LOW/MEDIUM/HIGH)*/
+    /** Which portfolio model (LOW/MEDIUM/HIGH).
+     * */
 
     private Long portfolioModelId;
     /**
      * The date associated with the asset.
      */
-    private LocalDateTime UnitPurchaseDate;
+    private LocalDateTime unitPurchaseDate;
 
     /**
      * The profit or loss from the investment.

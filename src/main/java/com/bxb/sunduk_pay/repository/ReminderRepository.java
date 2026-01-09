@@ -33,10 +33,12 @@ public interface ReminderRepository extends JpaRepository<Reminder, String> {
 
 
 /**     * Finds reminders by user UUID and contact number with pagination.
-     * @param Uuid the UUID of the user
+     * @param uuid the UUID of the user
      * @param contactNumber the contact number associated with the reminder
      * @param pageable pagination information
-     * @return a list of reminders matching the specified user UUID and contact number
+     * @return a list of reminders matching the specified user
+ * UUID and contact number
      */
-    List<Reminder> findByUser_UuidAndContactNumber(String Uuid, String contactNumber, Pageable pageable);
+    List<Reminder> findByUserUuidAndContactNumber(
+            String uuid, String contactNumber, Pageable pageable);
 }

@@ -8,6 +8,13 @@ import java.util.List;
 /**
  * Repository interface for managing GlobalPotDocument entities in the database.
  */
-public interface GlobalPotDocumentRepository extends JpaRepository<GlobalPotDocument, String> {
+public interface GlobalPotDocumentRepository
+        extends JpaRepository<GlobalPotDocument, String> {
+
+    /**
+     * Finds all GlobalPotDocument entities associated with a Global Pot ID.
+     * @param globalPotId the ID of the Global Pot
+     * @return a list of GlobalPotDocument entities
+     */
     List<GlobalPotDocument> findByGlobalPotGlobalPotId(String globalPotId);
 }

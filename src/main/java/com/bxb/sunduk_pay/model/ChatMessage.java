@@ -48,6 +48,9 @@ public class ChatMessage {
      */
     private String status;
 
+    /**
+     * Indicates if the sender is blocked by the receiver.
+     */
     private boolean isBlocked;
 
 }

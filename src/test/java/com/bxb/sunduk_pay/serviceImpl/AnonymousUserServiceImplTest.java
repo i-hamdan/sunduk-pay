@@ -101,34 +101,6 @@ class AnonymousUserServiceImplTest {
         verify(anonymousUserRepository, never()).save(any());
     }
 
-//    @Test
-//    void shouldCreateAnonymousIdentity_whenUserDoesNotExist() {
-//        User user = getUser();
-//        GlobalPot globalPot = getGlobalPot();
-//
-//        when(anonymousUserRepository
-//                .findByGlobalPotGlobalPotIdAndUserUuid(
-//                        globalPot.getGlobalPotId(),
-//                        user.getUuid()))
-//                .thenReturn(Optional.empty());
-//
-//        when(anonymousColorCreator.generateColor(anyLong()))
-//                .thenReturn("#00FF00");
-//
-//        when(anonymousUserRepository.save(any(AnonymousUser.class)))
-//                .thenAnswer(invocation -> invocation.getArgument(0));
-//
-//        AnonymousIdentityDTO response =
-//                anonymousUserService.getOrCreateAnonymousColor(user, globalPot);
-//
-//        assertNotNull(response);
-//        assertNotNull(response.getAnonymousId());
-//        assertEquals("#00FF00", response.getAnonymousColor());
-//
-//        verify(anonymousUserRepository, times(1))
-//                .save(any(AnonymousUser.class));
-//    }
-
     @Test
     void shouldCreateAnonymousIdentity_whenUserDoesNotExist() {
         User user = getUser();
@@ -172,42 +144,6 @@ class AnonymousUserServiceImplTest {
         verify(anonymousUserRepository).saveAndFlush(any(AnonymousUser.class));
     }
 
-
-//    @Test
-//    void shouldRetryWhenDataIntegrityViolationOccurs_andThenSucceed() {
-//        User user = getUser();
-//        GlobalPot globalPot = getGlobalPot();
-//
-//        when(redisTemplate.opsForValue()).thenReturn(valueOperations);
-//
-//        // First attempt → index 1, second attempt → index 2
-//        when(valueOperations.increment(anyString()))
-//                .thenReturn(1L, 2L);
-//
-//        when(anonymousColorCreator.generateColor(1L))
-//                .thenReturn("#RED");
-//        when(anonymousColorCreator.generateColor(2L))
-//                .thenReturn("#GREEN");
-//
-//        // First save fails, second succeeds
-//        when(anonymousUserRepository.saveAndFlush(any(AnonymousUser.class)))
-//                .thenThrow(new org.springframework.dao.DataIntegrityViolationException("collision"))
-//                .thenAnswer(invocation -> {
-//                    AnonymousUser au = invocation.getArgument(0);
-//                    au.setAnonymousId("anon_success");
-//                    return au;
-//                });
-//
-//        AnonymousIdentityDTO response =
-//                anonymousUserService.getOrCreateAnonymousColor(user, globalPot);
-//
-//        assertNotNull(response);
-//        assertEquals("anon_success", response.getAnonymousId());
-//        assertEquals("#GREEN", response.getAnonymousColor());
-//
-//        verify(entityManager, times(1)).clear();
-//        verify(anonymousUserRepository, times(2)).saveAndFlush(any());
-//    }
 
     @Test
     void shouldThrowCannotCreateAnonymousUserException_whenUnexpectedExceptionOccurs() {

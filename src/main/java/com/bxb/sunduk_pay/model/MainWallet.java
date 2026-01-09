@@ -54,7 +54,7 @@ public class MainWallet {
     /**
      * List of sub-wallets associated with the main wallet.
      */
-    @OneToMany(mappedBy = "mainWallet",cascade = CascadeType.ALL,
-            orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "mainWallet", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.EAGER)
     private List<SubWallet> subWallets = new ArrayList<>();
 }

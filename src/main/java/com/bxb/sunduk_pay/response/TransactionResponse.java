@@ -4,9 +4,12 @@ import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.persistence.Column;
-import lombok.*;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
@@ -148,6 +151,9 @@ public class TransactionResponse {
      */
     private String anonymousColor;
 
-    private String RiskLevel;
+    /**
+     * Risk level associated with the transaction.
+     */
+    private String riskLevel;
 }
 

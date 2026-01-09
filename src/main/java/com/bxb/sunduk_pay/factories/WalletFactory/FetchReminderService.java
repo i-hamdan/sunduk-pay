@@ -9,7 +9,6 @@ import com.bxb.sunduk_pay.response.ReminderResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -61,7 +60,7 @@ public class FetchReminderService implements WalletOperation{
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
             // Fetch reminders with pagination and sorting
-        List<Reminder> reminderList = reminderRepository.findByUser_UuidAndContactNumber(mainWalletRequest.getUuid(),
+        List<Reminder> reminderList = reminderRepository.findByUserUuidAndContactNumber(mainWalletRequest.getUuid(),
                 mainWalletRequest.getContactNumber(), pageable);
 
         // Map Reminder entities to ReminderResponse DTOs

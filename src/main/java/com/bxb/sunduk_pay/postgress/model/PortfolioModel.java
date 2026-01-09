@@ -37,7 +37,7 @@ public class PortfolioModel {
 
 
     /** List of allocations associated with the portfolio model. */
-    @OneToMany(mappedBy = "portfolioModel",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "portfolioModel", fetch = FetchType.EAGER)
     private List<PortfolioAllocation> allocations;
 
 }

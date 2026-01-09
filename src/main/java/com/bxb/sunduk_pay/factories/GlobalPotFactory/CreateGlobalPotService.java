@@ -23,15 +23,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * this service is for creating GLobalPot
+ * this service is for creating GlobalPot.
+ * It handles the creation of a new Global Pot,
+ * including saving associated media files and assigning
+ * administrators.
  */
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class CreateGlobalPotService implements GlobalPotOperation {
 
+    /** Repository to manage GlobalPot data */
     private final GlobalPotRepository repository;
+    /** Mapper to convert between request and entity */
     private final GlobalPotMapper mapper;
+    /** Repository to manage User data */
     private final UserRepository userRepository;
 
     /**
@@ -78,7 +84,8 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                                     .documentStatus(DocumentStatus.PENDING)
                                     .globalPot(pot).build();
                     pot.addDocument(globalPotDocument);
-                    log.info("Saved document: {}", wrapper.getDocumentHeading());
+                    log.info("Saved document: {}",
+                            wrapper.getDocumentHeading());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -90,7 +97,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         });
 
         // Assign Administrators
-        List<User> admins=new ArrayList<>();
+        List<User> admins = new ArrayList<>();
         request.getAdministrators().forEach(admin ->{
             User user=
                     userRepository.findById(admin.getUuid())
