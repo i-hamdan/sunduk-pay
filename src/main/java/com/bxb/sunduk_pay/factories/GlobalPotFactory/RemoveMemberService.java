@@ -14,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 /**
  * RemoveMemberService allows a Global Pot admin
  * to remove an existing member from a Global Pot.
@@ -60,7 +62,7 @@ public class RemoveMemberService implements GlobalPotOperation {
      * @return response indicating success or failure
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
 
         log.info("RemoveMember started | " +
                         "adminUuid={} globalPotId={} targetUserUuid={}",
@@ -94,7 +96,9 @@ public class RemoveMemberService implements GlobalPotOperation {
                     targetMember.getUuid(),
                     globalPot.getGlobalPotId());
             throw new UserNotFoundException(
-                    "User is not a member of this Global Pot");
+                    "User with userId:" +targetMember.getUuid() +
+                            " is not a member of the Global Pot:" +
+                            globalPot.getGlobalPotId());
         }
 
         globalPotMembersRepository.delete(member);

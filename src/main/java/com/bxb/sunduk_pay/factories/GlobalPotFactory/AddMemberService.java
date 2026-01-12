@@ -1,7 +1,9 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
@@ -10,6 +12,8 @@ import com.bxb.sunduk_pay.validations.Validations;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 
 /**
  * AddMemberService is responsible for allowing a Global Pot admin
@@ -34,6 +38,8 @@ public class AddMemberService implements GlobalPotOperation {
      */
     private final GlobalPotValidations globalPotValidations;
 
+    private final GlobalPotMembersRepository globalPotMembersRepository;
+
     /**
      * Returns the Global Pot request type handled by this service.
      *
@@ -52,7 +58,7 @@ public class AddMemberService implements GlobalPotOperation {
      * @return response indicating success or failure
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
 
         log.info("AddMember started | " +
                         "adminUuid={} globalPotId={} targetUserUuid={}",
@@ -76,10 +82,15 @@ public class AddMemberService implements GlobalPotOperation {
         log.info("Target user fetched successfully | userUuid={}",
                 targetUser.getUuid());
 
-        globalPotValidations.ensureUserIsMember(targetUser, globalPot);
-        log.info("User added as member | userUuid={} globalPotId={}",
-                targetUser.getUuid(),
-                globalPot.getGlobalPotId());
+        GlobalPotMembers member =
+                globalPotMembersRepository.findByUserIdAndGlobalPotId(
+                        targetUser, globalPot);
+
+            globalPotValidations.ensureUserIsMemberByAdmin(targetUser, globalPot);
+            log.info("User added as member | userUuid={} globalPotId={}",
+                    targetUser.getUuid(),
+                    globalPot.getGlobalPotId());
+
 
         return GlobalPotResponse.builder()
                 .message("User added to Global Pot successfully")

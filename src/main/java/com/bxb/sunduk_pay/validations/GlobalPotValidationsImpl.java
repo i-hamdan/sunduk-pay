@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.UserRoles;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -172,6 +173,29 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         globalPotMembersRepository.save(member);
     }
 
+    @Override
+    public void ensureUserIsMemberByAdmin(User userId, GlobalPot globalPotId) {
+
+        boolean isAlreadyMember =
+                globalPotMembersRepository
+                        .existsByUserIdAndGlobalPotId(userId, globalPotId);
+
+        if (isAlreadyMember) {
+            throw new UserAlreadyExist(
+                    "User with uuid [" + userId.getFullName() +
+                            "] is already a member of Global Pot [" +
+                            globalPotId.getCaseTitle() + "]"
+            );
+        }
+
+        GlobalPotMembers member = GlobalPotMembers.builder()
+                .userId(userId)
+                .globalPotId(globalPotId)
+                .userRoles(userId.getUserRole())
+                .build();
+
+        globalPotMembersRepository.save(member);
+    }
 }
 
 
