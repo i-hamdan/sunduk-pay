@@ -1,7 +1,16 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.util.*;
-import lombok.*;
+import com.bxb.sunduk_pay.util.Duration;
+import com.bxb.sunduk_pay.util.PaymentMethod;
+import com.bxb.sunduk_pay.util.RequestType;
+import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.UpdateWalletActionType;
+import lombok.NonNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -55,7 +64,7 @@ private static final int DEFAULT_SIZE = 10;
     private UpdateWalletActionType actionType;
    /** Payment method used in the transaction. */
     private PaymentMethod paymentMethod;
-    /** Tag used in transaction*/
+    /** Tag used in transaction. */
     private String paymentTag;
     /** Phone number for UPI contact search. */
     private String phone;

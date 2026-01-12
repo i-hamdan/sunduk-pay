@@ -22,8 +22,10 @@ public class PhotoMapperImpl implements PhotoMapper {
      */
 
     @Override
-    public PhotoRequest toRequest(String uuid, MultipartFile photoData,
-                                  PhotoRequestType type) {
+    public PhotoRequest toRequest(
+            final String uuid,
+            final MultipartFile photoData,
+            final PhotoRequestType type) {
         return null;
     }
 }

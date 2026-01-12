@@ -1,7 +1,11 @@
 package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.TimeSeries;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Request object for currency conversion and time series data.

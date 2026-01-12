@@ -43,10 +43,20 @@ public interface UserMapper {
      */
     UserKafkaEvent toKafkaEvent(User user, String eventType);
 
-
+    /**
+     * Updates an existing User entity with data from a UserRequest DTO.
+     *
+     * @param request the UserRequest DTO containing updated user info
+     * @param user    the existing User entity to be updated
+     * @return the updated User entity.
+     */
     User toUpdate(UserRequest request, User user);
 
-
+    /**
+     * Converts a User entity into a detailed UserResponse DTO.
+     * @param user the User entity
+     * @return a detailed UserResponse DTO.
+     */
     UserResponse getDetails(User user);
 
     /**

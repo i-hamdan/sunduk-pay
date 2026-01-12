@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.PhotoRequestType;
+
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,8 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhotoRequest {
+    /**
+     * The unique identifier for the photo.
+     */
     private String uuid;
-
+    /**
+     * The type of photo request.
+     */
     private PhotoRequestType photoRequestType;
+    /**
+     * The multipart file representing the photo data.
+     */
     private MultipartFile multipartFile;
 }

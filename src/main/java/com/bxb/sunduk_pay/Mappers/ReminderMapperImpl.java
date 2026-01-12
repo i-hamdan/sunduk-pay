@@ -7,15 +7,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 
-public class ReminderMapperImpl implements ReminderMapper{
+public class ReminderMapperImpl implements ReminderMapper {
     /**
-     * @param reminder
-     * @return
+     * @param reminder Reminder entity
+     * @return ReminderResponse
      */
     @Override
-    public ReminderResponse toReminderResponse(Reminder reminder) {
+    public ReminderResponse toReminderResponse(final Reminder reminder) {
 
-        ReminderResponse reminderResponse= ReminderResponse.builder()
+        ReminderResponse reminderResponse = ReminderResponse.builder()
                 .reminderId(reminder.getReminderId())
                 .amount(reminder.getAmount())
                 .duration(reminder.getDuration().toString())

@@ -34,8 +34,9 @@ public interface ChatMessageMapper {
      * @param receiverNo
      * @return the corresponding chat message response
      */
-    ChatMessageResponse toChatMessageResponse(final ChatMessage chatMessage,
-                                              final String senderNo ,
-                                              final String receiverNo);
+    ChatMessageResponse toChatMessageResponse(
+            ChatMessage chatMessage,
+            String senderNo,
+            String receiverNo);
 
 }

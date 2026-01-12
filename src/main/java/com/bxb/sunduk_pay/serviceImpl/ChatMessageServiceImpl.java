@@ -33,7 +33,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Implementation of ChatMessageService to handle chat message operations.
@@ -43,6 +46,11 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
 
+    // Indices for masking phone numbers in logs
+    private static final int SUBSTRING_START_INDEX = 9;
+    // Indices for masking phone numbers in logs
+    private static final int SUBSTRING_END_INDEX = 13;
+    private static final int DURATION_HOURS = 24;
     /**
      * Validations for message processing.
      */
@@ -94,7 +102,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
      * @return the response containing details of the processed chat message
      */
     @Override
-    public ChatMessageResponse processMessage(ChatMessageEvent messageEvent) {
+    public ChatMessageResponse processMessage(
+            final ChatMessageEvent messageEvent) {
         log.info("Processing chat message from {} to {}: {}",
                 messageEvent.getSenderId(),
                 messageEvent.getReceiverId(),
@@ -132,8 +141,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 
     /**
      * Saves a chat message to Redis.
-     * @param message the chat message to be saved
-     * @return the Redis key where the message is stored
+     * @param message the chat message to be saved.
      */
     @Override
     public void saveMessage(final ChatMessage message) {
@@ -147,7 +155,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             // Check if Redis key exists
             if (Boolean.FALSE.equals(chatMessageRedisTemplate.hasKey(key))) {
                 log.warn(
-                        "Redis key expired or not found for key: {}. Reloading from DB...",
+    "Redis key expired or not found for key: {}. Reloading from DB...",
                         key);
 
                 // Fetch existing chat history from DB
@@ -167,14 +175,15 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             // Save the message to Redis list
             chatMessageRedisTemplate.opsForList().rightPush(key, message);
             // Set expiration time for the key if not already set
-            chatMessageRedisTemplate.expire(key, Duration.ofHours(24));
+            chatMessageRedisTemplate.expire(key, Duration.ofHours(
+                    DURATION_HOURS));
 
             log.info("Saved chat message to Redis with key: {}", key);
         } catch (Exception e) {
             log.error("Error saving message to Redis", e);
             throw new RedisOperationException(
-                    "Failed to save message to Redis , an " +
-                            "error occurred: " + e.getMessage());
+                    "Failed to save message to Redis , an "
+                            + "error occurred: " + e.getMessage());
         }
     }
 
@@ -192,7 +201,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         User receiver = getReceiverUserDetails(messageRequest.getReceiverId());
 
         log.info(
-                "Fetching chat & transaction history for Sender: {} Receiver: {}",
+    "Fetching chat & transaction history for Sender: {} Receiver: {}",
                 messageRequest.getSenderId(), receiver.getUuid());
 
         User sendingUser = validations.getUserInfo(
@@ -210,7 +219,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 receiver.getUuid());
 
         log.debug(
-                "Generated Redis keys -> chatKey: {}, transactionKey: {}",
+          "Generated Redis keys -> chatKey: {}, transactionKey: {}",
                 chatKey, transactionKey);
 
 
@@ -229,13 +238,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 chatMessageRedisTemplate.opsForList().rightPushAll(
                         chatKey, chatMessages);
 
-                chatMessageRedisTemplate.expire(chatKey, Duration.ofHours(24));
+                chatMessageRedisTemplate.expire(chatKey,
+                        Duration.ofHours(DURATION_HOURS));
                 log.info("Chat loaded into Redis & TTL set (24 hours)");
 
             }
 
-        } else log.info("Chat loaded from Redis. Total messages: {}",
-                chatMessages.size());
+        } else {
+            log.info("Chat loaded from Redis. Total messages: {}",
+                    chatMessages.size());
+        }
 
         List<TransactionResponse> transactions = transactionRedisTemplate
                 .opsForList().range(transactionKey, 0, -1);
@@ -258,12 +270,14 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                         transactions);
 
                 transactionRedisTemplate.expire(transactionKey,
-                        Duration.ofHours(24));
+                        Duration.ofHours(DURATION_HOURS));
                 log.info("Transactions cached & TTL set (24 hours)");
 
             }
-        } else log.info("Transactions loaded from Redis. Total: {}",
-                transactions.size());
+        } else {
+            log.info("Transactions loaded from Redis. Total: {}",
+                    transactions.size());
+        }
 
         List<TransactionResponse> senderTransactions =
                 transactions.stream().filter(
@@ -315,15 +329,16 @@ public class ChatMessageServiceImpl implements ChatMessageService {
      * @return
      */
     @Override
-    public User getReceiverUserDetails(String receiverId) {
+    public User getReceiverUserDetails(final String receiverId) {
         try {
             log.info("Finding user by phoneNumber : {}",
-                    "****" + receiverId.substring(9, 13));
+                    "****" + receiverId.substring(
+                            SUBSTRING_START_INDEX, SUBSTRING_END_INDEX));
             return validations.getUserByPhoneNumber(receiverId);
         } catch (UserNotFoundException e) {
             throw new WebSocketUserNotFoundException(
-                    "This user in not registered on " +
-                            "sundukpay!");
+                    "This user in not registered on "
+                            + "sundukpay!");
         }
     }
 
@@ -334,7 +349,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
      * @return the phone number associated with the UUID
      */
     @Cacheable(value = "userPhoneCache", key = "#uuid")
-    private String getPhoneNumberbyUuid(String uuid) {
+    private String getPhoneNumberbyUuid(final String uuid) {
         User user = validations.getUserInfo(uuid);
         return user.getPhoneNumber();
     }

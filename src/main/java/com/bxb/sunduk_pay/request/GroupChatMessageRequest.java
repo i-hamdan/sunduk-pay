@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.request;
 
-import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;

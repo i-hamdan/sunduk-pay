@@ -34,7 +34,8 @@ public class StripeServiceImpl implements StripeService {
      */
     @Autowired
     public StripeServiceImpl(
-      @Value("${stripe.key.secret}") final String secretKey) {
+      @Value("${stripe.key.secret}")
+      final String secretKey) {
         Stripe.apiKey = secretKey;
         log.info("Stripe API key initialized.");
     }
@@ -133,7 +134,7 @@ try {
 
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put("userId", request.getUserId().toString()   );
+        metadata.put("userId", request.getUserId().toString());
         metadata.put("type", request.getTransactionType().toString());
         metadata.put("amount", request.getAmount().toString());
         if (request.getSourceWallet() != null) {

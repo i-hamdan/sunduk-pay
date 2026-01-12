@@ -42,7 +42,7 @@ public interface GlobalPotMapper {
      * @param request the GlobalPotRequest containing wallet details
      * @return the corresponding GlobalWallet entity
      */
-    GlobalWallet toEntityWallet(final GlobalPotRequest request);
+    GlobalWallet toEntityWallet(GlobalPotRequest request);
 
     /**
      * Converts a GlobalPotRequest to a Contributor entity.
@@ -89,8 +89,8 @@ public interface GlobalPotMapper {
             GroupChatMessage groupChatMessage);
 
     /**
-     * Converts a list of GroupChatMessage entities to a list of GroupChatMessageResponse DTOs.
-     *
+     * Converts a list of GroupChatMessage entities to a list of
+     * GroupChatMessageResponse DTOs.
      * @param groupChatMessage the list of group chat message entities
      * @return list of GroupChatMessageResponse
      */

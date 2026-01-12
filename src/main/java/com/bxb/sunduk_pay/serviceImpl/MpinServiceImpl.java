@@ -18,13 +18,20 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class MpinServiceImpl implements MpinService {
 
-
+/** Factory for obtaining MPIN operations based on request type. */
  private final MpinOperationsFactory mpinOperationsFactory;
 
+ /**
+     * Processes the MPIN request by delegating to the appropriate
+     * MPIN operation based on the request type.
+     *
+     * @param request the MPIN request containing necessary data
+     * @return the MPIN response after processing
+     */
     @Override
-    public MpinResponse mpinApi(MpinRequest request) {
+    public MpinResponse mpinApi(final MpinRequest request) {
         MpinOperation mpinOperation = mpinOperationsFactory.getMpinOperation
-                (request.getMpinRequestType());
+                ( request.getMpinRequestType());
         return mpinOperation.perform(request);
     }
 

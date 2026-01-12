@@ -1,11 +1,9 @@
 package com.bxb.sunduk_pay.kafkaListeners;
 
-import com.bxb.sunduk_pay.Mappers.ChatMessageMapper;
 import com.bxb.sunduk_pay.exception.ChatProcessingException;
 import com.bxb.sunduk_pay.kafkaEvents.ChatMessageEvent;
 import com.bxb.sunduk_pay.response.ChatMessageResponse;
 import com.bxb.sunduk_pay.service.ChatMessageService;
-import com.bxb.sunduk_pay.service.UserToUserTransferService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -75,7 +73,7 @@ public class ChatMessageListener {
      *
      * @param messageEvent the chat message event to be processed
      */
-    private void processAsync(ChatMessageEvent messageEvent) {
+    private void processAsync(final ChatMessageEvent messageEvent) {
         try {
             CompletableFuture
                     .supplyAsync(() -> {
@@ -86,13 +84,13 @@ public class ChatMessageListener {
                     }, executor)
                     .thenAccept(response -> {
                         log.info(
-                                "[ThenAcceptThread: {}] Sending message to user...",
+                "[ThenAcceptThread: {}] Sending message to user...",
                                 Thread.currentThread().getName());
                         sendMessageToWebSocket(response);
                     })
                     .exceptionally(ex -> {
                         log.error("[ErrorThread: {}] Exception: {}",
-                                Thread.currentThread().getName(), ex.getMessage());
+                            Thread.currentThread().getName(), ex.getMessage());
                         return null;
                     });
         } catch (Exception e) {

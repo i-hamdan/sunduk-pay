@@ -69,7 +69,8 @@ public class InvestmentUtil {
      * @return the updated Investment
      */
     public Investment updateInvestmentOnCredit(
-            final Investment investment, final Units unit, final Double amount) {
+            final Investment investment, final Units unit,
+            final Double amount) {
         double netAssetValue = unit.getCombinedValue().doubleValue();
         log.info("Current NAV for investment [{}] is {}",
                 investment.getInvestmentId(), netAssetValue);

@@ -8,8 +8,8 @@ import com.bxb.sunduk_pay.request.FollowerRequest;
  */
 public interface FollowerMapper {
     /**
-     * @param request
-     * @return
+     * @param request FollowerRequest DTO
+     * @return Follower entity
      */
     Follower toEntity(FollowerRequest request);
 }

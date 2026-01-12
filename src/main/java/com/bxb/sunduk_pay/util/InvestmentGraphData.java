@@ -58,7 +58,8 @@ public class InvestmentGraphData {
                         "dd MMMM yyyy HH:mm:ss")
                 .withLocale(Locale.ENGLISH);
 
-        Map<Integer, TreeMap<LocalDateTime, List<InvestmentGraphDataDTO>>> tempMap
+        Map<Integer, TreeMap<LocalDateTime,
+                List<InvestmentGraphDataDTO>>> tempMap
                 = new TreeMap<>();
 
         for (Transaction txn : transactions) {
@@ -74,11 +75,13 @@ public class InvestmentGraphData {
 
             tempMap
                     .computeIfAbsent(monthNumber, m -> new TreeMap<>())
-                    .computeIfAbsent(dateTime, d -> new ArrayList<>())
+                    .computeIfAbsent(dateTime, d ->
+                            new ArrayList<>())
                     .add(dto);
         }
 
-        Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
+        Map<String, List<InvestmentGraphDataDTO>> finalMap =
+                new LinkedHashMap<>();
 
         tempMap.forEach((month, dateMap) -> {
             String monthName = LocalDate.of(
@@ -87,14 +90,16 @@ public class InvestmentGraphData {
 
             List<InvestmentGraphDataDTO> dtoList = new ArrayList<>();
             dateMap.forEach((dt,
-                             list) -> dtoList.addAll(list));
+                             list) ->
+                    dtoList.addAll(list));
 
             // final deterministic sort: by exact timestamp,
             // then by balance (or any tie-breaker)
             dtoList.sort(Comparator
                     .comparing(InvestmentGraphDataDTO::getRawDateTime)
                     .thenComparing(Comparator.comparingDouble(
-                            d -> d.getBalance() == null ? 0.0 : d.getBalance()))
+                            d -> d.getBalance()
+                                    == null ? 0.0 : d.getBalance()))
             );
 
             finalMap.put(monthName, dtoList);

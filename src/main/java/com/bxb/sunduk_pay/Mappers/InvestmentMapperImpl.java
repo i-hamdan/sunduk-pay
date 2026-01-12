@@ -10,6 +10,10 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of InvestmentMapper to convert Investment entities
+ * into corresponding response DTOs.
+ */
 @Component
 @RequiredArgsConstructor
 public class InvestmentMapperImpl implements InvestmentMapper {
@@ -17,13 +21,22 @@ public class InvestmentMapperImpl implements InvestmentMapper {
     /**
      * Formatter for decimal values.
      */
-    private static final DecimalFormat formatter =
+    private static final DecimalFormat FORMATTER =
             new DecimalFormat("#,##0.00");
     /**
      * Mapper for wallet-related operations.
      */
     private final WalletMapper walletMapper;
 
+    /**
+     * Converts an Investment entity into an InvestmentResponse DTO,
+     * including graph data.
+     *
+     * @param investment          the investment entity
+     * @param graphData           the withdrawal trends graph data
+     * @param dailyInvestmentData the daily investment graph data
+     * @return an InvestmentResponse containing investment details and graphs
+     */
     @Override
     public InvestmentResponse toInvestmentResponse(
             final Investment investment,
@@ -35,10 +48,10 @@ public class InvestmentMapperImpl implements InvestmentMapper {
                         investment.getSubWallet()))
                 .riskLevel(investment.getRiskLevel())
                 .investedAmount(investment.getInvestmentAmount())
-                .currentValue(formatter.format(investment.getCurrentValue()))
-                .netProfitLoss(formatter.format(investment.getProfitLoss()))
+                .currentValue(FORMATTER.format(investment.getCurrentValue()))
+                .netProfitLoss(FORMATTER.format(investment.getProfitLoss()))
                 .profitLossPercent(
-                        formatter.format(investment.getProfitLossPercentage()))
+                        FORMATTER.format(investment.getProfitLossPercentage()))
                 .withdrawalTrendsGraph(graphData)
                 .dailyInvestmentGraph(dailyInvestmentData)
                 .build();

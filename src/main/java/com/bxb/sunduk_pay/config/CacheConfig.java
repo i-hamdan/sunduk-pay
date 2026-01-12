@@ -10,12 +10,21 @@ import java.util.concurrent.TimeUnit;
 /* Cache configuration class for managing OTP caching. */
 @Configuration
 public class CacheConfig {
-    /* Cache ka maximum size define kar rahe hain */
+
+    /**
+     * Maximum size of the OTP cache.
+     */
     private static final int MAX_CACHE_SIZE = 1000;
-    /* OTP expiry time define kar rahe hain (5 minutes) */
+
+    /**
+     * OTP expiry time in minutes.
+     */
     private static final int OTP_EXPIRY_MINUTES = 5;
 
-    /* OTP cache bean define kar rahe hain */
+    /**
+     *
+     * @return Caffeine cache instance for OTPs with defined expiry and size.
+     */
     @Bean
     public Cache<String, String> otpCache() {
         return Caffeine.newBuilder()

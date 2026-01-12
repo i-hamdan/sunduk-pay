@@ -6,7 +6,6 @@ import com.bxb.sunduk_pay.response.GroupChatUnifiedDTO;
 import com.bxb.sunduk_pay.service.GroupChatMessageService;
 import com.bxb.sunduk_pay.util.ChatDtoDataType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -49,9 +48,9 @@ public class GroupChatMessageListener {
      */
     @KafkaListener(topics = "group-chat-messages",
             groupId = "group-chat-service-group")
-    public void consumeGroupChatMessage(GroupChatEvent groupChatEvent) {
+    public void consumeGroupChatMessage(final GroupChatEvent groupChatEvent) {
         log.info(
-                "=========== Started processing group chat message ===========");
+              "=========== Started processing group chat message ===========");
         log.info("Received group chat message in group {} from {}",
                 groupChatEvent.getGlobalPotId(),
                 groupChatEvent.getSenderId());
@@ -65,21 +64,20 @@ public class GroupChatMessageListener {
      *
      * @param groupChatEvent the group chat event to process
      */
-    private void processGroupMessageAsync(GroupChatEvent groupChatEvent) {
+    private void processGroupMessageAsync(final GroupChatEvent groupChatEvent) {
         CompletableFuture.supplyAsync(() ->
                         groupChatMessageService
                                 .processGroupChatMessage(
                                         groupChatEvent), executor)
                 .thenAccept(response -> {
                     log.info(
-                            "[ThenAcceptThread: {}] Sending message to group...",
+             "[ThenAcceptThread: {}] Sending message to group...",
                             Thread.currentThread().getName());
                     forwardMessageToWebSocket(response);
                 })
                 .exceptionally(ex -> {
-                    ;
                     log.error(
-                            "Error processing group chat message in group {} from {}: {}",
+        "Error processing group chat message in group {} from {}: {}",
                             groupChatEvent.getGlobalPotId(),
                             groupChatEvent.getSenderId(),
                             ex.getMessage());
@@ -103,15 +101,18 @@ public class GroupChatMessageListener {
         log.info(
                 "Forwarded group chat message to WebSocket for group {}",
                 response.getGlobalPotId());
-        log.info("=========== Finished processing group chat message ===========");
+        log.info(
+                "========= Finished processing group chat message ==========");
     }
 
     /**
      * Converts GroupChatMessageResponse to GroupChatUnifiedDTO.
+     *
      * @param response the group chat message response
      * @return the unified DTO representation
      */
-    private GroupChatUnifiedDTO getChatDTO(GroupChatMessageResponse response){
+    private GroupChatUnifiedDTO getChatDTO(
+            final GroupChatMessageResponse response) {
         return GroupChatUnifiedDTO.builder()
                 .dataType(ChatDtoDataType.CHAT_MESSAGE)
                 .timestamp(response.getTimestamp())

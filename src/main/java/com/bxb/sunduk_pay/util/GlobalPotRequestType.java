@@ -62,7 +62,9 @@ public enum GlobalPotRequestType {
      * Fetches wallets associated with global pots.
      */
     FETCH_WALLETS,
-
+    /**
+     * Fetches the list of admins for a global pot.
+     */
     FETCH_ADMINS,
 
     /* ---------- Contributor & Engagement Operations ---------- */
@@ -117,22 +119,22 @@ public enum GlobalPotRequestType {
     FETCH_GLOBAL_POT,
 
     /**
-     * Admin can debit the amount from GlobalPot sub-wallet
+     * Admin can debit the amount from GlobalPot sub-wallet.
      */
     DEBIT_GLOBAL_POT_WALLET,
 
     /**
-     * for block Service
+     * for block Service.
      */
     BLOCK_USER,
 
     /**
-     * Admin can add member in global pot
+     * Admin can add member in global pot.
      */
     ADD_MEMBER,
 
     /**
-     *  Admin can remove member in global pot
+     *  Admin can remove member in global pot.
      */
     REMOVE_MEMBER
 

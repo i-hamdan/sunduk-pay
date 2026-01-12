@@ -3,7 +3,13 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.Investment;
+import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
@@ -12,7 +18,11 @@ import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.service.UserToUserTransferService;
-import com.bxb.sunduk_pay.util.*;
+import com.bxb.sunduk_pay.util.GenerateKeyUtil;
+import com.bxb.sunduk_pay.util.InvestmentUtil;
+import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.TransactionLevel;
+import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import com.bxb.sunduk_pay.wrapper.WalletWrapper;
@@ -30,9 +40,10 @@ import java.util.UUID;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class   UserToUserTransferServiceImpl
+public class UserToUserTransferServiceImpl
         implements UserToUserTransferService {
 
+    private static final int TRANSACTION_EXPIRY_HOURS = 24;
     /**
      * Validations utility for business rule enforcement.
      */
@@ -44,7 +55,7 @@ public class   UserToUserTransferServiceImpl
     private final TransactionRepository transactionRepository;
 
     /**
-     * Redis template for saving transactions in redis
+     * Redis template for saving transactions in redis.
      */
     private final RedisTemplate<String, TransactionResponse> redisTemplate;
     /**
@@ -53,11 +64,12 @@ public class   UserToUserTransferServiceImpl
     private final TransactionMapper transactionMapper;
 
     /**
-     * Util for generating redis key
+     * Util for generating redis key.
      */
     private final GenerateKeyUtil generateKeyUtil;
 
-   /**  * InvestmentRepository for database operations on Investments.
+    /**
+     * InvestmentRepository for database operations on Investments.
      */
     private final InvestmentRepository investmentRepository;
 
@@ -85,7 +97,7 @@ public class   UserToUserTransferServiceImpl
      * @return MainWalletResponse containing transfer details
      */
     @Override
-    public MainWalletResponse transferBetweenUsers(
+    public MainWalletResponse transferBetweenUsers (
             final String senderId,
             final String receiverId,
             final Double amount,
@@ -120,24 +132,24 @@ public class   UserToUserTransferServiceImpl
         log.info("Sufficient balance validated. Proceeding with transfer.");
 
         log.info("deducting amount from source wallet");
-  senderMasterWallet.setBalance(senderMasterWallet.getBalance() - amount);
+        senderMasterWallet.setBalance(senderMasterWallet.getBalance() - amount);
         senderWallet.setBalance(senderWallet.getBalance() - amount);
 
-        if(reminderId != null){
+        if (reminderId != null) {
             Reminder reminder = validations.getReminderById(reminderId);
             reminder.setIsPaid(true);
             reminder.setLocalDateTime(null);
             reminderRepository.save(reminder);
         }
 
-        if (senderWallet.isInvested()){
+        if (senderWallet.isInvested()) {
             log.info("Updating investment details for invested sub-wallet.");
             Investment investment = investmentValidation
                     .getInvestmentBySubWalletId(senderWalletId);
 
             if (!investment.isActive()) {
                 log.error("Attempted to add money to an inactive investment.");
-                throw new InvestmentException(
+                throw new InvestmentException (
                         "Cannot process payment from an inactive investment.");
             }
 
@@ -150,7 +162,7 @@ public class   UserToUserTransferServiceImpl
 
             Investment updatedInvestment =
                     investmentUtil.updateInvestmentOnDebit(
-                    investment, unit, amount);
+                            investment, unit, amount);
 
             investmentRepository.save(updatedInvestment);
 
@@ -215,7 +227,7 @@ public class   UserToUserTransferServiceImpl
                 receiverMainWallet.getBalance() + amount);
 
         log.info(
-          "Creating credit transaction for targetMasterWallet={}",
+                "Creating credit transaction for targetMasterWallet={}",
                 receiverMasterWallet.getMasterWalletId());
         Transaction targetMasterCreditTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
@@ -259,14 +271,14 @@ public class   UserToUserTransferServiceImpl
                 .toWallet("Main wallet")
                 .toWalletId(receiverMainWallet.getMainWalletId())
                 .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
-                 redisTemplate.opsForList().rightPush(key,
+        redisTemplate.opsForList().rightPush(key,
                 transactionMapper.toTransactionResponse(targetCreditTxn));
         transactions.add(targetCreditTxn);
 
         log.info("Saving all transactions to the database.");
         transactionRepository.saveAll(transactions);
 
-        redisTemplate.expire(key, Duration.ofHours(24));
+        redisTemplate.expire(key, Duration.ofHours(TRANSACTION_EXPIRY_HOURS));
         log.info("All transactions saved successfully. Transfer complete.");
 
         return MainWalletResponse.builder()
@@ -314,10 +326,10 @@ public class   UserToUserTransferServiceImpl
             return new WalletWrapper(subWallet);
         } else {
             log.error(
-      "No Wallet found for wallet ID {} in MainWalletId {}.",
+            "No Wallet found for wallet ID {} in MainWalletId {}.",
                     walletId, mainWallet.getMainWalletId());
-            throw new WalletNotFoundException("Wallet with id "+ walletId +" "
-                    + "does not belong to to user : "+mainWallet.
+            throw new WalletNotFoundException("Wallet with id " + walletId + " "
+                    + "does not belong to to user : " + mainWallet.
                     getUser().getFullName());
         }
     }

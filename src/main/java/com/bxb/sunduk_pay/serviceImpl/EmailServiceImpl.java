@@ -23,11 +23,14 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-    /** JavaMailSender for sending emails. */
+    /**
+     * JavaMailSender for sending emails.
+     */
     private final JavaMailSender mailSender;
-    /** Utility for building email subjects and bodies. */
+    /**
+     * Utility for building email subjects and bodies.
+     */
     private final EmailMessageUtil emailMessageUtil;
-
 
 
     /**
@@ -39,18 +42,23 @@ public class EmailServiceImpl implements EmailService {
         String subject = emailMessageUtil.buildSubject(event);
         String body = emailMessageUtil.buildBody(event);
         String from = getSenderByCategory(event.getEmailCategory());
-        sendEmail(event.getEmail(),from, subject, body,false);
+        sendEmail(event.getEmail(), from, subject, body, false);
     }
 
+    /**
+     * Processes an OTP-related Kafka event and sends an email notification.
+     *
+     * @param event the OTP event containing email and OTP details.
+     */
     @Override
-    public void processOtpEvent(OtpEvent event) {
-    String subject = emailMessageUtil.buildSubjectForOtp(event);
-    String body = emailMessageUtil.buildBodyForOtp(event);
-    sendEmail(event.getEmail(),
-            "updates@sundukpay.com",
-            subject,
-            body,
-            true);
+    public void processOtpEvent(final OtpEvent event) {
+        String subject = emailMessageUtil.buildSubjectForOtp(event);
+        String body = emailMessageUtil.buildBodyForOtp(event);
+        sendEmail(event.getEmail(),
+                "updates@sundukpay.com",
+                subject,
+                body,
+                true);
     }
 
 
@@ -63,11 +71,12 @@ public class EmailServiceImpl implements EmailService {
      * @throws EmailSendingException if the email fails to send
      * @throws EmailSendingException if sending fails.
      */
-    public void sendEmail(final String to,
-                          final String from,
-                          final String subject,
-                          final String body,
-                          final Boolean isHtml) {
+    public void sendEmail(
+            final String to,
+            final String from,
+            final String subject,
+            final String body,
+            final Boolean isHtml) {
         try {
             if (isHtml) {
                 //  HTML email using MimeMessage
@@ -80,13 +89,13 @@ public class EmailServiceImpl implements EmailService {
                 helper.setSubject(subject);
                 helper.setText(body, true);
 
-                ClassPathResource image = new ClassPathResource("static/sundukPayLogo.png");
+                ClassPathResource image =
+                        new ClassPathResource("static/sundukPayLogo.png");
                 helper.addInline("logoImage", image);
 
                 mailSender.send(message);
                 log.info(" HTML email sent to: {}", to);
-            }
-            else {
+            } else {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(to);
                 message.setFrom(from);
@@ -94,20 +103,19 @@ public class EmailServiceImpl implements EmailService {
                 message.setText(body);
                 mailSender.send(message);
             }
-            } catch (Exception e) {
+        } catch (Exception e) {
             log.error("Failed to send email to: {}", to);
             throw new EmailSendingException("Failed to send email to: " + to);
         }
     }
 
-    private String getSenderByCategory(EmailCategory category) {
+    private String getSenderByCategory(final EmailCategory category) {
         return switch (category) {
             case WELCOME -> "welcome@sundukpay.com";
             case SECURITY -> "updates@sundukpay.com";
             case TRANSACTION -> "transactions@sundukpay.com";
         };
     }
-
 
 
 }

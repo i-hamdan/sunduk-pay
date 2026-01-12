@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.Mappers;
 
 
-import com.bxb.sunduk_pay.model.CurrencyRates;
 import com.bxb.sunduk_pay.response.CurrencyRatesResponse;
 import com.bxb.sunduk_pay.response.CurrencyResponse;
 import com.bxb.sunduk_pay.util.TimeSeries;
@@ -44,9 +43,10 @@ public interface CurrencyMapper {
      * @return list of CurrencyRatesResponse.
      */
 
-    List<CurrencyRatesResponse>toCurrencyRatesResponses(List<Map<String, Object>> currencyRates,
-                                                        String rateKey,
-                                                        TimeSeries timeSeries
+    List<CurrencyRatesResponse>toCurrencyRatesResponses(
+            List<Map<String, Object>> currencyRates,
+            String rateKey,
+            TimeSeries timeSeries
     );
 
     /**

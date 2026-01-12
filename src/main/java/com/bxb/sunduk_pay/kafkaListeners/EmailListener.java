@@ -20,6 +20,10 @@ public class EmailListener {
     /** Service for handling email operations. */
     private final EmailService emailService;
 
+    /**
+     * Initializes the EmailListener bean
+     * and logs its successful creation.
+     */
     @PostConstruct
     public void init() {
         log.info("Email KafkaListener bean initialized successfully");

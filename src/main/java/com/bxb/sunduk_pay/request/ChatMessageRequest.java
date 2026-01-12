@@ -1,6 +1,10 @@
 package com.bxb.sunduk_pay.request;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Request object for sending a chat message.
@@ -18,6 +22,7 @@ import lombok.*;
     /** The content of the chat message. */
     private String content;
 
+    /** Indicates if the sender is blocked by the receiver. */
     private Boolean isBlocked;
     }
 
