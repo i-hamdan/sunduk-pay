@@ -20,8 +20,8 @@ public class TestimonialMapperImpl implements TestimonialMapper {
         entity.setAuthorName(request.getAuthorName());
         entity.setProfession(request.getProfession());
         entity.setProfileImage(request.getProfileImage());
-        entity.setIsSundukAdmin(request.getIsSundukAdmin() != null ?
-                request.getIsSundukAdmin() : false);
+        entity.setIsSundukAdmin(request.getIsSundukAdmin() != null
+                ? request.getIsSundukAdmin() : false);
 
         return entity;
     }

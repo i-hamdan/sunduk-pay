@@ -63,7 +63,7 @@ public class WalletMapperImpl implements WalletMapper {
      * @return a SubWalletResponse containing the mapped fields
      */
     @Override
-    public SubWalletResponse toSubWalletResponse(SubWallet subWallet) {
+    public SubWalletResponse toSubWalletResponse(final SubWallet subWallet) {
         DateTimeFormatter formatter = DateTimeFormatter
                 .ofPattern("dd MMM yyyy");
         SubWalletResponse subWalletResponse = new SubWalletResponse();
@@ -77,7 +77,8 @@ public class WalletMapperImpl implements WalletMapper {
         subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
                 .format(formatter));
         subWalletResponse.setIsInvested(subWallet.getIsInvested());
-        subWalletResponse.setIsCancelInvestment(subWallet.getIsCancelInvestment());
+        subWalletResponse.setIsCancelInvestment(
+                subWallet.getIsCancelInvestment());
         return subWalletResponse;
     }
 

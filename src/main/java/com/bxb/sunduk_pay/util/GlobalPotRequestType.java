@@ -93,7 +93,6 @@ public enum GlobalPotRequestType {
      */
     TRANSFER_OWNERSHIP,
 
-
     /**
      * Fetches the chat history associated with a global pot.
      */
@@ -102,14 +101,12 @@ public enum GlobalPotRequestType {
      * Share ownership of a global pot to other users.
      */
     SHARE_OWNERSHIP,
-    
     /**
      * Request type used for document verification.
      */
     VERIFY_DOCUMENT,
-    
     /**
-     * Request type for updating Global Pot details
+     * Request type for updating Global Pot details.
      */
     Update_Global_Pot,
 

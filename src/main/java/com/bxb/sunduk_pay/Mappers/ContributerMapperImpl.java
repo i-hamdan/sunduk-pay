@@ -4,6 +4,10 @@ import com.bxb.sunduk_pay.model.Contributor;
 import com.bxb.sunduk_pay.request.ContributorRequest;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mapper implementation for converting
+ * ContributorRequest to Contributor entity.
+ */
 @Component
 public class ContributerMapperImpl implements ContributerMapper {
     /**
@@ -18,12 +22,12 @@ public class ContributerMapperImpl implements ContributerMapper {
 
         Contributor entity = new Contributor();
         entity.setName(request.getName());
-        entity.setAmountContributed(request.getAmountContributed() != null ?
-                request.getAmountContributed() : 0.0);
-        entity.setIsAnonymous(request.getIsAnonymous() != null ?
-                request.getIsAnonymous() : false);
-        entity.setIsUser(request.getIsUser() != null ?
-                request.getIsUser() : true);
+        entity.setAmountContributed(request.getAmountContributed() != null
+                ? request.getAmountContributed() : 0.0);
+        entity.setIsAnonymous(request.getIsAnonymous() != null
+                ? request.getIsAnonymous() : false);
+        entity.setIsUser(request.getIsUser() != null
+                ? request.getIsUser() : true);
         entity.setProfileImage(request.getProfileImage());
 
         return entity;

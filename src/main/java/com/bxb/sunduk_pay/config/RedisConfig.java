@@ -190,7 +190,7 @@ public class RedisConfig {
      */
     @Bean
     public RedisTemplate<String, GlobalPotResponse>
-    globalPotResponseRedisTemplate(RedisConnectionFactory connectionFactory) {
+    globalPotResponseRedisTemplate(final RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, GlobalPotResponse> template =
                 new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);

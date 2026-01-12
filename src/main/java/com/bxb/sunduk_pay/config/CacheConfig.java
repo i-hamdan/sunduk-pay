@@ -15,6 +15,7 @@ public class CacheConfig {
     /* OTP expiry time define kar rahe hain (5 minutes) */
     private static final int OTP_EXPIRY_MINUTES = 5;
 
+    /* OTP cache bean define kar rahe hain */
     @Bean
     public Cache<String, String> otpCache() {
         return Caffeine.newBuilder()

@@ -3,7 +3,11 @@ package com.bxb.sunduk_pay.Mappers;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalWallet;
+import com.bxb.sunduk_pay.model.Contributor;
+import com.bxb.sunduk_pay.model.GroupChatMessage;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
@@ -20,10 +24,20 @@ import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of GlobalPotMapper to map between
+ * GlobalPot entities and various request/response objects.
+ */
 @Component
 @RequiredArgsConstructor
 public class GlobalPotMapperImpl implements GlobalPotMapper {
+    /**
+     * Mapper for Testimonial entities.
+     */
     private final TestimonialMapper testimonialMapper;
+    /**
+     * Repository for User entities.
+     */
     private final UserRepository userRepository;
 
     /**
@@ -31,15 +45,24 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
      */
     private final UserMapper userMapper;
 
-
+    /**
+     * Base URL for media resources.
+     */
     @Value("${media.base-url}")
     private String mediaBaseUrl;
 
     /**
      * Converts the incoming request into a persistence-ready Entity.
+     *
+     * @param request the incoming request
+     * @return the persistence-ready entity
+     * @throws IOException in case of I/O errors
      */
-    public GlobalPot toEntity(GlobalPotRequest request) throws IOException {
-        if (request == null) return null;
+    public GlobalPot toEntity(
+            final GlobalPotRequest request) throws IOException {
+        if (request == null) {
+            return null;
+        }
 
         GlobalPot pot = new GlobalPot();
 
@@ -51,13 +74,13 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
 
-       pot.setAdministrators(request.getAdministrators());
-       pot.setBeneficiaryName(request.getBeneficiaryName());
-       pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
-       pot.setCreatedByAdmin(request.getCreatedByAdmin());
-       pot.setCreatedForSelf(request.getCreatedForSelf());
-       pot.setCreatedBy(request.getCreatedBy());
-       pot.setLocation(request.getLocation());
+        pot.setAdministrators(request.getAdministrators());
+        pot.setBeneficiaryName(request.getBeneficiaryName());
+        pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
+        pot.setCreatedByAdmin(request.getCreatedByAdmin());
+        pot.setCreatedForSelf(request.getCreatedForSelf());
+        pot.setCreatedBy(request.getCreatedBy());
+        pot.setLocation(request.getLocation());
 
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
@@ -78,7 +101,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         if (request.getTestimonials() != null) {
             pot.setTestimonials(request.getTestimonials().stream()
                     .map(req -> {
-                        Testimonial t = testimonialMapper.toEntity(req);
+                        com.bxb.sunduk_pay.model.Testimonial t
+                                = testimonialMapper.toEntity(req);
                         t.setGlobalPot(pot);
                         return t;
                     }).collect(Collectors.toList()));
@@ -122,8 +146,12 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 //    }
 
 
+    /**
+     * @param pot
+     * @return
+     */
     @Override
-    public GlobalPotResponse toGlobalPotResponse(GlobalPot pot) {
+    public GlobalPotResponse toGlobalPotResponse(final GlobalPot pot) {
 
         return GlobalPotResponse.builder()
                 .globalPotId(pot.getGlobalPotId())
@@ -153,7 +181,11 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .message("Global Pot created successfully").build();
     }
 
-
+    /**
+     * @param request
+     * @return
+     */
+    @Override
     public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
 
         GlobalWallet wallet = new GlobalWallet();
@@ -168,16 +200,18 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
      * @param request
      */
     @Override
-    public Contributor toContributerEntity(GlobalPotRequest request,
-                                           GlobalPot pot) throws IOException {
+    public Contributor toContributerEntity(
+            final GlobalPotRequest request,
+            final GlobalPot pot) throws IOException {
         Contributor contributor = new Contributor();
         contributor.setName(request.getContributorName());
         contributor.setAmountContributed(request.getAmountContributed());
         contributor.setIsAnonymous(request.getIsAnonymous());
         User userContributor = userRepository
-                .findById(request.getUserContributorId()).orElseThrow(() -> new UserNotFoundException(
-                        "User not found with ID: "
-                                + request.getUserContributorId()));
+                .findById(request.getUserContributorId()).orElseThrow(() ->
+                        new UserNotFoundException(
+                                "User not found with ID: "
+                                        + request.getUserContributorId()));
         contributor.setUserContributor(userContributor);
 
 //        contributor.setProfileImage(request.getContributorImage().getBytes());
@@ -187,8 +221,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     }
 
 
+    /**
+     * Converts a GlobalPot entity to a GlobalPotTileDto.
+     *
+     * @param pot the GlobalPot entity
+     * @return the corresponding GlobalPotTileDto
+     */
     @Override
-    public GlobalPotTileDto toTileDto(GlobalPot pot) {
+    public GlobalPotTileDto toTileDto(final GlobalPot pot) {
 
         return GlobalPotTileDto.builder()
                 .globalPotId(pot.getGlobalPotId())
@@ -222,8 +262,17 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .build();
     }
 
+
     // method to add list on that
-    public List<GlobalPotTileDto> toTileDtos(List<GlobalPot> pots) {
+
+    /**
+     * Converts a list of GlobalPot entities to a list of GlobalPotTileDto.
+     *
+     * @param pots the list of GlobalPot entities
+     * @return the corresponding list of GlobalPotTileDto
+     */
+    @Override
+    public List<GlobalPotTileDto> toTileDtos(final List<GlobalPot> pots) {
 
         List<GlobalPotTileDto> responses = new ArrayList<>();
 
@@ -265,9 +314,10 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 //            response.setSender(anonymousSender());
 //        } else {
         response.setSender(userMapper
-                    .toUserResponse(groupChatMessage.getSender()));
+                .toUserResponse(groupChatMessage.getSender()));
 //        }
-        response.setGlobalPotId(groupChatMessage.getGlobalPot().getGlobalPotId());
+        response.setGlobalPotId(
+                groupChatMessage.getGlobalPot().getGlobalPotId());
         response.setContent(groupChatMessage.getContent());
         response.setTimestamp(groupChatMessage.getTimestamp().toString());
         response.setIsAnonymous(groupChatMessage.isAnonymous());
@@ -286,7 +336,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
      */
     @Override
     public List<GroupChatMessageResponse> toGroupChatMessageResponseList(
-            List<GroupChatMessage> groupChatMessage) {
+            final List<GroupChatMessage> groupChatMessage) {
         return groupChatMessage
                 .stream()
                 .map(this::toGroupChatMessageResponse)
@@ -297,12 +347,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     /**
      * Private helper to convert byte array to base64 string.
      *
-     * @param image
-     * @return
+     * @param image byte array
+     * @return base64 string
      */
     // helper method to  set images into base 64
-    public String toBase64(byte[] image) {
-        if (image == null) return null;
+    public String toBase64(final byte[] image) {
+        if (image == null) {
+            return null;
+        }
         return Base64.getEncoder().encodeToString(image);
     }
 

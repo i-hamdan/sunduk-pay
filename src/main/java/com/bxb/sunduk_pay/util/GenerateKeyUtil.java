@@ -16,7 +16,8 @@ public class GenerateKeyUtil {
     /** Length of ID part to consider for key generation.
      */
     private static final Integer FOUR = 4;
-
+    /** Length of ID part to consider for key generation.
+     */
     private static final Integer SIX = 6;
     /**
      * Generates a Redis key for chat history between two users

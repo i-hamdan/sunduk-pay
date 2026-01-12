@@ -16,13 +16,14 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class ChatMessageMapperImpl implements ChatMessageMapper{
+public class ChatMessageMapperImpl implements ChatMessageMapper {
 
 
     /**
      * Mapper for converting transaction-related data.
      */
     private final TransactionMapper transactionMapper;
+
     /**
      * Converts a ChatMessageRequest to a ChatMessageEvent.
      *
@@ -49,12 +50,12 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
     @Override
     public ChatMessage toChatMessage(
             final ChatMessageEvent event) {
-       return ChatMessage.builder()
+        return ChatMessage.builder()
                 .senderId(event.getSenderId())
                 .receiverId(event.getReceiverId())
-               .status("SUCCESS")
+                .status("SUCCESS")
                 .content(event.getContent())
-               .isBlocked(event.getIsBlocked())
+                .isBlocked(event.getIsBlocked())
                 .build();
     }
 
@@ -69,13 +70,13 @@ public class ChatMessageMapperImpl implements ChatMessageMapper{
     @Override
     public ChatMessageResponse toChatMessageResponse(
             final ChatMessage chatMessage,
-            String senderNo,
-            String receiverNo) {
+            final String senderNo,
+            final String receiverNo) {
         String timestamp = chatMessage.getTimestamp().toString();
         String[] parts = timestamp.split("T");
         String datePart = parts[0]; // e.g. "2025-09-03"
-        String timePart = parts.length > 1 ?
-                parts[1].split("\\.")[0] : ""; // e.g. "14:40:49"
+        String timePart = parts.length > 1
+                ? parts[1].split("\\.")[0] : ""; // e.g. "14:40:49"
 
         // Format date: "3 Sep 2025"
         String formattedDate = "";

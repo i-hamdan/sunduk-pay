@@ -24,82 +24,93 @@ import java.util.TreeMap;
 @Log4j2
 public class InvestmentGraphData {
 
+    /**
+     * Year constant for date formatting.
+     */
     private static final int YEAR = 2025;
+    /**
+     * Day constant for date formatting.
+     */
     private static final int DAY = 1;
+    /**
+     * Day of month constant for date formatting.
+     */
+    private static final int dayOfMonth = 5;
 
-    /** Date formatter for "dd MMMM yyyy" pattern in English locale. */
+    /**
+     * Date formatter for "dd MMMM yyyy" pattern in English locale.
+     */
     private static final DateTimeFormatter dateFormater =
             DateTimeFormatter.ofPattern("dd MMMM yyyy")
                     .withLocale(Locale.ENGLISH);
 
-/**     * Processes a list of transactions to generate monthly graph data.
+    /**
+     * Processes a list of transactions to generate monthly graph data.
      *
      * @param transactions the list of transactions
      * @return a map with month names as keys and lists of
- * InvestmentGraphDataDTO as values
+     * InvestmentGraphDataDTO as values
      */
-public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
-        final List<Transaction> transactions) {
+    public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
+            final List<Transaction> transactions) {
 
-    DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
-            "dd MMMM yyyy HH:mm:ss")
-            .withLocale(Locale.ENGLISH);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
+                        "dd MMMM yyyy HH:mm:ss")
+                .withLocale(Locale.ENGLISH);
 
-    Map<Integer, TreeMap<LocalDateTime, List<InvestmentGraphDataDTO>>> tempMap
-            = new TreeMap<>();
+        Map<Integer, TreeMap<LocalDateTime, List<InvestmentGraphDataDTO>>> tempMap
+                = new TreeMap<>();
 
-    for (Transaction txn : transactions) {
-        int monthNumber = txn.getDateTime().getMonthValue();
-        LocalDateTime dateTime = txn.getDateTime(); // full timestamp
+        for (Transaction txn : transactions) {
+            int monthNumber = txn.getDateTime().getMonthValue();
+            LocalDateTime dateTime = txn.getDateTime(); // full timestamp
 
-        InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
-                .balance(txn.getRemainingBalance())
-                .rawDateTime(dateTime)
-                .rawDate(dateTime.toLocalDate())
-                .date(dateTime.format(DATE_TIME_FORMATTER))
-                .build();
+            InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
+                    .balance(txn.getRemainingBalance())
+                    .rawDateTime(dateTime)
+                    .rawDate(dateTime.toLocalDate())
+                    .date(dateTime.format(dateTimeFormatter))
+                    .build();
 
-        tempMap
-                .computeIfAbsent(monthNumber, m -> new TreeMap<>())
-                .computeIfAbsent(dateTime, d -> new ArrayList<>())
-                .add(dto);
+            tempMap
+                    .computeIfAbsent(monthNumber, m -> new TreeMap<>())
+                    .computeIfAbsent(dateTime, d -> new ArrayList<>())
+                    .add(dto);
+        }
+
+        Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
+
+        tempMap.forEach((month, dateMap) -> {
+            String monthName = LocalDate.of(
+                            LocalDate.now().getYear(), month, DAY)
+                    .format(DateTimeFormatter.ofPattern("MMM"));
+
+            List<InvestmentGraphDataDTO> dtoList = new ArrayList<>();
+            dateMap.forEach((dt,
+                             list) -> dtoList.addAll(list));
+
+            // final deterministic sort: by exact timestamp,
+            // then by balance (or any tie-breaker)
+            dtoList.sort(Comparator
+                    .comparing(InvestmentGraphDataDTO::getRawDateTime)
+                    .thenComparing(Comparator.comparingDouble(
+                            d -> d.getBalance() == null ? 0.0 : d.getBalance()))
+            );
+
+            finalMap.put(monthName, dtoList);
+        });
+
+        return finalMap;
     }
 
-    Map<String, List<InvestmentGraphDataDTO>> finalMap = new LinkedHashMap<>();
 
-    tempMap.forEach((month, dateMap) -> {
-        String monthName = LocalDate.of(
-                LocalDate.now().getYear(), month, DAY)
-                .format(DateTimeFormatter.ofPattern("MMM"));
-
-        List<InvestmentGraphDataDTO> dtoList = new ArrayList<>();
-        dateMap.forEach((dt,
-        list) -> dtoList.addAll(list));
-
-        // final deterministic sort: by exact timestamp,
-        // then by balance (or any tie-breaker)
-        dtoList.sort(Comparator
-                .comparing(InvestmentGraphDataDTO::getRawDateTime)
-                .thenComparing(Comparator.comparingDouble(
- d -> d.getBalance() == null ? 0.0 : d.getBalance()))
-        );
-
-        finalMap.put(monthName, dtoList);
-    });
-
-    return finalMap;
-}
-
-
-
-
-
-/**     * Processes a list of investment daily history records
+    /**
+     * Processes a list of investment daily history records
      * to generate daily investment graph data.
      *
      * @param historyList the list of investment daily history records
      * @return a map with month names as keys and lists of
- *InvestmentGraphDataDTO as values
+     * InvestmentGraphDataDTO as values
      */
     public Map<String, List<InvestmentGraphDataDTO>> dailyInvestmentGraphData(
             final List<InvestmentDailyHistory> historyList) {
@@ -131,7 +142,7 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
                 InvestmentGraphDataDTO>> entry : tempMap.entrySet()) {
             int month = entry.getKey();
 
-            String monthName = LocalDate.of(YEAR, month, 5)
+            String monthName = LocalDate.of(YEAR, month, dayOfMonth)
                     .format(DateTimeFormatter.ofPattern("MMM"));
 
             finalMap.put(
@@ -148,15 +159,16 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
     }
 
 
-    /**     * Processes a map of portfolio history to generate
+    /**
+     * Processes a map of portfolio history to generate
      * daily combined investment graph data.
      *
      * @param portfolioHistory the map of portfolio history
      * @return a map with month names as keys and lists of
- * InvestmentGraphDataDTO as values
+     * InvestmentGraphDataDTO as values
      */
     public Map<String,
-  List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData(
+            List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData(
             final Map<LocalDate, Double> portfolioHistory) {
 
         // Temporary: monthNumber → (date → DTO)
@@ -206,7 +218,6 @@ public Map<String, List<InvestmentGraphDataDTO>> withdrawalTrendsGraphData(
 
         return finalMap;
     }
-
 
 
 }

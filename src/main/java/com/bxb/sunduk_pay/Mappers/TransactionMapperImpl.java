@@ -83,7 +83,7 @@ public class TransactionMapperImpl implements TransactionMapper {
         if (transaction.getIsInvestment()
                 && transaction.getTransactionLevel()
                 == TransactionLevel.INVESTED
-                && transaction.getTransactionType() == TransactionType.CREDIT){
+                && transaction.getTransactionType() == TransactionType.CREDIT) {
             transactionResponse.setFromWalletIcon("Investment");
         } else {
             transactionResponse.setFromWalletIcon(validations.getFromIconOfTxn(
