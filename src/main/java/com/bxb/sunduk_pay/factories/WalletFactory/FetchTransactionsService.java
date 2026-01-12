@@ -30,7 +30,7 @@ public class FetchTransactionsService implements WalletOperation {
     private final Validations validations;
     /** Mapper to convert transaction entities to response DTOs. **/
     private final TransactionMapper transactionMapper;
-
+/** Repository for transaction data access. **/
     private final TransactionRepository transactionRepository;
 
     /**

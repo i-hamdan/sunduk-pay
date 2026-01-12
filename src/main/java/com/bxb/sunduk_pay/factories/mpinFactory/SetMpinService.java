@@ -17,14 +17,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Log4j2
 @Service
-public class SetMpinService implements MpinOperation{
+public class SetMpinService implements MpinOperation {
     /** Service for MPIN encryption. */
     private final MpinEncryption mpinEncryption;
     /** Utility for validations. */
     private  final Validations validations;
     /** Repository for MPIN persistence. */
     private final MpinRepository repository;
-    /** validations for mpin*/
+    /** validations for mpin.*/
     private final MpinValidations mpinValidations;
     /**
      * Returns the MpinRequestType handled by this service.
@@ -70,8 +70,8 @@ public class SetMpinService implements MpinOperation{
 
         return MpinResponse.builder()
                 .title("MPIN set successfully.")
-                .message(" You can now use your new MPIN " +
-                        "to access your account and authorize transaction.")
+                .message(" You can now use your new MPIN "
+                        + "to access your account and authorize transaction.")
                 .build();
     }
 }

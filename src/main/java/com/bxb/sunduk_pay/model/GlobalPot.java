@@ -3,11 +3,9 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +45,12 @@ import java.util.List;
 })
 public class GlobalPot {
 
+    /** Length constant for description field. */
+    private static final int LENGTH_3000 = 3000;
+
+    /** Length constant for case title field. */
+    private static final int LENGTH_120 = 120;
+
     // --- 1. IDENTITY & OWNERSHIP ---
 
     /** Unique UUID string identifier for the Global Pot. */
@@ -63,7 +67,7 @@ public class GlobalPot {
     // --- 2. CAMPAIGN CORE DETAILS ---
 
     /** The headline or title of the fundraising case. */
-    @Column(nullable = false, length = 120)
+    @Column(nullable = false, length = LENGTH_120)
     private String caseTitle;
 
     /** The classification category (e.g., Medical, Education) for the case. */
@@ -88,7 +92,7 @@ public class GlobalPot {
 
     /** Comprehensive description providing details about
      *  the fundraising cause. */
-    @Column(length = 3000, columnDefinition = "TEXT")
+    @Column(length = LENGTH_3000, columnDefinition = "TEXT")
     private String description;
 
     // --- 3. BENEFICIARY & LOCATION ---
@@ -130,7 +134,8 @@ public class GlobalPot {
 
     // --- 5. MEDIA & VISUALS ---
     @Builder.Default
-    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<GlobalPotDocument> globalPotDocuments = new ArrayList<>();
     // --- 7. COLLECTIONS (BIDIRECTIONAL) ---
 
@@ -149,6 +154,7 @@ public class GlobalPot {
 
     // --- 1. IDENTITY & OWNERSHIP ---
 
+    /** List of admin users managing this pot. */
     @ManyToMany
     @JoinTable(
             name = "pot_administrators",
@@ -176,7 +182,7 @@ public class GlobalPot {
     /** Name of the person who created the pot. */
     private String createdBy;
 
-    /** Geographical location associated with the pot's creator */
+    /** Geographical location associated with the pot's creator. */
     private String location;
 
     /** Automatic timestamp of when the pot record was first created. */
@@ -188,13 +194,16 @@ public class GlobalPot {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
-    @OneToMany(mappedBy = "globalPotId", cascade = CascadeType.ALL, orphanRemoval = true)
+/** List of members associated with this global pot. */
+    @OneToMany(mappedBy = "globalPotId",
+            cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GlobalPotMembers> members;
 
 
-    /** Adds a document to the global pot and sets the bidirectional relationship. */
-    public void addDocument(GlobalPotDocument doc) {
+    /** Adds a document to the global pot and
+     * sets the bidirectional relationship. */
+    public void addDocument(
+            final GlobalPotDocument doc) {
         if (doc != null) {
             this.globalPotDocuments.add(doc);
             doc.setGlobalPot(this);

@@ -1,7 +1,11 @@
 package com.bxb.sunduk_pay.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -73,7 +73,8 @@ public class UpdateRiskLevelService implements InvestmentOperation {
      * @return response indicating success
      */
     @Override
-    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(
+            final InvestmentRequest investmentRequest) {
 
         User user = validations.getUserInfo(investmentRequest.getUuid());
         log.info("User validation successful for UUID: {}",
@@ -93,7 +94,7 @@ public class UpdateRiskLevelService implements InvestmentOperation {
                 investmentRequest.getSubWalletId());
 
         if (!subWallet.getIsInvested()
-                || !investment.isActive()){
+                || !investment.isActive()) {
             throw new InvestmentException(
                     "Cannot change risk level for inactive investment.");
         }
@@ -117,8 +118,8 @@ public class UpdateRiskLevelService implements InvestmentOperation {
                 riskLevel.toString());
 
 
-        InvestmentDailyHistory lastSnapshot =
-                dailyHistory.findTopByInvestmentOrderBySnapshotDateDesc(investment);
+        InvestmentDailyHistory lastSnapshot = dailyHistory
+                .findTopByInvestmentOrderBySnapshotDateDesc(investment);
 
 
         LocalDate snapshotDate;
@@ -126,8 +127,7 @@ public class UpdateRiskLevelService implements InvestmentOperation {
         if (lastSnapshot != null) {
             snapshotDate = lastSnapshot.getSnapshotDate();
             log.info("Using last P/L snapshot date: {}", snapshotDate);
-        }
-        else {
+        } else {
             snapshotDate = investment.getCreatedAt().toLocalDate();
             log.info(
                     "No P/L snapshot found. Using investment creation date: {}",
@@ -151,7 +151,7 @@ public class UpdateRiskLevelService implements InvestmentOperation {
 
 
         double currentValue = investment.getCurrentValue();
-        double recalculatedUnit = currentValue/newUnitValue;
+        double recalculatedUnit = currentValue / newUnitValue;
 
 
         investment.setUnits(recalculatedUnit);

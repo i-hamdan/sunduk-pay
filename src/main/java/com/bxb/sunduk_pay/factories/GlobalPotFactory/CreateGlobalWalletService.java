@@ -9,34 +9,30 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class CreateGlobalWalletService implements GlobalPotOperation {
 
+    /** Repository for Global Wallet operations. */
     private final GlobalWalletRepository globalWalletRepository;
+    /** Validations for Global Pot operations. */
     private final GlobalPotValidations globalPotValidations;
+    /** Mapper for Global Pot data transformations. */
     private final GlobalPotMapper globalPotMapper;
+    /** Repository for Global Pot operations. */
     private final GlobalPotRepository globalPotRepository;
 
-    public CreateGlobalWalletService(
-            GlobalWalletRepository globalWalletRepository,
-            GlobalPotValidations globalPotValidations,
-            GlobalPotMapper globalPotMapper,
-            GlobalPotRepository globalPotRepository
-    ) {
-        this.globalWalletRepository = globalWalletRepository;
-        this.globalPotValidations = globalPotValidations;
-        this.globalPotMapper = globalPotMapper;
-        this.globalPotRepository = globalPotRepository;
-    }
 
 
     /**
      * Specifies the type of Global Pot request this service handles.
      *
-     * @return the GlobalPotRequestType for verifying or creating a Global Wallet
+     * @return the GlobalPotRequestType for
+     * verifying or creating a Global Wallet
      */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
@@ -45,17 +41,20 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
 
     /**
      * Ensures that a Global Wallet exists for the specified Global Pot.
-     * If it does not exist, a new Global Wallet is created and linked to the Pot.
+     * If it does not exist, a new Global Wallet is created and
+     * linked to the Pot.
      *
      * @param request the request containing the Global Pot ID
      * @return a response indicating the result of the operation
      */
     @Override
     @Transactional
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) {
 
         // 1. Fetch and Validate the Pot existence
-        GlobalPot globalPot = globalPotValidations.getGlobalPot(request.getGlobalPotId());
+        GlobalPot globalPot = globalPotValidations
+                .getGlobalPot(request.getGlobalPotId());
 
         GlobalWallet globalWallet = new GlobalWallet();
 
@@ -77,7 +76,8 @@ public class CreateGlobalWalletService implements GlobalPotOperation {
 
         // 3. Return the specialized Wallet Response
         return GlobalPotResponse.builder().message(
-                "Global Wallet verified/created successfully").status("SUCCESS").build();
+                "Global Wallet verified/created successfully")
+                .status("SUCCESS").build();
     }
 
 

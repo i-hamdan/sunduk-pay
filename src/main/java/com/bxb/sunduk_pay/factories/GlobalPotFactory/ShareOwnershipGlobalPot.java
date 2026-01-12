@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+/**
+ * Service to handle sharing ownership of a global pot with another user.
+ */
 @Service
 @RequiredArgsConstructor
-public class ShareOwnershipGlobalPot implements GlobalPotOperation{
+public class ShareOwnershipGlobalPot implements GlobalPotOperation {
 
     /**
      * Validations for global pot operations.
@@ -25,17 +28,30 @@ public class ShareOwnershipGlobalPot implements GlobalPotOperation{
      * General validations utility.
      */
     private final Validations validations;
-    /** Repository to save User data */
+    /** Repository to save User data. */
     private final UserRepository userRepository;
 
+    /**
+     * Returns the type of global pot request this operation handles.
+     *
+     * @return GlobalPotRequestType associated with this operation.
+     */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.SHARE_OWNERSHIP;
     }
 
 
+    /**
+     * Shares ownership of a global pot with another user.
+     *
+     * @param request the request containing admin and target user UUIDs
+     * @return GlobalPotResponse indicating the result of the operation
+     * @throws IOException if an I/O error occurs during the operation
+     */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
 
         //Checking current admin info.
         User admin = validations.getUserInfo(request.getAdminUuid());

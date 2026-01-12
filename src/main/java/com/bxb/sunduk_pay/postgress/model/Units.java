@@ -33,7 +33,9 @@ import java.time.LocalDate;
 @Table(name = "units")
 public class Units {
 
+    /** Precision for the combined value field. */
     private static final int PRECISION = 30;
+    /** Scale for the combined value field. */
     private static final int SCALE = 15;
     /**
      * Unique identifier for the units record.

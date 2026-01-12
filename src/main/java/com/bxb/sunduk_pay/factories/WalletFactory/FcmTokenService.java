@@ -11,13 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Service class for updating FCM tokens for users.
+ */
 @Service
 @RestController
 @AllArgsConstructor
 @Slf4j
-/**
- * Service class for updating FCM tokens for users.
- */
 public class FcmTokenService implements WalletOperation {
 
     /** Validations utility for input validation and data retrieval. **/
@@ -39,14 +39,15 @@ public class FcmTokenService implements WalletOperation {
      * @return
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
 
-        User user=validations.getUserInfo(mainWalletRequest.getUuid());
+        User user = validations.getUserInfo(mainWalletRequest.getUuid());
         user.setFcmToken(mainWalletRequest.getFcmToken());
         userRepository.save(user);
         log.info("FCM Token updated for user: {}", mainWalletRequest.getUuid());
 
-        MainWalletResponse mainWalletResponse= MainWalletResponse.builder()
+        MainWalletResponse mainWalletResponse = MainWalletResponse.builder()
                 .message("FCM Token Updated Successfully")
                 .build();
         return mainWalletResponse;

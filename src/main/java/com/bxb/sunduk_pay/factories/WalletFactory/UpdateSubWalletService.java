@@ -4,10 +4,8 @@ import com.bxb.sunduk_pay.exception.CannotUpdateWalletException;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.UpdateWalletActionType;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Service to handle updates to SubWallets.
@@ -37,10 +34,7 @@ public class UpdateSubWalletService implements WalletOperation {
      * Repository for accessing MainWallet data.
      */
     private final MainWalletRepository mainWalletRepository;
-//    /**
-//     * Repository for accessing Transaction data.
-//     */
-//    private final TransactionRepository transactionRepository;
+
     /**
      * Validations class for various validations.
      */
@@ -99,7 +93,8 @@ public class UpdateSubWalletService implements WalletOperation {
         LocalDate oldTargetDate = (subWallet != null)
                 ? subWallet.getTargetDate() : null;
 
-        if (mainWalletRequest.getActionType() == UpdateWalletActionType.GOAL_AMOUNT) {
+        if (mainWalletRequest.getActionType()
+                == UpdateWalletActionType.GOAL_AMOUNT) {
             if (subWallet != null) {
                 log.info(
            "Updating goal amount of SubWallet [{}] under MainWallet [{}]",
@@ -135,7 +130,8 @@ public class UpdateSubWalletService implements WalletOperation {
                 );
             }
         }
-        if (mainWalletRequest.getActionType() == UpdateWalletActionType.GOAL_DATE) {
+        if (mainWalletRequest.getActionType()
+                == UpdateWalletActionType.GOAL_DATE) {
             if (subWallet != null) {
                 log.info(
                "Updating goal date of SubWallet [{}] under MainWallet [{}]",

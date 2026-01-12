@@ -77,7 +77,7 @@ public class DeleteSubWalletService implements WalletOperation {
             }
 
             log.debug(
-                    "Found SubWallet. subWalletId={}, subWalletName={}, balance={}",
+"Found SubWallet. subWalletId={}, subWalletName={}, balance={}",
                     subWallet.getSubWalletId(), subWallet.getSubWalletName(),
                     subWallet.getBalance());
 
@@ -98,14 +98,15 @@ public class DeleteSubWalletService implements WalletOperation {
                         .build();
             } else {
                 log.error(
-                        "Attempted to delete SubWallet [{}] with non-zero balance: {}",
+  "Attempted to delete SubWallet [{}] with non-zero balance: {}",
                         subWallet.getSubWalletName(),
                         subWallet.getBalance());
                 throw new CannotDeleteWalletException(
-                        "Cannot delete SubWallet " + subWallet.getSubWalletName()
+                        "Cannot delete SubWallet "
+                                + subWallet.getSubWalletName()
                                 + " because it contains a balance of "
                                 + subWallet.getBalance()
-                                + ". Please transfer or withdraw the funds first."
+                             + ". Please transfer or withdraw the funds first."
                 );
             }
         } catch (Exception e) {

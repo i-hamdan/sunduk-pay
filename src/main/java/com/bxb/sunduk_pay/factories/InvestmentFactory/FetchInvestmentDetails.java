@@ -35,8 +35,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FetchInvestmentDetails implements InvestmentOperation {
 
+    /** Decimal format for currency representation. */
     private static final DecimalFormat decimalFormat =
             new DecimalFormat("#,##0.00");
+
+    /** Constant for percentage calculations. */
+    private static final int HUNDRED = 100;
+    /** Constant for six months duration. */
+    private static final int SIX = 6;
+    /** Constant for one month duration. */
+    private static final int ONE = 1;
+
+
+
     /**
      * Stock-related validations.
      **/
@@ -90,18 +101,18 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         } else if ((InvestmentsFetchType.ALL_INVESTMENTS
                 .equals(investmentRequest.getInvestmentsFetchType()))) {
             return fetchAllInvestments(user);
-        } else throw new InvalidPayloadException(
-                "Invalid fetch investment action type provided."
-        );
+        } else {
+            throw new InvalidPayloadException(
+                "Invalid fetch investment action type provided.");
+        }
     }
 
 
     /**
      * Fetch pot investments for the user.
-     *
-     * @return InvestmentResponse containing the fetched pot investments
      * @Param user the user whose investments are to be fetched
-     * @Param investmentRequest the investment request containing fetch details
+     * @Param subWalletId the sub-wallet ID associated with the pot
+     * @return InvestmentResponse containing fetched pot investments
      */
     private InvestmentResponse fetchPotInvestments(
             final User user,
@@ -154,9 +165,8 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
     /**
      * Fetch all investments for the user.
-     *
-     * @return InvestmentResponse containing all fetched investments
      * @Param user the user whose investments are to be fetched
+     * @return InvestmentResponse containing all fetched investments
      */
     private InvestmentResponse fetchAllInvestments(final User user) {
 
@@ -186,7 +196,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         double totalNetProfitLoss = totalCurrentValue - totalInvested;
 
         LocalDate today = LocalDate.now();
-        LocalDate sixMonthsAgo = today.minusMonths(6);
+        LocalDate sixMonthsAgo = today.minusMonths(SIX);
 
         List<InvestmentDailyHistory> history =
                 investmentHistoryRepository
@@ -211,7 +221,9 @@ public class FetchInvestmentDetails implements InvestmentOperation {
                 .collect(Collectors.groupingBy(
                         InvestmentDailyHistory::getSnapshotDate,
                         TreeMap::new,
-                        Collectors.summingDouble(h -> h.getUnits() * h.getUnitPrice())
+       Collectors
+               .summingDouble(
+                   h -> h.getUnits() * h.getUnitPrice())
                 ));
 
 
@@ -237,21 +249,25 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
 
         // ---- inside fetchAllInvestments after 'sorted' and todayValue ----
-        LocalDate oneMonthTarget = today.minusMonths(1);
-        LocalDate sixMonthsTarget = today.minusMonths(6);
+        LocalDate oneMonthTarget = today.minusMonths(ONE);
+        LocalDate sixMonthsTarget = today.minusMonths(SIX);
 
 // try floorEntry for targets, else fallback to earliest entry
         Double oneMonthValue = valueAtOrBefore(sorted, oneMonthTarget);
-        if (oneMonthValue == null) oneMonthValue = sorted.firstEntry().getValue();
-
+        if (oneMonthValue == null) {
+            oneMonthValue = sorted.firstEntry().getValue();
+        }
         Double sixMonthsValue = valueAtOrBefore(sorted, sixMonthsTarget);
-        if (sixMonthsValue == null) sixMonthsValue = sorted.firstEntry().getValue();
+        if (sixMonthsValue == null) {
+            sixMonthsValue = sorted.firstEntry().getValue();
+        }
+        double gain1MonthPercent = (oneMonthValue == null
+                || oneMonthValue <= 0) ? 0
+                : ((todayValue - oneMonthValue) / oneMonthValue) * HUNDRED;
 
-        double gain1MonthPercent = (oneMonthValue == null || oneMonthValue <= 0) ? 0 :
-                ((todayValue - oneMonthValue) / oneMonthValue) * 100;
-
-        double gain6MonthsPercent = (sixMonthsValue == null || sixMonthsValue <= 0) ? 0 :
-                ((todayValue - sixMonthsValue) / sixMonthsValue) * 100;
+        double gain6MonthsPercent = (sixMonthsValue == null
+                || sixMonthsValue <= 0) ? 0
+                : ((todayValue - sixMonthsValue) / sixMonthsValue) * HUNDRED;
 
         return InvestmentResponse.builder()
                 .totalInvestedAmount(totalInvested)
@@ -265,20 +281,24 @@ public class FetchInvestmentDetails implements InvestmentOperation {
     }
 
     /**
-     * Helper method to get the value at or before a specific date from a TreeMap.
-     *
+     * Helper method to get the value at or before a specific
+     * date from a TreeMap.
      * @param map    The TreeMap containing date-value pairs.
      * @param target The target date to search for.
      * @return The value at or before the target date, or null if none found.
      */
-    private Double valueAtOrBefore(TreeMap<LocalDate, Double> map, LocalDate target) {
+    private Double valueAtOrBefore(
+            final TreeMap<LocalDate, Double> map,
+            final LocalDate target) {
         Map.Entry<LocalDate, Double> e = map.floorEntry(target);
         return (e != null) ? e.getValue() : null;
     }
 
 
 
-//    private double getNetCashflow(LocalDate start, LocalDate end, String userUuid) {
+//    private double getNetCashflow(LocalDate start,
+//    LocalDate end,
+//    String userUuid) {
 //        List<Transaction> txns =
 //                transactionRepository.findByUserUuidAndDateTimeBetween(
 //                userUuid, start.atStartOfDay(), end.plusDays(1)

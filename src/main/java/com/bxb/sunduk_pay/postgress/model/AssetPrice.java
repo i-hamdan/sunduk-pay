@@ -32,7 +32,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class AssetPrice {
 
+    /** Precision for the close price field. */
     private static final int PRECISION = 19;
+    /** Scale for the close price field. */
     private static final int SCALE = 4;
 
     /**

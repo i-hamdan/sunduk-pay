@@ -18,16 +18,21 @@ import java.util.Map;
 @Component
 public class GlobalPotOperationFactory {
 
-    // Map to store all implementations, keyed by their supported RequestType
-    private final Map<GlobalPotRequestType, GlobalPotOperation> operationMap = new HashMap<>();
+    /** A map to hold the association between GlobalPotRequestType
+     * and their corresponding GlobalPotOperation implementations.
+     */
+    private final Map<GlobalPotRequestType,
+            GlobalPotOperation> operationMap = new HashMap<>();
 
     /**
      * Autowires all beans that implement the GlobalPotOperation interface.
-     * This is a standard way in Spring to collect all strategy pattern implementations.
-     * * @param operations A list of all beans implementing GlobalPotOperation.
+     * This is a standard way in Spring to collect all strategy
+     * pattern implementations.
+     * @param operations A list of all beans implementing GlobalPotOperation.
      */
     @Autowired
-    public GlobalPotOperationFactory(List<GlobalPotOperation> operations) {
+    public GlobalPotOperationFactory(
+            final List<GlobalPotOperation> operations) {
         // Populate the map during factory initialization
         for (GlobalPotOperation operation : operations) {
             operationMap.put(operation.getGlobalPotRequestType(), operation);
@@ -35,16 +40,22 @@ public class GlobalPotOperationFactory {
     }
 
     /**
-     * Retrieves the correct GlobalPotOperation implementation based on the request type.
-     * * @param requestType The type of operation requested (e.g., CREATE, UPDATE, DELETE).
+     * Retrieves the correct GlobalPotOperation implementation based
+     * on the request type.
+     * @param requestType The type of operation requested
+     *                    (e.g., CREATE, UPDATE, DELETE).
      * @return The specific implementation of GlobalPotOperation.
-     * @throws UnsupportedOperationException if no handler is found for the given type.
+     * @throws UnsupportedOperationException if no handler is found
+     * for the given type.
      */
-    public GlobalPotOperation getOperation(GlobalPotRequestType requestType) {
+    public GlobalPotOperation getOperation(
+            final GlobalPotRequestType requestType) {
         GlobalPotOperation operation = operationMap.get(requestType);
 
         if (operation == null) {
-            throw new UnsupportedOperationException("No GlobalPotOperation handler found for RequestType: " + requestType);
+            throw new UnsupportedOperationException(
+                    "No GlobalPotOperation handler found for RequestType: "
+                            + requestType);
         }
 
         return operation;
@@ -53,10 +64,12 @@ public class GlobalPotOperationFactory {
     /**
      * Executes the requested operation using the factory pattern.
      * This method is often the one called by the main service layer.
-     * * @param request The incoming GlobalPotRequest containing the RequestType.
+     *  @param request The incoming GlobalPotRequest
+     *                 containing the RequestType.
      * @return The response from the specific operation handler.
      */
-    public GlobalPotResponse performOperation(GlobalPotRequest request) throws IOException {
+    public GlobalPotResponse performOperation(
+            final GlobalPotRequest request) throws IOException {
         GlobalPotRequestType requestType = request.getGlobalPotRequestType();
 
         GlobalPotOperation operation = getOperation(requestType);

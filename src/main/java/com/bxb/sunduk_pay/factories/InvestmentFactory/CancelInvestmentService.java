@@ -66,7 +66,8 @@ public class CancelInvestmentService implements InvestmentOperation {
      * @return InvestmentResponse indicating the result of the cancellation
      */
     @Override
-    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(
+            final InvestmentRequest investmentRequest) {
         try {
             // Validate user information before proceeding with cancellation
             User user = validations.getUserInfo(investmentRequest.getUuid());

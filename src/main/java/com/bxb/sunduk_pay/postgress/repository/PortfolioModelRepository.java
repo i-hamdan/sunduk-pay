@@ -10,5 +10,12 @@ import java.util.Optional;
  */
 public interface PortfolioModelRepository extends JpaRepository<
         PortfolioModel, Long> {
+    /**
+     * Finds a PortfolioModel entity by its name.
+     *
+     * @param name the name of the PortfolioModel
+     * @return an Optional containing the found PortfolioModel,
+     *         or empty if not found
+     */
     Optional<PortfolioModel> findByName(String name);
 }

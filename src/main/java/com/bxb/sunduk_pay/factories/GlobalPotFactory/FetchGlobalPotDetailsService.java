@@ -71,20 +71,20 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
             log.info("Fetching details for Global Pot ID: {}",
                     request.getGlobalPotId());
 
-            String redisKey = generateKeyUtil
-                    .getGlobalPotKey(request.getGlobalPotId());
-
-            log.info("Generated Redis Key: {}", redisKey);
-
-            GlobalPotResponse redisGlobalPotResponse = redisTemplate
-                    .opsForValue().get(redisKey);
-
-            if (redisGlobalPotResponse != null) {
-                log.info(
-         "Global Pot details found in Redis cache for key: {}",
-                        redisKey);
-                return redisGlobalPotResponse;
-            } else {
+//            String redisKey = generateKeyUtil
+//                    .getGlobalPotKey(request.getGlobalPotId());
+//
+//            log.info("Generated Redis Key: {}", redisKey);
+//
+//            GlobalPotResponse redisGlobalPotResponse = redisTemplate
+//                    .opsForValue().get(redisKey);
+//
+//            if (redisGlobalPotResponse != null) {
+//                log.info(
+//         "Global Pot details found in Redis cache for key: {}",
+//                        redisKey);
+//                return redisGlobalPotResponse;
+//            } else {
                 log.info(
 "Global Pot details not found in Redis. Fetching from database for ID: {}",
                         request.getGlobalPotId());
@@ -128,14 +128,14 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 });
                 globalPotResponse.setGlobalPotDocumentResponses(globalPotDocumentList);
 
-
-                redisTemplate.opsForValue()
-                        .set(redisKey, globalPotResponse, Duration.ofMinutes(5));
-                log.info(
-"Cached Global Pot details in Redis with key: {}", redisKey);
+//
+//                redisTemplate.opsForValue()
+//                        .set(redisKey, globalPotResponse, Duration.ofMinutes(5));
+//                log.info(
+//"Cached Global Pot details in Redis with key: {}", redisKey);
 
                 return globalPotResponse;
-            }
+//            }
         } catch (Exception e) {
             log.error("Error fetching global pot details: {}",
                     e.getMessage());

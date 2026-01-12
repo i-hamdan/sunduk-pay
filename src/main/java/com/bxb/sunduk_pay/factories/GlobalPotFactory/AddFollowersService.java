@@ -10,45 +10,36 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class AddFollowersService implements GlobalPotOperation {
 
     /**
      * Validation component used to fetch and validate user details.
      */
 
-    private Validations validations;
+    private final Validations validations;
     /**
      * Repository for performing Create operations on Global Pot entities.
      */
 
-    private GlobalPotRepository globalPotRepository;
+    private final GlobalPotRepository globalPotRepository;
     /**
      * Repository for managing follower records.
      */
 
-    private FollowerRepository followerRepository;
-
-    private final GlobalPotValidations globalPotValidations;
+    private final FollowerRepository followerRepository;
 
     /**
-     * Constructs the AddFollowersService with required dependencies.
-     *
-     * @param validations           validation utility for user-related checks
-     * @param globalPotRepository   repository for Global Pot data access
-     * @param followerRepository    repository for follower persistence
+     * Validation component for Global Pot specific validations.
      */
-    public AddFollowersService(Validations validations, GlobalPotRepository globalPotRepository,
-                               FollowerRepository followerRepository, GlobalPotValidations globalPotValidations) {
-        this.validations = validations;
-        this.globalPotRepository = globalPotRepository;
-        this.followerRepository = followerRepository;
-        this.globalPotValidations = globalPotValidations;
-    }
+    private final GlobalPotValidations globalPotValidations;
+
 
     /**
      * Tells factory that this service handles ADD_FOLLOWER request.
@@ -62,7 +53,8 @@ public class AddFollowersService implements GlobalPotOperation {
      * Perform add follower logic.
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) {
 
         log.info("Follow_Pot request | user={} pot={}",
                 request.getFollowerUser(),
@@ -75,7 +67,8 @@ public class AddFollowersService implements GlobalPotOperation {
         // Fetch Global Pot
         GlobalPot globalPot =
                 globalPotRepository.findById(request.getGlobalPotId())
-                .orElseThrow(() -> new RuntimeException("Global Pot not found"));
+                .orElseThrow(() -> new RuntimeException(
+                        "Global Pot not found"));
 
 
         // Check if already followed

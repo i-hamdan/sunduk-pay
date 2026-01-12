@@ -14,9 +14,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Random;
 
+/**
+ * Service class responsible for generating and sending OTPs
+ * as part of the MPIN operations.
+ */
 @Service
 @RequiredArgsConstructor
-public class GenerateOtp implements MpinOperation{
+public class GenerateOtp implements MpinOperation {
+
+    private static final int BOUNDS = 10000;
+
     /**
      * Mapper for MPIN-related data transformations.
      */
@@ -56,19 +63,19 @@ public class GenerateOtp implements MpinOperation{
        // generating otp
         String otp = String
                 .format("%04d", new Random()
-                        .nextInt(10000));
+                        .nextInt(BOUNDS));
           // saved otp in chache for 5 minutes
-            otpCache.put(user.getEmail(),otp);
+            otpCache.put(user.getEmail(), otp);
             // create otp event
         OtpEvent otpEvent = mpinMapper.toOtpEvent(user.getUuid(),
-                user.getEmail(), user.getFullName(),otp);
+                user.getEmail(), user.getFullName(), otp);
          // send otp event to kafka topic
-        kafkaTemplate.send("otp-topic",otpEvent);
+        kafkaTemplate.send("otp-topic", otpEvent);
 
         return MpinResponse.builder()
-                .message("A Verification code  has been sent to your " +
-                        "registered " +
-                        "email.")
+                .message("A Verification code  has been sent to your "
+                        + "registered "
+                        + "email.")
                 .build();
     }
 }

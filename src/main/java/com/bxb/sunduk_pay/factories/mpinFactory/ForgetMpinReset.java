@@ -10,9 +10,13 @@ import com.bxb.sunduk_pay.util.MpinRequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class to handle MPIN reset operations
+ *      when a user forgets their MPIN.
+ */
 @RequiredArgsConstructor
 @Service
-public class ForgetMpinReset implements MpinOperation{
+public class ForgetMpinReset implements MpinOperation {
     /**
      * Utility for validations.
      */
@@ -35,7 +39,8 @@ public class ForgetMpinReset implements MpinOperation{
     }
     /**
      * Performs the MPIN reset operation based on the provided request.
-     * @param mpinRequest the request containing necessary data for the operation.
+     * @param mpinRequest the request containing necessary data
+     *                    for the operation.
      * @return MpinResponse containing the result of the operation.
      */
 
@@ -56,8 +61,8 @@ public class ForgetMpinReset implements MpinOperation{
         return MpinResponse.builder()
                 .title("MPIN reset successfully.")
                 .message(
-                        " You can use it now to access your account" +
-                        "and authorize transactions.")
+                        " You can use it now to access your account"
+                                + "and authorize transactions.")
                 .build();
     }
 }

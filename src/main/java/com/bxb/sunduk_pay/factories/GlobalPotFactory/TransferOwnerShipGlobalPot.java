@@ -16,6 +16,12 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class TransferOwnerShipGlobalPot implements GlobalPotOperation {
+
+    /**
+     * Returns the type of global pot request this operation handles.
+     *
+     * @return GlobalPotRequestType.TRANSFER_OWNERSHIP
+     */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.TRANSFER_OWNERSHIP;
@@ -28,10 +34,19 @@ public class TransferOwnerShipGlobalPot implements GlobalPotOperation {
      * General validations utility.
      */
     private final Validations validations;
-    /** Repository to save User data */
+    /** Repository to save User data. */
     private final UserRepository userRepository;
+
+    /**
+     * Transfers ownership of the global pot to another user.
+     *
+     * @param request the request containing admin and target user UUIDs
+     * @return GlobalPotResponse indicating the result of the operation
+     * @throws IOException if an I/O error occurs during the operation
+     */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
         // checking currentAdmin Info
         User admin = validations.getUserInfo(request.getAdminUuid());
         // check if admin is admin

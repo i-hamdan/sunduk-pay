@@ -27,12 +27,15 @@ import java.util.UUID;
 
 /**
  * NEW INVESTMENT CREATION LOGIC USING:
- * 10-month old UNIT VALUE instead of today's NAV
+ * 10-month old UNIT VALUE instead of today's NAV.
  */
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class CreateInvestmentService implements InvestmentOperation {
+
+    /** Constant for ten. */
+    private static final int TEN = 10;
     /** validations class for subWallet.*/
     private final Validations validations;
     /** validation for investment Validations. */
@@ -45,11 +48,22 @@ public class CreateInvestmentService implements InvestmentOperation {
     private final TransactionRepository transactionRepository;
 
 
+    /**
+     * Returns the InvestmentRequestType handled by this service.
+     *
+     * @return InvestmentRequestType.CREATE_INVESTMENT
+     */
     @Override
     public InvestmentRequestType getInvestmentRequestType() {
         return InvestmentRequestType.CREATE_INVESTMENT;
     }
 
+    /**
+     * Perform new investment creation.
+     *
+     * @param request the investment request
+     * @return the investment response
+     */
     @Transactional
     @Override
     public InvestmentResponse perform(final InvestmentRequest request) {
@@ -67,7 +81,8 @@ public class CreateInvestmentService implements InvestmentOperation {
         log.info("Verifying sub-wallet: {}", subWallet);
 
         // 3) Balance validation
-        investmentValidations.ValidateBalanceForInvestment(subWallet.getBalance());
+        investmentValidations.ValidateBalanceForInvestment(
+                subWallet.getBalance());
 
         // 4) Ensure subwallet is not already invested
         validations.validateSubWalletForInvestment(subWallet);
@@ -75,8 +90,8 @@ public class CreateInvestmentService implements InvestmentOperation {
 
         // 5) Fetch portfolio model by risk level
         PortfolioModel portfolioModel =
-                investmentValidations.validatePortfolioModelByName
-                        (request.getRiskLevel().name());
+                investmentValidations.validatePortfolioModelByName(
+                        request.getRiskLevel().name());
 
         log.info("Fetched Portfolio Model: {}", portfolioModel.getName());
 
@@ -84,17 +99,19 @@ public class CreateInvestmentService implements InvestmentOperation {
         double potAmount = subWallet.getBalance();
 
         // 6)  BUY using 6-MONTH OLD UNIT VALUE
-        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(10);
+        LocalDate unitPurchaseDate = LocalDate.now().minusMonths(
+                TEN);
 
         // get Units of date
         Units unitRecord =
-               investmentValidations.getUnitsForDate(portfolioModel,unitPurchaseDate);
+               investmentValidations.getUnitsForDate(
+                       portfolioModel, unitPurchaseDate);
 
 
         double unitValue = unitRecord.getCombinedValue().doubleValue();
 
         log.info(" BUY UNIT VALUE FOR DATE = {} UNIT {} | Model = {}",
-                unitValue, portfolioModel.getName(),unitRecord);
+                unitValue, portfolioModel.getName(), unitRecord);
 
         // 7) Units purchased = amount / unitValue
         double unitsPurchased = potAmount / unitValue;
@@ -139,8 +156,8 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.INVESTED)
                 .dateTime(LocalDateTime.now())
-                .description("Invested " + potAmount +
-                        " using model " + portfolioModel.getName())
+                .description("Invested " + potAmount
+                        + " using model " + portfolioModel.getName())
                 .fromWallet(subWallet.getSubWalletName())
                 .fromWalletId(subWallet.getSubWalletId())
                 .toWallet(
@@ -153,7 +170,8 @@ public class CreateInvestmentService implements InvestmentOperation {
         transactionRepository.save(transaction);
 
         return InvestmentResponse.builder()
-                .message("Great Job! Your investment is now active and growing.")
+                .message(
+                     "Great Job! Your investment is now active and growing.")
                 .isCancelInvestment(false)
                 .build();
     }

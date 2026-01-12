@@ -77,10 +77,13 @@ public class FetchWalletService implements WalletOperation {
                 .map(subWallet -> {
                     if(subWallet.getIsInvested()) {
                         Investment investment = investmentValidation
-                                .getInvestmentBySubWalletId(subWallet.getSubWalletId());
-                        subWallet.setGainOrLossPercentage(investment.getProfitLossPercentage()
+                                .getInvestmentBySubWalletId(
+                                        subWallet.getSubWalletId());
+                        subWallet.setGainOrLossPercentage(
+                                investment.getProfitLossPercentage()
                                 .toString());
-                        subWallet.setRiskLevel(investment.getRiskLevel().toString());
+                        subWallet.setRiskLevel(investment
+                                .getRiskLevel().toString());
                         return subWallet;
                     } else {
                         return subWallet;

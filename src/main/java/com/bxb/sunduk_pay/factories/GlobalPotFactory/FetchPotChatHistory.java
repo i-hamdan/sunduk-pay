@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,6 +32,10 @@ import java.util.List;
 @Log4j2
 @RequiredArgsConstructor
 public class FetchPotChatHistory implements GlobalPotOperation {
+
+    /** Constant for five. **/
+    private static final int FIVE = 5;
+
     /**
      * Redis template for fetching group chat message responses.
      */
@@ -75,11 +78,22 @@ public class FetchPotChatHistory implements GlobalPotOperation {
      */
     private final GenerateKeyUtil generateKeyUtil;
 
+    /**
+     * Returns the type of global pot request this operation handles.
+     * @return GlobalPotRequestType.FETCH_GROUP_CHAT_HISTORY
+     */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.FETCH_GROUP_CHAT_HISTORY;
     }
 
+    /**
+     * Fetches the chat history for a global pot,
+     * including both chat messages and transactions.
+     * @param request the global pot request
+     * @return the global pot response with chat history
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     public GlobalPotResponse perform(
             final GlobalPotRequest request) throws IOException {
@@ -120,10 +134,12 @@ public class FetchPotChatHistory implements GlobalPotOperation {
                     .toGroupChatMessageResponseList(groupChatMessagesFromDB);
 
             if (!groupChatMessages.isEmpty()) {
-                messageResponseRedisTemplate.opsForList().rightPushAll(groupChatKey,
-                        globalPotMapper.toGroupChatMessageResponseList(
+                messageResponseRedisTemplate.opsForList().rightPushAll(
+                        groupChatKey, globalPotMapper
+                                .toGroupChatMessageResponseList(
                                 groupChatMessagesFromDB));
-                messageResponseRedisTemplate.expire(groupChatKey, Duration.ofMinutes(5));
+                messageResponseRedisTemplate.expire(groupChatKey,
+                        Duration.ofMinutes(FIVE));
                 log.info("Cached {} chat messages to Redis for pot {}",
                         groupChatMessages.size(),
                         request.getGlobalPotId());
@@ -157,7 +173,8 @@ public class FetchPotChatHistory implements GlobalPotOperation {
             if (!groupTransactions.isEmpty()) {
                 transactionRedisTemplate.opsForList().rightPushAll(
                         groupTransactionKey, groupTransactions);
-                transactionRedisTemplate.expire(groupTransactionKey, Duration.ofMinutes(5));
+                transactionRedisTemplate.expire(groupTransactionKey,
+                        Duration.ofMinutes(FIVE));
                 log.info("Cached {} transactions to Redis for pot {}",
                         groupTransactions.size(),
                         request.getGlobalPotId());

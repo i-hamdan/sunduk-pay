@@ -116,8 +116,7 @@ public class CreateSubwalletService implements WalletOperation {
         return MainWalletResponse.builder()
                 .message("Sub wallet created successfully")
                 .build();
-    }
-      catch (Exception e) {
+    } catch (Exception e) {
     log.error("Failed to create SubWallet for User UUID: {}. "
             + "Reason: {}", mainWalletRequest.getUuid(), e.getMessage());
     throw e;

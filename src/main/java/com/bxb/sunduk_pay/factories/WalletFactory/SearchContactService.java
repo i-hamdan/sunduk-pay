@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-@Service
-@Log4j2
-@RequiredArgsConstructor
 /**
  * Service to handle searching contacts by phone number.
  */
+@Service
+@Log4j2
+@RequiredArgsConstructor
 public class SearchContactService implements WalletOperation {
 
     /** Repository for accessing contact data. */
@@ -36,7 +36,8 @@ public class SearchContactService implements WalletOperation {
      * @return MainWalletResponse containing the result of the operation.
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
         String phone = mainWalletRequest.getPhone();
         log.info("Searching contact for phone: {}", phone);
 

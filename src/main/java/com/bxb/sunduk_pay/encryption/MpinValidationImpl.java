@@ -21,7 +21,7 @@ import java.util.Optional;
 @Log4j2
 @RequiredArgsConstructor
 @Component
-public class MpinValidationImpl implements MpinValidations {
+public final class MpinValidationImpl implements MpinValidations {
     /***
      * Time constants for lock duration calculations.
      */

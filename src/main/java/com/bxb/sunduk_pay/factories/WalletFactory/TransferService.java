@@ -147,8 +147,7 @@ public class  TransferService implements WalletOperation {
                         previousSourceWalletBalance,
                         previousTargetWalletBalance,
                         mainWalletRequest.getMpin());
-            }
-            else if (sourceExists && !targetExists) {
+            } else if (sourceExists && !targetExists) {
                 log.info("Processing external outgoing transfer");
 
                 return handleExternalOutGoingTransfer(sourceWallet,
@@ -157,8 +156,7 @@ public class  TransferService implements WalletOperation {
                         user,
                         mainWalletRequest.getMpin()
                 );
-            }
-            else if (!sourceExists && targetExists) {
+            } else if (!sourceExists && targetExists) {
                 log.info("Processing external incoming transfer");
 
                 return handleExternalIncomingTransfer(user,
@@ -212,6 +210,7 @@ public class  TransferService implements WalletOperation {
      * @param targetWallet    the wallet receiving the funds,
      * @param amount          the amount to be transferred,
      * @param user            the user initiating the transfer
+     * @Param mpin            the MPIN for authentication
      * @return MainWalletResponse with transfer result
      */
     private MainWalletResponse handleExternalOutGoingTransfer(
@@ -222,9 +221,9 @@ public class  TransferService implements WalletOperation {
             final String mpin) {
         log.info("Processing outgoing transfer, Amount: {}",
                 amount);
-        validations.validateBalance(sourceSubWallet.getBalance(),amount);
+        validations.validateBalance(sourceSubWallet.getBalance(), amount);
         /* Validate MPIN for payment */
-        mpinValidations.validateMpin(user.getUuid(),mpin);
+        mpinValidations.validateMpin(user.getUuid(), mpin);
         return paymentService.createCheckoutSession(user.getUuid(),
                 amount,
                 TransactionType.DEBIT,
@@ -245,6 +244,7 @@ public class  TransferService implements WalletOperation {
      *                                    wallet before transfer,
      * @param previousTargetWalletBalance the balance of the target
      *                                    wallet before transfer
+     * @param mpin                        the MPIN for authentication
      * @return MainWalletResponse with transfer result
      *
      */
@@ -258,7 +258,7 @@ public class  TransferService implements WalletOperation {
             final Double previousTargetWalletBalance,
             final String mpin) {
 
-        mpinValidations.validateMpin(user.getUuid(),mpin);
+        mpinValidations.validateMpin(user.getUuid(), mpin);
         return internalTransferService
                 .doInternalTransfer(user,
                         mainWallet,

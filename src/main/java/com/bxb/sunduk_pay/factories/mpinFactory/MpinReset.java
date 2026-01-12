@@ -10,9 +10,12 @@ import com.bxb.sunduk_pay.util.MpinRequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class for handling MPIN reset operations.
+ */
 @Service
 @RequiredArgsConstructor
-public class MpinReset implements MpinOperation{
+public class MpinReset implements MpinOperation {
 
     /*** Repository for MPIN data. */
     private final MpinRepository mpinRepository;
@@ -27,6 +30,12 @@ public class MpinReset implements MpinOperation{
         return MpinRequestType.RESET_MPIN;
     }
 
+    /**
+     * Performs the MPIN reset operation.
+     *
+     * @param mpinRequest the MPIN request containing user details
+     * @return MpinResponse indicating the result of the operation
+     */
     @Override
     public MpinResponse perform(final MpinRequest mpinRequest) {
         // Validate the UUID and retrieve the corresponding MPIN record.
@@ -35,7 +44,8 @@ public class MpinReset implements MpinOperation{
         mpinValidations.validateMpin(mpinRequest.getUuid(),
                 mpinRequest.getMpin());
         // Encrypt the new MPIN.
-        String encryptMpin = mpinEncryption.encryptMpin(mpinRequest.getNewMpin());
+        String encryptMpin = mpinEncryption.encryptMpin(
+                mpinRequest.getNewMpin());
         // Set the new MPIN for the user.
         mpin.setMpin(encryptMpin);
         mpin.setLockedUntil(null);
@@ -46,8 +56,8 @@ public class MpinReset implements MpinOperation{
         return MpinResponse.builder()
                 .title("MPIN Change successfully.")
                 .message(
-                        " You can now  use your new MPIN to access your " +
-                        "account and authorize transactions.")
+                        " You can now  use your new MPIN to access your "
+                                + "account and authorize transactions.")
                 .build();
 
     }

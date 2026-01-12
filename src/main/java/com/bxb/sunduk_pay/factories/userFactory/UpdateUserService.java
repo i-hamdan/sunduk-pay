@@ -19,20 +19,20 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class UpdateUserService implements UserOperation {
     /**
-     * Validations instance for user validation
+     * Validations instance for user validation.
      */
     private final Validations validations;
     /**
-     * MpinValidations instance for mpin validation
+     * MpinValidations instance for mpin validation.
      */
     private final MpinValidations mpinvalidations;
 /**
-     * UserMapper for converting between User entities and requests
+     * UserMapper for converting between User entities and requests.
      */
 
     private final UserMapper mapper;
     /**
-     * UserRepository for database operations
+     * UserRepository for database operations.
      */
     private final UserRepository userRepository;
 /**
@@ -58,7 +58,7 @@ public class UpdateUserService implements UserOperation {
 
         User update = mapper.toUpdate(userRequest, user);
 
-        log.info("updated User info of user  " +user.getFullName());
+        log.info("updated User info of user  " + user.getFullName());
         userRepository.save(update);
 
         return UserResponse.builder()

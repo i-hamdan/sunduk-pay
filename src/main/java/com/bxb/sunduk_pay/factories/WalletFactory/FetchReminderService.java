@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class FetchReminderService implements WalletOperation{
+public class FetchReminderService implements WalletOperation {
 
     /** Repository for accessing reminder data. */
     private final ReminderRepository reminderRepository;
@@ -45,7 +45,8 @@ public class FetchReminderService implements WalletOperation{
      * @return
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
 
         // Determine sort direction
             Sort.Direction direction;
@@ -60,12 +61,13 @@ public class FetchReminderService implements WalletOperation{
                     Sort.by(direction, mainWalletRequest.getSortBy()));
 
             // Fetch reminders with pagination and sorting
-        List<Reminder> reminderList = reminderRepository.findByUserUuidAndContactNumber(mainWalletRequest.getUuid(),
+        List<Reminder> reminderList = reminderRepository
+                .findByUserUuidAndContactNumber(mainWalletRequest.getUuid(),
                 mainWalletRequest.getContactNumber(), pageable);
 
         // Map Reminder entities to ReminderResponse DTOs
-        List<ReminderResponse> list = reminderList.stream().map
-                (reminderMapper::toReminderResponse).toList();
+        List<ReminderResponse> list = reminderList.stream().map(
+                reminderMapper::toReminderResponse).toList();
 
         // Build and return the response
         return MainWalletResponse.builder()

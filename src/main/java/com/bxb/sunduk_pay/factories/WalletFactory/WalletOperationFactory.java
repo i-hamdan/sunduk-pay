@@ -25,7 +25,8 @@ public class WalletOperationFactory {
     /**
      * Map to hold RequestType to WalletOperation mappings.
      */
-    private Map<RequestType, WalletOperation> walletServiceMap = new HashMap<>();
+    private Map<RequestType,
+            WalletOperation> walletServiceMap = new HashMap<>();
 
     /**
      * Initialize the factory by populating the map with

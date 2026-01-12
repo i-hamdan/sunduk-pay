@@ -8,9 +8,12 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class to validate OTPs.
+ */
 @Service
 @RequiredArgsConstructor
-public class ValidateOtp implements MpinOperation{
+public class ValidateOtp implements MpinOperation {
     /**
      * Cache to store OTPs temporarily.
      */
@@ -26,7 +29,7 @@ public class ValidateOtp implements MpinOperation{
     }
 
     /**
-     * Performs the OTP validation operation
+     * Performs the OTP validation operation.
      * @param mpinRequest the request containing
      *                          necessary data for the operation.
      * @return MpinResponse containing the result of the operation.
@@ -45,9 +48,9 @@ public class ValidateOtp implements MpinOperation{
                     .build();
         } else {
             // throw exception for invalid otp
-            throw new InvalidMpinException("Invalid code.please check your" +
-                    " email for the correct code " +
-                    "and re entre.");
+            throw new InvalidMpinException("Invalid code.please check your"
+                    + " email for the correct code "
+                    + "and re entre.");
         }
     }
 }

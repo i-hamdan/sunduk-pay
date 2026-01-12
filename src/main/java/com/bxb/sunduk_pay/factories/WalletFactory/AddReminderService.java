@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 /**
  * Service to handle adding reminders.
@@ -40,10 +39,11 @@ public class AddReminderService implements WalletOperation {
      * @return
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
 
-        User user= validations.getUserInfo(mainWalletRequest.getUuid());
-        Reminder reminder= Reminder.builder()
+        User user = validations.getUserInfo(mainWalletRequest.getUuid());
+        Reminder reminder = Reminder.builder()
                 .amount(mainWalletRequest.getAmount())
                 .startDate(mainWalletRequest.getStartDate())
                 .duration(mainWalletRequest.getDuration())
@@ -58,16 +58,16 @@ public class AddReminderService implements WalletOperation {
 
         // Set reminder time to 12:00 AM if start date is today
         LocalDate today = LocalDate.now();
-        LocalDateTime todayHours12 = LocalDateTime.now().withHour(0).withMinute(0);
-        if(reminder.getStartDate().isEqual(today)){
+        LocalDateTime todayHours12 = LocalDateTime.now()
+                .withHour(0).withMinute(0);
+        if (reminder.getStartDate().isEqual(today)) {
             reminder.setLocalDateTime(todayHours12);
         }
 
         reminderRepository.save(reminder);
-        MainWalletResponse mainWalletResponse= MainWalletResponse.builder()
+        return MainWalletResponse.builder()
                 .status("SUCCESS")
                 .message("Reminder added successfully")
                 .build();
-        return mainWalletResponse;
     }
 }

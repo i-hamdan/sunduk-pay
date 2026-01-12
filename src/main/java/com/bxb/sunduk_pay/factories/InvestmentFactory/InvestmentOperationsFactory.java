@@ -26,7 +26,7 @@ public class InvestmentOperationsFactory {
     /**
      * Initializes the investment operation map after construction.
      */
-    private Map<InvestmentRequestType,InvestmentOperation>
+    private Map<InvestmentRequestType, InvestmentOperation>
             investmentOperationMap = new HashMap<>();
 
     /**

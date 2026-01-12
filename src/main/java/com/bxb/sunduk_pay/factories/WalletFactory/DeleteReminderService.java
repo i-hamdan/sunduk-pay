@@ -9,14 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-@Log4j2
-
 /**
  * Service to handle deleting reminders.
  */
-public class DeleteReminderService implements WalletOperation{
+@Service
+@RequiredArgsConstructor
+@Log4j2
+public class DeleteReminderService implements WalletOperation {
 
     /** Repository for accessing reminder data. */
     private final ReminderRepository reminderRepository;
@@ -34,7 +33,8 @@ public class DeleteReminderService implements WalletOperation{
      * @return
      */
     @Override
-    public MainWalletResponse perform(MainWalletRequest mainWalletRequest) {
+    public MainWalletResponse perform(
+            final MainWalletRequest mainWalletRequest) {
         try {
             Reminder reminder = reminderRepository.findByReminderId(
                     mainWalletRequest.getReminderId());
@@ -56,8 +56,8 @@ public class DeleteReminderService implements WalletOperation{
                     e.getMessage(), e);
             return MainWalletResponse.builder()
                     .status("FAILURE")
-                    .message("Unexpected error occurred while deleting " +
-                            "reminder")
+                    .message("Unexpected error occurred while deleting "
+                            + "reminder")
                     .build();
         }
     }
