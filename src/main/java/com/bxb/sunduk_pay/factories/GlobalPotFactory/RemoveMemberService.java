@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
@@ -87,8 +88,10 @@ public class RemoveMemberService implements GlobalPotOperation {
                 targetMember.getUuid());
 
         GlobalPotMembers member =
-                globalPotMembersRepository.findByUserIdAndGlobalPotId(
-                        targetMember, globalPot);
+                globalPotMembersRepository.findByUserAndGlobalPot(
+                        targetMember, globalPot).orElseThrow(
+                                ()-> new ResourceNotFoundException(
+                                        "Membership record not found"));
 
         if (member == null) {
             log.warn("RemoveMember failed | user not a member |" +

@@ -195,7 +195,7 @@ public class GlobalPot {
     private LocalDateTime updatedAt;
 
 /** List of members associated with this global pot. */
-    @OneToMany(mappedBy = "globalPotId",
+    @OneToMany(mappedBy = "globalPot",
             cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GlobalPotMembers> members;
 

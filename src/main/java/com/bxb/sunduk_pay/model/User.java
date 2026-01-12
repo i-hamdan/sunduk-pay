@@ -26,7 +26,7 @@ public class User {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String  uuid;
+    private String uuid;
 /**
 * Full name of the user.
  */
@@ -118,7 +118,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoles userRole;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<GlobalPotMembers> globalPotMemberships;
 
 

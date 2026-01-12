@@ -3,12 +3,12 @@ package com.bxb.sunduk_pay.exception;
 /**
  * Exception thrown when a user is blocked.
  */
-public class UserIsBlocked extends RuntimeException {
+public class UserIsBlockedException extends RuntimeException {
     /**
      * Constructor for UserIsBlocked exception.
      * @param message
      */
-    public UserIsBlocked(String message) {
+    public UserIsBlockedException(String message) {
         super(message);
     }
 }

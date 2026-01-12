@@ -4,7 +4,6 @@ import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.UserRoles;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -35,8 +34,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      */
     private final ContributerRepository contributerRepository;
 
-
-    private final GlobalPotBlockedUserRepository globalPotBlockedUserRepository;
 
     private final GlobalPotMembersRepository globalPotMembersRepository;
 
@@ -129,45 +126,23 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
     }
 
-    @Override
-    public void validateNotAlreadyBlocked(String globalPotId, String userUuid) {
-        if (globalPotBlockedUserRepository
-                .existsByGlobalPotGlobalPotIdAndUserUuid(
-                        globalPotId, userUuid)) {
-
-            throw new ResourceNotFoundException(
-                    "User is already blocked in this Global Pot"
-            );
-        }
-    }
-
-    @Override
-    public void validateUserNotBlocked(String globalPotId, String userUuid) {
-        if (globalPotBlockedUserRepository
-                .existsByGlobalPotGlobalPotIdAndUserUuid(
-                        globalPotId, userUuid)) {
-
-            throw new UserIsBlocked(
-                    "user is blocked in this Global Pot" + userUuid
-            );
-        }
-    }
 
     @Override
     public void ensureUserIsMember(User userId, GlobalPot globalPotId) {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
-                        .existsByUserIdAndGlobalPotId(userId, globalPotId);
+                        .existsByUserAndGlobalPot(userId, globalPotId);
 
         if (isAlreadyMember) {
 
             return;
         }
         GlobalPotMembers member = GlobalPotMembers.builder()
-                .userId(userId)
-                .globalPotId(globalPotId)
+                .user(userId)
+                .globalPot(globalPotId)
                 .userRoles(userId.getUserRole())
+                .isBlocked(false)
                 .build();
 
         globalPotMembersRepository.save(member);
@@ -178,7 +153,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
-                        .existsByUserIdAndGlobalPotId(userId, globalPotId);
+                        .existsByUserAndGlobalPot(
+                                userId, globalPotId);
 
         if (isAlreadyMember) {
             throw new UserAlreadyExist(
@@ -189,13 +165,27 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
 
         GlobalPotMembers member = GlobalPotMembers.builder()
-                .userId(userId)
-                .globalPotId(globalPotId)
+                .user(userId)
+                .globalPot(globalPotId)
                 .userRoles(userId.getUserRole())
                 .build();
 
         globalPotMembersRepository.save(member);
     }
+
+    @Override
+    public GlobalPotMembers getMemberByUuidAndGlobalPotId(
+            final User userUuid,
+            final GlobalPot globalPotId) {
+        return globalPotMembersRepository.findByUserAndGlobalPot(
+                userUuid,globalPotId).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        "Member not found with UUID: "
+                                + userUuid.getUuid() + " in Global Pot ID: "
+                                + globalPotId.getGlobalPotId()));
+    }
+
+
 }
 
 

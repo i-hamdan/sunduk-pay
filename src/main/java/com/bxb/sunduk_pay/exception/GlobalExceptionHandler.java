@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.exception;
 
-import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -561,14 +559,14 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(value = UserIsBlocked.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = UserIsBlockedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleUserIsBlockedException(
-            final UserIsBlocked e,
+            final UserIsBlockedException e,
             final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
 

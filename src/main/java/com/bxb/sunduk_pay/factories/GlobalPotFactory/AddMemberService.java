@@ -82,9 +82,6 @@ public class AddMemberService implements GlobalPotOperation {
         log.info("Target user fetched successfully | userUuid={}",
                 targetUser.getUuid());
 
-        GlobalPotMembers member =
-                globalPotMembersRepository.findByUserIdAndGlobalPotId(
-                        targetUser, globalPot);
 
             globalPotValidations.ensureUserIsMemberByAdmin(targetUser, globalPot);
             log.info("User added as member | userUuid={} globalPotId={}",
