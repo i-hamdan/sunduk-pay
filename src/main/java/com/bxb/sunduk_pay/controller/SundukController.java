@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.controller;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.response.UserResponse;
+import com.bxb.sunduk_pay.service.AuthenticationSessionService;
 import com.bxb.sunduk_pay.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +38,11 @@ public class SundukController {
      */
     private final UserMapper userMapper;
 
+    /**
+     * Service for authorised session operation
+     */
+    private final AuthenticationSessionService authenticationSessionService;
+
 
     /**
      * Handles custom login via OIDC.
@@ -66,6 +72,7 @@ public class SundukController {
         boolean isMpinCreated = dbUser.getIsMpinCreated();
         String phoneNumber = dbUser.getPhoneNumber();
 
+        authenticationSessionService.saveSession(session.getId(),dbUser);
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
                 + "&email=" + URLEncoder.encode(user.getEmail(),
