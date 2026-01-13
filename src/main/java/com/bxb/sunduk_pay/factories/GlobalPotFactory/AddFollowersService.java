@@ -88,7 +88,8 @@ public class AddFollowersService implements GlobalPotOperation {
                 .globalPot(globalPot)
                 .build();
         followerRepository.save(follower);
-        globalPotValidations.ensureUserIsMember(followerUser,globalPot);
+        globalPotValidations.ensureUserIsMember(followerUser,
+                globalPot);
 
         return GlobalPotResponse.builder()
                 .message("Gloable Pot Followed Successfully")

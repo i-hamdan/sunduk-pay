@@ -365,7 +365,8 @@ public class AddContributerService implements GlobalPotOperation {
         globalWalletRepository.save(globalWallet);
         globalPotRepository.save(globalPot);
         contributerRepository.save(contributor);
-        globalPotValidations.ensureUserIsMember(user, globalPot);
+        globalPotValidations.ensureUserIsMember(user,
+                globalPot);
         log.info(
 "Contributor added successfully | userId={} globalPotId={} amount={}",
                 request.getUserContributorId(),

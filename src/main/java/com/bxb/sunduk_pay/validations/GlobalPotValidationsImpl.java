@@ -132,7 +132,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
-                        .existsByUserAndGlobalPot(userId, globalPotId);
+                        .existsByUserAndGlobalPot(userId,
+                                globalPotId);
 
         if (isAlreadyMember) {
 
@@ -149,12 +150,14 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
     }
 
     @Override
-    public void ensureUserIsMemberByAdmin(User userId, GlobalPot globalPotId) {
+    public void ensureUserIsMemberByAdmin(User userId,
+                                          GlobalPot globalPotId) {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
                         .existsByUserAndGlobalPot(
-                                userId, globalPotId);
+                                userId,
+                                globalPotId);
 
         if (isAlreadyMember) {
             throw new UserAlreadyExist(
