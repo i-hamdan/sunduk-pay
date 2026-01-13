@@ -136,7 +136,8 @@ public enum GlobalPotRequestType {
     /**
      *  Admin can remove member in global pot.
      */
-    REMOVE_MEMBER
+    REMOVE_MEMBER,
 
+    DRAFT_POT;
 
     }

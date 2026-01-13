@@ -119,6 +119,8 @@ public class GlobalPotRequest {
     // location filter
     private String location;
 
+    private Creator creator;
+
     // target user to add to admin list
     private String targetUserToAdd;
     // target user to remove from admin list

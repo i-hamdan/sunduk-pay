@@ -3,11 +3,7 @@ package com.bxb.sunduk_pay.Mappers;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.GlobalPotTileDto;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalWallet;
-import com.bxb.sunduk_pay.model.Contributor;
-import com.bxb.sunduk_pay.model.GroupChatMessage;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
@@ -74,13 +70,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
 
-        pot.setAdministrators(request.getAdministrators());
-        pot.setBeneficiaryName(request.getBeneficiaryName());
-        pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
-        pot.setCreatedByAdmin(request.getCreatedByAdmin());
-        pot.setCreatedForSelf(request.getCreatedForSelf());
-        pot.setCreatedBy(request.getCreatedBy());
-        pot.setLocation(request.getLocation());
+       pot.setAdministrators(request.getAdministrators());
+       pot.setBeneficiaryName(request.getBeneficiaryName());
+       pot.setRelationToBeneficiary(request.getRelationToBeneficiary());
+       pot.setCreatedByAdmin(request.getCreatedByAdmin());
+       pot.setCreatedForSelf(request.getCreatedForSelf());
+       pot.setCreatedBy(request.getCreator().getCreatedBy());
+       pot.setDesignation(request.getCreator().getDesignation());
+       pot.setLocation(request.getLocation());
 
         // --- 2. Geolocation ---
         pot.setAddress(request.getAddress());
@@ -101,8 +98,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         if (request.getTestimonials() != null) {
             pot.setTestimonials(request.getTestimonials().stream()
                     .map(req -> {
-                        com.bxb.sunduk_pay.model.Testimonial t
-                                = testimonialMapper.toEntity(req);
+                        Testimonial t = testimonialMapper.toEntity(req);
                         t.setGlobalPot(pot);
                         return t;
                     }).collect(Collectors.toList()));

@@ -42,7 +42,7 @@ public interface GlobalPotMapper {
      * @param request the GlobalPotRequest containing wallet details
      * @return the corresponding GlobalWallet entity
      */
-    GlobalWallet toEntityWallet(GlobalPotRequest request);
+    GlobalWallet toEntityWallet(final GlobalPotRequest request);
 
     /**
      * Converts a GlobalPotRequest to a Contributor entity.

@@ -3,9 +3,11 @@ package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.*;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -67,12 +69,11 @@ public class GlobalPot {
     // --- 2. CAMPAIGN CORE DETAILS ---
 
     /** The headline or title of the fundraising case. */
-    @Column(nullable = false, length = LENGTH_120)
+    @Column(length = 120)
     private String caseTitle;
 
     /** The classification category (e.g., Medical, Education) for the case. */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private CaseCategory caseCategory;
 
     /** The geographical or social reach of the pot
@@ -82,7 +83,6 @@ public class GlobalPot {
 
     /** Specific requirement type needed for the case validation. */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private CaseRequirementType caseRequirementType;
 
     /** The lifecycle status of the pot
@@ -98,23 +98,18 @@ public class GlobalPot {
     // --- 3. BENEFICIARY & LOCATION ---
 
     /** Legal name of the individual or entity receiving the funds. */
-    @Column(nullable = false)
     private String beneficiaryName;
 
     /** The relationship between the pot creator (admin) and the beneficiary. */
-    @Column(nullable = false)
     private String relationToBeneficiary;
 
     /** Physical address associated with the case for verification purposes. */
-    @Column(nullable = false)
     private String address;
 
     /** City where the case or beneficiary is located. */
-    @Column(nullable = false)
     private String city;
 
     /** Country where the case or beneficiary is located. */
-    @Column(nullable = false)
     private String country;
 
     // --- 4. FINANCIAL TRACKING ---
@@ -182,7 +177,10 @@ public class GlobalPot {
     /** Name of the person who created the pot. */
     private String createdBy;
 
-    /** Geographical location associated with the pot's creator. */
+    /** Designation of the pot's creator */
+    private String designation;
+
+    /** Geographical location associated with the pot's creator */
     private String location;
 
     /** Automatic timestamp of when the pot record was first created. */
