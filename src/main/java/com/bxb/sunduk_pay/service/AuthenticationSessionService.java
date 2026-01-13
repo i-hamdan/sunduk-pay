@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.service;
 
+import com.bxb.sunduk_pay.model.AuthenticationSession;
 import com.bxb.sunduk_pay.model.User;
 
 /**
@@ -16,4 +17,6 @@ public interface AuthenticationSessionService {
      * @param user the authenticated user for whom the session is being created
      */
     void saveSession(String jSessionId, User user);
+
+    AuthenticationSession validateSession(String jSessionId);
 }

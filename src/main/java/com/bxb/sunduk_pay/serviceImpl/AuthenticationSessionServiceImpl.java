@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
+import com.bxb.sunduk_pay.exception.InvalidSessionException;
 import com.bxb.sunduk_pay.model.AuthenticationSession;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.AuthenticationSessionRepository;
@@ -52,4 +53,22 @@ public class AuthenticationSessionServiceImpl implements AuthenticationSessionSe
 
         authenticationSessionRepository.save(authenticationSession);
     }
+
+    @Override
+    public AuthenticationSession validateSession(String jSessionId) {
+
+        AuthenticationSession session = authenticationSessionRepository
+                .findByjSessionIdAndIsActiveSessionTrue(jSessionId)
+                .orElseThrow(()-> new InvalidSessionException("Invalid Session"));
+
+        if (session.getExpiresAt().isBefore(LocalDateTime.now())){
+            session.setActiveSession(false);
+            authenticationSessionRepository.save(session);
+            throw new InvalidSessionException("Session Expired");
+        }
+
+        return session;
+    }
+
+
 }

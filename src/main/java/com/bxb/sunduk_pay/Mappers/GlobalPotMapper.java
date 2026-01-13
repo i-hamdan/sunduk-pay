@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.model.GlobalWallet;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
+import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 
@@ -42,7 +43,7 @@ public interface GlobalPotMapper {
      * @param request the GlobalPotRequest containing wallet details
      * @return the corresponding GlobalWallet entity
      */
-    GlobalWallet toEntityWallet(final GlobalPotRequest request);
+    GlobalWallet toEntityWallet(SundukPayAdminRequest request);
 
     /**
      * Converts a GlobalPotRequest to a Contributor entity.
