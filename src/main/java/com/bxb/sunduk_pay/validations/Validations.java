@@ -1,6 +1,11 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
@@ -75,7 +80,7 @@ public interface Validations {
      * @param subWalletId  sub-wallet ID
      * @return {@link SubWallet} if found, otherwise null
      */
-    SubWallet findSubWalletIfExists(String mainWalletId,String subWalletId);
+    SubWallet findSubWalletIfExists(String mainWalletId, String subWalletId);
 
     /**
      * Retrieves the icon for the source wallet in a transaction.
@@ -117,6 +122,7 @@ public interface Validations {
      * @param subWalletName sub-wallet name
      *                      if found,
      *                      otherwise empty
+     *@param mainWalletId main wallet ID
      */
     void findSubWalletByName(
             String subWalletName, String mainWalletId);
@@ -156,14 +162,20 @@ public interface Validations {
      * @return {@link User}
      */
     User getUserByPhoneNumber(String phoneNumber);
-/**
+
+    /**
      * Validates a sub-wallet for investment operations.
      *
      * @param subWallet the sub-wallet to validate
      */
+    void validateSubWalletForInvestment(SubWallet subWallet);
 
-  void validateSubWalletForInvestment(SubWallet subWallet);
-
-    Reminder getReminderById (String reminderId);
+  /**
+     * Retrieves a reminder by its ID.
+     *
+     * @param reminderId reminder ID
+     * @return {@link Reminder}
+     */
+    Reminder getReminderById(String reminderId);
 
 }

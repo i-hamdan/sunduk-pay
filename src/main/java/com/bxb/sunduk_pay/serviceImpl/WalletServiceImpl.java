@@ -5,7 +5,13 @@ import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperation;
 import com.bxb.sunduk_pay.factories.WalletFactory.WalletOperationFactory;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.Investment;
+
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;
@@ -174,13 +180,14 @@ public class WalletServiceImpl implements WalletService {
                 Investment investment = investmentValidation
              .getInvestmentBySubWalletId(sourcesubWallet.getSubWalletId());
 
-                if (!investment.isActive()){
-                    log.error("Attempted to process payment from an inactive investment.");
+                if (!investment.isActive()) {
+    log.error("Attempted to process payment from an inactive investment.");
                     throw new InvestmentException(
   "Cannot process payment from an inactive investment.");
                 }
                 PortfolioModel portfolioModel = investmentValidation
-                        .getPortfolioModelById(investment.getPortfolioModelId());
+                       .getPortfolioModelById(
+                               investment.getPortfolioModelId());
 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,
@@ -191,7 +198,7 @@ public class WalletServiceImpl implements WalletService {
 
 
                 investmentRepository.save(updatedInvestment);
-                log.info("Updated investment [{}] after payment deduction.",
+           log.info("Updated investment [{}] after payment deduction.",
                         investment.getInvestmentId());
             }
 
@@ -360,16 +367,18 @@ public class WalletServiceImpl implements WalletService {
             if (Boolean.TRUE.equals(subWallet.getIsInvested())) {
 
                 Investment investment = investmentValidation
-                        .getInvestmentBySubWalletId(subWallet.getSubWalletId());
+                        .getInvestmentBySubWalletId(
+                                subWallet.getSubWalletId());
 
-                if (!investment.isActive()){
-                    log.error("Attempted to add money to an inactive investment.");
+                if (!investment.isActive()) {
+                log.error("Attempted to add money to an inactive investment.");
                     throw new InvestmentException(
-                            "Cannot process payment from an inactive investment.");
+                     "Cannot process payment from an inactive investment.");
                 }
 
                 PortfolioModel portfolioModel = investmentValidation
-                        .getPortfolioModelById(investment.getPortfolioModelId());
+                        .getPortfolioModelById(
+                                investment.getPortfolioModelId());
 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,

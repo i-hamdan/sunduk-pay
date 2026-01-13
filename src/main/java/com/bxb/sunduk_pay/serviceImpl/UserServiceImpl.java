@@ -33,6 +33,9 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    /**
+     * Factory for creating user operations.
+     */
     private final UserOperationFactory userOperation;
     /**
      * Repository for user data access.
@@ -59,10 +62,6 @@ public class UserServiceImpl implements UserService {
      */
     private final MpinRepository mpinRepository;
 
-    /**
-     * Repository for contact data access.
-     */
-
 
     /**
      * Handles OAuth login for a user.
@@ -87,7 +86,7 @@ public class UserServiceImpl implements UserService {
             user.setIsDeleted(false);
             user.setUserRole(UserRoles.NORMAL_USER);
 
-            user=userRepository.save(user);
+            user = userRepository.save(user);
 
             MainWallet mainWallet = MainWallet.builder()
                     .mainWalletId(UUID.randomUUID().toString())
@@ -95,7 +94,7 @@ public class UserServiceImpl implements UserService {
                     .user(user)
                     .createdAt(LocalDateTime.now())
                     .build();
-            mainWallet=mainWalletRepository.save(mainWallet);
+            mainWallet = mainWalletRepository.save(mainWallet);
 
             MasterWallet masterWallet = MasterWallet.builder()
                     .masterWalletId(UUID.randomUUID().toString())
@@ -122,8 +121,8 @@ public class UserServiceImpl implements UserService {
 
         } else {
             user = userOptional.get();
-            if (user.getPhoneNumber()==null){
-             log.error( "User found but phone number is null for email: {}",
+            if (user.getPhoneNumber() == null) {
+             log.error("User found but phone number is null for email: {}",
                      user.getEmail());
             }
             UserKafkaEvent userEvent = userMapper
@@ -142,8 +141,13 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * Performs user operations based on the request type.
+     * @param request The user request containing operation details.
+     * @return The user response after performing the operation.
+     */
     @Override
-    public UserResponse userOperations(UserRequest request) {
+    public UserResponse userOperations(final UserRequest request) {
         UserOperation userOperations =
                 userOperation.getUserOperations(request.getUserRequestType());
     return userOperations.perform(request);

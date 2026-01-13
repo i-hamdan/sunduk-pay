@@ -23,7 +23,7 @@ public class InvestmentServiceImpl implements InvestmentService {
      * @return the investment response
      */
     @Override
-    public InvestmentResponse investmentApi(InvestmentRequest request) {
+    public InvestmentResponse investmentApi(final InvestmentRequest request) {
         InvestmentOperation operation = factory
                 .getOperation(request.getRequestType());
         return operation.perform(request);

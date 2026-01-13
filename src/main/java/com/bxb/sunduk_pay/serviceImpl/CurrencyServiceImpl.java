@@ -211,7 +211,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             final String to) {
     String currencyPair = from.concat(to);
     LocalDate oneYear = LocalDate.of(YEAR_START, MONTH_END, DAY_19);
-    LocalDate endDate = LocalDate.of( YEAR_END, MONTH_END, DAY_19);
+    LocalDate endDate = LocalDate.of(YEAR_END, MONTH_END, DAY_19);
     log.info("Fetching yearly rates for currencyPair={} from date={}",
                 currencyPair, oneYear);
 

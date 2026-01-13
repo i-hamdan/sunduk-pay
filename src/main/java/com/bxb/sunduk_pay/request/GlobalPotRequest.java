@@ -26,107 +26,145 @@ import java.util.List;
 @AllArgsConstructor
 public class GlobalPotRequest {
 
-    // --- Identification ---
+    /** unique identifier of the case */
     private String uuid;
 
-    // --- Core Information ---
+    /** title of the case */
     private String caseTitle;
-    // category of the case
+    /** category of the case */
     private CaseCategory caseCategory;
-    // scope of the pot
+    /** scope of the pot */
     private PotScope potScope;
-    // type of case requirement
+    /** requirement type of the case */
     private CaseRequirementType caseRequirementType;
-    // status of the pot
+    /** status of the pot */
     private PotStatus PotStatus;
-    // detailed description of the case
+    /** detailed description of the case */
     private String description;
-    // target amount to be collected
+    /** target amount to be raised */
     private Double targetAmount;
 
 
 
-    // --- Geolocation ---
+    /** address */
     private String address;
-    // city
+    /** city */
     private String city;
 
-    // state or province
+    /** country */
     private String country;
 
-    // --- Financials & Dates ---
+    /** target goal amount */
     private Double goalAmount;
-    // date by which the goal amount is to be achieved
+    /** target date to reach the goal amount */
     private LocalDate goalDate;
 
-    // --- Binary Media (Images & Docs) ---
+    /** list of document files */
     private List<DocumentWrapper> documentFiles;
 
-    // --- Audit & Ownership ---
+    /** verification status of the pot */
     private Boolean isVerified;
-    // list of admin users
+    /** list of admin users */
     private List<User> administrators;
 
-    // current admin user creating the pot
+    /** admin user uuid */
     private String adminUuid;
-    // target user for transfering pot to user
+    /** target user uuid for admin actions */
     private String targetUserUuid;
 
-    // admin note
+    /** admin note for the pot */
     private String adminNote;
-    // beneficiary name
+    /** name of the beneficiary */
     private String beneficiaryName;
-    // relation to beneficiary
+    /** relation to beneficiary */
     private String relationToBeneficiary;
 
-    // --- Nested Child Lists ---
+    /** list of contributor requests */
     private List<ContributorRequest> contributors;
-    // list of photo requests
+    /** list of testimonial requests */
     private List<TestimonialRequest> testimonials;
-    // list of follower requests
+    /** list of follower requests */
     private List<FollowerRequest> followers;
-    // type of global pot request
+    /**
+     * type of global pot request
+     */
     private GlobalPotRequestType globalPotRequestType;
-    // global pot id
+    /**
+     * global pot id
+     */
     private String globalPotId;
-    // contributor name
+    /**
+     * name of the contributor
+     */
     private String contributorName;
-    // amount contributed by the user
+    /**
+     * amount contributed
+     */
     private Double amountContributed;
-    // user contributor id
+    /**
+     * user contributor id
+     */
     private String userContributorId;
-    // flag to indicate if the contributor is anonymous
+    /**
+     * flag to indicate if the requester is anonymous
+     */
     private Boolean isAnonymous;
-    // flag to indicate if the contributor is a registered user
+    /**
+     * flag to indicate if the requester is a user
+     */
     private Boolean isUser;
-    // contributor image file
+    /**
+     * contributor image file
+     */
     private MultipartFile contributorImage;
-    // follower user id
+    /**
+     * follower user id
+     */
     private String followerUser;
-    // wallet id of the source wallet for contribution
+    /**
+     * wallet id of the source wallet for contribution
+     */
     private String sourceWalletId;
-    // pagination - page number
+    /**
+     * pagination - page number
+     */
     private int pageNumber;
-    // number of pots per page
+    /**
+     * pagination - page size
+     */
     private int pageSize;
-
-    // filter by admin-created pots
+    /**
+     * filter by admin-created pots
+     */
     private Boolean createdByAdmin;
-    // filter by self-created pots
+    /**
+     * filter by self-created pots
+     */
     private Boolean createdForSelf;
-    // filter by creator
+    /**
+     * admin who created the pot
+     */
     private String createdBy;
-    // location filter
+    /**
+     * location for filtering pots
+     */
     private String location;
 
     private Creator creator;
 
     // target user to add to admin list
+    /**
+     * target user to add to admin list
+     */
     private String targetUserToAdd;
-    // target user to remove from admin list
+    /**
+     * target user to remove from admin list
+     */
     private String targetUserToRemove;
 
-   // for document retrieval
+    /**
+     * Document ID for global pot
+     */
     private String globalPotDocumentId;
 
 }

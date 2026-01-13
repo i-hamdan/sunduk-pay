@@ -45,12 +45,13 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      * Validates if the balance is sufficient for investment.
      *
      * @param balance the balance to validate
+     * @throws InsufficientBalanceException if the balance is insufficient.
      */
     @Override
-    public void ValidateBalanceForInvestment(final Double balance) {
+    public void validateBalanceForInvestment(final Double balance) {
         if (balance <= 0 || balance == null) {
-            throw new InsufficientBalanceException
-                    ("Insufficient balance for investment.");
+            throw new InsufficientBalanceException(
+                    "Insufficient balance for investment.");
         }
     }
 
@@ -59,12 +60,13 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      *
      * @param name the name of the portfolio model
      * @return the validated PortfolioModel
+     * @throws ResourceNotFoundException if no portfolio model is found.
      */
     @Override
     public PortfolioModel validatePortfolioModelByName(final String name) {
         return portfolioModelRepository.findByName(name).orElseThrow(() ->
-                new ResourceNotFoundException("Portfolio model not found with" +
-                        " name: "
+                new ResourceNotFoundException("Portfolio model not found with"
+                        + " name: "
                         + name));
     }
 
@@ -73,6 +75,7 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      *
      * @param subWalletId the sub-wallet ID
      * @return the active Investment
+     * @throws InvestmentException if no active investment is found.
      */
    @Override
     public Investment getInvestmentBySubWalletId(final String subWalletId) {
@@ -147,7 +150,8 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      * @return the next Units after the specified date
      */
     @Override
-    public Units findNextUnit(PortfolioModel model, LocalDate date) {
+    public Units findNextUnit(final PortfolioModel model,
+                              final LocalDate date) {
         List<Units> list = unitsRepository.findNextAfterDate(model, date);
         if (list.isEmpty()) {
             log.error(
@@ -173,10 +177,10 @@ public class InvestmentValidationImpl implements InvestmentValidation {
      */
     @Override
     public Units findUnitByDate(final Long modelId,
-                                LocalDate date){
+                                final LocalDate date) {
         try {
             return unitsRepository.findByPortfolioModelAndDate(modelId, date);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(
                     "Error fetching unit for model on date {}: {}",
                     date, e.getMessage());
@@ -197,15 +201,14 @@ public class InvestmentValidationImpl implements InvestmentValidation {
     @Override
     public RiskLevel validateRiskLevel(final String investmentRiskLevel,
                                        final String riskLevel) {
-        if (riskLevel.equalsIgnoreCase(investmentRiskLevel)){
+        if (riskLevel.equalsIgnoreCase(investmentRiskLevel)) {
             throw new InvestmentException("No changes detected: "
                     + "the provided value is identical to the current value.");
-        }
-        else if (riskLevel.equalsIgnoreCase(RiskLevel.LOW.toString())){
+        } else if (riskLevel.equalsIgnoreCase(RiskLevel.LOW.toString())) {
             return RiskLevel.LOW;
-        } else if (riskLevel.equalsIgnoreCase(RiskLevel.MEDIUM.toString())){
+        } else if (riskLevel.equalsIgnoreCase(RiskLevel.MEDIUM.toString())) {
             return RiskLevel.MEDIUM;
-        } else if (riskLevel.equalsIgnoreCase(RiskLevel.HIGH.toString())){
+        } else if (riskLevel.equalsIgnoreCase(RiskLevel.HIGH.toString())) {
             return RiskLevel.HIGH;
         } else {
             throw new InvestmentException(
@@ -223,7 +226,7 @@ public class InvestmentValidationImpl implements InvestmentValidation {
     public PortfolioModel getPortfolioModelByRiskLevel(
             final String riskLevel) {
         return portfolioModelRepository.findByName(riskLevel).orElseThrow(
-        ()-> new InvestmentException("No portfolio model found for risk level:"
+        () -> new InvestmentException("No portfolio model found for risk level:"
                         + riskLevel));
     }
 
@@ -236,7 +239,7 @@ public class InvestmentValidationImpl implements InvestmentValidation {
     @Override
     public PortfolioModel getPortfolioModelById(final Long id) {
         return portfolioModelRepository.findById(id)
-                .orElseThrow(()->new InvestmentException(
+                .orElseThrow(() -> new InvestmentException(
                         "No portfolio model found for id: " + id));
     }
 }

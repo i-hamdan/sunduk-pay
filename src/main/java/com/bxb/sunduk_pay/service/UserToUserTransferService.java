@@ -12,6 +12,8 @@ public interface UserToUserTransferService {
      * @param receiverId     the ID of the receiver
      * @param amount         the amount to be transferred
      * @param senderWalletId the wallet ID of the sender
+     * @param paymentTag    the payment tag for the transaction
+     * @param reminderId    the reminder ID associated with the transfer
      * @return the updated main wallet response after the transfer
      */
     MainWalletResponse transferBetweenUsers(

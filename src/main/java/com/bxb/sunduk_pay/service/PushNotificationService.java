@@ -6,10 +6,11 @@ import com.google.firebase.messaging.Notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service for sending push notifications using Firebase Cloud Messaging (FCM).
+ */
 @Service
 @Slf4j
-/** Service for sending push notifications using Firebase Cloud
- * Messaging (FCM). */
 public class PushNotificationService {
 
     /**
@@ -19,7 +20,8 @@ public class PushNotificationService {
      * @param title the title of the notification.
      * @param body  the body content of the notification.
      */
-    public void sendNotification(String token, String title, String body) {
+    public void sendNotification(final String token, final String title,
+                                 final String body) {
         try {
             Notification notification = Notification.builder()
                     .setTitle(title)

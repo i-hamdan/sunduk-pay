@@ -81,7 +81,7 @@ public class CreateInvestmentService implements InvestmentOperation {
         log.info("Verifying sub-wallet: {}", subWallet);
 
         // 3) Balance validation
-        investmentValidations.ValidateBalanceForInvestment(
+        investmentValidations.validateBalanceForInvestment(
                 subWallet.getBalance());
 
         // 4) Ensure subwallet is not already invested

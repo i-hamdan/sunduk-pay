@@ -22,7 +22,8 @@ public interface InternalTransferService {
      *                                    before the transfer.
      * @param previousTargetWalletBalance The balance of the target
      *                                    wallet before the transfer.
-     * @return A response object containing details of the transfer operation.
+     * @return A response object containing details of the transfer operation
+     * @param mpin The mobile PIN for authentication.
      */
     MainWalletResponse doInternalTransfer(User user, MainWallet mainWallet,
                                           Double amount,

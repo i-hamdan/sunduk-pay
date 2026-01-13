@@ -17,7 +17,7 @@ public interface InvestmentValidation {
     /** Validates if the balance is sufficient for investment.
      * @param balance the balance to validate
      */
-    void ValidateBalanceForInvestment(Double balance);
+    void validateBalanceForInvestment(Double balance);
     /** Validates and retrieves a PortfolioModel by its name.
      * @param name the name of the portfolio model
      * @return the validated PortfolioModel
@@ -34,7 +34,7 @@ public interface InvestmentValidation {
      * @param uuid
      * @return
      */
-    List<Investment>getInvestmentsByUserUuid(String uuid);
+    List <Investment> getInvestmentsByUserUuid(String uuid);
 
     /** Retrieve units for a given portfolio model and date.
      * @param model

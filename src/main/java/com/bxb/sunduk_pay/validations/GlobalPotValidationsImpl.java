@@ -1,8 +1,18 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.model.*;
-import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
+import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import com.bxb.sunduk_pay.exception.UserAlreadyExist;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalPotMembers;
+import com.bxb.sunduk_pay.model.GroupChatMessage;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.ContributerRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
+import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,8 +21,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 /**
- * Implementation of Global Pot validations.
- * Provides methods to validate and retrieve Global Pot data.
+ * Implementation of Global Pot validation operations.
  */
 @Log4j2
 @Component
@@ -34,7 +43,9 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      */
     private final ContributerRepository contributerRepository;
 
-
+    /**
+     * Repository for accessing Global Pot Members data.
+     */
     private final GlobalPotMembersRepository globalPotMembersRepository;
 
 
@@ -44,7 +55,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      *
      * @param globalPotId the ID of the Global Pot to validate
      * @return the validated Global Pot
-     * @throws GlobalPotNotFoundException if the Global Pot is not found
+     * @throws GlobalPotNotFoundException if the Global Pot is not found.
      */
     @Override
     public GlobalPot getGlobalPot(final String globalPotId) {
@@ -59,7 +70,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Retrieves the count of contributors for a given Global Pot.
      *
      * @param globalPotId the ID of the Global Pot
-     * @return the number of contributors
+     * @return the number of contributors.
      */
     @Override
     public int getContributorsCount(final String globalPotId) {
@@ -71,7 +82,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Retrieves the count of followers for a given Global Pot.
      *
      * @param globalPotId the ID of the Global Pot
-     * @return the number of followers
+     * @return the number of followers.
      */
     @Override
     public int getFollowersCount(final String globalPotId) {
@@ -79,8 +90,15 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                 .getFollowersCountGlobalByPotId(globalPotId);
     }
 
+    /**
+     * Validates the amount contributed to a Global Pot.
+     *
+     * @param amountContributed the amount contributed
+     * @throws InsufficientBalanceException if the amount is null or
+     * non-positive.
+     */
     @Override
-    public void validateAmountContributed(Double amountContributed) {
+    public void validateAmountContributed(final Double amountContributed) {
 
         if (amountContributed == null || amountContributed <= 0) {
             throw new InsufficientBalanceException(
@@ -90,15 +108,21 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
     }
 
+    /**
+     * Validates if a user is an admin of the Global Pot.
+     *
+     * @param admin the user to validate
+     * @throws UserNotFoundException if the user is not an admin.
+     */
     @Override
-    public void validateAdmin(User admin) {
+    public void validateAdmin(final User admin) {
         if (admin == null) {
             throw new UserNotFoundException(
                     "Admin user not found for the Global Pot"
             );
         }
 
-            if (admin.getUserRole()!= UserRoles.GLOBALPOT_ADMIN) {
+            if (admin.getUserRole() != UserRoles.GLOBALPOT_ADMIN) {
             throw new UserNotFoundException(
                     "User is not authorized as Global Pot Admin"
             );
@@ -107,15 +131,30 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
     }
 
+    /**
+     * Retrieves group chat messages for a given Global Pot from the database.
+     *
+     * @param globalPotId the ID of the Global Pot
+     * @return list of group chat messages.
+     */
     @Override
-    public List<GroupChatMessage> getGroupChatMessagesFromDB(String globalPotId) {
-        return groupChatMessageRepository.findByGlobalPotGlobalPotId(globalPotId);
+    public List<GroupChatMessage> getGroupChatMessagesFromDB(
+            final String globalPotId) {
+        return groupChatMessageRepository.
+                findByGlobalPotGlobalPotId(globalPotId);
     }
 
 
-
+    /**
+     * Validates if a user has contributed to a Global Pot.
+     *
+     * @param globalPotId the ID of the Global Pot
+     * @param userUuid    the UUID of the user
+     * @throws ResourceNotFoundException if the user has not contributed.
+     */
     @Override
-    public void validateUserHasContributed(String globalPotId, String userUuid) {
+    public void validateUserHasContributed(
+            final String globalPotId, final String userUuid) {
         if (!contributerRepository
                 .existsByGlobalPotGlobalPotIdAndUserContributorUuid(
                         globalPotId, userUuid)) {
@@ -126,9 +165,15 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
     }
 
-
+    /**
+     * Ensures that a user is a member of a Global Pot.
+     *
+     * @param userId       the user to be added as a member
+     * @param globalPotId  the Global Pot to which the user is to be added.
+     */
     @Override
-    public void ensureUserIsMember(User userId, GlobalPot globalPotId) {
+    public void ensureUserIsMember(final User userId,
+                                   final GlobalPot globalPotId) {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
@@ -149,9 +194,17 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         globalPotMembersRepository.save(member);
     }
 
+    /**
+     * Ensures that a user is a member of a Global Pot by an admin action.
+     *
+     * @param userId       the user to be added as a member
+     * @param globalPotId  the Global Pot to which the user is to be added
+     * @throws UserAlreadyExist if the user is already a member of the
+     * Global Pot.
+     */
     @Override
-    public void ensureUserIsMemberByAdmin(User userId,
-                                          GlobalPot globalPotId) {
+    public void ensureUserIsMemberByAdmin(final User userId,
+                                          final GlobalPot globalPotId) {
 
         boolean isAlreadyMember =
                 globalPotMembersRepository
@@ -161,9 +214,10 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 
         if (isAlreadyMember) {
             throw new UserAlreadyExist(
-                    "User with uuid [" + userId.getFullName() +
-                            "] is already a member of Global Pot [" +
-                            globalPotId.getCaseTitle() + "]"
+                    "User with uuid [" + userId.getFullName()
+                            + "] is already a member of Global Pot ["
+                            + globalPotId.getCaseTitle()
+                            + "]"
             );
         }
 
@@ -176,6 +230,14 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         globalPotMembersRepository.save(member);
     }
 
+    /**
+     * Retrieves a Global Pot member by user UUID and Global Pot ID.
+     *
+     * @param userUuid    the user UUID
+     * @param globalPotId the Global Pot ID
+     * @return the Global Pot member
+     * @throws ResourceNotFoundException if the member is not found.
+     */
     @Override
     public GlobalPotMembers getMemberByUuidAndGlobalPotId(
             final User userUuid,
@@ -184,7 +246,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                 userUuid,globalPotId).orElseThrow(
                 () -> new ResourceNotFoundException(
                         "Member not found with UUID: "
-                                + userUuid.getUuid() + " in Global Pot ID: "
+                                + userUuid.getUuid()
+                                + " in Global Pot ID: "
                                 + globalPotId.getGlobalPotId()));
     }
 

@@ -121,7 +121,7 @@ class CreateInvestmentServiceTest {
 /// 1.
         doThrow(new RuntimeException("Insufficient Balance"))                           // throw exception
                 .when(investmentValidation)                                             // on this object
-                .ValidateBalanceForInvestment(anyDouble());                             // whenever this method is called with any double value
+                .validateBalanceForInvestment(anyDouble());                             // whenever this method is called with any double value
 
 /// 2.
         assertThrows(RuntimeException.class,

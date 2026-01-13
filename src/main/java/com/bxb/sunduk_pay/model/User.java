@@ -1,6 +1,20 @@
 package com.bxb.sunduk_pay.model;
 import com.bxb.sunduk_pay.util.UserRoles;
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Column;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Builder;
@@ -118,6 +132,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoles userRole;
 
+    /**
+     * One-to-many relationship with GlobalPotMembers.
+     */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<GlobalPotMembers> globalPotMemberships;

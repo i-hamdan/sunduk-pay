@@ -113,6 +113,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
      * @param targetWallet                target wallet
      * @param previousSourceWalletBalance previous source balance
      * @param previousTargetWalletBalance previous target balance
+     * @param mpin                        user's MPIN for validation
      * @return MainWalletResponse with transaction details
      */
     @Transactional
@@ -126,7 +127,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             final Double previousTargetWalletBalance,
             final String mpin) {
         try {
-            log.info("Starting internal transfer of amount {} from {} to {}",
+            log.info(
+               "Starting internal transfer of amount {} from {} to {}",
                     amount, sourceWallet.getId(), targetWallet.getId());
 
             List<Transaction> transactions = new ArrayList<>();
@@ -155,24 +157,28 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                         .getInvestmentBySubWalletId(sourceWallet.getId());
 
                 if (!investment.isActive()) {
-                    log.error("Attempted to debit money from an inactive " +
-                            "investment.");
+                    log.error("Attempted to debit money from an inactive "
+                            + "investment.");
                     throw new InvestmentException(
-                            "Cannot process payment from an inactive investment.");
+                       "Cannot process payment from an inactive investment.");
                 }
 
-                PortfolioModel portfolioModel = investmentValidation.getPortfolioModelById(investment.getPortfolioModelId());
+                PortfolioModel portfolioModel = investmentValidation
+                      .getPortfolioModelById(investment.getPortfolioModelId());
 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,
                                 investment.getUnitPurchaseDate().toLocalDate());
-                log.info("Fetched unit for investment update: {}", unit);
+                log.info(
+                       "Fetched unit for investment update: {}", unit);
 
-                Investment updatedInvestment = investmentUtil.updateInvestmentOnDebit(investment, unit, amount);
+                Investment updatedInvestment = investmentUtil
+                        .updateInvestmentOnDebit(investment, unit, amount);
 
                 investmentRepository.save(updatedInvestment);
 
-                log.info("Investment details updated successfully: {}", investment.getInvestmentId());
+                log.info("Investment details updated successfully:"
+                        + investment.getInvestmentId());
 
             }
 
@@ -215,20 +221,24 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                         .getInvestmentBySubWalletId(targetWallet.getId());
 
                 if (!investment.isActive()) {
-                    log.error("Attempted to add money to an inactive investment.");
+                    log.error(
+                        "Attempted to add money to an inactive investment.");
                     throw new InvestmentException(
-                            "Cannot process payment from an inactive investment.");
+                        "Cannot process payment from an inactive investment.");
                 }
 
                 PortfolioModel portfolioModel = investmentValidation
-                        .getPortfolioModelById(investment.getPortfolioModelId());
+                        .getPortfolioModelById(investment
+                                .getPortfolioModelId());
 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,
                                 investment.getUnitPurchaseDate().toLocalDate());
-                log.info("Fetched unit for investment update: {}", unit);
+                log.info(
+                       "Fetched unit for investment update: {}", unit);
 
-                Investment updatedInvestment = investmentUtil.updateInvestmentOnCredit(
+                Investment updatedInvestment = investmentUtil.
+                        updateInvestmentOnCredit(
                         investment, unit, amount);
 
                 investmentRepository.save(updatedInvestment);
@@ -281,7 +291,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Transaction event published to Kafka successfully");
 
 
-            log.info("Internal transfer completed successfully for user {}",
+            log.info(
+             "Internal transfer completed successfully for user {}",
                     user.getUuid());
             return MainWalletResponse.builder()
                     .status("SUCCESS")
@@ -295,7 +306,7 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                     .build();
         } catch (Exception e) {
             log.error(
-                    "Internal transfer failed for user {}, amount {}, error: {}",
+    "Internal transfer failed for user {}, amount {}, error: {}",
                     user.getUuid(), amount, e.getMessage(), e);
             throw e;
         }

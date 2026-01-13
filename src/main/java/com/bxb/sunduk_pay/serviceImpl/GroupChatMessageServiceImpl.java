@@ -37,6 +37,10 @@ import java.util.List;
 public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
     /**
+     * Duration for which the group chat messages are cached in Redis (in minutes).
+     */
+    private static final int DURATION_IN_MINUTES = 5;
+    /**
      * Repository for group chat messages.
      */
     private final GroupChatMessageRepository groupChatMessageRepository;
@@ -101,11 +105,11 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             boolean isFollower = followerRepository
                     .existsByFollowerUserAndGlobalPot(user, globalPot);
 
-            if (!isFollower){
+            if (!isFollower) {
                 log.info(
-   "User {} is not a follower of pot {}. Creating follower record.",
+     "User {} is not a follower of pot {}. Creating follower record.",
                         user.getUuid(), globalPot.getGlobalPotId());
-               createFollowerRecord(user, globalPot);
+                createFollowerRecord(user, globalPot);
             }
 
             boolean isAnonymous = event.isAnonymous();
@@ -116,18 +120,18 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
             if (isAnonymous) {
                 log.info(
-   "Fetching or creating anonymous identity for user {} in pot {}",
+      "Fetching or creating anonymous identity for user {} in pot {}",
                         user.getUuid(), globalPot.getGlobalPotId());
-                 anonymousUser = anonymousUserService
+                anonymousUser = anonymousUserService
                         .getOrCreateAnonymousColor(user, globalPot);
-                 if (anonymousUser!=null){
-                     log.info(
-                  "Obtained anonymous identity: ID={}, Color={}",
-                             anonymousUser.getAnonymousId(),
-                             anonymousUser.getAnonymousColor());
-                     anonymousColor = anonymousUser.getAnonymousColor();
-                     anonymousId = anonymousUser.getAnonymousId();
-                 }
+                if (anonymousUser != null) {
+                    log.info(
+                      "Obtained anonymous identity: ID={}, Color={}",
+                            anonymousUser.getAnonymousId(),
+                            anonymousUser.getAnonymousColor());
+                    anonymousColor = anonymousUser.getAnonymousColor();
+                    anonymousId = anonymousUser.getAnonymousId();
+                }
             }
 
             log.info("Creating group chat message entity...");
@@ -143,7 +147,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
             // Persist FIRST
             groupChatMessageRepository.save(message);
-            log.info("Saved group chat message with ID {} to database.",
+            log.info(
+                 "Saved group chat message with ID {} to database.",
                     message.getMessageId());
 
             // Map AFTER persistence
@@ -153,12 +158,13 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
             // Cache AFTER DB
             saveMessageInRedisCache(message);
-            log.info("Group chat message processing completed for pot {}",
+            log.info(
+                 "Group chat message processing completed for pot {}",
                     event.getGlobalPotId());
 
             return response;
 
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error processing group chat message: {}",
                     e.getMessage());
             throw new ChatProcessingException(
@@ -172,7 +178,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      *
      * @param message the group chat message to be cached
      */
-        protected void saveMessageInRedisCache(final GroupChatMessage message) {
+    protected void saveMessageInRedisCache(final GroupChatMessage message) {
 
         try {
             // First, check if the group chat messages for this pot
@@ -185,9 +191,9 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
             // If not cached, load existing messages from DB and cache them
             if (!messageResponseRedisTemplate.hasKey(groupChatKey)) {
-                log.info(
-                        "Group chat messages for key {} not found in Redis cache. Loading from DB...",
-                        groupChatKey);
+                log.info("Group chat messages for key"
+        + groupChatKey + "not found in Redis cache. Loading from DB..."
+                        );
                 List<GroupChatMessage> groupMessagesFromDb =
                         groupChatMessageRepository.findByGlobalPotGlobalPotId(
                                 message.getGlobalPot().getGlobalPotId());
@@ -195,21 +201,23 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                 // Cache the messages in Redis
                 if (!groupMessagesFromDb.isEmpty()) {
                     log.info(
-                            "Found {} group chat messages in DB for pot {}. Caching in Redis...",
+  "Found {} group chat messages in DB for pot {}. Caching in Redis...",
                             groupMessagesFromDb.size(),
                             message.getGlobalPot().getGlobalPotId());
                     // Map DB messages to response DTOs
                     List<GroupChatMessageResponse> groupMessagesResponse =
                             groupMessagesFromDb.stream()
-                                    .map(globalPotMapper::toGroupChatMessageResponse)
+                            .map(globalPotMapper::toGroupChatMessageResponse)
                                     .toList();
 
                     // Store the list of messages in Redis
                     messageResponseRedisTemplate.opsForList().rightPushAll(
                             groupChatKey, groupMessagesResponse);
-                    log.info(
-                            "Loaded {} group chat messages from DB to Redis cache for key {}",
-                            groupMessagesResponse.size(), groupChatKey);
+                    log.info("Loaded"
+                            + groupMessagesResponse.size()
+                            +" group chat messages from DB "
+                            + " to Redis cache for key "
+                            +groupChatKey);
                 }
             }
             // Now, add the new message to Redis cache
@@ -217,15 +225,17 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     .toGroupChatMessageResponse(message);
 
             log.info(
-                    "Adding new group chat message to Redis cache for key {}",
+            "Adding new group chat message to Redis cache for key {}",
                     groupChatKey);
 
             // Push the new message to the end of the list
             messageResponseRedisTemplate.opsForList().rightPush(groupChatKey,
                     groupChatMessageResponse);
-            messageResponseRedisTemplate.expire(groupChatKey, Duration.ofMinutes(5));
-        } catch(Exception e){
-            log.error("Error saving group chat message in Redis cache: {}",
+            messageResponseRedisTemplate.expire(
+                    groupChatKey, Duration.ofMinutes(DURATION_IN_MINUTES));
+        } catch (Exception e) {
+            log.error(
+                 "Error saving group chat message in Redis cache: {}",
                     e.getMessage());
             throw new RedisOperationException(
                     "Error saving group chat message in Redis cache: "
@@ -236,10 +246,11 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     /**
      * Creates a new follower record for the user in the specified global pot.
      *
-     * @param user the user who is following
+     * @param user      the user who is following
      * @param globalPot the global pot being followed
      */
-    private void createFollowerRecord(User user, GlobalPot globalPot) {
+    private void createFollowerRecord(
+            final User user, final GlobalPot globalPot) {
         log.info("Creating new follower record for user {} in pot {}",
                 user.getUuid(), globalPot.getGlobalPotId());
         Follower follower = Follower.builder()

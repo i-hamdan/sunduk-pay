@@ -23,7 +23,7 @@ public class PhotoServiceImpl implements PhotoService {
      * @return the response after attempting to upload the photo
      */
     @Override
-    public PhotoResponse uploadPhoto(PhotoRequest request) {
+    public PhotoResponse uploadPhoto(final PhotoRequest request) {
         PhotoOperation operation = factory
                 .getOperation(request.getPhotoRequestType());
         if (operation == null) {

@@ -10,13 +10,15 @@ import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
 public interface AnonymousUserService {
 
     /**
-     * Retrieves or creates an anonymous color identity for a user within a global pot.
+     * Retrieves or creates an anonymous color identity for
+     * a user within a global pot.
      *
-     * @param user      the user for whom to retrieve or create the anonymous identity
+     * @param user      the user for whom to retrieve or create the anonymous
+     *                 identity
      * @param globalPot the global pot in which the user is participating
      * @return the anonymous identity data transfer object
      */
     AnonymousIdentityDTO getOrCreateAnonymousColor(
-            final User user,
-            final GlobalPot globalPot);
+            User user,
+            GlobalPot globalPot);
 }

@@ -1,8 +1,23 @@
     package com.bxb.sunduk_pay.model;
-
     import com.bxb.sunduk_pay.util.UserRoles;
-    import jakarta.persistence.*;
-    import lombok.*;
+    import jakarta.persistence.Entity;
+    import jakarta.persistence.Id;
+    import jakarta.persistence.Table;
+    import jakarta.persistence.UniqueConstraint;
+    import lombok.Builder;
+    import jakarta.persistence.GeneratedValue;
+    import jakarta.persistence.GenerationType;
+    import jakarta.persistence.ManyToOne;
+    import jakarta.persistence.FetchType;
+    import jakarta.persistence.JoinColumn;
+    import jakarta.persistence.Enumerated;
+    import jakarta.persistence.EnumType;
+    import jakarta.persistence.Column;
+    import lombok.Getter;
+    import lombok.NoArgsConstructor;
+    import lombok.AllArgsConstructor;
+    import lombok.Setter;
+    import lombok.AccessLevel;
     import org.apache.commons.lang3.builder.ToStringExclude;
     import org.hibernate.annotations.CreationTimestamp;
     import org.hibernate.annotations.UpdateTimestamp;
@@ -11,7 +26,8 @@
 
     @Entity
     @Table(name = "global_pot_member",
-            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id_of_member","global_pot_id"})
+            uniqueConstraints = {@UniqueConstraint(columnNames =
+                    {"user_id_of_member","global_pot_id"})
             }
     )
     @Getter
@@ -48,11 +64,17 @@
         @ToStringExclude
         private GlobalPot globalPot;
 
-
+        /**
+         * The role of the user within the GlobalPot.
+         * Stored as a string representation of the UserRoles enum.
+         */
         @Enumerated(EnumType.STRING)
         private UserRoles userRoles;
 
-
+        /**
+         * Indicates whether the member is blocked from participating in the GlobalPot.
+         * Defaults to false (not blocked).
+         */
         private Boolean isBlocked = false;
 
         /**

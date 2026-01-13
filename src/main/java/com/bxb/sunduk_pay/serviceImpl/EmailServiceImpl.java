@@ -70,6 +70,8 @@ public class EmailServiceImpl implements EmailService {
      * @param body    body content of the email
      * @throws EmailSendingException if the email fails to send
      * @throws EmailSendingException if sending fails.
+     * @param from    sender email address
+     * @param isHtml  indicates if the email body is HTML formatted.
      */
     public void sendEmail(
             final String to,
@@ -81,8 +83,8 @@ public class EmailServiceImpl implements EmailService {
             if (isHtml) {
                 //  HTML email using MimeMessage
                 MimeMessage message = mailSender.createMimeMessage();
-                MimeMessageHelper helper = new MimeMessageHelper
-                        (message, true, "UTF-8");
+                MimeMessageHelper helper = new MimeMessageHelper(
+                        message, true, "UTF-8");
 
                 helper.setTo(to);
                 helper.setFrom(from);

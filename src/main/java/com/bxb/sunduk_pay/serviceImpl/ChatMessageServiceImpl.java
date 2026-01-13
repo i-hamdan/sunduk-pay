@@ -46,10 +46,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChatMessageServiceImpl implements ChatMessageService {
 
-    // Indices for masking phone numbers in logs
+    /** Start index for masking phone numbers in logs.
+    */
     private static final int SUBSTRING_START_INDEX = 9;
-    // Indices for masking phone numbers in logs
+    /** End index for masking phone numbers in logs.
+    */
     private static final int SUBSTRING_END_INDEX = 13;
+   /** Duration in hours for Redis key expiration.
+    */
     private static final int DURATION_HOURS = 24;
     /**
      * Validations for message processing.

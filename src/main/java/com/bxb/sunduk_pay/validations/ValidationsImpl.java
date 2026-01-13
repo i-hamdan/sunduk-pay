@@ -1,9 +1,31 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.encryption.HashUtil;
-import com.bxb.sunduk_pay.model.*;
-import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
+import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
+import com.bxb.sunduk_pay.exception.NullValueException;
+import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
+import com.bxb.sunduk_pay.exception.NullAmountException;
+import com.bxb.sunduk_pay.exception.TransactionProcessingException;
+import com.bxb.sunduk_pay.exception.InvalidPhotoException;
+import com.bxb.sunduk_pay.exception.InvestmentException;
+import com.bxb.sunduk_pay.exception.InvalidPayloadException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.WalletNotFoundException;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Reminder;
+import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.ReminderRepository;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -153,14 +175,14 @@ private static final int WALLET_SIZE = 19;
 
         if (receiverId != null
                 && method == PaymentMethod.PHONE_NUMBER) {
-            log.info
-             ("Fetching transactions for history between {} and {} ",
+            log.info(
+              "Fetching transactions for history between {} and {} ",
                     uuid, receiverId);
             User sendingUser = getUserInfo(uuid);
             User receivingUser = getUserByPhoneNumber(receiverId);
-            log.info
-             ("Both users fetched and their numbers are {} and {} ",
-             sendingUser.getPhoneNumber(),receivingUser.getPhoneNumber());
+            log.info(
+                 "Both users fetched and their numbers are {} and {} ",
+             sendingUser.getPhoneNumber(), receivingUser.getPhoneNumber());
             return transactionRepository
                     .getTransactionsBySenderAndReceiverId(
                             uuid,
@@ -176,14 +198,15 @@ private static final int WALLET_SIZE = 19;
             if (hasType && transactionType == TransactionType.DEBIT) {
                 if (hasMethod) {
                     transactions = transactionRepository
-                            .findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
-                                    uuid, walletId, TransactionType.DEBIT, method, pageable);
+             .findByUserUuidAndFromWalletIdAndTransactionTypeAndPaymentMethod(
+                                    uuid, walletId, TransactionType.DEBIT,
+                                    method, pageable);
                 } else {
                     transactions = transactionRepository
                             .findByUserUuidAndFromWalletIdAndTransactionType(
-                                    uuid, walletId, TransactionType.DEBIT, pageable);
-                }
-            }
+                                    uuid, walletId, TransactionType.DEBIT,
+                                    pageable);
+                }}
 
             // Case 1b: Credit transactions
             else if (hasType && transactionType == TransactionType.CREDIT) {
@@ -195,8 +218,8 @@ private static final int WALLET_SIZE = 19;
                     transactions = transactionRepository
                             .findByUserUuidAndToWalletIdAndTransactionType(
                  uuid, walletId, TransactionType.CREDIT, pageable);
-                }
-            }
+                }}
+
             // Case 1c: No transaction type filter
             else {
                 if (hasMethod) {
@@ -208,8 +231,7 @@ private static final int WALLET_SIZE = 19;
                             .findAllByUserUuidAndWalletId(
                                     uuid, walletId, pageable);
                 }
-            }
-        }
+            }}
 
         // Case 2: No wallet filter
         else {
@@ -356,9 +378,9 @@ private static final int WALLET_SIZE = 19;
      * {@inheritDoc} */
     @Override
     public void findSubWalletByName(
-            final String subWalletName, String mainWalletId) {
+            final String subWalletName, final String mainWalletId) {
         Optional<SubWallet> subWallet = subWalletRepository
-       .findActiveByNameAndMainWallet(subWalletName,mainWalletId);
+        .findActiveByNameAndMainWallet(subWalletName, mainWalletId);
         if (subWallet.isPresent()) {
             throw new SubWalletAlreadyExistsException(
                     "SubWallet with name "
@@ -397,10 +419,10 @@ private static final int WALLET_SIZE = 19;
                     + balance + " amount=" + amount);
         }
 
-        if(amount <= 0){
-            log.error("Validation failed: Given amount should not be " +
-                    "less than or equal to zero. Provided balance=" + balance
-            + " amount=" + amount);
+        if (amount <= 0) {
+            log.error("Validation failed: Given amount should not be "
+                    + "less than or equal to zero. Provided balance=" + balance
+                    + " amount=" + amount);
             throw new TransactionProcessingException(
                     "Validation failed: Amount should be greater than zero."
                     + " Provided balance=" + balance + " Amount=" + amount
@@ -409,30 +431,30 @@ private static final int WALLET_SIZE = 19;
         log.debug(
 "Validation successful:  targetBalance={}, Amount={}",
                 balance, amount);
-
     }
-/** {@inheritDoc} */
+
+    /** {@inheritDoc} */
     @Override
-    public User getUserEmailInfo(String email) {
+    public User getUserEmailInfo(final String email) {
         log.info("Fetching user with email: {}", email);
         return userRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> {
                     log.error("User not found with email: {}", email);
                     return new UserNotFoundException(
-                            "this email is not registered with us"                            );
+                            "this email is not registered with us");
                 });    }
 
     /** {@inheritDoc} */
     @Override
-    public void validateRecipientUpiId(String recipientUpiId) {
+    public void validateRecipientUpiId(final String recipientUpiId) {
 
         log.info("Validating recipient UPI ID: {}", recipientUpiId);
 
         if (recipientUpiId == null || recipientUpiId.isBlank()) {
-            log.error
-                    ("Validation failed: recipient UPI ID is null or blank");
-            throw new NullValueException
-                    ("Recipient UPI ID cannot be null or blank.");
+            log.error(
+                    "Validation failed: recipient UPI ID is null or blank");
+            throw new NullValueException(
+                    "Recipient UPI ID cannot be null or blank.");
         }
 
         log.debug("Validation successful for UPI ID: {}",
@@ -444,23 +466,23 @@ private static final int WALLET_SIZE = 19;
 
 /** {@inheritDoc} */
     @Override
-    public User getUserByPhoneNumber(String phoneNumber) {
+    public User getUserByPhoneNumber(final String phoneNumber) {
 //        String phoneHash = hashUtil.sha256(phoneNumber);
         return userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(()->new UserNotFoundException(
+                .orElseThrow(() -> new UserNotFoundException(
                         "User not found with phone number: "
-                        +phoneNumber));
+                        + phoneNumber));
     }
 
 
     /** {@inheritDoc} */
     @Override
-    public void validatePorfilePhoto(MultipartFile photo) {
+    public void validatePorfilePhoto(final MultipartFile photo) {
         // Check if file is null or empty
         if (photo == null || photo.isEmpty()) {
             log.error("No photo uploaded or file is empty");
-            throw new InvalidPhotoException
-                    ("Please upload a valid JPEG photo.");
+            throw new InvalidPhotoException(
+                    "Please upload a valid JPEG photo.");
         }
 
         // Check MIME type
@@ -478,8 +500,8 @@ private static final int WALLET_SIZE = 19;
     }
     /** {@inheritDoc} */
     @Override
-    public void validateSubWalletForInvestment(SubWallet subWallet) {
-        if (subWallet.getIsInvested()){
+    public void validateSubWalletForInvestment(final SubWallet subWallet) {
+        if (subWallet.getIsInvested()) {
             log.error("SubWallet is already invested: {}",
                     subWallet.getSubWalletId());
             throw new InvestmentException(
@@ -489,10 +511,10 @@ private static final int WALLET_SIZE = 19;
 
 
     }
-
+/** {@inheritDoc} */
     @Override
-    public Reminder getReminderById(String reminderId) {
-            return reminderRepository.findById(reminderId).orElseThrow(()->
+    public Reminder getReminderById(final String reminderId) {
+            return reminderRepository.findById(reminderId).orElseThrow(() ->
                     new RuntimeException("cannot find Reminder "));
     }
 

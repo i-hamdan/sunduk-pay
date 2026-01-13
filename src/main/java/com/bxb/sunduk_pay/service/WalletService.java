@@ -2,9 +2,6 @@ package com.bxb.sunduk_pay.service;
 
 import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
-import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 
 /**
  * Service interface for handling wallet-related operations.

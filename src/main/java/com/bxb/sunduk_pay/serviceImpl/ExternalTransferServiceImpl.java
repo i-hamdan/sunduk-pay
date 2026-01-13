@@ -1,7 +1,11 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.Reminder;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.MainWalletRepository;
 import com.bxb.sunduk_pay.repository.MasterWalletRepository;
 import com.bxb.sunduk_pay.repository.ReminderRepository;
@@ -67,10 +71,10 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
      * @return the response containing updated wallet information
      */
     @Override
-    public MainWalletResponse handleUPITransfer(final MainWalletRequest request)
-    {
-        log.info("Initiating UPI transfer for UUID: {}, Amount: {}, " +
-                "RecipientUPI: {}", request.getUuid(), request.getAmount(),
+    public MainWalletResponse handleUPITransfer(
+            final MainWalletRequest request) {
+        log.info("Initiating UPI transfer for UUID: {}, Amount: {}, "
+                 + "RecipientUPI: {}", request.getUuid(), request.getAmount(),
                 request.getRecipientUpiId());
 
         try {
@@ -93,21 +97,22 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                     masterWallet.getMasterWalletId());
 
             // Step 3: Validate balance
-            log.info("Validating main wallet balance:" +
-                            " {} for amount: {}",
+            log.info("Validating main wallet balance:"
+                            + " {} for amount: {}",
                     mainWallet.getBalance(), request.getAmount());
             validations.validateBalance(mainWallet.getBalance(),
                     request.getAmount());
 
             // Step 4: Deduct balances
             log.info("Deducting amount from master and main wallets...");
-            masterWallet.setBalance(masterWallet.getBalance() -
-                    request.getAmount());
-            mainWallet.setBalance(mainWallet.getBalance() -
-                    request.getAmount());
+            masterWallet.setBalance(masterWallet.getBalance()
+                    - request.getAmount());
+            mainWallet.setBalance(mainWallet.getBalance()
+                    - request.getAmount());
 
-            if(request.getReminderId() != null){
-                Reminder reminder = validations.getReminderById(request.getReminderId());
+            if (request.getReminderId() != null) {
+                Reminder reminder = validations
+                .getReminderById(request.getReminderId());
                 reminder.setLocalDateTime(null);
                 reminder.setIsPaid(true);
                 reminderRepository.save(reminder);
@@ -129,8 +134,8 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                             .transactionLevel(TransactionLevel.EXTERNAL)
                             .dateTime(LocalDateTime.now())
                             .status("SUCCESS")
-                            .description("Deducted from Master Wallet for" +
-                                    " UPI transfer").fromWallet("Master Wallet")
+                            .description("Deducted from Master Wallet for"
+                              + " UPI transfer").fromWallet("Master Wallet")
                             .fromWalletId(masterWallet.getMasterWalletId())
                             .isInvestment(false)
                             .isMaster(true).build();
@@ -145,8 +150,8 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                             .dateTime(LocalDateTime.now())
                             .status("SUCCESS")
                             .paymentTag(request.getPaymentTag())
-                            .description("Deducted from Main Wallet for" +
-                                    " UPI transfer").fromWallet("Main Wallet")
+                            .description("Deducted from Main Wallet for"
+                                    + " UPI transfer").fromWallet("Main Wallet")
                             .fromWalletId(mainWallet.getMainWalletId())
                             .isInvestment(false)
                             .isMaster(false).build();
@@ -160,8 +165,9 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
             masterWalletRepository.save(masterWallet);
             mainWalletRepository.save(mainWallet);
 
-            log.info("UPI transfer completed successfully " +
-                            "for UUID: " + "{}",
+            log.info("UPI transfer completed successfully "
+                            + "for UUID: "
+                            + "{}",
                     user.getUuid());
 
             // Step 7: Build response
@@ -171,7 +177,8 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
 
         } catch (Exception e) {
             log.error("Error occurred during UPI transfer" +
-                    " for UUID: " + "{}. "
+                    " for UUID: "
+                    + "{}. "
                     + "Message: {}", request.getUuid(), e.getMessage(), e);
             throw e; // rethrow to be handled by global exception handler
         }

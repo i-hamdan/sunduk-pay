@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +45,9 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      */
     private final GenerateKeyUtil generateKeyUtil;
 
+    /**
+     * Repository for accessing global pot documents.
+     */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
 
     /**
@@ -66,7 +67,7 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      * @return A response containing the fetched pot details.
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(final GlobalPotRequest request) {
         try {
             log.info("Fetching details for Global Pot ID: {}",
                     request.getGlobalPotId());
@@ -92,7 +93,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 GlobalPot globalPot = globalPotValidations
                         .getGlobalPot(request.getGlobalPotId());
 
-                int contributorsCount = globalPotValidations.getContributorsCount(
+                int contributorsCount = globalPotValidations.
+                        getContributorsCount(
                         globalPot.getGlobalPotId());
 
                 int followersCount = globalPotValidations.getFollowersCount(
@@ -108,7 +110,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                         globalPotDocumentRepository.findByGlobalPotGlobalPotId(
                                 request.getGlobalPotId());
 
-                List<GlobalPotDocumentResponse> globalPotDocumentList= new ArrayList<>();
+         List<GlobalPotDocumentResponse>
+                 globalPotDocumentList = new ArrayList<>();
 
 
                 globalPotDocuments.forEach(document -> {
@@ -126,11 +129,12 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                     globalPotDocumentList.add(documentResponse);
 
                 });
-                globalPotResponse.setGlobalPotDocumentResponses(globalPotDocumentList);
+                globalPotResponse.setGlobalPotDocumentResponses(
+                        globalPotDocumentList);
 
 //
 //                redisTemplate.opsForValue()
-//                        .set(redisKey, globalPotResponse, Duration.ofMinutes(5));
+//                    .set(redisKey, globalPotResponse, Duration.ofMinutes(5));
 //                log.info(
 //"Cached Global Pot details in Redis with key: {}", redisKey);
 

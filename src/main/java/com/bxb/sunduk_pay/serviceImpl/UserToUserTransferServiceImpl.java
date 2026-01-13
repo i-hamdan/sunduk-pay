@@ -43,6 +43,9 @@ import java.util.UUID;
 public class UserToUserTransferServiceImpl
         implements UserToUserTransferService {
 
+    /**
+     * Transaction expiry time in hours for Redis storage.
+     */
     private static final int TRANSACTION_EXPIRY_HOURS = 24;
     /**
      * Validations utility for business rule enforcement.
@@ -97,7 +100,7 @@ public class UserToUserTransferServiceImpl
      * @return MainWalletResponse containing transfer details
      */
     @Override
-    public MainWalletResponse transferBetweenUsers (
+    public MainWalletResponse transferBetweenUsers(
             final String senderId,
             final String receiverId,
             final Double amount,
@@ -149,7 +152,7 @@ public class UserToUserTransferServiceImpl
 
             if (!investment.isActive()) {
                 log.error("Attempted to add money to an inactive investment.");
-                throw new InvestmentException (
+                throw new InvestmentException(
                         "Cannot process payment from an inactive investment.");
             }
 

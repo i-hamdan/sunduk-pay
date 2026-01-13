@@ -1,13 +1,32 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.util.*;
-import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.SuperBuilder;
+import com.bxb.sunduk_pay.util.CaseCategory;
+import com.bxb.sunduk_pay.util.CaseRequirementType;
+import com.bxb.sunduk_pay.util.PotScope;
+import com.bxb.sunduk_pay.util.PotStatus;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Index;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinTable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringExclude;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +35,8 @@ import java.util.List;
 
 /**
  * Entity representing a Global Pot fundraising campaign.
- * Stores campaign details, financial progress, and associated verification documents.
+ * Stores campaign details, financial progress, and associated
+ * verification documents.
  */
 @Builder
 @Entity
@@ -128,6 +148,7 @@ public class GlobalPot {
     private LocalDate goalDate;
 
     // --- 5. MEDIA & VISUALS ---
+    /** URL link to the main image representing the fundraising case. */
     @Builder.Default
     @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL,
             orphanRemoval = true)
@@ -199,7 +220,9 @@ public class GlobalPot {
 
 
     /** Adds a document to the global pot and
-     * sets the bidirectional relationship. */
+     * sets the bidirectional relationship.
+     * @param doc The document to be added.
+     */
     public void addDocument(
             final GlobalPotDocument doc) {
         if (doc != null) {

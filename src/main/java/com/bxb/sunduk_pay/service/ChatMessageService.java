@@ -16,17 +16,16 @@ public interface ChatMessageService {
     /**
      * Processes and saves a chat message.
      *
-     * @param message the chat message to be saved
-     * @return a confirmation string or message ID
+     * @param message the chat message to be saved.
      */
-    void saveMessage( ChatMessage message);
+    void saveMessage(ChatMessage message);
 
     /**
      * Fetches the chat history based on the provided request parameters.
      *
      * @param messageRequest the request containing parameters for
      *                       fetching chat history
-     * @return a list of chat message responses
+     * @return a list of chat message responses.
      */
     List<ChatAndTransactionUnifiedDTO> fetchChatHistory(
              ChatMessageRequest messageRequest);
@@ -35,7 +34,7 @@ public interface ChatMessageService {
      * Processes an incoming chat message event.
      *
      * @param messageEvent the chat message event to be processed
-     * @return the response after processing the chat message
+     * @return the response after processing the chat message.
      */
     ChatMessageResponse processMessage(
              ChatMessageEvent messageEvent);
@@ -43,7 +42,7 @@ public interface ChatMessageService {
     /***
      * Fetches the details of the receiver user based on the receiver ID.
      * @param receiverId
-     * @return User
+     * @return User.
      */
-    User getReceiverUserDetails( String receiverId);
+    User getReceiverUserDetails(String receiverId);
 }
