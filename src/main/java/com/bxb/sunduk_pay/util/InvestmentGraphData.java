@@ -35,12 +35,12 @@ public class InvestmentGraphData {
     /**
      * Day of month constant for date formatting.
      */
-    private static final int dayOfMonth = 5;
+    private static final int DAY_OF_MONTH = 5;
 
     /**
      * Date formatter for "dd MMMM yyyy" pattern in English locale.
      */
-    private static final DateTimeFormatter dateFormater =
+    private static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("dd MMMM yyyy")
                     .withLocale(Locale.ENGLISH);
 
@@ -131,7 +131,7 @@ public class InvestmentGraphData {
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(dateFormater))
+                    .date(rawDate.format(DATE_FORMATTER ))
                     .balance(history.getCurrentValue())
                     .build();
 
@@ -147,7 +147,7 @@ public class InvestmentGraphData {
                 InvestmentGraphDataDTO>> entry : tempMap.entrySet()) {
             int month = entry.getKey();
 
-            String monthName = LocalDate.of(YEAR, month, dayOfMonth)
+            String monthName = LocalDate.of(YEAR, month, DAY_OF_MONTH)
                     .format(DateTimeFormatter.ofPattern("MMM"));
 
             finalMap.put(
@@ -190,7 +190,7 @@ public class InvestmentGraphData {
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(dateFormater))  // "dd MMMM yyyy"
+                    .date(rawDate.format(DATE_FORMATTER ))  // "dd MMMM yyyy"
                     .balance(totalBalance)
                     .build();
 

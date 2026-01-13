@@ -2,7 +2,11 @@ package com.bxb.sunduk_pay.request;
 
 import com.bxb.sunduk_pay.util.PhotoRequestType;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Builder;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter

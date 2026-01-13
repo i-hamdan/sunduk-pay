@@ -392,8 +392,8 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.PAYLOAD_TOO_LARGE.value(),
                 HttpStatus.PAYLOAD_TOO_LARGE.getReasonPhrase(),
-                "File size exceeds the limit! Individual files" +
-                        " must be under 10MB and total request under 50MB.",
+                "File size exceeds the limit! Individual files"
+                        + " must be under 10MB and total request under 50MB.",
                 request.getRequestURI()
         );
 
@@ -458,6 +458,13 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
     }
 
+    /**
+     * Handles {@link InvestmentException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = InvestmentException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleInvestException(
@@ -470,6 +477,13 @@ public class GlobalExceptionHandler {
                 request.getRequestURI());
     }
 
+    /**
+     * Handles {@link MpinAlreadyExists}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = MpinAlreadyExists.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse mpinAlreadyExists(
@@ -527,6 +541,13 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
     }
+    /**
+     * Handles {@link GlobalPotNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = GlobalPotNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleGlobalPotNotFoundException(
@@ -538,6 +559,13 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link GoalAmountBelowThresholdException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = GoalAmountBelowThresholdException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleGoalAmountBelowThresholdException(
@@ -548,6 +576,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
+    /**
+     * Handles {@link CannotCreateAnonymousUserException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = CannotCreateAnonymousUserException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleCannotCreateAnonymousUserException(
@@ -570,12 +605,18 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
-
+    /**
+     * Handles {@link GlobalPotDocumentNotFoundException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = GlobalPotDocumentNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleGlobalPotDocumentNotFoundException(
             final GlobalPotDocumentNotFoundException e,
-            final HttpServletRequest request){
+            final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
@@ -583,6 +624,13 @@ public class GlobalExceptionHandler {
 
     }
 
+    /**
+     * Handles {@link UserAlreadyExist}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(UserAlreadyExist.class)
     public ErrorResponse handleUserAlreadyExist(
             final UserAlreadyExist e,

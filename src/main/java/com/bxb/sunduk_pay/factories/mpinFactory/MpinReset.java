@@ -25,6 +25,11 @@ public class MpinReset implements MpinOperation {
 
     /*** MPIN record to be updated. */
     private final MpinValidations mpinValidations;
+    /**
+     * Returns the type of MPIN request this operation handles.
+     *
+     * @return MpinRequestType.RESET_MPIN
+     */
     @Override
     public MpinRequestType getMpinRequestType() {
         return MpinRequestType.RESET_MPIN;

@@ -8,7 +8,7 @@ public class UserIsBlockedException extends RuntimeException {
      * Constructor for UserIsBlocked exception.
      * @param message
      */
-    public UserIsBlockedException(String message) {
+    public UserIsBlockedException(final String message) {
         super(message);
     }
 }

@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.exception;
 
-public class GlobalPotNotFoundException extends RuntimeException{
+public class GlobalPotNotFoundException extends RuntimeException {
     /**
      * Constructs a new {@code GlobalPotNotFoundException} with the specified
      * detail message.

@@ -16,7 +16,7 @@ public interface ChatMessageMapper {
      * @param request the chat message request
      * @return the corresponding chat message event
      */
-    ChatMessageEvent toMessageEvent(final ChatMessageRequest request);
+    ChatMessageEvent toMessageEvent(ChatMessageRequest request);
 
     /**
      * Converts a ChatMessageEvent to a ChatMessage.
@@ -24,7 +24,7 @@ public interface ChatMessageMapper {
      * @param event the chat message event
      * @return the corresponding chat message model
      */
-    ChatMessage toChatMessage(final ChatMessageEvent event);
+    ChatMessage toChatMessage(ChatMessageEvent event);
 
     /**
      * Converts a ChatMessage to a ChatMessageResponse.

@@ -11,9 +11,22 @@ import java.util.Optional;
 public interface GlobalPotMembersRepository
         extends JpaRepository<GlobalPotMembers, String> {
 
+    /**
+     * Check if GlobalPotMembers exists by User and GlobalPot
+     * @param userId
+     * @param globalPotId
+     * @return Boolean
+     */
     Boolean existsByUserAndGlobalPot(User userId, GlobalPot globalPotId);
 
-    Optional<GlobalPotMembers> findByUserAndGlobalPot(User userId, GlobalPot globalPotId);
+    /**
+     * Find GlobalPotMembers by User and GlobalPot
+     * @param userId
+     * @param globalPotId
+     * @return Optional of GlobalPotMembers
+     */
+    Optional<GlobalPotMembers> findByUserAndGlobalPot(
+            User userId, GlobalPot globalPotId);
 
 //    List<GlobalPotMembers> findByGlobalPotId(GlobalPot globalPotId);
 //

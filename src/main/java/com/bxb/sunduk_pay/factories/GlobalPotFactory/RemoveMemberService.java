@@ -63,10 +63,11 @@ public class RemoveMemberService implements GlobalPotOperation {
      * @return response indicating success or failure
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
 
-        log.info("RemoveMember started | " +
-                        "adminUuid={} globalPotId={} targetUserUuid={}",
+        log.info("RemoveMember started | "
+                        + "adminUuid={} globalPotId={} targetUserUuid={}",
                 request.getAdminUuid(),
                 request.getGlobalPotId(),
                 request.getTargetUserToRemove());
@@ -90,18 +91,18 @@ public class RemoveMemberService implements GlobalPotOperation {
         GlobalPotMembers member =
                 globalPotMembersRepository.findByUserAndGlobalPot(
                         targetMember, globalPot).orElseThrow(
-                                ()-> new ResourceNotFoundException(
+                                () -> new ResourceNotFoundException(
                                         "Membership record not found"));
 
         if (member == null) {
-            log.warn("RemoveMember failed | user not a member |" +
-                            " userUuid={} globalPotId={}",
+            log.warn("RemoveMember failed | user not a member |"
+                            + " userUuid={} globalPotId={}",
                     targetMember.getUuid(),
                     globalPot.getGlobalPotId());
             throw new UserNotFoundException(
-                    "User with userId:" +targetMember.getUuid() +
-                            " is not a member of the Global Pot:" +
-                            globalPot.getGlobalPotId());
+                    "User with userId:" +targetMember.getUuid()
+                            + " is not a member of the Global Pot:"
+                            + globalPot.getGlobalPotId());
         }
 
         globalPotMembersRepository.delete(member);

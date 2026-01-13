@@ -2,7 +2,11 @@ package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
 import com.bxb.sunduk_pay.Mappers.InvestmentMapper;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.Investment;
+import com.bxb.sunduk_pay.model.InvestmentDailyHistory;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.InvestmentDailyHistoryRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.InvestmentRequest;
@@ -11,7 +15,6 @@ import com.bxb.sunduk_pay.response.InvestmentResponse;
 import com.bxb.sunduk_pay.util.InvestmentsFetchType;
 import com.bxb.sunduk_pay.util.InvestmentGraphData;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
-import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
 public class FetchInvestmentDetails implements InvestmentOperation {
 
     /** Decimal format for currency representation. */
-    private static final DecimalFormat decimalFormat =
+    private static final DecimalFormat DECIMAL_FORMAT =
             new DecimalFormat("#,##0.00");
 
     /** Constant for percentage calculations. */
@@ -86,10 +87,11 @@ public class FetchInvestmentDetails implements InvestmentOperation {
     }
 
     /**
-     * Fetch investment details method
+     * Fetch investment details method.
      */
     @Override
-    public InvestmentResponse perform(final InvestmentRequest investmentRequest) {
+    public InvestmentResponse perform(
+            final InvestmentRequest investmentRequest) {
         log.info("Fetching investment details for User UUID: {}",
                 investmentRequest.getUuid());
         User user = validations.getUserInfo(investmentRequest.getUuid());
@@ -110,9 +112,10 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
     /**
      * Fetch pot investments for the user.
-     * @Param user the user whose investments are to be fetched
-     * @Param subWalletId the sub-wallet ID associated with the pot
-     * @return InvestmentResponse containing fetched pot investments
+     * @param user the user whose investments are to be fetched
+     * @param subWalletId the sub-wallet ID associated with the pot
+     * @return InvestmentResponse containing fetched pot investments.
+     *
      */
     private InvestmentResponse fetchPotInvestments(
             final User user,
@@ -165,8 +168,8 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
     /**
      * Fetch all investments for the user.
-     * @Param user the user whose investments are to be fetched
-     * @return InvestmentResponse containing all fetched investments
+     * @param user the user whose investments are to be fetched
+     * @return InvestmentResponse containing all fetched investments.
      */
     private InvestmentResponse fetchAllInvestments(final User user) {
 
@@ -176,7 +179,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (investments.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(0.0)
-                    .totalCurrentValue(decimalFormat.format(0.0))
+                    .totalCurrentValue(DECIMAL_FORMAT.format(0.0))
                     .totalNetProfitLoss(0.0)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
@@ -210,7 +213,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (history == null || history.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(totalInvested)
-                    .totalCurrentValue(decimalFormat.format(totalCurrentValue))
+                    .totalCurrentValue(DECIMAL_FORMAT.format(totalCurrentValue))
                     .totalNetProfitLoss(totalNetProfitLoss)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
@@ -231,14 +234,15 @@ public class FetchInvestmentDetails implements InvestmentOperation {
         if (portfolioHistory.isEmpty()) {
             return InvestmentResponse.builder()
                     .totalInvestedAmount(totalInvested)
-                    .totalCurrentValue(decimalFormat.format(totalCurrentValue))
+                    .totalCurrentValue(DECIMAL_FORMAT.format(totalCurrentValue))
                     .totalNetProfitLoss(totalNetProfitLoss)
                     .gain1MonthPercent(0.0)
                     .gain6MonthsPercent(0.0)
                     .build();
         }
 
-        Map<String, List<InvestmentGraphDataDTO>> dailyCombinedInvestmentGraphData =
+        Map<String, List<InvestmentGraphDataDTO>>
+                dailyCombinedInvestmentGraphData =
                 investmentGraphData.dailyCombinedInvestmentGraphData(
                         portfolioHistory);
 
@@ -271,7 +275,7 @@ public class FetchInvestmentDetails implements InvestmentOperation {
 
         return InvestmentResponse.builder()
                 .totalInvestedAmount(totalInvested)
-                .totalCurrentValue(decimalFormat.format(totalCurrentValue))
+                .totalCurrentValue(DECIMAL_FORMAT.format(totalCurrentValue))
                 .totalNetProfitLoss(totalNetProfitLoss)
                 .gain1MonthPercent(gain1MonthPercent)
                 .gain6MonthsPercent(gain6MonthsPercent)

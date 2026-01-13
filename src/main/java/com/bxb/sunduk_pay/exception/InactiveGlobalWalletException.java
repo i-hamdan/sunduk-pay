@@ -10,7 +10,7 @@ public class InactiveGlobalWalletException extends RuntimeException {
      * with the specified detail message.
      *@param message
      */
-    public InactiveGlobalWalletException(String message) {
+    public InactiveGlobalWalletException(final String message) {
         super(message);
     }
 }

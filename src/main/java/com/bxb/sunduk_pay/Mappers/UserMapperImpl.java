@@ -85,6 +85,13 @@ public class UserMapperImpl implements UserMapper {
         return kafkaEvent;
     }
 
+    /**
+     * Updates a User entity based on a UserRequest DTO.
+     *
+     * @param request the UserRequest containing updated info
+     * @param user    the existing User entity to update
+     * @return the updated User entity
+     */
     @Override
     public User toUpdate(final UserRequest request, final User user) {
 
@@ -130,6 +137,12 @@ public class UserMapperImpl implements UserMapper {
         return user;
     }
 
+    /**
+     * Converts a User entity to a UserResponse DTO.
+     *
+     * @param user the User entity to convert
+     * @return the corresponding UserResponse DTO
+     */
     @Override
     public UserResponse getDetails(final User user) {
 
@@ -143,7 +156,8 @@ public class UserMapperImpl implements UserMapper {
                 ""
                 : userEncryption.decrypt(user.getDateOfBirth());
 
-        String permanentAddress = user.getPermanentAddress() == null ?
+        String permanentAddress = user.getPermanentAddress() == null
+                ?
                 ""
                 : userEncryption.decrypt(user.getPermanentAddress());
 

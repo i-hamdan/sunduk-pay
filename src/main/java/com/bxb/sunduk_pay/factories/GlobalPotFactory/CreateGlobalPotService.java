@@ -33,11 +33,11 @@ import java.util.List;
 @Log4j2
 public class CreateGlobalPotService implements GlobalPotOperation {
 
-    /** Repository to manage GlobalPot data */
+    /** Repository to manage GlobalPot data. */
     private final GlobalPotRepository repository;
-    /** Mapper to convert between request and entity */
+    /** Mapper to convert between request and entity. */
     private final GlobalPotMapper mapper;
-    /** Repository to manage User data */
+    /** Repository to manage User data. */
     private final UserRepository userRepository;
 
     /**
@@ -57,7 +57,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
      */
     @Override
     @Transactional
-    public GlobalPotResponse perform(GlobalPotRequest request)
+    public GlobalPotResponse perform(final GlobalPotRequest request)
             throws IOException {
 
         log.info("Starting Global Pot creation process");
@@ -66,10 +66,10 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         log.debug("Mapped GlobalPot entity from request");
 
         // Handle Media Files
-        List<DocumentWrapper> mediaFiles=request.getDocumentFiles();
+        List <DocumentWrapper> mediaFiles = request.getDocumentFiles();
         log.info("Saving media files for GlobalPot ID: {}",
                 pot.getGlobalPotId());
-        mediaFiles.forEach((wrapper)-> {
+        mediaFiles.forEach((wrapper) -> {
             GlobalPotDocument globalPotDocument;
             if (wrapper != null && wrapper.getDocumentFile() != null
                     && !wrapper.getDocumentFile().isEmpty()) {
@@ -91,20 +91,19 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                 }
             }
             else {
-                log.warn("Skipping document '{}' - No file content found in " +
-                        "request", wrapper.getDocumentHeading());
+                log.warn("Skipping document '{}' - No file content "
+                        + "found in request", wrapper.getDocumentHeading());
             }
         });
 
         // Assign Administrators
         List<User> admins = new ArrayList<>();
-        request.getAdministrators().forEach(admin ->{
-            User user=
-                    userRepository.findById(admin.getUuid())
-                            .orElseThrow(()->new UserNotFoundException(
+        request.getAdministrators().forEach(admin -> {
+            User user = userRepository.findById(admin.getUuid())
+                            .orElseThrow(() -> new UserNotFoundException(
                                     "User not found with UUID: "
-                                            +admin.getUuid()));
-            if (!UserRoles.GLOBALPOT_ADMIN.equals(user.getUserRole())){
+                                            + admin.getUuid()));
+            if (!UserRoles.GLOBALPOT_ADMIN.equals(user.getUserRole())) {
                 user.setUserRole(UserRoles.GLOBALPOT_ADMIN);
                 admins.add(user);
             }

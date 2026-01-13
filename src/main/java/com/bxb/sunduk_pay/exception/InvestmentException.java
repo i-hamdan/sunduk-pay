@@ -10,7 +10,7 @@ public class InvestmentException extends RuntimeException {
      *
      * @param message the detail message
      */
-    public InvestmentException(String message) {
+    public InvestmentException(final String message) {
         super(message);
     }
 }

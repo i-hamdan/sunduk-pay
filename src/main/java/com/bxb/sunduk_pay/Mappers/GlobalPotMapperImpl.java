@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.GroupChatMessageRequest;
+import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -177,12 +178,14 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .message("Global Pot created successfully").build();
     }
 
+
+
     /**
      * @param request
      * @return
      */
     @Override
-    public GlobalWallet toEntityWallet(final GlobalPotRequest request) {
+    public GlobalWallet toEntityWallet(final SundukPayAdminRequest request) {
 
         GlobalWallet wallet = new GlobalWallet();
 

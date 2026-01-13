@@ -210,7 +210,7 @@ public class  TransferService implements WalletOperation {
      * @param targetWallet    the wallet receiving the funds,
      * @param amount          the amount to be transferred,
      * @param user            the user initiating the transfer
-     * @Param mpin            the MPIN for authentication
+     * @param mpin            the MPIN for authentication
      * @return MainWalletResponse with transfer result
      */
     private MainWalletResponse handleExternalOutGoingTransfer(

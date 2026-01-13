@@ -15,7 +15,7 @@ public class GlobalPotDocumentNotFoundException extends RuntimeException {
      * @param message the detail message explaining why the global pot document
      *                was not found
      */
-    public GlobalPotDocumentNotFoundException (final String message){
+    public GlobalPotDocumentNotFoundException(final String message) {
         super(message);
     }
 }

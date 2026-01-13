@@ -3,8 +3,11 @@ package com.bxb.sunduk_pay.request;
 import com.bxb.sunduk_pay.util.InvestmentsFetchType;
 import com.bxb.sunduk_pay.util.InvestmentRequestType;
 import com.bxb.sunduk_pay.util.RiskLevel;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 

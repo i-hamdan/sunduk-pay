@@ -30,11 +30,18 @@ public class WalletWrapper {
         this.mainWallet = null;
     }
 
-    // Check type
+    /** Checks if the underlying wallet is a MainWallet.
+     * @return true if it's a MainWallet,
+     * otherwise false
+     */
     public boolean isMainWallet() {
         return mainWallet != null;
     }
-    public boolean isInvested(){
+    /** Checks if the underlying wallet is invested.
+     * @return true if it's a SubWallet and is invested,
+     * otherwise false
+     */
+    public boolean isInvested() {
         return subWallet != null && subWallet.getIsInvested();
     }
 

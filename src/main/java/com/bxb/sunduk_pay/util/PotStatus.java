@@ -12,5 +12,7 @@ public enum PotStatus {
     /** Pot has been verified. */
     VERIFIED,
     /** Pot has been rejected. */
-    REJECTED
+    REJECTED,
+    /** Pot is in draft status. */
+    DRAFT
 }

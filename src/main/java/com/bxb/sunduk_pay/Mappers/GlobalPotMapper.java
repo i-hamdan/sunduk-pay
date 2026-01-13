@@ -45,6 +45,8 @@ public interface GlobalPotMapper {
      */
     GlobalWallet toEntityWallet(SundukPayAdminRequest request);
 
+//    GlobalWallet toEntityWallet(GlobalPotRequest request);
+
     /**
      * Converts a GlobalPotRequest to a Contributor entity.
      *

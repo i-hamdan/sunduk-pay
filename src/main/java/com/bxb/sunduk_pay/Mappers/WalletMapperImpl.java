@@ -20,7 +20,7 @@ import java.util.List;
 public class WalletMapperImpl implements WalletMapper {
 
     /** Decimal formatter for formatting balance values. */
-    private static final DecimalFormat decimalFormat =
+    private static final DecimalFormat DECIMAL_FORMAT =
             new DecimalFormat("#,##0.00");
 
     /**

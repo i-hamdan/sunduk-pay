@@ -280,7 +280,7 @@ public class AddContributerService implements GlobalPotOperation {
 
         } else {
 
-            log.info("No SubWallet found, using MainWallet | mainWalletId={}",
+    log.info("No SubWallet found, using MainWallet | mainWalletId={}",
                     mainWallet.getMainWalletId());
 
             log.info("MainWallet balance before deduction={}",
@@ -409,7 +409,7 @@ public class AddContributerService implements GlobalPotOperation {
      * @return the unified DTO representation
      */
     private GroupChatUnifiedDTO getTransactionDTO(
-            final TransactionResponse response){
+            final TransactionResponse response) {
         return GroupChatUnifiedDTO.builder()
                 .dataType(ChatDtoDataType.TRANSACTION_MESSAGE)
                 .timestamp(response.getChatDateTime()

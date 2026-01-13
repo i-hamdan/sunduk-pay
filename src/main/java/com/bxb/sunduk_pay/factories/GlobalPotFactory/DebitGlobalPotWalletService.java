@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class DebitGlobalPotWalletService implements GlobalPotOperation{
+public class DebitGlobalPotWalletService implements GlobalPotOperation {
 
     /** validations class for subWallet.*/
     private final Validations validations;
@@ -34,39 +34,53 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation{
      */
     private final GlobalPotValidations globalPotValidations;
 
-
+    /** Repository for global wallet data. */
     private final GlobalWalletRepository globalWalletRepository;
 
+    /** Repository for transaction data. */
     private final TransactionRepository transactionRepository;
 
 
-
+    /**
+     * Returns the type of global pot request this operation handles.
+     *
+     * @return GlobalPotRequestType.DEBIT_GLOBAL_POT_WALLET
+     */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType(){
         return GlobalPotRequestType.DEBIT_GLOBAL_POT_WALLET;
     }
 
+    /**
+     * Performs the debit operation on the global pot wallet.
+     *
+     * @param request the GlobalPotRequest containing debit details
+     * @return GlobalPotResponse indicating the result of the operation
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     @Transactional
-    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException{
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
 
         User admin = validations.getUserInfo(request.getAdminUuid());
         globalPotValidations.validateAdmin(admin);
 
-        GlobalPot globalPot = globalPotValidations.getGlobalPot
-                (request.getGlobalPotId());
+        GlobalPot globalPot = globalPotValidations.getGlobalPot(
+                request.getGlobalPotId());
 
         GlobalWallet globalWallet = globalPot.getGlobalWallet();
 
         if (!globalWallet.getIsActive()) {
-            throw new InactiveGlobalWalletException("Global wallet is inactive");
+            throw new InactiveGlobalWalletException(
+                    "Global wallet is inactive");
         }
 
         Double amount = request.getTargetAmount();
 
         validations.validateTargetBalance(globalWallet.getBalance(), amount);
 
-        globalWallet.setBalance( globalWallet.getBalance()-amount);
+        globalWallet.setBalance(globalWallet.getBalance() - amount);
         globalWalletRepository.save(globalWallet);
 
         Transaction transaction = Transaction.builder()
@@ -76,8 +90,8 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation{
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.GLOBAL_POT)
                 .dateTime(LocalDateTime.now())
-                .description("Admin debited amount-" +amount+
-                        " from Global Pot")
+                .description("Admin debited amount-" + amount
+                        + " from Global Pot")
                 .fromWallet("GlobalPotWallet")
                 .fromWalletId(globalWallet.getGlobalWalletId())
                 .toWallet("External")
@@ -88,8 +102,8 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation{
         transactionRepository.save(transaction);
 
         return GlobalPotResponse.builder()
-                .message("Amount-" +amount+ " debited from " +
-                        globalWallet.getGlobalWalletId())
+                .message("Amount-" +amount + " debited from "
+                        + globalWallet.getGlobalWalletId())
                 .currentBalance(globalWallet.getBalance())
                 .status("SUCCESS")
                 .build();
