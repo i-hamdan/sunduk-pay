@@ -69,10 +69,12 @@ public class SundukController {
 
         response.setUuid(dbUser.getUuid());
 
+
         boolean isMpinCreated = dbUser.getIsMpinCreated();
         String phoneNumber = dbUser.getPhoneNumber();
 
         authenticationSessionService.saveSession(session.getId(),dbUser);
+
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
                 + "&email=" + URLEncoder.encode(user.getEmail(),

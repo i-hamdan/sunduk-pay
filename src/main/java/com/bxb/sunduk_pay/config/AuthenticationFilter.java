@@ -1,6 +1,9 @@
 package com.bxb.sunduk_pay.config;
 
 import com.bxb.sunduk_pay.exception.InvalidUserException;
+import com.bxb.sunduk_pay.model.AuthenticationSession;
+import com.bxb.sunduk_pay.service.AuthenticationSessionService;
+import com.bxb.sunduk_pay.util.UserRoles;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -27,6 +30,10 @@ public class AuthenticationFilter implements Filter {
     /** Security properties containing excluded
      *  paths and other configs. **/
     private final SundukSecurityProperties securityProperties;
+    /**
+     * Service for managing authentication sessions.
+     */
+    private final AuthenticationSessionService sessionService;
 
     /**
      * Performs authentication checks on incoming requests.
@@ -62,9 +69,9 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        // Validate session
-        HttpSession session = httpServletRequest.getSession(false);
-        if (session == null || session.getAttribute(
+        // Validate ServelteSession
+        HttpSession ServelteSession = httpServletRequest.getSession(false);
+        if (ServelteSession == null || ServelteSession.getAttribute(
                 "SPRING_SECURITY_CONTEXT") == null) {
             log.error("Session is null or invalid for path: {}", path);
             throw new InvalidUserException("Session expired or invalid");
@@ -77,6 +84,8 @@ public class AuthenticationFilter implements Filter {
             throw new InvalidUserException("Cookies missing!");
         }
 
+
+
         String sessionId = Arrays.stream(cookies)
                 .filter(cookie -> "JSESSIONID".equals(cookie.getName()))
                 .map(Cookie::getValue)
@@ -87,6 +96,18 @@ public class AuthenticationFilter implements Filter {
             log.error("JSESSIONID not found or is blank.");
             throw new InvalidUserException("Session ID invalid!");
         }
+
+        AuthenticationSession session =
+                sessionService.validateSession(sessionId);
+
+        if (path.startsWith("/api/sunduk-service/sunduk-admin")
+                && session.getRoles() != UserRoles.SUNDUK_PAY_ADMIN) {
+            throw new InvalidUserException("Admin access required");
+        }
+
+
+
+
 
         log.info("Request passed filter and is authorized.");
         chain.doFilter(request, response);

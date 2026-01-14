@@ -12,9 +12,11 @@ import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.util.AdminRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Service
 public class VerifyGlobalPot implements SundukPayAdminOperation{
 
 

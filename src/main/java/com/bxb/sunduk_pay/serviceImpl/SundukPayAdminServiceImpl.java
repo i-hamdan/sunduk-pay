@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.service.SundukPayAdminService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class SundukPayAdminServiceImpl implements SundukPayAdminService {
 
-    /**
-     * Logger instance for service-level logging.
-     */
-    private static final Logger logger =
-            LogManager.getLogger(SundukPayAdminServiceImpl.class);
+
 
     /**
      * Factory responsible for resolving the correct
@@ -41,7 +39,7 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
     @Override
     public SundukPayAdminResponse adminApi(final SundukPayAdminRequest request) {
 
-        logger.info("Processing admin request of type: {}",
+        log.info("Processing admin request of type: {}",
                 request.getAdminRequestType());
 
         try {
@@ -51,7 +49,7 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
                                     request.getAdminRequestType());
 
             if (adminOperation == null) {
-                logger.error("No admin operation found for request type: {}",
+                log.error("No admin operation found for request type: {}",
                         request.getAdminRequestType());
                 throw new IllegalArgumentException(
                         "Unsupported admin request type");
@@ -60,13 +58,13 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
             SundukPayAdminResponse response =
                     adminOperation.perform(request);
 
-            logger.info("Admin request processed successfully for type: {}",
+            log.info("Admin request processed successfully for type: {}",
                     request.getAdminRequestType());
 
             return response;
 
         } catch (Exception ex) {
-            logger.error("Error occurred while processing admin request of type: {}",
+            log.error("Error occurred while processing admin request of type: {}",
                     request.getAdminRequestType(), ex);
             throw ex;
         }

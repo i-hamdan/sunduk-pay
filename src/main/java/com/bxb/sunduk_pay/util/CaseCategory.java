@@ -38,11 +38,8 @@ public enum CaseCategory {
 
     /**
      * Represents all case categories.
-     * <p>
      * Typically used for filtering or fetching cases without
-     * category-based restrictions.
-     * </p>
-     */
+     * category-based restrictions.*/
     ALL,
 
     /**
