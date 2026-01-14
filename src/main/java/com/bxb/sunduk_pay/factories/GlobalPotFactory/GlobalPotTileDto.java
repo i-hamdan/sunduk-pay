@@ -20,6 +20,11 @@ public class GlobalPotTileDto {
     /** Category of the case associated with the global pot. */
     private String caseCategory;
     /** Short description of the global pot. */
+
+    private String description;
+
+    private String caseRequirementType;
+
     private Boolean isVerified;
     /** Indicates if the global pot is currently active. */
     private Boolean isActive;
