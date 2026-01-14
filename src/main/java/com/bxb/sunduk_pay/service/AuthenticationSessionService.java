@@ -18,5 +18,10 @@ public interface AuthenticationSessionService {
      */
     void saveSession(String jSessionId, User user);
 
+    /**
+     * Validates an existing session by its ID.
+     * @param jSessionId
+     * @return
+     */
     AuthenticationSession validateSession(String jSessionId);
 }

@@ -247,8 +247,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 // --- Financials ---
                 .currentBalance(pot.getCurrentBalance())
                 .goalAmount(pot.getGoalAmount())
-                .description(pot.getDescription())
-                .caseRequirementType(pot.getCaseRequirementType().toString())
+                //.description(pot.getDescription())
+               // .caseRequirementType(pot.getCaseRequirementType().toString())
 
 
                 .contributorCount(

@@ -97,6 +97,7 @@ public class AuthenticationFilter implements Filter {
             throw new InvalidUserException("Session ID invalid!");
         }
 
+
         AuthenticationSession session =
                 sessionService.validateSession(sessionId);
 
@@ -104,10 +105,6 @@ public class AuthenticationFilter implements Filter {
                 && session.getRoles() != UserRoles.SUNDUK_PAY_ADMIN) {
             throw new InvalidUserException("Admin access required");
         }
-
-
-
-
 
         log.info("Request passed filter and is authorized.");
         chain.doFilter(request, response);

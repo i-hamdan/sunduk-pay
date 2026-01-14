@@ -12,20 +12,16 @@ import java.time.LocalDateTime;
  * session ID, user UUID, user role, creation time, expiration time,
  * and session status.
  */
-@Entity
 @Builder
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "authentication_sessions")
 public class AuthenticationSession {
 
     /**
-     * Unique identifier for the authentication session.
      * Represents the JSESSIONID created during user authentication.
      */
-    @Id
     private String jSessionId;
 
     /**
@@ -45,19 +41,4 @@ public class AuthenticationSession {
     @Enumerated(EnumType.STRING)
     private UserRoles roles;
 
-    /**
-     * Date and time when the session was created.
-     */
-    private LocalDateTime createdAt;
-
-    /**
-     * Date and time when the session will expire.
-     */
-    private LocalDateTime expiresAt;
-
-    /**
-     * Indicates whether the session is currently active.
-     * True if the session is valid, false if expired or invalidated.
-     */
-    private boolean isActiveSession;
 }
