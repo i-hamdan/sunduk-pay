@@ -13,7 +13,6 @@ import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,7 +50,7 @@ public class UpdateSubWalletService implements WalletOperation {
     }
 
     /**
-     * Updates a SubWallet based on the action
+     * Updates a SubWallet based on the action.
      * type specified in the request.
      * Supports renaming, updating goal amounts,
      * and changing target dates.
@@ -59,9 +58,8 @@ public class UpdateSubWalletService implements WalletOperation {
      * @param mainWalletRequest request containing user UUID, wallet ID,
      *  action type, and relevant update details
      * @return response indicating success or failure of the update
-     * @throws ResourceNotFoundException if user or wallet is not found
      * @throws CannotUpdateWalletException if the
-     * @throws InvalidPayloadException if the request payload is invalid
+     * @throws InvalidPayloadException if the request payload is invalid.
      */
     @Override
     public MainWalletResponse perform(

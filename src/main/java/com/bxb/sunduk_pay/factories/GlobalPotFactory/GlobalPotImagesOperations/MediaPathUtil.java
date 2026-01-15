@@ -19,8 +19,8 @@ public class MediaPathUtil {
      * @return the generated image path
      */
     public  String potImage(final String potId, final String ext) {
-        return "pots/" + potId + "/images/" +
-                UUID.randomUUID() + "." + ext;
+        return "pots/" + potId + "/images/"
+                + UUID.randomUUID() + "." + ext;
     }
 
     /**

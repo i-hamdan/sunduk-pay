@@ -46,15 +46,15 @@
 //     * <p>
 //     * This method performs the following steps:
 //     * <ul>
-//     *   <li>Fetches the Global Pot Document using the provided document ID</li>
-//     *   <li>Throws {@link GlobalPotDocumentNotFoundException} if not found</li>
-//     *     <li>Verifies the document if its status is PENDING</li>
-//     *     <li>Updates and persists the document status</li>
+//     * <li>Fetches the Global Pot Document using the provided document ID</li>
+//     * <li>Throws {@link GlobalPotDocumentNotFoundException} if not found</li>
+//     * <li>Verifies the document if its status is PENDING</li>
+//     * <li>Updates and persists the document status</li>
 //     * </ul>
 //     * </p>
 //     *
 //     * @param request the Global Pot request containing the document ID
-//     * @return {@link GlobalPotResponse} containing verification result message
+//     *@return {@link GlobalPotResponse} containing verification result message
 //     * @throws IOException if any I/O error occurs during processing
 //     */
 //    @Override

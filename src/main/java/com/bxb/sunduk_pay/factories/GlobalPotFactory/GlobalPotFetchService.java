@@ -1,4 +1,5 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
+
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
@@ -76,7 +77,7 @@ public class GlobalPotFetchService implements GlobalPotOperation {
 
             log.debug("Fetching all PUBLIC global pots");
           pots = globalPotRepository.findByPotScope(PotScope.PUBLIC, pageable);
-        }else {
+        } else {
             log.debug("Fetching PUBLIC global pots for category: {}",
                     request.getCaseCategory());
 

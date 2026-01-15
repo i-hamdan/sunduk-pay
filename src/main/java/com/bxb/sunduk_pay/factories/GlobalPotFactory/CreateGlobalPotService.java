@@ -89,8 +89,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-            }
-            else {
+            } else {
                 log.warn("Skipping document '{}' - No file content "
                         + "found in request", wrapper.getDocumentHeading());
             }

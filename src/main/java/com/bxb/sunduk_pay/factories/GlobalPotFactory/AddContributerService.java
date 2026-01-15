@@ -2,7 +2,6 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
-import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.Contributor;
@@ -124,7 +123,6 @@ public class AddContributerService implements GlobalPotOperation {
      *                wallet information, and contribution amount
      * @return {@link GlobalPotResponse} with success message
      * @throws IOException                  if any I/O related issue occurs
-     * @throws InsufficientBalanceException if wallet balance is insufficient
      */
     @Override
     @Transactional
