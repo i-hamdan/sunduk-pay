@@ -28,6 +28,18 @@ import java.util.List;
 @Log4j2
 public class ReminderScheduler {
     /**
+     * Number of days for reminder notification window.
+     */
+    private static final int REMINDER_WINDOW_DAYS = 3;
+    /**
+     * Number of days before and after reminder for notification window.
+     */
+    private static final int DAYS_BEFORE_REMINDER = 7;
+    /**
+     * Number of days after reminder for notification window.
+     */
+    private static final int DAYS_AFTER_REMINDER = 7;
+    /**
      * Number of days for daily reminder lookback.
      */
     private static final int DAILY_LOOKBACK_DAYS = 1;
@@ -131,9 +143,9 @@ public class ReminderScheduler {
             }
 
 //  Create a new DAILY reminder if yesterday's reminder is unpaid and available
-            if (!reminder.getIsPaid() &&
-                    reminder.getDate().isEqual(minusDays1) &&
-                    reminder.getIsAvailable()) {
+            if (!reminder.getIsPaid()
+                    && reminder.getDate().isEqual(minusDays1)
+                    && reminder.getIsAvailable()) {
 
           log.info("Creating new DAILY reminder from unpaid yesterday reminder."
                   + " Reminder ID:"
@@ -163,8 +175,8 @@ public class ReminderScheduler {
 //              It is paid and not available
 //              OR unpaid, not available, and 2 days old
             LocalDate minusDays2 = today.minusDays(DAILY_EXPIRY_DAYS);
-            if (reminder.getIsPaid() && !reminder.getIsAvailable()||
-            !reminder.getIsPaid() && !reminder.getIsAvailable()
+            if (reminder.getIsPaid() && !reminder.getIsAvailable()
+                     || !reminder.getIsPaid() && !reminder.getIsAvailable()
                     && reminder.getDate().isEqual(minusDays2)) {
                 reminderRepository.delete(reminder);
 
@@ -192,7 +204,7 @@ public class ReminderScheduler {
                 weeklyReminders.size());
 
 //          Process weekly reminder date adjustments
-        for (Reminder reminder : weeklyReminders){
+        for (Reminder reminder : weeklyReminders) {
 
             LocalDate minusDays1 = today.minusDays(WEEKLY_LOOKBACK_DAYS);
             LocalDate minusDays2 = today.minusDays(2);
@@ -205,14 +217,14 @@ public class ReminderScheduler {
 //             Update reminder date and notification time
 //              if reminder is unpaid and falls within -1, 0, or +1 day range
             if (minusDays1.getDayOfWeek().equals(dayOfWeek)
-                    && ! reminder.getIsPaid()) {
+                    && !reminder.getIsPaid()) {
                 reminder.setLocalDateTime(currentDateTime);
                 reminder.setDate(minusDays1);
                 log.info("Reminder ID {} updated to yesterday",
                         reminder.getReminderId());
 
-            } else if (today.getDayOfWeek().equals(dayOfWeek)
-                    && ! reminder.getIsPaid()) {
+            }else if (today.getDayOfWeek().equals(dayOfWeek)
+                    && !reminder.getIsPaid()) {
                 reminder.setLocalDateTime(currentDateTime);
                 reminder.setDate(today);
 
@@ -221,9 +233,8 @@ public class ReminderScheduler {
                 log.info("Reminder ID {} updated to today",
                         reminder.getReminderId());
 
-            }
-            else if(plusDays1.getDayOfWeek().equals(dayOfWeek)
-                    && !reminder.getIsPaid()){
+            }else if (plusDays1.getDayOfWeek().equals(dayOfWeek)
+                    && !reminder.getIsPaid()) {
                 reminder.setLocalDateTime(currentDateTime);
                 reminder.setDate(plusDays1);
                 log.info("Reminder ID {} updated to tomorrow",
@@ -232,7 +243,7 @@ public class ReminderScheduler {
             }
 
 //              Clear notification time for reminders older than 2 days
-            if(minusDays2.getDayOfWeek().equals(dayOfWeek)
+            if (minusDays2.getDayOfWeek().equals(dayOfWeek)
                     && reminder.getIsAvailable()){
 
                 reminder.setLocalDateTime(null);
@@ -272,7 +283,7 @@ public class ReminderScheduler {
             int validDay = Math.min(reminderDay, currentMonth.lengthOfMonth());
             LocalDate dueDate = currentMonth.atDay(validDay);
 
-            //  If today is already after this month's window → move to next month
+      //  If today is already after this month's window → move to next month
             if (today.isAfter(dueDate.plusDays(MONTHLY_REMINDER_WINDOW_DAYS))) {
                 YearMonth nextMonth = currentMonth.plusMonths(1);
 
@@ -281,9 +292,8 @@ public class ReminderScheduler {
      log.info("Reminder ID {} moved to next month. New due date: {}",
                         reminder.getReminderId(), dueDate);
 
-            }
-            else if (today.isBefore(dueDate.minusDays(
-                    MONTHLY_REMINDER_WINDOW_DAYS))){
+            }else if (today.isBefore(dueDate.minusDays(
+                    MONTHLY_REMINDER_WINDOW_DAYS))) {
                 YearMonth previousMonth =
                         currentMonth.minusMonths(1);
 
@@ -295,11 +305,10 @@ public class ReminderScheduler {
 
 //              Check if today's date is within the ±3 day window
 //              and the reminder is unpaid & available
-            for (int i = -3; i <= 3; i++) {
+            for (int i = -REMINDER_WINDOW_DAYS; i <= REMINDER_WINDOW_DAYS; i++) {
                 LocalDate checkDate = today.plusDays(i);
-
                 // Collect reminders to send notification
-                if(checkDate.isEqual(today)){
+                if (checkDate.isEqual(today)) {
                     remindersToSend.add(reminder);
 log.debug("Reminder scheduled for sending. Reminder ID: {}, Date: {}",
                             reminder.getReminderId(), today);
@@ -327,8 +336,8 @@ log.debug("Reminder scheduled for sending. Reminder ID: {}, Date: {}",
             }
 
 //             Clear notification time 4 days before due date
-            if(today.isEqual(dueDate.minusDays(MONTHLY_NOTIFICATION_CLEAR_DAYS))
-                    && reminder.getIsAvailable()){
+            if (today.isEqual(dueDate.minusDays(MONTHLY_NOTIFICATION_CLEAR_DAYS))
+                    && reminder.getIsAvailable()) {
                 reminder.setLocalDateTime(null);
 log.info("Cleared notification time for Monthly Reminder ID {}",
                         reminder.getReminderId());
@@ -358,21 +367,19 @@ log.info("Cleared notification time for Monthly Reminder ID {}",
                 dueDate = monthDay.atYear(today.getYear() + 1);
     log.info("Reminder ID {} moved to next year. New due date: {}",
                         reminder.getReminderId(), dueDate);
-
-            }
-            else if (today.isBefore(
+            }else if (today.isBefore(
                     dueDate.minusDays(YEARLY_REMINDER_WINDOW_DAYS))) {
-                dueDate = monthDay.atYear(today.getYear() -1);
+                dueDate = monthDay.atYear(today.getYear() - 1);
     log.info("Reminder ID {} moved to previous year. New due date: {}",
                         reminder.getReminderId(), dueDate);
             }
 
 //             Check if today's date is within the ±7 day window
 //              and the reminder is unpaid & available
-            for (int i = -7; i <= 7; i++) {
+            for (int i = -DAYS_BEFORE_REMINDER; i <= DAYS_AFTER_REMINDER; i++) {
                 LocalDate checkDate = today.plusDays(i);
 
-                if(checkDate.isEqual(today)) {
+                if (checkDate.isEqual(today)) {
                     remindersToSend.add(reminder);
                 }
                 // Collect reminders to send notification

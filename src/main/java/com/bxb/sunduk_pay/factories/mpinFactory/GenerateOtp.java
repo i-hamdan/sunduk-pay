@@ -22,6 +22,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class GenerateOtp implements MpinOperation {
 
+    /** Upper bound for OTP generation. */
     private static final int BOUNDS = 10000;
 
     /**

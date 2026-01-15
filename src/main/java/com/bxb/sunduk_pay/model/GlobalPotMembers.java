@@ -1,4 +1,5 @@
     package com.bxb.sunduk_pay.model;
+
     import com.bxb.sunduk_pay.util.UserRoles;
     import jakarta.persistence.Entity;
     import jakarta.persistence.Id;
@@ -72,7 +73,8 @@
         private UserRoles userRoles;
 
         /**
-         * Indicates whether the member is blocked from participating in the GlobalPot.
+         * Indicates whether the member is blocked from participating.
+         * in the GlobalPot.
          * Defaults to false (not blocked).
          */
         private Boolean isBlocked = false;

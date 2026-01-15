@@ -593,7 +593,13 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
-
+/**
+     * Handles {@link UserIsBlockedException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
     @ExceptionHandler(value = UserIsBlockedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleUserIsBlockedException(

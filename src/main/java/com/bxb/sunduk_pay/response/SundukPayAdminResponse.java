@@ -1,6 +1,10 @@
 package com.bxb.sunduk_pay.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Response DTO used to return the result of

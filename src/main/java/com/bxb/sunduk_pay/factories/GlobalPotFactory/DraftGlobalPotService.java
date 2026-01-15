@@ -18,18 +18,30 @@ import java.io.IOException;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DraftGlobalPotService implements GlobalPotOperation{
+public class DraftGlobalPotService implements GlobalPotOperation {
 
+    /** Mapper for converting between Global Pot entities and requests. */
     private final GlobalPotMapper mapper;
+    /** Repository for Global Pot entities. */
     private final GlobalPotRepository globalPotRepository;
-
+    /**
+     * Returns the type of Global Pot request this service handles.
+     *
+     * @return the Global Pot request type
+     */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.DRAFT_POT;
     }
-
+    /**
+     * Performs the drafting of a Global Pot.
+     *
+     * @param request the Global Pot request
+     * @return the response indicating the result of the operation
+     * @throws IOException if an I/O error occurs
+     */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request)
+    public GlobalPotResponse perform(final GlobalPotRequest request)
             throws IOException {
 
         log.info("Global Pot draft initiated.");

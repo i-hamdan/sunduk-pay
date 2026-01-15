@@ -34,16 +34,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Log4j2
 public class GlobalPotFetchService implements GlobalPotOperation {
-    /** Repository to access GlobalPot data */
+    /** Repository to access GlobalPot data. */
 
     private final GlobalPotRepository globalPotRepository;
-    /** Mapper to convert GlobalPot entity to response DTO */
+    /** Mapper to convert GlobalPot entity to response DTO. */
 
     private final GlobalPotMapper globalPotMapper;
     /**
      * Returns the request type supported by this service.
      *
-     * @return FETCH_GLOBAL_POT request type
+     * @return FETCH_GLOBAL_POT request type.
      */
     @Override
     public GlobalPotRequestType getGlobalPotRequestType() {
@@ -57,11 +57,11 @@ public class GlobalPotFetchService implements GlobalPotOperation {
      * - Or fetches category wise public global pots
      *
      * @param request request containing filter details
-     * @return response containing global pot tiles
+     * @return response containing global pot tiles.
      */
 
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) {
+    public GlobalPotResponse perform(final GlobalPotRequest request) {
         log.info("Fetch global pot request received: {}", request);
 
         Pageable pageable = PageRequest.of(
@@ -71,13 +71,12 @@ public class GlobalPotFetchService implements GlobalPotOperation {
 
         Page<GlobalPot> pots;
 
-        if (request.getCaseCategory() == null ||
-                request.getCaseCategory() == CaseCategory.ALL){
+        if (request.getCaseCategory() == null
+                || request.getCaseCategory() == CaseCategory.ALL) {
 
             log.debug("Fetching all PUBLIC global pots");
-            pots = globalPotRepository.findByPotScope(PotScope.PUBLIC, pageable);
-        }
-        else {
+          pots = globalPotRepository.findByPotScope(PotScope.PUBLIC, pageable);
+        }else {
             log.debug("Fetching PUBLIC global pots for category: {}",
                     request.getCaseCategory());
 

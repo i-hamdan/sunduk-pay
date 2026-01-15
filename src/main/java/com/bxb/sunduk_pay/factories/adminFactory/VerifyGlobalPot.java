@@ -5,19 +5,20 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalWallet;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
-import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
-import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.util.AdminRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class responsible for verifying or creating
+ * a Global Wallet associated with a Global Pot.
+ */
 @RequiredArgsConstructor
 @Service
-public class VerifyGlobalPot implements SundukPayAdminOperation{
+public class VerifyGlobalPot implements SundukPayAdminOperation {
 
 
     /** Repository for Global Wallet operations. */
@@ -29,14 +30,22 @@ public class VerifyGlobalPot implements SundukPayAdminOperation{
     /** Repository for Global Pot operations. */
     private final GlobalPotRepository globalPotRepository;
 
-
+/**
+     * Returns the type of admin request this operation handles.
+     * @return AdminRequestType associated with this operation.
+     */
     @Override
     public AdminRequestType getAdminRequestType() {
         return AdminRequestType.VERIFY_POT;
     }
-
+    /**
+     * Performs the verification or creation of a Global Wallet
+     * associated with a Global Pot based on the provided request.
+     * @param request the request containing necessary data for the operation.
+     * @return SundukPayAdminResponse containing the result of the operation.
+     */
     @Override
-    public SundukPayAdminResponse perform(SundukPayAdminRequest request) {
+    public SundukPayAdminResponse perform(final SundukPayAdminRequest request) {
         // 1. Fetch and Validate the Pot existence
         GlobalPot globalPot = globalPotValidations
                 .getGlobalPot(request.getGlobalPotId());
