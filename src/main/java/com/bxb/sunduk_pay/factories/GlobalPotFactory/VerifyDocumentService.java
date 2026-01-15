@@ -16,8 +16,11 @@
 //@Service
 //@RequiredArgsConstructor
 //@Log4j2
-//public class VerifyDocumentService implements GlobalPotOperation{
+//public class VerifyDocumentService implements GlobalPotOperation {
 //
+//    /**
+//     * Repository for accessing Global Pot Document data.
+//     */
 //    private final GlobalPotDocumentRepository globalPotDocumentRepository;
 //
 //
@@ -33,7 +36,7 @@
 //     * @return the Global Pot request type as VERIFY_DOCUMENT
 //     */
 //    @Override
-//    public GlobalPotRequestType getGlobalPotRequestType(){
+//    public GlobalPotRequestType getGlobalPotRequestType() {
 //        return GlobalPotRequestType.VERIFY_DOCUMENT;
 //    }
 //
@@ -43,8 +46,8 @@
 //     * <p>
 //     * This method performs the following steps:
 //     * <ul>
-//     *     <li>Fetches the Global Pot Document using the provided document ID</li>
-//     *     <li>Throws {@link GlobalPotDocumentNotFoundException} if not found</li>
+//     *   <li>Fetches the Global Pot Document using the provided document ID</li>
+//     *   <li>Throws {@link GlobalPotDocumentNotFoundException} if not found</li>
 //     *     <li>Verifies the document if its status is PENDING</li>
 //     *     <li>Updates and persists the document status</li>
 //     * </ul>
@@ -55,11 +58,11 @@
 //     * @throws IOException if any I/O error occurs during processing
 //     */
 //    @Override
-//    public GlobalPotResponse perform(GlobalPotRequest request)
+//    public GlobalPotResponse perform(final GlobalPotRequest request)
 //            throws IOException {
 //
-//        log.info("Starting Global Pot document verification." +
-//                        " Document ID: {}",
+//        log.info("Starting Global Pot document verification."
+//                        + " Document ID: {}",
 //                request.getGlobalPotDocumentId());
 //
 //        // Fetch the Global Pot Document by ID
@@ -67,26 +70,26 @@
 //                .findById(request.getGlobalPotDocumentId()).orElseThrow(() ->
 //                new GlobalPotDocumentNotFoundException(
 //                        "Global Pot Document Not Found"));
-//
-//        log.debug("Global Pot Document fetched successfully. " +
-//                        "Current Status: {}",
+//        log.debug("Global Pot Document fetched successfully. "
+//                        + "Current Status: {}",
 //                globalPotDocument.getDocumentStatus());
 //
 //        // Verify and update the document status
 //        String message;
-//        if(globalPotDocument.getDocumentStatus().equals(
-//                DocumentStatus.PENDING)){
+//        if (globalPotDocument.getDocumentStatus().equals(
+//                DocumentStatus.PENDING)) {
 //            globalPotDocument.setDocumentStatus(DocumentStatus.VERIFIED);
 //            globalPotDocumentRepository.save(globalPotDocument);
 //            message = "Document Verified Successfully";
-//            log.info("Global Pot Document verified successfully. " +
-//                            "Document ID: {}",
+//            log.info("Global Pot Document verified successfully. "
+//                            + "Document ID: {}",
 //                    globalPotDocument.getGlobalPotDocumentId());
-//        }else {
+//        }
+//        else {
 //            message = "Document is Already Verified";
 //
-//            log.info("Global Pot Document already verified. " +
-//                            "Document ID: {}",
+//            log.info("Global Pot Document already verified. "
+//                            + "Document ID: {}",
 //                    globalPotDocument.getGlobalPotDocumentId());
 //        }
 //

@@ -138,6 +138,9 @@ public enum GlobalPotRequestType {
      */
     REMOVE_MEMBER,
 
+    /**
+     * Draft a new global pot.
+     */
     DRAFT_POT;
 
     }

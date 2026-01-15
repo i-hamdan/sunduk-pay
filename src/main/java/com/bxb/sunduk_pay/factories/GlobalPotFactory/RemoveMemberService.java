@@ -100,7 +100,7 @@ public class RemoveMemberService implements GlobalPotOperation {
                     targetMember.getUuid(),
                     globalPot.getGlobalPotId());
             throw new UserNotFoundException(
-                    "User with userId:" +targetMember.getUuid()
+                    "User with userId:" + targetMember.getUuid()
                             + " is not a member of the Global Pot:"
                             + globalPot.getGlobalPotId());
         }

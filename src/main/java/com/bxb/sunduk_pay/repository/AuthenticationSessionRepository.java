@@ -13,6 +13,13 @@
 //public interface AuthenticationSessionRepository
 //        extends JpaRepository<AuthenticationSession, String> {
 //
-//
-//    Optional<AuthenticationSession> findByjSessionIdAndIsActiveSessionTrue(String jSessionId);
+//    /**
+//     * Finds an active authentication session by its JSessionId.
+//     *
+//     * @param jSessionId the JSessionId of the authentication session
+//     * @return an Optional containing the found AuthenticationSession,
+//     *         or empty if no active session is found
+//     */
+//    Optional<AuthenticationSession> findByjSessionIdAndIsActiveSessionTrue(
+//            String jSessionId);
 //}

@@ -206,7 +206,8 @@ private static final int WALLET_SIZE = 19;
                             .findByUserUuidAndFromWalletIdAndTransactionType(
                                     uuid, walletId, TransactionType.DEBIT,
                                     pageable);
-                }}
+                }
+            }
 
             // Case 1b: Credit transactions
             else if (hasType && transactionType == TransactionType.CREDIT) {
@@ -218,7 +219,8 @@ private static final int WALLET_SIZE = 19;
                     transactions = transactionRepository
                             .findByUserUuidAndToWalletIdAndTransactionType(
                  uuid, walletId, TransactionType.CREDIT, pageable);
-                }}
+                }
+            }
 
             // Case 1c: No transaction type filter
             else {
@@ -231,7 +233,8 @@ private static final int WALLET_SIZE = 19;
                             .findAllByUserUuidAndWalletId(
                                     uuid, walletId, pageable);
                 }
-            }}
+            }
+        }
 
         // Case 2: No wallet filter
         else {

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class MpinServiceImpl implements MpinService{
+public class MpinServiceImpl implements MpinService {
 
 /** Factory for obtaining MPIN operations based on request type. */
  private final MpinOperationsFactory mpinOperationsFactory;

@@ -26,53 +26,53 @@ public interface InvestmentValidation {
 
     /** Retrieve investment by sub-wallet ID.
      * @param subWalletId
-     * @return
+     * @return Investment
      */
     Investment getInvestmentBySubWalletId(String subWalletId);
 
     /** Retrieve investments by user UUID.
      * @param uuid
-     * @return
+     * @return List of Investments
      */
-    List <Investment> getInvestmentsByUserUuid(String uuid);
+    List<Investment> getInvestmentsByUserUuid(String uuid);
 
     /** Retrieve units for a given portfolio model and date.
      * @param model
      * @param date
-     * @return
+     * @return Units
      */
     Units getUnitsForDate(PortfolioModel model, LocalDate date);
 
     /** Find the next available units for a given portfolio model and date.
      * @param model
      * @param date
-     * @return
+     * @return Units
      */
     Units findNextUnit(PortfolioModel model, LocalDate date);
 
     /** Find units by portfolio model ID and date.
      * @param modelId
      * @param date
-     * @return
+     * @return Units
      */
     Units findUnitByDate(Long modelId, LocalDate date);
 
     /** Validate the risk level of an investment.
      * @param investmentRiskLevel
      * @param riskLevel
-     * @return
+     * @return RiskLevel
      */
     RiskLevel validateRiskLevel(String investmentRiskLevel, String riskLevel);
 
     /** Retrieve a PortfolioModel by risk level.
      * @param riskLevel
-     * @return
+     * @return riskLevel
      */
     PortfolioModel getPortfolioModelByRiskLevel(String riskLevel);
 
     /** Retrieve a PortfolioModel by its ID.
      * @param id
-     * @return
+     * @return id
      */
     PortfolioModel getPortfolioModelById(Long id);
 }

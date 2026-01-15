@@ -12,10 +12,22 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class MediaStorageService {
 
+    /**
+     * Root directory for media storage, injected from application properties.
+     */
     @Value("${media.root}")
     private String mediaRoot;
 
-    public String savePublicFile(MultipartFile file, String relativePath) {
+    /**
+     * Saves a public file to the media storage.
+     *
+     * @param file         the file to be saved
+     * @param relativePath the relative path where the file should be saved
+     * @return the relative path of the saved file
+     */
+    public String savePublicFile(
+            final MultipartFile file,
+            final String relativePath) {
         try {
             Path fullPath = Paths.get(
                     mediaRoot,

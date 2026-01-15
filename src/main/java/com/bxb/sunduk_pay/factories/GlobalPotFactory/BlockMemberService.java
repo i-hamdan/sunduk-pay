@@ -77,7 +77,7 @@ log.info("Block member request | admin={} pot={} targetUser={}",
                 memberToBeBlocked.getUser().getUuid(),
                 globalPot.getGlobalPotId());
 
-        if (memberToBeBlocked.getIsBlocked()){
+        if (memberToBeBlocked.getIsBlocked()) {
             log.error("User {} is already blocked in pot {}",
                     targetUser.getUuid(),
                     globalPot.getGlobalPotId());

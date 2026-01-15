@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class FollowerRequest {
     /**
-     * UUID of the follower
+     * UUID of the follower.
      */
     private String uuid;
 }

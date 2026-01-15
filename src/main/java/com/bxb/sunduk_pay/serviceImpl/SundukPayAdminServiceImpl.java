@@ -7,8 +7,6 @@ import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.service.SundukPayAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,7 +35,8 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
      * @return response containing the result of the admin operation
      */
     @Override
-    public SundukPayAdminResponse adminApi(final SundukPayAdminRequest request) {
+    public SundukPayAdminResponse adminApi(
+            final SundukPayAdminRequest request) {
 
         log.info("Processing admin request of type: {}",
                 request.getAdminRequestType());
@@ -49,7 +48,8 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
                                     request.getAdminRequestType());
 
             if (adminOperation == null) {
-                log.error("No admin operation found for request type: {}",
+                log.error(
+                        "No admin operation found for request type: {}",
                         request.getAdminRequestType());
                 throw new IllegalArgumentException(
                         "Unsupported admin request type");
@@ -58,13 +58,15 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
             SundukPayAdminResponse response =
                     adminOperation.perform(request);
 
-            log.info("Admin request processed successfully for type: {}",
+            log.info(
+                    "Admin request processed successfully for type: {}",
                     request.getAdminRequestType());
 
             return response;
 
         } catch (Exception ex) {
-            log.error("Error occurred while processing admin request of type: {}",
+log.error(
+        "Error occurred while processing admin request of type: {}",
                     request.getAdminRequestType(), ex);
             throw ex;
         }

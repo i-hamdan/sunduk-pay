@@ -1,13 +1,12 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.AdminRequestType;
-import com.bxb.sunduk_pay.util.GlobalPotRequestType;
-import com.bxb.sunduk_pay.util.PotStatus;
-import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
 
 /**
  * Request DTO used by admin users to perform operations

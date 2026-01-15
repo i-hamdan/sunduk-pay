@@ -23,7 +23,7 @@ public class SundukPayAdminController {
     /**
      * Logger instance for tracking admin API requests and responses.
      */
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(SundukPayAdminController.class);
 
     /**
@@ -42,14 +42,14 @@ public class SundukPayAdminController {
     public ResponseEntity<SundukPayAdminResponse> adminApi(
             @RequestBody final SundukPayAdminRequest request) {
 
-        logger.info("Received admin API request");
+        LOGGER.info("Received admin API request");
 
         try {
             SundukPayAdminResponse response = service.adminApi(request);
-            logger.info("Admin API request processed successfully");
+            LOGGER.info("Admin API request processed successfully");
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
-            logger.error("Error occurred while processing admin API request", ex);
+LOGGER.error("Error occurred while processing admin API request", ex);
             throw ex;
         }
     }

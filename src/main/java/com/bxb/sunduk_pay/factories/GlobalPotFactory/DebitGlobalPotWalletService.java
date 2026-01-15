@@ -47,7 +47,7 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
      * @return GlobalPotRequestType.DEBIT_GLOBAL_POT_WALLET
      */
     @Override
-    public GlobalPotRequestType getGlobalPotRequestType(){
+    public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.DEBIT_GLOBAL_POT_WALLET;
     }
 
@@ -102,7 +102,7 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
         transactionRepository.save(transaction);
 
         return GlobalPotResponse.builder()
-                .message("Amount-" +amount + " debited from "
+                .message("Amount-" + amount + " debited from "
                         + globalWallet.getGlobalWalletId())
                 .currentBalance(globalWallet.getBalance())
                 .status("SUCCESS")

@@ -37,7 +37,8 @@ import java.util.List;
 public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
     /**
-     * Duration for which the group chat messages are cached in Redis (in minutes).
+     * Duration for which the group chat messages.
+     * are cached in Redis (in minutes).
      */
     private static final int DURATION_IN_MINUTES = 5;
     /**
@@ -215,9 +216,9 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                             groupChatKey, groupMessagesResponse);
                     log.info("Loaded"
                             + groupMessagesResponse.size()
-                            +" group chat messages from DB "
+                            + " group chat messages from DB "
                             + " to Redis cache for key "
-                            +groupChatKey);
+                            + groupChatKey);
                 }
             }
             // Now, add the new message to Redis cache

@@ -66,7 +66,7 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         log.debug("Mapped GlobalPot entity from request");
 
         // Handle Media Files
-        List <DocumentWrapper> mediaFiles = request.getDocumentFiles();
+        List<DocumentWrapper> mediaFiles = request.getDocumentFiles();
         log.info("Saving media files for GlobalPot ID: {}",
                 pot.getGlobalPotId());
         mediaFiles.forEach((wrapper) -> {
