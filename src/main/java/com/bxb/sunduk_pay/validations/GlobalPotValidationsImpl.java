@@ -243,7 +243,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
             final User userUuid,
             final GlobalPot globalPotId) {
         return globalPotMembersRepository.findByUserAndGlobalPot(
-                userUuid,globalPotId).orElseThrow(
+                userUuid, globalPotId).orElseThrow(
                 () -> new ResourceNotFoundException(
                         "Member not found with UUID: "
                                 + userUuid.getUuid()

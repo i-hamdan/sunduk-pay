@@ -39,7 +39,7 @@ public class SundukController {
     private final UserMapper userMapper;
 
     /**
-     * Service for authorised session operation
+     * Service for authorised session operation.
      */
     private final AuthenticationSessionService authenticationSessionService;
 
@@ -73,8 +73,7 @@ public class SundukController {
         boolean isMpinCreated = dbUser.getIsMpinCreated();
         String phoneNumber = dbUser.getPhoneNumber();
 
-        authenticationSessionService.saveSession(session.getId(),dbUser);
-
+        authenticationSessionService.saveSession(session.getId(), dbUser);
         String deepLink = "islamicbank://login-success?sessionId="
                 + session.getId()
                 + "&email=" + URLEncoder.encode(user.getEmail(),

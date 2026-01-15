@@ -176,8 +176,8 @@ public class ExternalTransferServiceImpl implements ExternalTransferService {
                     .transactionDate(LocalDateTime.now()).build();
 
         } catch (Exception e) {
-            log.error("Error occurred during UPI transfer" +
-                    " for UUID: "
+            log.error("Error occurred during UPI transfer"
+                    + " for UUID: "
                     + "{}. "
                     + "Message: {}", request.getUuid(), e.getMessage(), e);
             throw e; // rethrow to be handled by global exception handler

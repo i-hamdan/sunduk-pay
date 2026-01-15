@@ -43,8 +43,8 @@ public interface CurrencyMapper {
      * @return list of CurrencyRatesResponse.
      */
 
-    List <CurrencyRatesResponse> toCurrencyRatesResponses(
-            List <Map<String, Object>> currencyRates,
+    List<CurrencyRatesResponse> toCurrencyRatesResponses(
+            List<Map<String, Object>> currencyRates,
             String rateKey,
             TimeSeries timeSeries
     );
@@ -57,8 +57,8 @@ public interface CurrencyMapper {
      * @return list of CurrencyRatesResponse representing monthly averages
      * representing monthly averages.
      */
-    List <CurrencyRatesResponse> toMonthlyAverageResponses(
-            List <Map<String, Object>> currencyRates,
+    List<CurrencyRatesResponse> toMonthlyAverageResponses(
+            List<Map<String, Object>> currencyRates,
             String rateKey);
 
 

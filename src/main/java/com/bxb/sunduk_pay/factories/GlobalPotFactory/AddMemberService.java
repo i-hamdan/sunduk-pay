@@ -1,7 +1,6 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
@@ -38,6 +37,9 @@ public class AddMemberService implements GlobalPotOperation {
      */
     private final GlobalPotValidations globalPotValidations;
 
+    /**
+     * Repository for managing Global Pot members.
+     */
     private final GlobalPotMembersRepository globalPotMembersRepository;
 
     /**
@@ -58,10 +60,11 @@ public class AddMemberService implements GlobalPotOperation {
      * @return response indicating success or failure
      */
     @Override
-    public GlobalPotResponse perform(GlobalPotRequest request) throws IOException {
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
 
-        log.info("AddMember started | " +
-                        "adminUuid={} globalPotId={} targetUserUuid={}",
+        log.info("AddMember started | "
+                        + "adminUuid={} globalPotId={} targetUserUuid={}",
                 request.getAdminUuid(),
                 request.getGlobalPotId(),
                 request.getTargetUserToAdd());
@@ -83,7 +86,8 @@ public class AddMemberService implements GlobalPotOperation {
                 targetUser.getUuid());
 
 
-            globalPotValidations.ensureUserIsMemberByAdmin(targetUser, globalPot);
+            globalPotValidations.ensureUserIsMemberByAdmin(
+                    targetUser, globalPot);
             log.info("User added as member | userUuid={} globalPotId={}",
                     targetUser.getUuid(),
                     globalPot.getGlobalPotId());

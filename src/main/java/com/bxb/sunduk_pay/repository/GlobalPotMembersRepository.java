@@ -5,25 +5,24 @@ import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface GlobalPotMembersRepository
         extends JpaRepository<GlobalPotMembers, String> {
 
     /**
-     * Check if GlobalPotMembers exists by User and GlobalPot
+     * Check if GlobalPotMembers exists by User and GlobalPot.
      * @param userId
      * @param globalPotId
-     * @return Boolean
+     * @return Boolean.
      */
     Boolean existsByUserAndGlobalPot(User userId, GlobalPot globalPotId);
 
     /**
-     * Find GlobalPotMembers by User and GlobalPot
+     * Find GlobalPotMembers by User and GlobalPot.
      * @param userId
      * @param globalPotId
-     * @return Optional of GlobalPotMembers
+     * @return Optional of GlobalPotMembers.
      */
     Optional<GlobalPotMembers> findByUserAndGlobalPot(
             User userId, GlobalPot globalPotId);

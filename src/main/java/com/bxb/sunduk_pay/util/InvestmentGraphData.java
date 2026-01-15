@@ -131,7 +131,7 @@ public class InvestmentGraphData {
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(DATE_FORMATTER ))
+                    .date(rawDate.format(DATE_FORMATTER))
                     .balance(history.getCurrentValue())
                     .build();
 
@@ -190,7 +190,7 @@ public class InvestmentGraphData {
 
             InvestmentGraphDataDTO dto = InvestmentGraphDataDTO.builder()
                     .rawDate(rawDate)
-                    .date(rawDate.format(DATE_FORMATTER ))  // "dd MMMM yyyy"
+                    .date(rawDate.format(DATE_FORMATTER))  // "dd MMMM yyyy"
                     .balance(totalBalance)
                     .build();
 
