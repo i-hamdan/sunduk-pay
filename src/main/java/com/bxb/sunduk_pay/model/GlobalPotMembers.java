@@ -28,7 +28,7 @@
     @Entity
     @Table(name = "global_pot_member",
             uniqueConstraints = {@UniqueConstraint(columnNames =
-                    {"user_id_of_member", "global_pot_id"})
+                    {"user_id_of_member","global_pot_id"})
             }
     )
     @Getter

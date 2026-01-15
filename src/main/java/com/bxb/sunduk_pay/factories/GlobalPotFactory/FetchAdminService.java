@@ -18,6 +18,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class FetchAdminService implements GlobalPotOperation {
+
     /** Repository for accessing user data. */
     private final UserRepository userRepository;
 
