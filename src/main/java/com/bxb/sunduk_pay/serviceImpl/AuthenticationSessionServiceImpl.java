@@ -11,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 /**
  * Implementation of {@link AuthenticationSessionService}.
@@ -24,20 +23,20 @@ import java.time.LocalDateTime;
 public class AuthenticationSessionServiceImpl implements
         AuthenticationSessionService {
 
+    /**
+     * Redis template for performing operations
+     * on authentication sessions in Redis.
+     */
     private final RedisTemplate<String, AuthenticationSession> redisTemplate;
 
     /**
-     * Session validity duration in minutes.
-     */
-    public final long session = 30;
-
-    /**
      * Saves an authentication session for a user.
-     * @param jSessionId the unique session identifier created during authentication
+     * @param jSessionId the unique session identifier
+     *                   created during authentication.
      * @param user the authenticated user for whom the session is being created
      */
     @Override
-    public void saveSession(String jSessionId, User user) {
+    public void saveSession(final String jSessionId, final User user) {
 
         log.info(
                 "Creating session in Redis. sessionId="
@@ -57,6 +56,10 @@ public class AuthenticationSessionServiceImpl implements
                     .build();
 
             redisTemplate.opsForValue().set(sessionKey, authenticationSession);
+            /**
+             * Session validity duration in minutes.
+             */
+            long session = 30;
             redisTemplate.expire(sessionKey, Duration.ofMinutes(session));
 
             log.info(
@@ -85,7 +88,7 @@ public class AuthenticationSessionServiceImpl implements
      * @return  authentication session details
      */
     @Override
-    public AuthenticationSession validateSession(String jSessionId) {
+    public AuthenticationSession validateSession(final String jSessionId) {
 
         log.debug(
                 "Validating session with sessionId= "

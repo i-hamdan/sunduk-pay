@@ -38,7 +38,7 @@ public class GlobalPotRequest {
     /** requirement type of the case. */
     private CaseRequirementType caseRequirementType;
     /** status of the pot. */
-    private PotStatus PotStatus;
+    private PotStatus potStatus;
     /** detailed description of the case. */
     private String description;
     /** target amount to be raised. */

@@ -37,7 +37,7 @@ public class SundukPayAdminRequest {
     private String globalPotId;
 
     /**
-     * Document ID for global pot
+     * Document ID for global pot.
      */
     private String globalPotDocumentId;
 

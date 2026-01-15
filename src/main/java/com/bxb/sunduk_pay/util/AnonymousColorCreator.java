@@ -68,24 +68,19 @@ public class AnonymousColorCreator {
         if (h < HUE_RANGE_60) {
             r = c;
             g = x;
-        }
-        else if (h < HUE_RANGE_120) {
+        } else if (h < HUE_RANGE_120) {
             r = x;
             g = c;
-        }
-        else if (h < HUE_RANGE_180) {
+        } else if (h < HUE_RANGE_180) {
             g = c;
             b = x;
-        }
-        else if (h < HUE_RANGE_240) {
+        } else if (h < HUE_RANGE_240) {
             g = x;
             b = c;
-        }
-        else if (h < HUE_RANGE_300) {
+        } else if (h < HUE_RANGE_300) {
             r = x;
             b = c;
-        }
-        else {
+        } else {
             r = c;
             b = x;
         }

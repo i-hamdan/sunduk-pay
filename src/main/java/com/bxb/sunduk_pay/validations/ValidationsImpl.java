@@ -207,10 +207,8 @@ private static final int WALLET_SIZE = 19;
                                     uuid, walletId, TransactionType.DEBIT,
                                     pageable);
                 }
-            }
-
-            // Case 1b: Credit transactions
-            else if (hasType && transactionType == TransactionType.CREDIT) {
+                // Case 1b: Credit transactions
+            } else if (hasType && transactionType == TransactionType.CREDIT) {
                 if (hasMethod) {
                     transactions = transactionRepository
                 .findByUserUuidAndToWalletIdAndTransactionTypeAndPaymentMethod(
@@ -220,10 +218,8 @@ private static final int WALLET_SIZE = 19;
                             .findByUserUuidAndToWalletIdAndTransactionType(
                  uuid, walletId, TransactionType.CREDIT, pageable);
                 }
-            }
-
-            // Case 1c: No transaction type filter
-            else {
+                // Case 1c: No transaction type filter
+            } else {
                 if (hasMethod) {
                     transactions = transactionRepository
                             .findByUuidAndWalletIdAndPaymentMethod(
@@ -234,10 +230,8 @@ private static final int WALLET_SIZE = 19;
                                     uuid, walletId, pageable);
                 }
             }
-        }
-
-        // Case 2: No wallet filter
-        else {
+            // Case 2: No wallet filter
+        } else {
             if (hasType && hasMethod) {
                 transactions = transactionRepository
            .findByUserUuidAndTransactionTypeAndPaymentMethodAndIsMasterFalse(

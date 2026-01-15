@@ -23,7 +23,8 @@ public interface AuthenticationSessionService {
     /**
      * Validates an authentication session by its JSessionId.
      *
-     * @param jSessionId the JSessionId of the authentication session to validate
+     * @param jSessionId the JSessionId of the authentication
+     *                   session to validate.
      * @return the valid AuthenticationSession if found
      */
     AuthenticationSession validateSession(String jSessionId);

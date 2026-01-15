@@ -69,9 +69,9 @@ public class AuthenticationFilter implements Filter {
             return;
         }
 
-        // Validate ServelteSession
-        HttpSession ServelteSession = httpServletRequest.getSession(false);
-        if (ServelteSession == null || ServelteSession.getAttribute(
+        // Validate servletSession
+        HttpSession servletSession = httpServletRequest.getSession(false);
+        if (servletSession == null || servletSession.getAttribute(
                 "SPRING_SECURITY_CONTEXT") == null) {
             log.error("Session is null or invalid for path: {}", path);
             throw new InvalidUserException("Session expired or invalid");

@@ -104,7 +104,8 @@ public final class EmailMessageUtil {
                  <html lang="en">
                  <head>
                  <meta charset="UTF-8" />
-                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                 <meta name="viewport"
+                  content="width=device-width, initial-scale=1.0" />
                  <title>4 Digit PIN To Reset Sunduk MPIN</title>
                  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
                  rel="stylesheet" />
@@ -115,7 +116,8 @@ public final class EmailMessageUtil {
                  body { background-color: #f4f4f4; margin: 0; padding: 0; }
                  .card-custom { border-radius: 16px;
                  box-shadow: 0 2px 6px rgba(0,0,0,0.05);}
-                 .logo-text { color: #C19945; font-weight: 700; font-size: 20px;}
+                 .logo-text { color: #C19945; font-weight: 700;
+                  font-size: 20px;}
                  .title-bar {border-top: 1px solid #f0f0f0;
                   border-bottom: 1px solid #f0f0f0; color: #666666;
                  padding: 12px 0; font-weight: 500; text-align: center;
@@ -141,10 +143,13 @@ public final class EmailMessageUtil {
                  </head>
                  <body>
                  <div class="container my-5">
-                 <div class="card card-custom mx-auto" style="max-width: 600px;">
+                 <div class="card card-custom mx-auto"
+                  style="max-width: 600px;">
                  <div class="card-body ">
                  <!-- Logo Section -->
-                 <div class="d-flex align-items-center " style="display:flex !important;
+                 <div
+                  class="d-flex align-items-center "
+                   style="display:flex !important;
                  justify-items:center !important;gap:14px; ">
                  <img src="cid:logoImage" alt="Sunduk Pay Logo"
                  width="90" height="90" class="me-2" />
@@ -152,7 +157,8 @@ public final class EmailMessageUtil {
                  style="padding-top:30px !important">Sunduk Pay</span>
                  </div>
                  <!-- Title Bar -->
-                 <div class="title-bar mb-4">4 Digit PIN To Reset Sunduk MPIN</div>
+                 <div class="title-bar mb-4">4 Digit PIN To Reset Sunduk MPIN
+                 </div>
                 <!-- Content -->
                 <p class="greeting mb-2">
                 <span class="hi-text">Hi</span>
@@ -168,14 +174,16 @@ public final class EmailMessageUtil {
                 <strong class="text-dark">4-digit verification MPIN
                 </strong> below to reset your MPIN securely in the Sunduk app.
                 </p>
-                <h4 class="fw-semibold mt-4 mb-1 text-dark">Your Verification PIN</h4>
+                <h4 class="fw-semibold mt-4 mb-1 text-dark">
+                Your Verification PIN</h4>
                 <div class="pin-box">
                 <span class="pin"><span class="bracket">[</span>%s </span>
                 <span class="bracket">]</span>
                 </div>
                 <p class="text-muted mt-3">
                 This PIN is valid for
-                <strong class="text-dark">Today</strong> and can only be used once.<br>
+                <strong class="text-dark">Today</strong>
+                 and can only be used once.<br>
                 Enter this code on the
                 <strong class="text-dark">“Verify OTP”</strong>
                 screen in your Sunduk app to set your new MPIN.
@@ -190,7 +198,10 @@ public final class EmailMessageUtil {
                 including Sunduk representatives.</li>
                 <li><span>#</span>Sunduk will never ask for your PIN via call,
                 SMS, or email.</li>
-                <li><span>#</span>Always use the official Sunduk app or website.</li>
+                <li>
+                <span>#</span>
+                Always use the official Sunduk app or website.
+                </li>
                 </ul>
                 <!-- Help -->
                 <h4 class="mt-4 text-dark fw-semibold">Need Help?</h4>
