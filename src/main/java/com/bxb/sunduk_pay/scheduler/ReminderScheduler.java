@@ -94,8 +94,8 @@ public class ReminderScheduler {
 /**
      * Scheduled method to send reminder notifications based on their duration.
      */
-//    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
-    @Scheduled(cron = "0 * * * * *") // runs every 1 min
+    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
+//    @Scheduled(cron = "0 * * * * *") // runs every 1 min
 //      @Scheduled(cron = "*/30 * * * * *") // runs every 30 seconds
     public void sendReminderNotifications() {
         
