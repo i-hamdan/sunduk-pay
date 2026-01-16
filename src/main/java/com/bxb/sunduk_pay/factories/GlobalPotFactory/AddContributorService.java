@@ -66,7 +66,7 @@ import java.util.UUID;
 @Service
 @Log4j2
 @RequiredArgsConstructor
-public class AddContributerService implements GlobalPotOperation {
+public class AddContributorService implements GlobalPotOperation {
 
     /** Constant for five minutes duration. */
     private static final int FIVE = 5;

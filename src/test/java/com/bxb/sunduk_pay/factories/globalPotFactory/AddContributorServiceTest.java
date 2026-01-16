@@ -1,7 +1,7 @@
 package com.bxb.sunduk_pay.factories.globalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
-import com.bxb.sunduk_pay.factories.GlobalPotFactory.AddContributerService;
+import com.bxb.sunduk_pay.factories.GlobalPotFactory.AddContributorService;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
@@ -15,14 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-public class AddContributerServiceTest {
+public class AddContributorServiceTest {
 
     @Mock
     private ContributerRepository contributerRepository;
@@ -45,12 +45,12 @@ public class AddContributerServiceTest {
     @Mock
     private GlobalPotRepository globalPotRepository;
     @InjectMocks
-    private AddContributerService addContributerService;
+    private AddContributorService addContributorService;
 
 
     @Test
     void shouldReturnAddContributorRequestType(){
-        GlobalPotRequestType type = addContributerService.getGlobalPotRequestType();
+        GlobalPotRequestType type = addContributorService.getGlobalPotRequestType();
         Assertions.assertEquals(type,GlobalPotRequestType.ADD_CONTRIBUTOR);
     }
 
@@ -118,7 +118,7 @@ public class AddContributerServiceTest {
 
         // WHEN
         GlobalPotResponse response =
-                addContributerService.perform(request);
+                addContributorService.perform(request);
 
         // THEN
         Assertions.assertNotNull(response);
@@ -195,7 +195,7 @@ public class AddContributerServiceTest {
 
         // WHEN
         GlobalPotResponse response =
-                addContributerService.perform(request);
+                addContributorService.perform(request);
 
         // THEN
         Assertions.assertNotNull(response);
