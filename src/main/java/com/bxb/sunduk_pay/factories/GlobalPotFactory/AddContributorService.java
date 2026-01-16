@@ -3,32 +3,15 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.Contributor;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalWallet;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
-import com.bxb.sunduk_pay.repository.ContributerRepository;
-import com.bxb.sunduk_pay.repository.GlobalPotRepository;
-import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.MasterWalletRepository;
-import com.bxb.sunduk_pay.repository.SubWalletRepository;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.TransactionResponse;
 import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
-import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.util.*;
 import com.bxb.sunduk_pay.response.GroupChatUnifiedDTO;
-import com.bxb.sunduk_pay.util.ChatDtoDataType;
 import com.bxb.sunduk_pay.service.AnonymousUserService;
-import com.bxb.sunduk_pay.util.GenerateKeyUtil;
-import com.bxb.sunduk_pay.util.TransactionLevel;
-import com.bxb.sunduk_pay.util.TransactionType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -101,7 +85,10 @@ public class AddContributorService implements GlobalPotOperation {
     private final AnonymousUserService anonymousUserService;
     /** Messaging template for WebSocket communication. **/
     private final SimpMessagingTemplate messagingTemplate;
-
+/** Repository for GlobalPotMembers data access. **/
+    private final GlobalPotMembersRepository membersRepository;
+    /** Repository for follower data access. **/
+private final FollowerRepository followerRepository;
     /**
      * Returns the {@link GlobalPotRequestType} handled by this service.
      *
@@ -162,6 +149,8 @@ public class AddContributorService implements GlobalPotOperation {
                         globalPot.getGlobalWallet().getGlobalWalletId()
                 ).orElseThrow(() -> new WalletNotFoundException(
                         "GlobalWallet not found"));
+        createFollowerRecord(user,globalPot);
+        createMemberRecord(user,globalPot);
 
         String groupTransactionRedisKey = generateKeyUtil
                 .getGroupTransactionKey(request.getGlobalPotId());
@@ -213,6 +202,7 @@ public class AddContributorService implements GlobalPotOperation {
                 .fromWalletId(masterWallet.getMasterWalletId())
                 .toGlobalPotId(globalPot.getGlobalPotId())
                 .isAnonymous(isAnonymous)
+                .paymentTag(request.getPaymentTag())
                 .anonymousId(
                         identity != null ? identity.getAnonymousId() : null)
                 .anonymousColor(
@@ -250,6 +240,7 @@ public class AddContributorService implements GlobalPotOperation {
                     .transactionType(TransactionType.DEBIT)
                     .status("SUCCESS")
                     .description("Deducted from sub wallet")
+                    .paymentTag(request.getPaymentTag())
                     .dateTime(LocalDateTime.now())
                     .user(user)
                     .fromWallet(subWallet.getSubWalletName())
@@ -305,6 +296,7 @@ public class AddContributorService implements GlobalPotOperation {
                     .transactionType(TransactionType.DEBIT)
                     .status("SUCCESS")
                     .description("Deducted from main wallet")
+                    .paymentTag(request.getPaymentTag())
                     .dateTime(LocalDateTime.now())
                     .user(user)
                     .fromWallet("Main Wallet")
@@ -363,8 +355,6 @@ public class AddContributorService implements GlobalPotOperation {
         globalWalletRepository.save(globalWallet);
         globalPotRepository.save(globalPot);
         contributerRepository.save(contributor);
-        globalPotValidations.ensureUserIsMember(user,
-                globalPot);
         log.info(
 "Contributor added successfully | userId={} globalPotId={} amount={}",
                 request.getUserContributorId(),
@@ -416,5 +406,77 @@ public class AddContributorService implements GlobalPotOperation {
                         .toString())
                 .data(response)
                 .build();
+    }
+
+    /**
+     * Creates a new follower record for the user in the specified global pot.
+     *
+     * @param user      the user who is following
+     * @param globalPot the global pot being followed
+     */
+    private void createFollowerRecord(
+            final User user, final GlobalPot globalPot) {
+
+        if (followerRepository.existsByFollowerUserAndGlobalPot(
+                user, globalPot)) {
+            log.info(
+     "User {} is already a follower of pot {}. No action taken.",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            return;
+        } else {
+            log.info(
+                    "Creating new follower record for user {} in pot {}",
+                    user.getUuid(), globalPot.getGlobalPotId());
+
+            Follower follower = Follower.builder()
+                    .followerUser(user)
+                    .globalPot(globalPot)
+                    .createdAt(LocalDateTime.now()).build();
+            followerRepository.save(follower);
+        }
+    }
+
+    /**
+     * Creates a new member record for the user in the specified global pot.
+     *
+     * @param user      the user to be added as a member
+     * @param globalPot the global pot to which the user is being added
+     */
+    private void createMemberRecord(
+            final User user, final GlobalPot globalPot) {
+
+        log.info("Checking if user {} is already a member of pot {}",
+                user.getUuid(), globalPot.getGlobalPotId());
+        Optional<GlobalPotMembers> dbMember
+                = membersRepository.findByUserAndGlobalPot(user, globalPot);
+        if (dbMember.isPresent() && Boolean.TRUE
+                .equals(dbMember.get().getIsContributor())) {
+            log.info(
+     "User {} is already a contributor of pot {}. No action taken.",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            return;
+        }
+        else if (dbMember.isPresent() && Boolean.FALSE
+                .equals(dbMember.get().getIsContributor())) {
+            log.info(
+"User {} is already a member of pot {}. No action taken.",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            dbMember.get().setIsContributor(true);
+            membersRepository.saveAndFlush(dbMember.get());
+            return;
+        } else {
+            log.info(
+                    "Creating new member record for user {} in pot {}",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            GlobalPotMembers member = GlobalPotMembers.builder()
+                    .user(user)
+                    .globalPot(globalPot)
+                    .isBlocked(false)
+                    .userRoles(UserRoles.NORMAL_USER)
+                    .createdAt(LocalDateTime.now())
+                    .isContributor(true)
+                    .build();
+            membersRepository.save(member);
+        }
     }
 }

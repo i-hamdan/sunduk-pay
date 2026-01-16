@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.util.UserRoles;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public interface GlobalPotValidations {
      */
     GlobalPotMembers getMemberByUuidAndGlobalPotId(
             User userUuid, GlobalPot globalPotId);
-    
+
     /**
      * Retrieves a GlobalPotDocument by its document ID.
      *
@@ -99,5 +100,10 @@ public interface GlobalPotValidations {
      * @return the GlobalPotDocument object if found
      */
     GlobalPotDocument getGlobalPotDocumentId(String documentId);
-    
+
+
+    void ensureFollowerAndMember(User user,
+                                 GlobalPot globalPot,
+                                 UserRoles roles);
+
 }

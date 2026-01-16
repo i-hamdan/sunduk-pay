@@ -39,10 +39,7 @@ public class GlobalPotTileDto {
     private String city;
     /** Country where the global pot is located. */
     private String country;
-    /** Type of requirement for the case. */
-    private String caseRequirementType;
-    /** Description of the global pot. */
-    private String description;
+
     /** Current balance of the global pot. */
     private Double currentBalance;
     /** Goal amount for the global pot. */

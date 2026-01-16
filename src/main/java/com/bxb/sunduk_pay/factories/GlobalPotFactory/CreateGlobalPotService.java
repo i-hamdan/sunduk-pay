@@ -2,9 +2,8 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotDocument;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.FollowerRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.DocumentWrapper;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +39,8 @@ public class CreateGlobalPotService implements GlobalPotOperation {
     private final GlobalPotMapper mapper;
     /** Repository to manage User data. */
     private final UserRepository userRepository;
+    /** Repository to manage Follower data. */
+    private final FollowerRepository followerRepository;
 
     /**
      * Identifies this operation as CREATE_POT.
@@ -102,18 +104,34 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                             .orElseThrow(() -> new UserNotFoundException(
                                     "User not found with UUID: "
                                             + admin.getUuid()));
-            if (!UserRoles.GLOBALPOT_ADMIN.equals(user.getUserRole())) {
-                user.setUserRole(UserRoles.GLOBALPOT_ADMIN);
+
                 admins.add(user);
-            }
 
         });
-        userRepository.saveAll(admins);
+        pot.setAdministrators(admins);
         log.info("Assigned {} administrators to GlobalPot ID: {}",
                 admins.size(), pot.getGlobalPotId());
        repository.save(pot);
         log.info("GlobalPot saved successfully with ID: {}",
                 pot.getGlobalPotId());
+
+        // ALSO add admins as members with ADMIN role
+        admins.forEach(user -> {
+            GlobalPotMembers member = GlobalPotMembers.builder()
+                    .user(user)
+                    .globalPot(pot)
+                    .userRoles(UserRoles.GLOBALPOT_ADMIN)
+                    .isContributor(false)
+                    .isBlocked(false)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            pot.getMembers().add(member);
+
+            Follower follower = Follower.builder().followerUser(user)
+                    .globalPot(pot)
+                    .createdAt(LocalDateTime.now()).build();
+            followerRepository.save(follower);
+        });
 
         //  Build response
         return GlobalPotResponse.builder()

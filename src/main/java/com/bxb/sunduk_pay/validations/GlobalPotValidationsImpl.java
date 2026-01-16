@@ -42,10 +42,10 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Repository for accessing Global Pot Document data.
      */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
-    
-    
-    
-    
+
+
+
+
     /**
      * Validates the existence of a Global Pot by its ID.
      *
@@ -246,12 +246,21 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                                 + " in Global Pot ID: "
                                 + globalPotId.getGlobalPotId()));
     }
-    
-    
+
+    @Override
+    public void ensureFollowerAndMember(
+            final User user,
+            final GlobalPot globalPot,
+            final UserRoles roles) {
+
+    }
+
+
+
     @Override
     public GlobalPotDocument getGlobalPotDocumentId(
             final String documentId) {
-        
+
         return globalPotDocumentRepository.findById(documentId).orElseThrow(() ->
                 new GlobalPotDocumentNotFoundException("Document not " +
                         "found with Document Id : " + documentId));

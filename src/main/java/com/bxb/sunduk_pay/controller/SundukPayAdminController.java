@@ -4,6 +4,7 @@ import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.service.SundukPayAdminService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 public class SundukPayAdminController {
-
-    /**
-     * Logger instance for tracking admin API requests and responses.
-     */
-    private static final Logger LOGGER =
-            LogManager.getLogger(SundukPayAdminController.class);
 
     /**
      * Service responsible for processing admin requests.
@@ -42,14 +38,15 @@ public class SundukPayAdminController {
     public ResponseEntity<SundukPayAdminResponse> adminApi(
             @RequestBody final SundukPayAdminRequest request) {
 
-        LOGGER.info("Received admin API request");
+        log.info("Received admin API request");
 
         try {
             SundukPayAdminResponse response = service.adminApi(request);
-            LOGGER.info("Admin API request processed successfully");
+            log.info("Admin API request processed successfully");
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
-LOGGER.error("Error occurred while processing admin API request", ex);
+            log.error(
+   "Error occurred while processing admin API request", ex);
             throw ex;
         }
     }

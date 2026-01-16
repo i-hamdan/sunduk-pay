@@ -1,6 +1,6 @@
     package com.bxb.sunduk_pay.model;
-
     import com.bxb.sunduk_pay.util.UserRoles;
+    import jakarta.annotation.Nullable;
     import jakarta.persistence.Entity;
     import jakarta.persistence.Id;
     import jakarta.persistence.Table;
@@ -93,5 +93,11 @@
          */
         @UpdateTimestamp
         private LocalDateTime updatedAt;
+
+        /**
+         * Indicates whether the member is a contributor to the GlobalPot.
+         */
+        @Nullable
+        private Boolean isContributor;
 
     }

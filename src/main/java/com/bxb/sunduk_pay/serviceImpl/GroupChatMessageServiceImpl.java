@@ -4,23 +4,23 @@ import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.exception.ChatProcessingException;
 import com.bxb.sunduk_pay.exception.RedisOperationException;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
-import com.bxb.sunduk_pay.model.Follower;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GroupChatMessage;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.FollowerRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
 import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 import com.bxb.sunduk_pay.service.AnonymousUserService;
 import com.bxb.sunduk_pay.service.GroupChatMessageService;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
+import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -83,12 +83,18 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final AnonymousUserService anonymousUserService;
 
     /**
+     * Repository for global pot members.
+     */
+    private final GlobalPotMembersRepository membersRepository;
+
+    /**
      * Processes a group chat message event.
      *
      * @param event the group chat event
      * @return the response after processing the group chat message
      */
     @Override
+    @Transactional
     public GroupChatMessageResponse processGroupChatMessage(
             final GroupChatEvent event) {
         try {
@@ -103,15 +109,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             log.info("Fetched global pot info for pot ID {}: {}",
                     event.getGlobalPotId(), globalPot.getGlobalPotId());
 
-            boolean isFollower = followerRepository
-                    .existsByFollowerUserAndGlobalPot(user, globalPot);
-
-            if (!isFollower) {
-                log.info(
-     "User {} is not a follower of pot {}. Creating follower record.",
-                        user.getUuid(), globalPot.getGlobalPotId());
-                createFollowerRecord(user, globalPot);
-            }
+            createFollowerRecord(user, globalPot);
+            createMemberRecord(user, globalPot);
 
             boolean isAnonymous = event.isAnonymous();
             log.info("Is the message anonymous? {}", isAnonymous);
@@ -121,13 +120,13 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
             if (isAnonymous) {
                 log.info(
-      "Fetching or creating anonymous identity for user {} in pot {}",
+           "Fetching or creating anonymous identity for user {} in pot {}",
                         user.getUuid(), globalPot.getGlobalPotId());
                 anonymousUser = anonymousUserService
                         .getOrCreateAnonymousColor(user, globalPot);
                 if (anonymousUser != null) {
                     log.info(
-                      "Obtained anonymous identity: ID={}, Color={}",
+                            "Obtained anonymous identity: ID={}, Color={}",
                             anonymousUser.getAnonymousId(),
                             anonymousUser.getAnonymousColor());
                     anonymousColor = anonymousUser.getAnonymousColor();
@@ -149,7 +148,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             // Persist FIRST
             groupChatMessageRepository.save(message);
             log.info(
-                 "Saved group chat message with ID {} to database.",
+                    "Saved group chat message with ID {} to database.",
                     message.getMessageId());
 
             // Map AFTER persistence
@@ -160,7 +159,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             // Cache AFTER DB
             saveMessageInRedisCache(message);
             log.info(
-                 "Group chat message processing completed for pot {}",
+                    "Group chat message processing completed for pot {}",
                     event.getGlobalPotId());
 
             return response;
@@ -193,8 +192,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             // If not cached, load existing messages from DB and cache them
             if (!messageResponseRedisTemplate.hasKey(groupChatKey)) {
                 log.info("Group chat messages for key"
-        + groupChatKey + "not found in Redis cache. Loading from DB..."
-                        );
+                        + groupChatKey + "not found in Redis cache. Loading from DB..."
+                );
                 List<GroupChatMessage> groupMessagesFromDb =
                         groupChatMessageRepository.findByGlobalPotGlobalPotId(
                                 message.getGlobalPot().getGlobalPotId());
@@ -202,13 +201,14 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                 // Cache the messages in Redis
                 if (!groupMessagesFromDb.isEmpty()) {
                     log.info(
-  "Found {} group chat messages in DB for pot {}. Caching in Redis...",
+
+              "Found {} group chat messages in DB for pot {}. Caching in Redis...",
                             groupMessagesFromDb.size(),
                             message.getGlobalPot().getGlobalPotId());
                     // Map DB messages to response DTOs
                     List<GroupChatMessageResponse> groupMessagesResponse =
                             groupMessagesFromDb.stream()
-                            .map(globalPotMapper::toGroupChatMessageResponse)
+                                    .map(globalPotMapper::toGroupChatMessageResponse)
                                     .toList();
 
                     // Store the list of messages in Redis
@@ -226,7 +226,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     .toGroupChatMessageResponse(message);
 
             log.info(
-            "Adding new group chat message to Redis cache for key {}",
+                    "Adding new group chat message to Redis cache for key {}",
                     groupChatKey);
 
             // Push the new message to the end of the list
@@ -236,7 +236,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     groupChatKey, Duration.ofMinutes(DURATION_IN_MINUTES));
         } catch (Exception e) {
             log.error(
-                 "Error saving group chat message in Redis cache: {}",
+                    "Error saving group chat message in Redis cache: {}",
                     e.getMessage());
             throw new RedisOperationException(
                     "Error saving group chat message in Redis cache: "
@@ -252,14 +252,55 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      */
     private void createFollowerRecord(
             final User user, final GlobalPot globalPot) {
-        log.info("Creating new follower record for user {} in pot {}",
+
+        if (followerRepository.existsByFollowerUserAndGlobalPot(
+                user, globalPot)) {
+            log.info(
+     "User {} is already a follower of pot {}. No action taken.",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            return;
+        } else {
+            log.info(
+         "Creating new follower record for user {} in pot {}",
+                    user.getUuid(), globalPot.getGlobalPotId());
+
+            Follower follower = Follower.builder()
+                    .followerUser(user)
+                    .globalPot(globalPot)
+                    .createdAt(LocalDateTime.now()).build();
+            followerRepository.save(follower);
+        }
+    }
+
+    /**
+     * Creates a new member record for the user in the specified global pot.
+     *
+     * @param user      the user to be added as a member
+     * @param globalPot the global pot to which the user is being added
+     */
+    private void createMemberRecord(
+            final User user, final GlobalPot globalPot) {
+
+        log.info("Checking if user {} is already a member of pot {}",
                 user.getUuid(), globalPot.getGlobalPotId());
-        Follower follower = Follower.builder()
-                .followerUser(user)
-                .globalPot(globalPot)
-                .createdAt(LocalDateTime.now()).build();
-        followerRepository.save(follower);
-        log.info("Created new follower record for user {} in pot {}",
-                user.getUuid(), globalPot.getGlobalPotId());
+        if (membersRepository.existsByUserAndGlobalPot(user, globalPot)) {
+            log.info(
+      "User {} is already a member of pot {}. No action taken.",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            return;
+        } else {
+            log.info(
+               "Creating new member record for user {} in pot {}",
+                    user.getUuid(), globalPot.getGlobalPotId());
+            GlobalPotMembers member = GlobalPotMembers.builder()
+                    .user(user)
+                    .globalPot(globalPot)
+                    .isBlocked(false)
+                    .isContributor(false)
+                    .userRoles(UserRoles.NORMAL_USER)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            membersRepository.save(member);
+        }
     }
 }

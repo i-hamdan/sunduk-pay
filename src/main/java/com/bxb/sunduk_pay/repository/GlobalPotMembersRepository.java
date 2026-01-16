@@ -27,7 +27,5 @@ public interface GlobalPotMembersRepository
     Optional<GlobalPotMembers> findByUserAndGlobalPot(
             User userId, GlobalPot globalPotId);
 
-//    List<GlobalPotMembers> findByGlobalPotId(GlobalPot globalPotId);
-//
-//    List<GlobalPotMembers> findByUserId(User userId);
+
 }

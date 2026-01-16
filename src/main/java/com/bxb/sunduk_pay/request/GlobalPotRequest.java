@@ -169,5 +169,8 @@ public class GlobalPotRequest {
      */
     private String globalPotDocumentId;
 
+    /** payment tag for tracking contributions */
+    private String paymentTag;
+
 }
 

@@ -28,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Service to fetch chat history for a global pot.
+ * Includes both chat messages and transactions.
+ */
 @Service
 @Log4j2
 @RequiredArgsConstructor
