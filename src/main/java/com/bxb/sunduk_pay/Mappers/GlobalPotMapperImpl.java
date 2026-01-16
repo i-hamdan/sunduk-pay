@@ -364,7 +364,62 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         }
         return Base64.getEncoder().encodeToString(image);
     }
-
+    
+    @Override
+    public GlobalPot toUpdateEntity(
+            final GlobalPotRequest request,
+            final GlobalPot globalPot) throws IOException {
+        
+        if(request.getCaseTitle() != null){
+            globalPot.setCaseTitle(request.getCaseTitle());
+        }
+        if(request.getCaseCategory() != null) {
+            globalPot.setCaseCategory(request.getCaseCategory());
+        }
+        if(request.getPotScope() != null) {
+            globalPot.setPotScope(request.getPotScope());
+        }
+        if(request.getCaseRequirementType() != null) {
+            globalPot.setCaseRequirementType(request.getCaseRequirementType());
+        }
+        if(request.getPotStatus() != null) {
+            globalPot.setPotStatus(request.getPotStatus());
+        }
+        if(request.getDescription() != null) {
+            globalPot.setDescription(request.getDescription());
+        }
+        if(request.getBeneficiaryName() != null) {
+            globalPot.setBeneficiaryName(request.getBeneficiaryName());
+        }
+        if(request.getRelationToBeneficiary() != null) {
+            globalPot.setRelationToBeneficiary(request.
+                    getRelationToBeneficiary());
+        }
+        if(request.getAddress() != null) {
+            globalPot.setAddress(request.getAddress());
+        }
+        if(request.getCity() != null) {
+            globalPot.setCity(request.getCity());
+        }
+        if(request.getCountry() != null) {
+            globalPot.setCountry(request.getCountry());
+        }
+        if(request.getGoalDate() != null) {
+            globalPot.setGoalDate(request.getGoalDate());
+        }
+        if(request.getGoalAmount() != null) {
+            globalPot.setGoalAmount(request.getGoalAmount());
+        }
+        if(request.getCreator().getCreatedBy() != null){
+            globalPot.setCreatedBy(request.getCreator().getCreatedBy());
+        }
+        if(request.getCreator().getDesignation() != null){
+            globalPot.setDesignation(request.getCreator().getDesignation());
+        }
+        return globalPot;
+    }
+    
+    
     private UserResponse anonymousSender() {
         return UserResponse.builder()
                 .fullName("Anonymous user")

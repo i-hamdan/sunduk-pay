@@ -1,18 +1,8 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
-import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.UserAlreadyExist;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotMembers;
-import com.bxb.sunduk_pay.model.GroupChatMessage;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.ContributerRepository;
-import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
-import com.bxb.sunduk_pay.repository.GlobalPotRepository;
-import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
+import com.bxb.sunduk_pay.exception.*;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -48,8 +38,14 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      */
     private final GlobalPotMembersRepository globalPotMembersRepository;
 
-
-
+    /**
+     * Repository for accessing Global Pot Document data.
+     */
+    private final GlobalPotDocumentRepository globalPotDocumentRepository;
+    
+    
+    
+    
     /**
      * Validates the existence of a Global Pot by its ID.
      *
@@ -250,7 +246,16 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                                 + " in Global Pot ID: "
                                 + globalPotId.getGlobalPotId()));
     }
-
+    
+    
+    @Override
+    public GlobalPotDocument getGlobalPotDocumentId(
+            final String documentId) {
+        
+        return globalPotDocumentRepository.findById(documentId).orElseThrow(() ->
+                new GlobalPotDocumentNotFoundException("Document not " +
+                        "found with Document Id : " + documentId));
+    }
 
 }
 

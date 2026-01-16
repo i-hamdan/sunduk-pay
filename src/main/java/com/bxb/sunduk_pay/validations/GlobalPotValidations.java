@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotMembers;
-import com.bxb.sunduk_pay.model.GroupChatMessage;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 
 import java.util.List;
 
@@ -94,4 +91,13 @@ public interface GlobalPotValidations {
      */
     GlobalPotMembers getMemberByUuidAndGlobalPotId(
             User userUuid, GlobalPot globalPotId);
+    
+    /**
+     * Retrieves a GlobalPotDocument by its document ID.
+     *
+     * @param documentId the ID of the document
+     * @return the GlobalPotDocument object if found
+     */
+    GlobalPotDocument getGlobalPotDocumentId(String documentId);
+    
 }

@@ -107,4 +107,9 @@ public interface GlobalPotMapper {
      * @return the Base64 encoded string
      */
     String toBase64(byte[] data);
+    
+    GlobalPot toUpdateEntity(GlobalPotRequest request, GlobalPot globalPot)
+            throws IOException;
+    
+   
 }
