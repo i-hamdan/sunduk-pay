@@ -103,7 +103,7 @@ public class UpdateGlobalPotService implements GlobalPotOperation {
             log.debug("Validating Global Pot Document. Document ID: {}",
                     globalPotDocumentId);
             // Update document title if provided
-            if(documentWrapper.getDocumentTitle() != null) {
+            if (documentWrapper.getDocumentTitle() != null) {
                 globalPotDocument.setDocumentTitle(documentWrapper
                         .getDocumentTitle());
             }
