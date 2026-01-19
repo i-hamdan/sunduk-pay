@@ -28,28 +28,23 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UpdateGlobalPotService implements GlobalPotOperation{
-    
+public class UpdateGlobalPotService implements GlobalPotOperation {
     /**
      * Repository for Global Pot persistence operations.
      */
     private final GlobalPotRepository globalPotRepository;
-    
     /**
      * Repository for Global Pot document persistence operations.
      */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
-    
     /**
      * Validations for global pot operations.
      */
     private final GlobalPotValidations globalPotValidations;
-    
     /**
      * Mapper for global pot entities and requests/responses.
      */
     private final GlobalPotMapper globalPotMapper;
-    
     /**
      * Returns the request type supported by this service.
      * <p>
@@ -62,7 +57,6 @@ public class UpdateGlobalPotService implements GlobalPotOperation{
     public GlobalPotRequestType getGlobalPotRequestType() {
         return GlobalPotRequestType.Update_Global_Pot;
     }
-    
     /**
      * Updates an existing Global Pot along with its associated documents.
      * <p>
@@ -82,61 +76,51 @@ public class UpdateGlobalPotService implements GlobalPotOperation{
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request)
             throws IOException {
-        
         log.info("Starting Global Pot update. GlobalPot ID: {}",
                 request.getGlobalPotId());
-        
         // Fetch Global Pot by ID
         GlobalPot globalPot = globalPotValidations.getGlobalPot(
                 request.getGlobalPotId());
         log.debug("Global Pot fetched successfully. ID: {}",
                 globalPot.getGlobalPotId());
-        
         // Update Global Pot details
         GlobalPot updateGlobalPot = globalPotMapper.toUpdateEntity(
                 request, globalPot);
         log.info("Global Pot basic details updated. GlobalPot ID: {}",
                 globalPot.getGlobalPotId());
-        
         // Update Global Pot Documents
             List<GlobalPotDocument> documentList = new ArrayList<>();
-            
         List<DocumentWrapper> globalPotDocumentList =
                 request.getDocumentFiles();
-        globalPotDocumentList.forEach(documentWrapper ->{
+        globalPotDocumentList.forEach(documentWrapper -> {
             String globalPotDocumentId = documentWrapper.getDocumentId();
             log.debug("Processing Global Pot document. Document ID: {}",
                     globalPotDocumentId);
-            
             // Fetch and validate the Global Pot Document using
             // the provided document ID
             GlobalPotDocument globalPotDocument = globalPotValidations.
                     getGlobalPotDocumentId(globalPotDocumentId);
             log.debug("Validating Global Pot Document. Document ID: {}",
                     globalPotDocumentId);
-            
-            
             // Update document title if provided
             if(documentWrapper.getDocumentTitle() != null) {
                 globalPotDocument.setDocumentTitle(documentWrapper
                         .getDocumentTitle());
             }
-            
             // Update document heading if provided
-            if(documentWrapper.getDocumentHeading() != null){
+            if (documentWrapper.getDocumentHeading() != null) {
                 globalPotDocument.setDocumentHeading(documentWrapper
                         .getDocumentHeading());
             }
-            
             // Update document file if provided
-            if(documentWrapper.getDocumentFile() != null){
+            if (documentWrapper.getDocumentFile() != null) {
                 try {
                     globalPotDocument.setDocument(documentWrapper
                             .getDocumentFile().getBytes());
                     log.info("Document file updated successfully. "
                                     + "Document ID: {}",
                             globalPotDocumentId);
-                } catch (IOException e){
+                } catch (IOException e) {
                     log.error("Error while reading document file. "
                                     + "Document ID: {}",
                             globalPotDocumentId, e);
@@ -150,10 +134,8 @@ public class UpdateGlobalPotService implements GlobalPotOperation{
         
         // Save updated Global Pot
         globalPotRepository.save(updateGlobalPot);
-        
         log.info("Global Pot updated successfully. GlobalPot ID: {}",
                 globalPot.getGlobalPotId());
-        
         return GlobalPotResponse.builder()
                 .globalPotId(globalPot.getGlobalPotId())
                 .message("Global Pot Update Successfully")
