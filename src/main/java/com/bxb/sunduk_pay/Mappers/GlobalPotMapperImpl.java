@@ -146,8 +146,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 //
 //        pot.setUpdatedAt(LocalDateTime.now());
 //    }
-
-
+    
     /**
      * @param pot
      * @return
@@ -182,9 +181,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
                 .message("Global Pot created successfully").build();
     }
-
-
-
     /**
      * @param request
      * @return
@@ -199,7 +195,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
         return wallet;
     }
-
     /**
      * @param request
      */
@@ -223,8 +218,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         contributor.setGlobalPot(pot);
         return contributor;
     }
-
-
     /**
      * Converts a GlobalPot entity to a GlobalPotTileDto.
      *
@@ -268,10 +261,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 )
                 .build();
     }
-
-
-    // method to add list on that
-
     /**
      * Converts a list of GlobalPot entities to a list of GlobalPotTileDto.
      *
@@ -288,7 +277,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         }
         return responses;
     }
-
     /**
      * Converts a GroupChatMessageRequest to a GroupChatEvent.
      *
@@ -305,7 +293,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .isAnonymous(request.getIsAnonymous())
                 .build();
     }
-
     /**
      * Converts a GroupChatMessage to a GroupChatMessageResponse.
      *
@@ -333,8 +320,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
         return response;
     }
-
-
     /**
      * Converts a GroupChatMessage entity to a GroupChatMessageResponse DTO.
      *
@@ -349,8 +334,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .map(this::toGroupChatMessageResponse)
                 .collect(Collectors.toList());
     }
-
-
     /**
      * Private helper to convert byte array to base64 string.
      *
@@ -364,68 +347,73 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         }
         return Base64.getEncoder().encodeToString(image);
     }
-    
+    /**
+     * Updates the existing GlobalPot entity with values from the request.
+     *
+     * <p>This method is used during the Update Global Pot operation.
+     * Only mutable fields are updated; the entity identity remains unchanged.</p>
+     *
+     * @param globalPot the existing GlobalPot entity fetched from the database
+     * @param request   the request containing updated Global Pot details
+     * @return the updated GlobalPot entity
+     */
     @Override
     public GlobalPot toUpdateEntity(
             final GlobalPotRequest request,
             final GlobalPot globalPot) throws IOException {
         
-        if(request.getCaseTitle() != null){
+        if (request.getCaseTitle() != null) {
             globalPot.setCaseTitle(request.getCaseTitle());
         }
-        if(request.getCaseCategory() != null) {
+        if (request.getCaseCategory() != null) {
             globalPot.setCaseCategory(request.getCaseCategory());
         }
-        if(request.getPotScope() != null) {
+        if (request.getPotScope() != null) {
             globalPot.setPotScope(request.getPotScope());
         }
-        if(request.getCaseRequirementType() != null) {
+        if (request.getCaseRequirementType() != null) {
             globalPot.setCaseRequirementType(request.getCaseRequirementType());
         }
-        if(request.getPotStatus() != null) {
+        if (request.getPotStatus() != null) {
             globalPot.setPotStatus(request.getPotStatus());
         }
-        if(request.getDescription() != null) {
+        if (request.getDescription() != null) {
             globalPot.setDescription(request.getDescription());
         }
-        if(request.getBeneficiaryName() != null) {
+        if (request.getBeneficiaryName() != null) {
             globalPot.setBeneficiaryName(request.getBeneficiaryName());
         }
-        if(request.getRelationToBeneficiary() != null) {
+        if (request.getRelationToBeneficiary() != null) {
             globalPot.setRelationToBeneficiary(request.
                     getRelationToBeneficiary());
         }
-        if(request.getAddress() != null) {
+        if (request.getAddress() != null) {
             globalPot.setAddress(request.getAddress());
         }
-        if(request.getCity() != null) {
+        if (request.getCity() != null) {
             globalPot.setCity(request.getCity());
         }
-        if(request.getCountry() != null) {
+        if (request.getCountry() != null) {
             globalPot.setCountry(request.getCountry());
         }
-        if(request.getGoalDate() != null) {
+        if (request.getGoalDate() != null) {
             globalPot.setGoalDate(request.getGoalDate());
         }
-        if(request.getGoalAmount() != null) {
+        if (request.getGoalAmount() != null) {
             globalPot.setGoalAmount(request.getGoalAmount());
         }
-        if(request.getCreator().getCreatedBy() != null){
+        if (request.getCreator().getCreatedBy() != null) {
             globalPot.setCreatedBy(request.getCreator().getCreatedBy());
         }
-        if(request.getCreator().getDesignation() != null){
+        if (request.getCreator().getDesignation() != null) {
             globalPot.setDesignation(request.getCreator().getDesignation());
         }
         return globalPot;
     }
-    
-    
     private UserResponse anonymousSender() {
         return UserResponse.builder()
                 .fullName("Anonymous user")
                 .email("anonymous@gmail.com")
                 .build();
     }
-
-
 }

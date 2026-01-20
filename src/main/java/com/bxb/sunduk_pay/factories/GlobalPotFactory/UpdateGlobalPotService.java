@@ -131,7 +131,6 @@ public class UpdateGlobalPotService implements GlobalPotOperation {
             log.debug("Global Pot document updated successfully."
                     + " Document ID: {}", globalPotDocumentId);
         });
-        
         // Save updated Global Pot
         globalPotRepository.save(updateGlobalPot);
         log.info("Global Pot updated successfully. GlobalPot ID: {}",

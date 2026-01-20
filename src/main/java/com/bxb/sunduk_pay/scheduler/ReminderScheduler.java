@@ -119,9 +119,9 @@ public class ReminderScheduler {
      */
     private final LocalDateTime currentDateTime = LocalDateTime.now();
     /**
-    * List to collect reminders that need to be sent
+    * List to collect reminders that need to be sent.
      */
-    List<Reminder> remindersToSend = new ArrayList<>();
+    private List<Reminder> remindersToSend = new ArrayList<>();
     /**
      * Scheduled method to send reminder notifications based on their duration.
      */
@@ -170,16 +170,16 @@ public class ReminderScheduler {
                     reminder.setLocalDateTime(currentDateTime);
                     // Collect reminder to send notification
                     remindersToSend.add(reminder);
-                    log.debug("Updated unpaid reminder" +
-                                    " for today. Reminder ID: {}",
+                    log.debug("Updated unpaid reminder"
+                                    + " for today. Reminder ID: {}",
                             reminder.getReminderId());
 
 //                   Update reminder time if it is unpaid and from yesterday
                 } else if (reminder.getDate().isEqual(minusDays1)
                         && !reminder.getIsPaid()) {
                     reminder.setLocalDateTime(currentDateTime);
-                    log.debug("Updated unpaid reminder from" +
-                                    " yesterday. Reminder ID: {}",
+                    log.debug("Updated unpaid reminder from"
+                                    + " yesterday. Reminder ID: {}",
                             reminder.getReminderId());
                 }
 
@@ -187,8 +187,8 @@ public class ReminderScheduler {
                 if (!reminder.getIsPaid()
                         && reminder.getDate().isEqual(minusDays1)
                         && reminder.getIsAvailable()) {
-                    log.info("Creating new DAILY reminder from" +
-                            " unpaid yesterday reminder."
+                    log.info("Creating new DAILY reminder from"
+                            + " unpaid yesterday reminder."
                             + " Reminder ID:"
                             + reminder.getReminderId());
                     User user = validations.getUserInfo(
@@ -207,8 +207,8 @@ public class ReminderScheduler {
                             .localDateTime(currentDateTime)
                             .build();
                     reminderRepository.save(reminder1);
-                    log.info("New DAILY reminder created" +
-                                    " successfully for user: {}",
+                    log.info("New DAILY reminder created"
+                                    + " successfully for user: {}",
                             user.getUuid());
                 }
 
@@ -220,8 +220,8 @@ public class ReminderScheduler {
                         || !reminder.getIsPaid() && !reminder.getIsAvailable()
                                 && reminder.getDate().isEqual(minusDays2)) {
                     reminderRepository.delete(reminder);
-                    log.warn("Deleted reminder due to expiration" +
-                                    " rules. Reminder ID: {}",
+                    log.warn("Deleted reminder due to expiration"
+                                    + " rules. Reminder ID: {}",
                             reminder.getReminderId());
                 }
 
@@ -230,8 +230,8 @@ public class ReminderScheduler {
                     reminder.setIsPaid(false);
                     reminder.setLocalDateTime(currentDateTime);
                     reminder.setDate(today);
-                    log.info("Reset reminder date and payment" +
-                                    " status. Reminder ID: {}",
+                    log.info("Reset reminder date and payment"
+                                    + " status. Reminder ID: {}",
                             reminder.getReminderId());
                 }
                 reminderRepository.save(reminder);
@@ -358,8 +358,8 @@ public class ReminderScheduler {
                     YearMonth nextMonth = currentMonth.plusMonths(1);
                     validDay = Math.min(reminderDay, nextMonth.lengthOfMonth());
                     dueDate = nextMonth.atDay(validDay);
-                    log.info("Reminder ID {} moved to next month." +
-                                    " New due date: {}",
+                    log.info("Reminder ID {} moved to next month."
+                                    + " New due date: {}",
                             reminder.getReminderId(), dueDate);
                 } else if (today.isBefore(dueDate.minusDays(
                         MONTHLY_REMINDER_WINDOW_DAYS))) {
@@ -368,8 +368,9 @@ public class ReminderScheduler {
                     validDay = Math.min(reminderDay,
                             previousMonth.lengthOfMonth());
                     dueDate = previousMonth.atDay(validDay);
-                    log.info("Reminder ID {} moved to" +
-                                    " previous month. New due date: {}",
+                    log.info("Reminder ID {} moved to"
+                                    + " previous month. " +
+                            "New due date: {}",
                             reminder.getReminderId(), dueDate);
                 }
 
@@ -381,15 +382,15 @@ public class ReminderScheduler {
                     // Collect reminders to send notification
                     if (checkDate.isEqual(today)) {
                         remindersToSend.add(reminder);
-                        log.debug("Reminder scheduled for sending." +
-                                        " Reminder ID: {}, Date: {}",
+                        log.debug("Reminder scheduled for sending."
+                                        + " Reminder ID: {}, Date: {}",
                                 reminder.getReminderId(), today);
                     }
                     if (checkDate.isEqual(dueDate)) {
                         reminder.setDate(checkDate);
                         reminder.setLocalDateTime(currentDateTime);
-                        log.info("Monthly reminder triggered." +
-                                        " Reminder ID: {}, Date: {}",
+                        log.info("Monthly reminder triggered."
+                                        + " Reminder ID: {}, Date: {}",
                                 reminder.getReminderId(), checkDate);
                         break;
                     }
@@ -410,13 +411,13 @@ public class ReminderScheduler {
                         MONTHLY_NOTIFICATION_CLEAR_DAYS))
                         && reminder.getIsAvailable()) {
                     reminder.setLocalDateTime(null);
-                    log.info("Cleared notification time for" +
-                                    " Monthly Reminder ID {}",
+                    log.info("Cleared notification time for"
+                                    + " Monthly Reminder ID {}",
                             reminder.getReminderId());
                 }
                 reminderRepository.save(reminder);
-                log.debug("Monthly reminder saved successfully." +
-                                " Reminder ID: {}",
+                log.debug("Monthly reminder saved successfully."
+                                + " Reminder ID: {}",
                         reminder.getReminderId());
             }
         }
@@ -457,14 +458,14 @@ public class ReminderScheduler {
                 if (today.isAfter(dueDate.plusDays(
                         YEARLY_REMINDER_WINDOW_DAYS))) {
                     dueDate = monthDay.atYear(today.getYear() + 1);
-                    log.info("Reminder ID {} moved to next year." +
-                                    " New due date: {}",
+                    log.info("Reminder ID {} moved to next year."
+                                    + " New due date: {}",
                             reminder.getReminderId(), dueDate);
                 } else if (today.isBefore(
                         dueDate.minusDays(YEARLY_REMINDER_WINDOW_DAYS))) {
                     dueDate = monthDay.atYear(today.getYear() - 1);
-                    log.info("Reminder ID {} moved to previous year." +
-                                    " New due date: {}",
+                    log.info("Reminder ID {} moved to previous year."
+                                    + " New due date: {}",
                             reminder.getReminderId(), dueDate);
                 }
 
@@ -480,9 +481,8 @@ public class ReminderScheduler {
                     if (checkDate.isEqual(dueDate)) {
                         reminder.setDate(checkDate);
                         reminder.setLocalDateTime(currentDateTime);
-                        log.info(
-                                "Yearly reminder triggered." +
-                                        " Reminder ID: {}, Date: {}",
+                        log.info("Yearly reminder triggered."
+                                        + " Reminder ID: {}, Date: {}",
                                 reminder.getReminderId(), checkDate);
                         break;
                     }
@@ -495,8 +495,8 @@ public class ReminderScheduler {
                     reminder.setLocalDateTime(currentDateTime);
                     reminder.setDate(LocalDate.now());
                     reminder.setDate(today);
-                    log.info("Yearly reminder reset applied." +
-                                    " Reminder ID: {}",
+                    log.info("Yearly reminder reset applied."
+                                    + " Reminder ID: {}",
                             reminder.getReminderId());
                 }
 
@@ -506,13 +506,13 @@ public class ReminderScheduler {
                 if (reminder.getDate().isEqual(minusDay8)
                         && reminder.getIsAvailable()) {
                     reminder.setLocalDateTime(null);
-                    log.info("Cleared notification time for" +
-                                    " Yearly Reminder ID {}",
+                    log.info("Cleared notification time for"
+                                    +" Yearly Reminder ID {}",
                             reminder.getReminderId());
                 }
                 reminderRepository.save(reminder);
-                log.debug("Yearly reminder saved successfully." +
-                                " Reminder ID: {}",
+                log.debug("Yearly reminder saved successfully."
+                                + " Reminder ID: {}",
                         reminder.getReminderId());
             }
         }

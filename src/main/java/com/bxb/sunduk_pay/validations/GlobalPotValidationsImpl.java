@@ -254,16 +254,25 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
             final UserRoles roles) {
 
     }
-
-
-
+    /**
+     * Fetches the GlobalPotDocument by document ID.
+     *
+     * <p>
+     * This method validates the provided document ID and retrieves
+     * the corresponding GlobalPotDocument from the database.
+     * </p>
+     *
+     * @param documentId the ID of the Global Pot document
+     * @return the GlobalPotDocument entity
+     * @throws GlobalPotDocumentNotFoundException if document is not found
+     */
     @Override
     public GlobalPotDocument getGlobalPotDocumentId(
             final String documentId) {
-
-        return globalPotDocumentRepository.findById(documentId).orElseThrow(() ->
-                new GlobalPotDocumentNotFoundException("Document not " +
-                        "found with Document Id : " + documentId));
+        return globalPotDocumentRepository.findById(
+                documentId).orElseThrow(() ->
+                new GlobalPotDocumentNotFoundException("Document not "
+                        + "found with Document Id : " + documentId));
     }
 
 }
