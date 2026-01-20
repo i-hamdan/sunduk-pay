@@ -369,8 +369,7 @@ public class ReminderScheduler {
                             previousMonth.lengthOfMonth());
                     dueDate = previousMonth.atDay(validDay);
                     log.info("Reminder ID {} moved to"
-                                    + " previous month. " +
-                            "New due date: {}",
+                                    + " previous month. New due date: {}",
                             reminder.getReminderId(), dueDate);
                 }
 
@@ -507,7 +506,7 @@ public class ReminderScheduler {
                         && reminder.getIsAvailable()) {
                     reminder.setLocalDateTime(null);
                     log.info("Cleared notification time for"
-                                    +" Yearly Reminder ID {}",
+                                    + " Yearly Reminder ID {}",
                             reminder.getReminderId());
                 }
                 reminderRepository.save(reminder);
