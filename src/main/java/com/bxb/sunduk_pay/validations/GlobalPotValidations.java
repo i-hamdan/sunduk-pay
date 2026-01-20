@@ -104,22 +104,24 @@ public interface GlobalPotValidations {
      * @return the GlobalPotDocument object if found
      */
     GlobalPotDocument getGlobalPotDocumentId(String documentId);
-    
     /**
      * Ensures that the user is both a follower and a member of the Global Pot.
      *
      * <p>
-     * This method validates the relationship between the user and the Global Pot.
-     * It confirms that the user has followed the pot and is also an active member.
+     * This method validates the relationship between the user and
+     * the Global Pot.
+     * It confirms that the user has followed the pot and is also
+     * an active member.
      * </p>
      *
      * <p>
-     * If the user does not meet either condition, an exception should be thrown
-     * by the calling validation logic.
+     * If the user does not meet either condition, an exception
+     * should be thrown by the calling validation logic.
      * </p>
      *
      * @param user       the ID of the user to validate
      * @param globalPot  the ID of the Global Pot
+     * @param roles      User Roles
      */
     void ensureFollowerAndMember(User user,
                                  GlobalPot globalPot,

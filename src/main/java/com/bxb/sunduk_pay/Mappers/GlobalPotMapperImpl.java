@@ -346,7 +346,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         }
         return Base64.getEncoder().encodeToString(image);
     }
-    
     /**
      * Updates the existing GlobalPot entity with values from the request.
      *

@@ -55,7 +55,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Repository for accessing Global Pot Document data.
      */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
-    
     /**
      * Validates the existence of a Global Pot by its ID.
      *
@@ -145,7 +144,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         return groupChatMessageRepository.
                 findByGlobalPotGlobalPotId(globalPotId);
     }
-    
     /**
      * Validates if a user has contributed to a Global Pot.
      *
@@ -257,7 +255,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
             final UserRoles roles) {
 
     }
-    
     /**
      * Fetches the GlobalPotDocument by document ID.
      *
