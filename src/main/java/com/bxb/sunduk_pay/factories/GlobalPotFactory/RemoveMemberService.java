@@ -76,12 +76,13 @@ public class RemoveMemberService implements GlobalPotOperation {
         log.info("Admin fetched successfully | adminUuid={}",
                 admin.getUuid());
 
-        globalPotValidations.validateAdmin(admin);
 
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
         log.info("GlobalPot fetched successfully | globalPotId={}",
                 globalPot.getGlobalPotId());
+        globalPotValidations.validateAdmin(admin,globalPot);
+
 
         User targetMember =
                 validations.getUserInfo(request.getTargetUserToRemove());

@@ -1,6 +1,5 @@
 package com.bxb.sunduk_pay.request;
 
-import com.bxb.sunduk_pay.Mappers.GlobalPotMemberMapper;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.util.*;
 import lombok.AllArgsConstructor;
@@ -22,6 +21,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GlobalPotRequest {
+
+    /** Default pagination values. */
+    private static final int DEFAULT_PAGE = 0;
+    /** Default number of records per page. */
+    private static final int DEFAULT_SIZE = 10;
 
     /** unique identifier of the case. */
     private String uuid;
@@ -125,11 +129,11 @@ public class GlobalPotRequest {
     /**
      * pagination - page number.
      */
-    private int pageNumber;
+    private int pageNumber = DEFAULT_PAGE;
     /**
      * pagination - page size.
      */
-    private int pageSize;
+    private int pageSize = DEFAULT_SIZE;
     /**
      * filter by admin-created pots.
      */
@@ -172,5 +176,15 @@ public class GlobalPotRequest {
     /** filter for global pot members */
     private GlobalPotMemberFilter globalPotMemberFilter;
 
-}
+    /** type of fetch transaction. */
+    private FetchTransactionType fetchTransactionType;
 
+    /** Page number for pagination. */
+    private int page = DEFAULT_PAGE;
+    /** Number of records per page for pagination. */
+    private int size = DEFAULT_SIZE;
+    /** Field to sort by (e.g., "dateTime", "amount"). */
+    private String sortBy = "dateTime";
+    /** Sort direction: ASC or DESC. */
+    private String sortDirection = "DESC";
+}

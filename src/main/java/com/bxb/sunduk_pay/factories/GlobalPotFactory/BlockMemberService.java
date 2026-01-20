@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
@@ -60,10 +61,10 @@ log.info("Block member request | admin={} pot={} targetUser={}",
         request.getTargetUserUuid());
         User admin = validations.getUserInfo(request.getAdminUuid());
 
-        globalPotValidations.validateAdmin(admin);
-
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
+
+        globalPotValidations.validateAdmin(admin,globalPot);
 
         User targetUser =
                 validations.getUserInfo(request.getTargetUserUuid());

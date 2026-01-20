@@ -207,4 +207,11 @@ public class GlobalPotResponse {
      * This field provides the complete name of the user.
      */
     private List<FetchGlobalMembersDTO> fetchGlobalMembersDTOS;
+    /**
+     * List of transaction responses associated with the global pot.
+     * These transactions represent contributions and withdrawals
+     * related to the pot.
+     */
+    private List<GlobalPotTransactionResponse> transactionResponses;
+
 }

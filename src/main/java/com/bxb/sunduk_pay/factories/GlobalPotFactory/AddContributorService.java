@@ -89,6 +89,9 @@ public class AddContributorService implements GlobalPotOperation {
     private final GlobalPotMembersRepository membersRepository;
     /** Repository for follower data access. **/
 private final FollowerRepository followerRepository;
+
+/** Repository for GlobalPotTransaction data access. **/
+private final GlobalPotTransactionRepository globalPotTransactionRepository;
     /**
      * Returns the {@link GlobalPotRequestType} handled by this service.
      *
@@ -187,6 +190,7 @@ private final FollowerRepository followerRepository;
 
         List<Transaction> transactions = new ArrayList<>();
 
+        //user master wallet transaction
         Transaction masterWalletTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .isMaster(true)
@@ -231,6 +235,7 @@ private final FollowerRepository followerRepository;
             log.info("SubWallet balance after deduction={}",
                     subWallet.getBalance());
 
+            //user sub wallet transaction
             Transaction subWalletTxn = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .isMaster(false)
@@ -254,6 +259,11 @@ private final FollowerRepository followerRepository;
                             identity != null
                                     ? identity.getAnonymousColor() : null)
                     .build();
+
+            GlobalPotTransaction globalPotTransaction =
+                    createGlobalPotTransaction(globalPot, globalWallet,
+                    request.getAmountContributed(), user, subWalletTxn
+                            .getTransactionId());
             // Create TransactionResponse for Redis and WebSocket forwarding
             TransactionResponse transactionResponse = transactionMapper
                     .toTransactionResponse(subWalletTxn);
@@ -261,6 +271,7 @@ private final FollowerRepository followerRepository;
             redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
                     transactionResponse);
             transactions.add(subWalletTxn);
+            globalPotTransactionRepository.save(globalPotTransaction);
             subWalletRepository.save(subWallet);
 
             // Forward the transaction message to WebSocket clients
@@ -287,6 +298,7 @@ private final FollowerRepository followerRepository;
             log.info("MainWallet balance after deduction={}",
                     mainWallet.getBalance());
 
+            //user main wallet transaction
             Transaction mainWalletTxn = Transaction.builder()
                     .transactionId(UUID.randomUUID().toString())
                     .isMaster(false)
@@ -311,6 +323,11 @@ private final FollowerRepository followerRepository;
                                     ? identity.getAnonymousColor() : null)
                     .build();
 
+            GlobalPotTransaction globalPotTransaction =
+                    createGlobalPotTransaction(globalPot, globalWallet,
+                            request.getAmountContributed(), user, mainWalletTxn
+                                    .getTransactionId());
+
             // Create TransactionResponse for Redis and WebSocket forwarding
             TransactionResponse transactionResponse = transactionMapper
                     .toTransactionResponse(mainWalletTxn);
@@ -318,6 +335,7 @@ private final FollowerRepository followerRepository;
             redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
                     transactionResponse);
             transactions.add(mainWalletTxn);
+            globalPotTransactionRepository.save(globalPotTransaction);
             mainWalletRepository.save(mainWallet);
             // Forward the transaction message to WebSocket clients
             forwardMessageToWebSocket(globalPot.getGlobalPotId(),
@@ -478,5 +496,24 @@ private final FollowerRepository followerRepository;
                     .build();
             membersRepository.save(member);
         }
+    }
+
+    private GlobalPotTransaction createGlobalPotTransaction(
+            final GlobalPot globalPot,
+            final GlobalWallet globalWallet,
+            final Double amount,
+            final User admin,
+            final String sourceTransactionId
+    ){
+        return GlobalPotTransaction.builder()
+                .globalPot(globalPot)
+                .globalWallet(globalWallet)
+                .amount(amount)
+                .transactionType(TransactionType.CREDIT)
+                .description("Amount credited -" + amount
+                        + " to Global Pot")
+                .user(admin)
+                .sourceUserTransactionId(sourceTransactionId)
+                .dateTime(LocalDateTime.now()).build();
     }
 }

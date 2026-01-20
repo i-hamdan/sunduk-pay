@@ -118,14 +118,20 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * @throws UserNotFoundException if the user is not an admin.
      */
     @Override
-    public void validateAdmin(final User admin) {
+    public void validateAdmin(final User admin,
+                              final GlobalPot globalPot) {
         if (admin == null) {
             throw new UserNotFoundException(
                     "Admin user not found for the Global Pot"
             );
         }
 
-            if (admin.getUserRole() != UserRoles.GLOBALPOT_ADMIN) {
+        Boolean isAdmin = globalPotMembersRepository
+                .existsByUserUuidAndGlobalPotGlobalPotIdAndUserRoles(
+                admin.getUuid(), globalPot.getGlobalPotId(),
+                        UserRoles.GLOBALPOT_ADMIN);
+
+        if (!isAdmin) {
             throw new UserNotFoundException(
                     "User is not authorized as Global Pot Admin"
             );

@@ -317,4 +317,110 @@ public interface TransactionRepository
             String toGlobalPotId
     );
 
+
+//    /**
+//     * Method for fetching incoming transactions.
+//     * find transactions by transaction level,
+//     * to global pot ID,transaction type and isMaster false.
+//     * @param level   transaction level
+//     * @param potId   to global pot ID
+//     * @param type    transaction type
+//     * @param pageable pagination information
+//     * @return list of transactions
+//     */
+//    @Query("""
+//        SELECT t FROM Transaction t
+//        WHERE t.isMaster = false
+//          AND t.transactionLevel = :level
+//          AND t.toGlobalPotId = :potId
+//          AND (:type IS NULL OR t.transactionType = :type)
+//    """)
+//    Page<Transaction> findIncomingGlobalPotTransactions(
+//            @Param("level") TransactionLevel level,
+//            @Param("potId") String potId,
+//            @Param("type") TransactionType type,
+//            Pageable pageable
+//    );
+//
+//    /**
+//     * Method for fetching outgoing transactions.
+//     * find transactions by transaction level,
+//     * from global pot ID,transaction type and isMaster false.
+//     * @param level   transaction level
+//     * @param potId   from global pot ID
+//     * @param type    transaction type
+//     * @param pageable pagination information
+//     * @return list of transactions
+//     */
+//    @Query("""
+//        SELECT t FROM Transaction t
+//        WHERE t.isMaster = false
+//          AND t.transactionLevel = :level
+//          AND t.fromGlobalPotId = :potId
+//          AND (:type IS NULL OR t.transactionType = :type)
+//    """)
+//    Page<Transaction> findOutgoingGlobalPotTransactions(
+//            @Param("level") TransactionLevel level,
+//            @Param("potId") String potId,
+//            @Param("type") TransactionType type,
+//            Pageable pageable
+//    );
+
+/**
+     * Method for fetching incoming transactions.
+     * find transactions by to global pot ID
+     * and isMaster false.
+     * @param potId   to global pot ID
+     * @param pageable pagination information
+     * @return list of transactions
+     */
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.isMaster = false
+      AND t.transactionLevel = 'CONTRIBUTOR'
+      AND t.toGlobalPotId = :potId
+    ORDER BY t.dateTime DESC
+""")
+    Page<Transaction> findIncomingGlobalTransactions(
+            String potId, Pageable pageable);
+
+
+/**
+     * Method for fetching outgoing transactions.
+     * find transactions by from global pot ID
+     * and isMaster false.
+     * @param potId   from global pot ID
+     * @param pageable pagination information
+     * @return list of transactions
+     */
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.isMaster = false
+      AND t.transactionLevel = 'GLOBAL_POT'
+      AND t.fromGlobalPotId = :potId
+    ORDER BY t.dateTime DESC
+""")
+    Page<Transaction> findOutgoingGlobalPotTransactions(
+            String potId, Pageable pageable);
+
+
+/**
+     * Method for fetching all transactions for a global pot.
+     * find transactions by global pot ID
+     * and isMaster false.
+     * @param potId   global pot ID
+     * @param pageable pagination information
+     * @return list of transactions
+     */
+    @Query("""
+    SELECT t FROM Transaction t
+    WHERE t.isMaster = false
+      AND (
+            (t.transactionLevel = 'CONTRIBUTOR' AND t.toGlobalPotId = :potId)
+         OR (t.transactionLevel = 'GLOBAL_POT' AND t.fromGlobalPotId = :potId)
+      )
+    ORDER BY t.dateTime DESC
+""")
+    Page<Transaction> findAllForGlobalPot(String potId, Pageable pageable);
+
 }

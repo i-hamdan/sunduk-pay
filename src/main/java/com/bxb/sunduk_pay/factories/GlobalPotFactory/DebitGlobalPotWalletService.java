@@ -1,10 +1,8 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.exception.InactiveGlobalWalletException;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.GlobalPotTransactionRepository;
 import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
@@ -12,6 +10,7 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.TransactionType;
+import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.AllArgsConstructor;
@@ -22,6 +21,9 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Service to handle debiting funds from a global pot wallet.
+ */
 @Service
 @AllArgsConstructor
 public class DebitGlobalPotWalletService implements GlobalPotOperation {
@@ -39,6 +41,8 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
 
     /** Repository for transaction data. */
     private final TransactionRepository transactionRepository;
+
+    private final GlobalPotTransactionRepository globalPotTransactionRepository;
 
 
     /**
@@ -64,10 +68,11 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
             final GlobalPotRequest request) throws IOException {
 
         User admin = validations.getUserInfo(request.getAdminUuid());
-        globalPotValidations.validateAdmin(admin);
 
         GlobalPot globalPot = globalPotValidations.getGlobalPot(
                 request.getGlobalPotId());
+
+        globalPotValidations.validateAdmin(admin,globalPot);
 
         GlobalWallet globalWallet = globalPot.getGlobalWallet();
 
@@ -83,23 +88,18 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
         globalWallet.setBalance(globalWallet.getBalance() - amount);
         globalWalletRepository.save(globalWallet);
 
-        Transaction transaction = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .user(admin)
+        GlobalPotTransaction globalPotTransaction = GlobalPotTransaction
+                .builder()
+                .globalPot(globalPot)
+                .globalWallet(globalWallet)
                 .amount(amount)
                 .transactionType(TransactionType.DEBIT)
-                .transactionLevel(TransactionLevel.GLOBAL_POT)
-                .dateTime(LocalDateTime.now())
                 .description("Admin debited amount-" + amount
                         + " from Global Pot")
-                .fromWallet("GlobalPotWallet")
-                .fromWalletId(globalWallet.getGlobalWalletId())
-                .toWallet("External")
-                .isInvestment(false)
-                .isMaster(false)
-                .build();
+                .user(admin)
+                .dateTime(LocalDateTime.now()).build();
 
-        transactionRepository.save(transaction);
+        globalPotTransactionRepository.save(globalPotTransaction);
 
         return GlobalPotResponse.builder()
                 .message("Amount-" + amount + " debited from "

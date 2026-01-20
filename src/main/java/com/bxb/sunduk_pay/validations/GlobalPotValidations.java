@@ -51,8 +51,9 @@ public interface GlobalPotValidations {
     /**
      * Validates the admin of the global pot.
      * @param admin
+     * @param globalPot
      */
-    void validateAdmin(User admin);
+    void validateAdmin(User admin,GlobalPot globalPot);
 
     /**
      * Retrieves group chat messages for a given global pot from the database.

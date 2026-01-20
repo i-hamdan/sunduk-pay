@@ -21,7 +21,7 @@ public class GlobalPotMemberMapperImpl implements GlobalPotMemberMapper{
         return FetchGlobalMembersDTO.builder()
                 .uuid(member.getUser().getUuid())
                 .fullName(member.getUser().getFullName())
-                .role(String.valueOf(member.getUser().getUserRole()))
+                .role(member.getUserRoles().toString())
                 .build();
     }
 }

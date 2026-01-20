@@ -148,6 +148,9 @@ public enum GlobalPotRequestType {
      */
     FETCH_GLOBAL_POT_MEMBERS,
 
-
+    /**
+     * Fetch transactions related to a global pot.
+     */
+    FETCH_TRANSACTIONS;
 
     }

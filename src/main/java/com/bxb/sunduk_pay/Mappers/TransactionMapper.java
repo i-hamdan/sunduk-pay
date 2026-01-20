@@ -38,4 +38,6 @@ public interface TransactionMapper {
      * @return the corresponding TransactionEvent
      */
     TransactionEvent toTransactionEvent(Transaction transaction);
+
+
 }
