@@ -1,11 +1,8 @@
 package com.bxb.sunduk_pay.request;
 
+import com.bxb.sunduk_pay.Mappers.GlobalPotMemberMapper;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.util.CaseCategory;
-import com.bxb.sunduk_pay.util.GlobalPotRequestType;
-import com.bxb.sunduk_pay.util.CaseRequirementType;
-import com.bxb.sunduk_pay.util.PotScope;
-import com.bxb.sunduk_pay.util.PotStatus;
+import com.bxb.sunduk_pay.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -171,6 +168,9 @@ public class GlobalPotRequest {
 
     /** payment tag for tracking contributions */
     private String paymentTag;
+
+    /** filter for global pot members */
+    private GlobalPotMemberFilter globalPotMemberFilter;
 
 }
 

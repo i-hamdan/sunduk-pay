@@ -141,6 +141,13 @@ public enum GlobalPotRequestType {
     /**
      * Draft a new global pot.
      */
-    DRAFT_POT;
+    DRAFT_POT,
+
+    /**
+     * Fetches members of a specific global pot.
+     */
+    FETCH_GLOBAL_POT_MEMBERS,
+
+
 
     }
