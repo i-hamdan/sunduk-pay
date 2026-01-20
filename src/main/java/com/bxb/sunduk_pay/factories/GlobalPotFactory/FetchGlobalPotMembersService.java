@@ -10,10 +10,12 @@ import com.bxb.sunduk_pay.response.FetchGlobalMembersDTO;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotMemberFilter;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.bouncycastle.oer.Switch;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -73,17 +75,23 @@ public class FetchGlobalPotMembersService implements GlobalPotOperation {
         log.info("GlobalPot fetched | globalPotId={}",
                 globalPot.getGlobalPotId());
 
-        globalPotValidations.ensureUserIsMember(
-                requester, globalPot);
 
+        List<GlobalPotMembers> members;
 
-        List<GlobalPotMembers> members =
-                globalPotMembersRepository.findByGlobalPot(globalPot);
+        switch(request.getGlobalPotMemberFilter()){
+            case MEMBER_ONLY -> members = globalPotMembersRepository
+                    .findByGlobalPotGlobalPotIdAndUserRoles(
+                            globalPot.getGlobalPotId(),
+                            UserRoles.NORMAL_USER);
 
-        GlobalPotMemberFilter filter =
-                request.getGlobalPotMemberFilter() != null
-                        ? request.getGlobalPotMemberFilter()
-                        : GlobalPotMemberFilter.ALL;
+            case ADMIN_ONLY -> members = globalPotMembersRepository
+                    .findByGlobalPotGlobalPotIdAndUserRoles(
+                            globalPot.getGlobalPotId(),
+                            UserRoles.GLOBALPOT_ADMIN);
+
+            default -> members = globalPotMembersRepository
+                    .findByGlobalPotGlobalPotId(globalPot.getGlobalPotId());
+        }
 
 
         List<FetchGlobalMembersDTO> memberDtos =
@@ -91,7 +99,9 @@ public class FetchGlobalPotMembersService implements GlobalPotOperation {
                 .map(globalPotMemberMapper::toFetchGlobalMembersDTO)
                 .collect(Collectors.toList());
 
-log.info("Members fetched successfully | count={}", memberDtos.size());
+log.info(
+    "Members fetched successfully | count={}",
+        memberDtos.size());
 
         return GlobalPotResponse.builder()
                 .status("SUCCESS")
@@ -99,31 +109,6 @@ log.info("Members fetched successfully | count={}", memberDtos.size());
                 .fetchGlobalMembersDTOS(memberDtos)
                 .build();
     }
-/**
-     * Applies the role filter to the list of Global Pot members.
-     *
-     * @param members The Global Pot member.
-     * @param filter The filter to apply.
-     * @return true if the member passes the filter, false otherwise.
-     */
-    private boolean applyRoleFilter(GlobalPotMembers members,
-                                    GlobalPotMemberFilter filter){
 
-       if (filter == GlobalPotMemberFilter.ALL){
-           return true;
-       }
-
-        if (filter == GlobalPotMemberFilter.ADMIN_ONLY) {
-            return "ADMIN".equalsIgnoreCase
-                    (members.getUserRoles().toString());
-        }
-
-        if (filter == GlobalPotMemberFilter.MEMBER_ONLY) {
-            return "MEMBER".equalsIgnoreCase
-                    (members.getUserRoles().toString());
-        }
-
-        return false;
-    }
 }
 
