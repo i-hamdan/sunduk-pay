@@ -203,4 +203,8 @@ public class GlobalPotResponse {
      */
     private List<GlobalPotDocumentResponse> globalPotDocumentResponses;
 
+    /** Full name of the user associated with the global pot.
+     * This field provides the complete name of the user.
+     */
+    private List<FetchGlobalMembersDTO> fetchGlobalMembersDTOS;
 }
