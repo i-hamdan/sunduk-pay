@@ -146,7 +146,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 //
 //        pot.setUpdatedAt(LocalDateTime.now());
 //    }
-    
     /**
      * @param pot
      * @return
@@ -347,11 +346,13 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         }
         return Base64.getEncoder().encodeToString(image);
     }
+    
     /**
      * Updates the existing GlobalPot entity with values from the request.
      *
      * <p>This method is used during the Update Global Pot operation.
-     * Only mutable fields are updated; the entity identity remains unchanged.</p>
+     * Only mutable fields are updated; the entity identity
+     * remains unchanged.</p>
      *
      * @param globalPot the existing GlobalPot entity fetched from the database
      * @param request   the request containing updated Global Pot details
@@ -361,7 +362,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     public GlobalPot toUpdateEntity(
             final GlobalPotRequest request,
             final GlobalPot globalPot) throws IOException {
-        
         if (request.getCaseTitle() != null) {
             globalPot.setCaseTitle(request.getCaseTitle());
         }

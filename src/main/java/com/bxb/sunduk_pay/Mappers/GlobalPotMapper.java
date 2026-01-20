@@ -108,8 +108,16 @@ public interface GlobalPotMapper {
      */
     String toBase64(byte[] data);
     
+    /**
+     * Updates the existing GlobalPot entity with values from the request.
+     *
+     * <p>This method is used during the Update Global Pot operation.
+     * Only mutable fields are updated; the entity identity remains unchanged.</p>
+     *
+     * @param globalPot the existing GlobalPot entity fetched from the database
+     * @param request   the request containing updated Global Pot details
+     * @return the updated GlobalPot entity
+     */
     GlobalPot toUpdateEntity(GlobalPotRequest request, GlobalPot globalPot)
             throws IOException;
-    
-   
 }

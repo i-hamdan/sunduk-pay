@@ -1,8 +1,21 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.exception.*;
-import com.bxb.sunduk_pay.model.*;
-import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
+import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import com.bxb.sunduk_pay.exception.UserAlreadyExist;
+import com.bxb.sunduk_pay.exception.GlobalPotDocumentNotFoundException;
+import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalPotMembers;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.model.GroupChatMessage;
+import com.bxb.sunduk_pay.repository.ContributerRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
+import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -42,10 +55,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
      * Repository for accessing Global Pot Document data.
      */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
-
-
-
-
+    
     /**
      * Validates the existence of a Global Pot by its ID.
      *
@@ -59,7 +69,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                 () -> new GlobalPotNotFoundException(
                         "Global Pot not found with ID: "
                                 + globalPotId));
-
     }
 
     /**
@@ -101,7 +110,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                     "Amount contributed is null or negative"
             );
         }
-
     }
 
     /**
@@ -123,8 +131,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                     "User is not authorized as Global Pot Admin"
             );
         }
-
-
     }
 
     /**
@@ -139,8 +145,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         return groupChatMessageRepository.
                 findByGlobalPotGlobalPotId(globalPotId);
     }
-
-
+    
     /**
      * Validates if a user has contributed to a Global Pot.
      *
@@ -177,7 +182,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                                 globalPotId);
 
         if (isAlreadyMember) {
-
             return;
         }
         GlobalPotMembers member = GlobalPotMembers.builder()
@@ -186,7 +190,6 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                 .userRoles(userId.getUserRole())
                 .isBlocked(false)
                 .build();
-
         globalPotMembersRepository.save(member);
     }
 
@@ -254,6 +257,7 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
             final UserRoles roles) {
 
     }
+    
     /**
      * Fetches the GlobalPotDocument by document ID.
      *
