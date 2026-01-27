@@ -10,5 +10,10 @@ public enum AdminRequestType {
     /**
      * Request type used for document verification.
      */
-    VERIFY_DOCUMENT
+    VERIFY_DOCUMENT,
+
+    /**
+     * Creates a new global pot.
+     */
+    CREATE_POT;
 }
