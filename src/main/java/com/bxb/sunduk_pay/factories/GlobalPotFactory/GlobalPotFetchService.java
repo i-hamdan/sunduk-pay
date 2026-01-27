@@ -63,7 +63,8 @@ public class GlobalPotFetchService implements GlobalPotOperation {
 
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request) {
-        log.info("Fetch global pot request received: {}", request);
+        log.info("Fetching global pots with request: {}"
+        ,System.currentTimeMillis());
 
         Pageable pageable = PageRequest.of(
                 request.getPageNumber(),
@@ -71,7 +72,8 @@ public class GlobalPotFetchService implements GlobalPotOperation {
         );
 
         Page<GlobalPot> pots;
-
+        log.info("Determining fetch criteria based on case category: {}"
+                ,System.currentTimeMillis());
         if (request.getCaseCategory() == null
                 || request.getCaseCategory() == CaseCategory.ALL) {
 
@@ -87,13 +89,16 @@ public class GlobalPotFetchService implements GlobalPotOperation {
                     pageable
             );
         }
+        log.info("Global pots fetched from repository: {}"
+                ,System.currentTimeMillis());
 
         List<GlobalPotTileDto> tileDtos =
                 globalPotMapper.toTileDtos(pots.getContent());
 
         log.info("Returning {} global pots",
                 tileDtos.size());
-
+        log.info("Fetch global pot operation completed: {}"
+                ,System.currentTimeMillis());
         return GlobalPotResponse.builder()
                 .status("SUCCESS")
                 .message("global pots fetched successfully")

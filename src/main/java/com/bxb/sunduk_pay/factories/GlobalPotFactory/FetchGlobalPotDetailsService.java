@@ -68,6 +68,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      */
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request) {
+        log.info("Performing fetch global pot details operation : {} ",
+                System.currentTimeMillis());
         try {
             log.info("Fetching details for Global Pot ID: {}",
                     request.getGlobalPotId());
@@ -89,26 +91,33 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 log.info(
 "Global Pot details not found in Redis. Fetching from database for ID: {}",
                         request.getGlobalPotId());
-
+                log.info("Validating Global Pot ID: {}",
+                        System.currentTimeMillis());
                 GlobalPot globalPot = globalPotValidations
                         .getGlobalPot(request.getGlobalPotId());
-
+                log.info("Global Pot validated successfully. ID: {}"
+                        ,System.currentTimeMillis());
                 int contributorsCount = globalPotValidations.
                         getContributorsCount(
                         globalPot.getGlobalPotId());
-
+                log.info("Contributors count fetched: {}"
+                        ,System.currentTimeMillis());
                 int followersCount = globalPotValidations.getFollowersCount(
                         globalPot.getGlobalPotId());
-
+                log.info("Followers count fetched: {}"
+                ,System.currentTimeMillis());
                 GlobalPotResponse globalPotResponse = globalPotMapper
                         .toGlobalPotResponse(globalPot);
-
+                log.info("Mapped Global Pot entity to response: {}"
+                ,System.currentTimeMillis());
                 globalPotResponse.setContributorCount(contributorsCount);
                 globalPotResponse.setFollowerCount(followersCount);
 
                 List<GlobalPotDocument> globalPotDocuments =
                         globalPotDocumentRepository.findByGlobalPotGlobalPotId(
                                 request.getGlobalPotId());
+                log.info("Fetched documents for Global Pot ID: {}"
+                        ,System.currentTimeMillis());
 
          List<GlobalPotDocumentResponse>
                  globalPotDocumentList = new ArrayList<>();
@@ -131,6 +140,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 });
                 globalPotResponse.setGlobalPotDocumentResponses(
                         globalPotDocumentList);
+                log.info("Mapped Global Pot documents to response DTOs: {}"
+                ,System.currentTimeMillis());
 
 //
 //                redisTemplate.opsForValue()
