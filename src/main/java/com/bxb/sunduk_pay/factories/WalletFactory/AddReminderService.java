@@ -7,7 +7,10 @@ import com.bxb.sunduk_pay.request.MainWalletRequest;
 import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.util.RequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import com.google.api.core.CurrentMillisClock;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +19,7 @@ import java.time.LocalDateTime;
 /**
  * Service to handle adding reminders.
  */
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class AddReminderService implements WalletOperation {
@@ -41,8 +45,10 @@ public class AddReminderService implements WalletOperation {
     @Override
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
-
+        
+        log.info("Validation : {}", System.currentTimeMillis());
         User user = validations.getUserInfo(mainWalletRequest.getUuid());
+        log.info("Add Reminder : {}", System.currentTimeMillis());
         Reminder reminder = Reminder.builder()
                 .amount(mainWalletRequest.getAmount())
                 .startDate(mainWalletRequest.getStartDate())
@@ -55,6 +61,8 @@ public class AddReminderService implements WalletOperation {
                 .isAvailable(true)
                 .isPaid(false)
                 .build();
+        log.info("Add Reminder before date set : {}",
+                System.currentTimeMillis());
 
         // Set reminder time to 12:00 AM if start date is today
         LocalDate today = LocalDate.now();
@@ -63,8 +71,12 @@ public class AddReminderService implements WalletOperation {
         if (reminder.getStartDate().isEqual(today)) {
             reminder.setLocalDateTime(todayHours12);
         }
+        log.info("Add Reminder after date set : {}",
+                System.currentTimeMillis());
 
         reminderRepository.save(reminder);
+        log.info("Add Reminder after save : {}",
+                System.currentTimeMillis());
         return MainWalletResponse.builder()
                 .status("SUCCESS")
                 .message("Reminder added successfully")
