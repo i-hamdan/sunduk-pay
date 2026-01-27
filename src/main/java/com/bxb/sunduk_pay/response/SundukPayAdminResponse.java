@@ -28,4 +28,6 @@ public class SundukPayAdminResponse {
      * Typically represents success or failure.
      */
     private String status;
+
+    private String globalPotId;
 }
