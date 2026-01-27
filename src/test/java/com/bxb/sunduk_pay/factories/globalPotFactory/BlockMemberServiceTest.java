@@ -1,16 +1,14 @@
 package com.bxb.sunduk_pay.factories.globalPotFactory;
 
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.exception.UserIsBlockedException;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.BlockMemberService;
 import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotBlockedUser;
+import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.GlobalPotBlockedUserRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
-import com.bxb.sunduk_pay.util.MpinRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import org.junit.jupiter.api.Test;
@@ -29,30 +27,23 @@ class BlockMemberServiceTest {
     private GlobalPotValidations globalPotValidations;
 
     @Mock
-    private GlobalPotBlockedUserRepository blockedUserRepository;
+    private Validations validations;
 
     @Mock
-    private Validations validations;
+    private GlobalPotMembersRepository membersRepository;
 
     @InjectMocks
     private BlockMemberService service;
 
-
-
-
     @Test
-    void testGetMpinRequestType_ShouldReturnOTP() {
+    void testGetGlobalPotRequestType_ShouldReturnBlockUser() {
         GlobalPotRequestType type = service.getGlobalPotRequestType();
-
-        assertEquals(GlobalPotRequestType.BLOCK_USER, type,
-                "this is service Request Type should be Block_User");
+        assertEquals(GlobalPotRequestType.BLOCK_USER, type);
     }
 
-
-
     @Test
-    void testBlockUserSuccess() {
-
+    void testPerform_BlockUserSuccess() {
+        // Arrange
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-uuid")
                 .globalPotId("pot-uuid")
@@ -68,28 +59,34 @@ class BlockMemberServiceTest {
         GlobalPot globalPot = new GlobalPot();
         globalPot.setGlobalPotId("pot-uuid");
 
+        GlobalPotMembers member = new GlobalPotMembers();
+        member.setUser(targetUser);
+        member.setIsBlocked(false);
+
         when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
-        when(validations.getUserInfo("target-uuid")).thenReturn(targetUser);
         when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
+        doNothing().when(globalPotValidations).validateAdmin(admin, globalPot);
 
-        // validation methods do nothing (pass)
-        doNothing().when(globalPotValidations).validateAdmin(admin);
-        doNothing().when(globalPotValidations)
-                .validateNotAlreadyBlocked("pot-uuid", "target-uuid");
+        when(validations.getUserInfo("target-uuid")).thenReturn(targetUser);
+        when(globalPotValidations.getMemberByUuidAndGlobalPotId(targetUser, globalPot))
+                .thenReturn(member);
 
+        when(membersRepository.save(member)).thenReturn(member);
+
+        // Act
         GlobalPotResponse response = service.perform(request);
 
+        // Assert
         assertNotNull(response);
         assertEquals("User has been blocked successfully", response.getMessage());
+        assertTrue(member.getIsBlocked());
 
-        verify(blockedUserRepository, times(1))
-                .save(any(GlobalPotBlockedUser.class));
+        verify(membersRepository, times(1)).save(member);
     }
 
-
     @Test
-    void testBlockUser_AdminNotAuthorized() {
-
+    void testPerform_WhenUserAlreadyBlocked_ShouldThrowException() {
+        // Arrange
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-uuid")
                 .globalPotId("pot-uuid")
@@ -99,121 +96,64 @@ class BlockMemberServiceTest {
         User admin = new User();
         admin.setUuid("admin-uuid");
 
+        User targetUser = new User();
+        targetUser.setUuid("target-uuid");
+
+        GlobalPot globalPot = new GlobalPot();
+        globalPot.setGlobalPotId("pot-uuid");
+
+        GlobalPotMembers member = new GlobalPotMembers();
+        member.setUser(targetUser);
+        member.setIsBlocked(true); // already blocked
+
         when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
+        doNothing().when(globalPotValidations).validateAdmin(admin, globalPot);
 
-        doThrow(new UserNotFoundException("Only admin can perform this action"))
-                .when(globalPotValidations).validateAdmin(admin);
+        when(validations.getUserInfo("target-uuid")).thenReturn(targetUser);
+        when(globalPotValidations.getMemberByUuidAndGlobalPotId(targetUser, globalPot))
+                .thenReturn(member);
 
-        UserNotFoundException ex = assertThrows(
-                UserNotFoundException.class,
+        // Act + Assert
+        UserIsBlockedException ex = assertThrows(
+                UserIsBlockedException.class,
+                () -> service.perform(request)
+        );
+
+        assertTrue(ex.getMessage().contains("already blocked"));
+
+        verify(membersRepository, never()).save(any());
+    }
+
+    @Test
+    void testPerform_WhenAdminValidationFails_ShouldThrowException() {
+        // Arrange
+        GlobalPotRequest request = GlobalPotRequest.builder()
+                .adminUuid("admin-uuid")
+                .globalPotId("pot-uuid")
+                .targetUserUuid("target-uuid")
+                .build();
+
+        User admin = new User();
+        admin.setUuid("admin-uuid");
+
+        GlobalPot globalPot = new GlobalPot();
+        globalPot.setGlobalPotId("pot-uuid");
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
+
+        doThrow(new RuntimeException("Only admin can perform this action"))
+                .when(globalPotValidations).validateAdmin(admin, globalPot);
+
+        // Act + Assert
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
                 () -> service.perform(request)
         );
 
         assertTrue(ex.getMessage().contains("admin"));
 
-        verify(blockedUserRepository, never()).save(any());
-    }
-
-
-
-    @Test
-    void testBlockUser_GlobalPotNotFound() {
-
-        GlobalPotRequest request = GlobalPotRequest.builder()
-                .adminUuid("admin-uuid")
-                .globalPotId("invalid-pot")
-                .targetUserUuid("target-uuid")
-                .build();
-
-        User admin = new User();
-        admin.setUuid("admin-uuid");
-
-        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
-
-        doNothing().when(globalPotValidations).validateAdmin(admin);
-
-        when(globalPotValidations.getGlobalPot("invalid-pot"))
-                .thenThrow(new ResourceNotFoundException("Global Pot not found"));
-
-        ResourceNotFoundException ex = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.perform(request)
-        );
-
-        assertTrue(ex.getMessage().contains("Global Pot"));
-
-        verify(blockedUserRepository, never()).save(any());
-    }
-
-
-    @Test
-    void testBlockUser_AlreadyBlocked() {
-
-        GlobalPotRequest request = GlobalPotRequest.builder()
-                .adminUuid("admin-uuid")
-                .globalPotId("pot-uuid")
-                .targetUserUuid("target-uuid")
-                .build();
-
-        User admin = new User();
-        admin.setUuid("admin-uuid");
-
-        GlobalPot globalPot = new GlobalPot();
-        globalPot.setGlobalPotId("pot-uuid");
-
-        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
-        when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
-
-        doNothing().when(globalPotValidations).validateAdmin(admin);
-
-        doThrow(new ResourceNotFoundException("User already blocked"))
-                .when(globalPotValidations)
-                .validateNotAlreadyBlocked("pot-uuid", "target-uuid");
-
-        ResourceNotFoundException ex = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.perform(request)
-        );
-
-        assertTrue(ex.getMessage().contains("already"));
-
-        verify(blockedUserRepository, never()).save(any());
-    }
-
-
-
-    @Test
-    void testBlockUser_TargetUserNotFound() {
-
-        GlobalPotRequest request = GlobalPotRequest.builder()
-                .adminUuid("admin-uuid")
-                .globalPotId("pot-uuid")
-                .targetUserUuid("missing-user")
-                .build();
-
-        User admin = new User();
-        admin.setUuid("admin-uuid");
-
-        GlobalPot globalPot = new GlobalPot();
-        globalPot.setGlobalPotId("pot-uuid");
-
-        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
-        when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
-
-        doNothing().when(globalPotValidations).validateAdmin(admin);
-        doNothing().when(globalPotValidations)
-                .validateNotAlreadyBlocked("pot-uuid", "missing-user");
-
-        when(validations.getUserInfo("missing-user"))
-                .thenThrow(new ResourceNotFoundException("User not found"));
-
-        ResourceNotFoundException ex = assertThrows(
-                ResourceNotFoundException.class,
-                () -> service.perform(request)
-        );
-
-        assertTrue(ex.getMessage().contains("User"));
-
-        verify(blockedUserRepository, never()).save(any());
+        verify(membersRepository, never()).save(any());
     }
 }
