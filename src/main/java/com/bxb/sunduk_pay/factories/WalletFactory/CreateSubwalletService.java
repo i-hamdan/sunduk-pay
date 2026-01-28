@@ -81,11 +81,11 @@ public class CreateSubwalletService implements WalletOperation {
                 .filter(sw -> !sw.getIsDeleted()).
                 collect(Collectors.toList());
 
-//        int size = subWallets.size();
-//
-//        validations.validateNumberOfSubWallets(size);
-//        log.debug("SubWallet count validation passed. Current size: {}",
-//                size);
+        int size = subWallets.size();
+
+        validations.validateNumberOfSubWallets(size);
+        log.debug("SubWallet count validation passed. Current size: {}",
+                size);
 
         // creating new subWallet
         SubWallet subWallet = SubWallet.builder()

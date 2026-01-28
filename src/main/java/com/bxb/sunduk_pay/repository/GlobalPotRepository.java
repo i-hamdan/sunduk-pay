@@ -71,4 +71,76 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
     )
     int getFollowersCountGlobalByPotId(
             @Param("globalPotId") String globalPotId);
+
+
+
+
+    /**     * Finds all GlobalPots sorted by user interest metrics such as
+     * visit count, total time spent, and last visited time.
+     * @param userId the ID of the user
+     * @param potScope the scope of the pot
+     * @param pageable pagination information
+     * @return a page of GlobalPots sorted by user interest
+     */
+    @Query(
+            value = """
+        SELECT gp
+        FROM GlobalPot gp
+        LEFT JOIN gp.interactions gpi
+               ON gpi.uuid.id = :userId
+        WHERE gp.potScope = :potScope
+        ORDER BY
+            COALESCE(gpi.visitCount, 0) DESC,
+            COALESCE(gpi.totalTimeSpentInSeconds, 0) DESC,
+            gpi.lastVisitedAt DESC
+    """,
+            countQuery = """
+        SELECT COUNT(gp)
+        FROM GlobalPot gp
+        WHERE gp.potScope = :potScope
+    """
+    )
+    Page<GlobalPot> findAllPotsSortedByUserInterest(
+            @Param("userId") String userId,
+            @Param("potScope") PotScope potScope,
+            Pageable pageable
+    );
+
+
+    /**     * Finds GlobalPots by CaseCategory sorted by user interest metrics
+     * such as visit count, total time spent, and last visited time.
+     * @param userId the ID of the user
+     * @param caseCategory the category of the case
+     * @param potScope the scope of the pot
+     * @param pageable pagination information
+     * @return a page of GlobalPots matching the specified CaseCategory
+     * and sorted by user interest
+     */
+    @Query(
+            value = """
+        SELECT gp
+        FROM GlobalPot gp
+        LEFT JOIN gp.interactions gpi
+               ON gpi.uuid.id = :userId
+        WHERE gp.potScope = :potScope
+          AND gp.caseCategory = :caseCategory
+        ORDER BY
+            COALESCE(gpi.visitCount, 0) DESC,
+            COALESCE(gpi.totalTimeSpentInSeconds, 0) DESC,
+            gpi.lastVisitedAt DESC
+    """,
+            countQuery = """
+        SELECT COUNT(gp)
+        FROM GlobalPot gp
+        WHERE gp.potScope = :potScope
+          AND gp.caseCategory = :caseCategory
+    """
+    )
+    Page<GlobalPot> findCategoryPotsSortedByUserInterest(
+            @Param("userId") String userId,
+            @Param("caseCategory") CaseCategory caseCategory,
+            @Param("potScope") PotScope potScope,
+            Pageable pageable
+    );
+
 }

@@ -222,6 +222,10 @@ public class GlobalPot {
     private List<GlobalPotMembers> members = new ArrayList<>();
 
 
+    @OneToMany(mappedBy = "globalPot", cascade = CascadeType.ALL)
+    private List<GlobalPotInteraction> interactions = new ArrayList<>();
+
+
     /** Adds a document to the global pot and
      * sets the bidirectional relationship.
      * @param doc The document to be added.
