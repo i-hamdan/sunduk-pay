@@ -1,7 +1,10 @@
 package com.bxb.sunduk_pay.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -13,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class DocumentWrapper {
     /**
      * The unique identifier of the document.

@@ -55,7 +55,7 @@ class CreateGlobalPotByAdminServiceTest {
         TestimonialRequest testimonialRequest = new TestimonialRequest();
         testimonialRequest.setAuthorName("Ali");
         testimonialRequest.setProfession("Teacher");
-        testimonialRequest.setDetail("Great initiative!");
+        testimonialRequest.setDetails("Great initiative!");
 
         MockMultipartFile file = new MockMultipartFile(
                 "documentFile", "test.pdf", "application/pdf", "content".getBytes());

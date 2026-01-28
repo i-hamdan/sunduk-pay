@@ -63,7 +63,7 @@ class CreateGlobalPotServiceTest {
         testimonialRequest  = new TestimonialRequest();
         testimonialRequest.setAuthorName("Ali");
         testimonialRequest.setProfession("Teacher");
-        testimonialRequest.setDetail("Great initiative!");
+        testimonialRequest.setDetails("Great initiative!");
 
         testimonialsRequests = new ArrayList<>();
         testimonialsRequests.add(testimonialRequest);
