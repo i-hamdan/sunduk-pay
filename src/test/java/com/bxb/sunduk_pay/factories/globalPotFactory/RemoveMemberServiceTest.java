@@ -72,7 +72,7 @@ class RemoveMemberServiceTest {
                 response.getMessage()
         );
 
-        verify(globalPotValidations).validateAdmin(admin);
+        verify(globalPotValidations).validateAdmin(admin,globalPot);
         verify(globalPotMembersRepository).delete(member);
     }
 

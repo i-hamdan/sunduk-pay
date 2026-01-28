@@ -52,7 +52,7 @@ class AddMemberServiceTest {
         when(validations.getUserInfo("user-1")).thenReturn(targetUser);
         when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
 
-        doNothing().when(globalPotValidations).validateAdmin(admin);
+        doNothing().when(globalPotValidations).validateAdmin(admin,pot);
         doNothing().when(globalPotValidations)
                 .ensureUserIsMemberByAdmin(targetUser, pot);
 
@@ -64,7 +64,7 @@ class AddMemberServiceTest {
 
         verify(validations).getUserInfo("admin-1");
         verify(validations).getUserInfo("user-1");
-        verify(globalPotValidations).validateAdmin(admin);
+        verify(globalPotValidations).validateAdmin(admin,pot);
         verify(globalPotValidations).ensureUserIsMemberByAdmin(targetUser, pot);
     }
 
@@ -72,22 +72,27 @@ class AddMemberServiceTest {
     void testUserIsNotAdmin() {
 
         User user = User.builder().uuid("user-1").build();
+        GlobalPot pot = GlobalPot.builder()
+                .globalPotId("pot-1")
+                .build();
 
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("user-1")
+                .globalPotId("pot-1")
                 .build();
 
         when(validations.getUserInfo("user-1")).thenReturn(user);
+        when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
+
         doThrow(new RuntimeException("Not admin"))
-                .when(globalPotValidations).validateAdmin(user);
+                .when(globalPotValidations).validateAdmin(user, pot);
 
         assertThrows(
                 RuntimeException.class,
                 () -> addMemberService.perform(request)
         );
 
-        verify(globalPotValidations).validateAdmin(user);
-        verifyNoMoreInteractions(globalPotValidations);
+        verify(globalPotValidations).validateAdmin(user, pot);
     }
 
     @Test
@@ -101,7 +106,6 @@ class AddMemberServiceTest {
                 .build();
 
         when(validations.getUserInfo("admin-1")).thenReturn(admin);
-        doNothing().when(globalPotValidations).validateAdmin(admin);
 
         doThrow(new RuntimeException("Global pot not found"))
                 .when(globalPotValidations)
@@ -113,6 +117,7 @@ class AddMemberServiceTest {
         );
 
         verify(globalPotValidations).getGlobalPot("invalid-pot");
+        verify(globalPotValidations, never()).validateAdmin(any(), any());
     }
 
     @Test
@@ -133,7 +138,7 @@ class AddMemberServiceTest {
         when(validations.getUserInfo("user-1")).thenReturn(targetUser);
         when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
 
-        doNothing().when(globalPotValidations).validateAdmin(admin);
+        doNothing().when(globalPotValidations).validateAdmin(admin,pot);
         doThrow(new RuntimeException("User already member"))
                 .when(globalPotValidations)
                 .ensureUserIsMemberByAdmin(targetUser, pot);

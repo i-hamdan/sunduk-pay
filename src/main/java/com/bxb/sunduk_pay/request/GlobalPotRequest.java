@@ -179,6 +179,9 @@ public class GlobalPotRequest {
     /** type of fetch transaction. */
     private FetchTransactionType fetchTransactionType;
 
+    /** timestamp in seconds for filtering transactions. */
+    private long timeStampInSeconds;
+
     /** Page number for pagination. */
     private int page = DEFAULT_PAGE;
     /** Number of records per page for pagination. */
