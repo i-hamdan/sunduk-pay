@@ -30,9 +30,9 @@ public class MySQLConfig {
     public DataSource mysqlDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/SundukPay");
-        dataSource.setUsername("root");
-        dataSource.setPassword("root123");
+        dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/sundukpay");
+        dataSource.setUsername("walletuser");
+        dataSource.setPassword("walletpass123");
         dataSource.setMaximumPoolSize(10);
         return dataSource;
     }
