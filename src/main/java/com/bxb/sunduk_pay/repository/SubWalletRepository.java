@@ -55,4 +55,7 @@ public interface SubWalletRepository extends
     List<SubWallet>
     findAllByMainWalletMainWalletIdAndIsDeletedFalse(
             String mainWalletId);
+
+    @Query("SELECT COUNT(sw) FROM SubWallet sw WHERE sw.mainWallet.mainWalletId = :mainWalletId AND sw.isDeleted = false")
+    long getSubWalletCountByMainWalletMainWalletId(String mainWalletId);
 }

@@ -76,16 +76,14 @@ public class CreateSubwalletService implements WalletOperation {
         log.debug("SubWallet name validation passed for name: {}",
                 mainWalletRequest.getSubWalletName());
 
-        // validating size of subwallets
-        List<SubWallet> subWallets = mainWallet.getSubWallets().stream()
-                .filter(sw -> !sw.getIsDeleted()).
-                collect(Collectors.toList());
+        // validation number of subWallets
+          long walletCount = subWalletRepository
+                  .getSubWalletCountByMainWalletMainWalletId(
+                  mainWallet.getMainWalletId());
 
-        int size = subWallets.size();
-
-        validations.validateNumberOfSubWallets(size);
+          validations.validateNumberOfSubWallets(walletCount);
         log.debug("SubWallet count validation passed. Current size: {}",
-                size);
+                walletCount);
 
         // creating new subWallet
         SubWallet subWallet = SubWallet.builder()

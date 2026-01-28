@@ -211,13 +211,13 @@ public class GlobalExceptionHandler {
      * @return structured error response
      */
     @ExceptionHandler(MaxSubWalletsExceededException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleMaxSubWalletsExceededException(
             final MaxSubWalletsExceededException e,
             final HttpServletRequest request) {
         return new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
 

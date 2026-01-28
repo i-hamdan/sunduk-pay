@@ -52,7 +52,7 @@ public interface Validations {
      *
      * @param size current number of sub-wallets
      */
-    void validateNumberOfSubWallets(int size);
+    void validateNumberOfSubWallets(long size);
 
     /**
      * Validates and retrieves transactions based on various filters.
