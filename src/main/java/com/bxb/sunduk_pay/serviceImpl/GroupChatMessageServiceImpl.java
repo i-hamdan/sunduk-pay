@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.exception.RedisOperationException;
 import com.bxb.sunduk_pay.kafkaEvents.GroupChatEvent;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.FollowerRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotInteractionRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.repository.GroupChatMessageRepository;
 import com.bxb.sunduk_pay.response.AnonymousIdentityDTO;
@@ -87,6 +88,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      */
     private final GlobalPotMembersRepository membersRepository;
 
+    private final GlobalPotInteractionRepository globalPotInteractionRepository;
+
     /**
      * Processes a group chat message event.
      *
@@ -161,6 +164,27 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             log.info(
                     "Group chat message processing completed for pot {}",
                     event.getGlobalPotId());
+
+            GlobalPotInteraction globalPotInteraction =
+                    globalPotInteractionRepository.findByUuidAndGlobalPot(
+                                    user, globalPot)
+                            .orElseGet(() -> GlobalPotInteraction.builder()
+                                    .uuid(user)
+                                    .globalPot(globalPot)
+                                    .caseCategory(globalPot.getCaseCategory())
+                                    .visitCount(0)
+                                    .messageCount(0)
+                                    .totalTimeSpentInSeconds(0)
+                                  .build());
+
+            globalPotInteraction.setMessageCount(
+                    globalPotInteraction.getMessageCount() + 1);
+
+            globalPotInteraction.setLastMessageAt(LocalDateTime.now());
+
+            globalPotInteraction.setLastInteractedAt(LocalDateTime.now());
+
+            globalPotInteractionRepository.save(globalPotInteraction);
 
             return response;
 

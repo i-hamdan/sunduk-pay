@@ -90,9 +90,12 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
                ON gpi.uuid.id = :userId
         WHERE gp.potScope = :potScope
         ORDER BY
-            COALESCE(gpi.visitCount, 0) DESC,
-            COALESCE(gpi.totalTimeSpentInSeconds, 0) DESC,
-            gpi.lastVisitedAt DESC
+        (
+            COALESCE(gpi.contributionCount, 0) * 3
+          + COALESCE(gpi.messageCount, 0) * 2
+          + COALESCE(gpi.visitCount, 0)
+        ) DESC,
+        gpi.lastInteractedAt DESC
     """,
             countQuery = """
         SELECT COUNT(gp)
@@ -100,7 +103,7 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
         WHERE gp.potScope = :potScope
     """
     )
-    Page<GlobalPot> findAllPotsSortedByUserInterest(
+    Page<GlobalPot> findFeedSortedByBehavior(
             @Param("userId") String userId,
             @Param("potScope") PotScope potScope,
             Pageable pageable
@@ -125,9 +128,12 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
         WHERE gp.potScope = :potScope
           AND gp.caseCategory = :caseCategory
         ORDER BY
-            COALESCE(gpi.visitCount, 0) DESC,
-            COALESCE(gpi.totalTimeSpentInSeconds, 0) DESC,
-            gpi.lastVisitedAt DESC
+        (
+            COALESCE(gpi.contributionCount, 0) * 3
+          + COALESCE(gpi.messageCount, 0) * 2
+          + COALESCE(gpi.visitCount, 0)
+        ) DESC,
+        gpi.lastInteractedAt DESC
     """,
             countQuery = """
         SELECT COUNT(gp)
@@ -136,7 +142,7 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
           AND gp.caseCategory = :caseCategory
     """
     )
-    Page<GlobalPot> findCategoryPotsSortedByUserInterest(
+    Page<GlobalPot> findCategoryFeedSortedByBehavior(
             @Param("userId") String userId,
             @Param("caseCategory") CaseCategory caseCategory,
             @Param("potScope") PotScope potScope,

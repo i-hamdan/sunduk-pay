@@ -78,6 +78,7 @@ public class GlobalPotInteractionService implements GlobalPotOperation {
                         .caseCategory(globalPot.getCaseCategory())
                         .visitCount(0)
                         .totalTimeSpentInSeconds(0)
+                        .lastVisitedAt(LocalDateTime.now())
                         .build());
 
         interaction.setVisitCount(interaction.getVisitCount() + 1);
@@ -89,6 +90,10 @@ public class GlobalPotInteractionService implements GlobalPotOperation {
         log.info("Updated total time spent: " +
                 interaction.getTotalTimeSpentInSeconds());
         interaction.setLastVisitedAt(LocalDateTime.now());
+
+        log.info("Set last visited at: " + interaction.getLastVisitedAt());
+        interaction.setLastVisitedAt(LocalDateTime.now());
+
         globalPotInteractionRepository.save(interaction);
         log.info("Global Pot interaction recorded successfully for user: "
                 + user.getUuid() + " and Global Pot: "

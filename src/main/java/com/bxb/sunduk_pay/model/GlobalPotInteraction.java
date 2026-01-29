@@ -8,6 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/** Entity representing user interactions with global pots.
+ */
 @Entity
 @Table(name = "global_pot_interactions",
         uniqueConstraints = {
@@ -29,6 +31,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class GlobalPotInteraction {
 
+    /** Primary key ID */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,10 +62,30 @@ public class GlobalPotInteraction {
     /** Last visit timestamp */
     private LocalDateTime lastVisitedAt;
 
+    /** Creation timestamp */
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    /** Last update timestamp */
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    /** Number of contributions made by the user to this pot */
+    private long contributionCount;
+
+    /** Timestamp of the last contribution made by the user to this pot */
+    private LocalDateTime lastContributionAt;
+
+    /** Total amount contributed by the user to this pot */
+    private Double totalContributedAmount;
+
+    /** Number of messages posted by the user in this pot */
+    private long messageCount;
+
+    /** Timestamp of the last message posted by the user in this pot */
+    private LocalDateTime lastMessageAt;
+
+    /** Number of interactions (likes, shares) by the user in this pot */
+    private LocalDateTime lastInteractedAt;
 }

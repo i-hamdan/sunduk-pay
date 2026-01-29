@@ -94,7 +94,7 @@ public class GlobalPotFetchService implements GlobalPotOperation {
 
             log.debug("Fetching all PUBLIC global pots");
             pots = globalPotRepository
-                    .findAllPotsSortedByUserInterest(user.getUuid(),
+                    .findFeedSortedByBehavior(user.getUuid(),
                             PotScope.PUBLIC, pageable);
 
 
@@ -103,7 +103,7 @@ public class GlobalPotFetchService implements GlobalPotOperation {
                     request.getCaseCategory());
 
             pots = globalPotRepository
-                    .findCategoryPotsSortedByUserInterest(
+                    .findCategoryFeedSortedByBehavior(
                             user.getUuid(),
                             request.getCaseCategory(),
                             PotScope.PUBLIC,
