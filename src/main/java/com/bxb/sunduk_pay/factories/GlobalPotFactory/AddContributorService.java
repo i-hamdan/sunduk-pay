@@ -352,6 +352,13 @@ private final GlobalPotTransactionRepository globalPotTransactionRepository;
         log.info("GlobalWallet balance after credit={}",
                 globalWallet.getBalance());
 
+        log.info("GlobalPot currentBalance before update={}",
+                globalPot.getCurrentBalance());
+        globalPot.setCurrentBalance(globalPot.getCurrentBalance()
+                + request.getAmountContributed());
+        log.info("GlobalPot currentBalance after update={}",
+                globalPot.getCurrentBalance());
+
         log.info("GlobalPot contributedBalance before update={}",
                 globalPot.getContributedBalance());
 

@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.exception.InactiveGlobalWalletException;
 import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotTransactionRepository;
 import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
 import com.bxb.sunduk_pay.repository.TransactionRepository;
@@ -36,11 +37,12 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
      */
     private final GlobalPotValidations globalPotValidations;
 
+    /** Repository for global pot data. */
+    private final GlobalPotRepository globalPotRepository;
+
     /** Repository for global wallet data. */
     private final GlobalWalletRepository globalWalletRepository;
 
-    /** Repository for transaction data. */
-    private final TransactionRepository transactionRepository;
 
     private final GlobalPotTransactionRepository globalPotTransactionRepository;
 
@@ -83,10 +85,11 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
 
         Double amount = request.getTargetAmount();
 
-        validations.validateTargetBalance(globalWallet.getBalance(), amount);
+validations.validateBalance(globalWallet.getBalance(), amount);
 
         globalWallet.setBalance(globalWallet.getBalance() - amount);
-        globalWalletRepository.save(globalWallet);
+
+        globalPot.setCurrentBalance(globalPot.getCurrentBalance() - amount);
 
         GlobalPotTransaction globalPotTransaction = GlobalPotTransaction
                 .builder()
@@ -100,6 +103,9 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
                 .dateTime(LocalDateTime.now()).build();
 
         globalPotTransactionRepository.save(globalPotTransaction);
+        globalPotRepository.save(globalPot);
+        globalWalletRepository.save(globalWallet);
+
 
         return GlobalPotResponse.builder()
                 .message("Amount-" + amount + " debited from "
