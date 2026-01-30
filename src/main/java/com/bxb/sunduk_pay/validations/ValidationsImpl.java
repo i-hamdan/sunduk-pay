@@ -110,7 +110,7 @@ private static final int WALLET_SIZE = 20;
     @Override
     public void validateNumberOfSubWallets(final long size) {
         log.info("Validating number of SubWallets: {}", size);
-        if (size <= WALLET_SIZE) {
+        if (size < WALLET_SIZE) {
             log.info(
                     "Validation passed. Current subwallet count: {}",
                     size);
