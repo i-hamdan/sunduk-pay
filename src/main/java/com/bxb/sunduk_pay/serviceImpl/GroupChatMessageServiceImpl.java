@@ -168,14 +168,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             GlobalPotInteraction globalPotInteraction =
                     globalPotInteractionRepository.findByUuidAndGlobalPot(
                                     user, globalPot)
-                            .orElseGet(() -> GlobalPotInteraction.builder()
-                                    .uuid(user)
-                                    .globalPot(globalPot)
-                                    .caseCategory(globalPot.getCaseCategory())
-                                    .visitCount(0)
-                                    .messageCount(0)
-                                    .totalTimeSpentInSeconds(0)
-                                  .build());
+                            .orElseGet(()-> getInteraction(user,globalPot));
 
             globalPotInteraction.setMessageCount(
                     globalPotInteraction.getMessageCount() + 1);
@@ -326,5 +319,29 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     .build();
             membersRepository.save(member);
         }
+    }
+
+    /**
+     * Creates a new GlobalPotInteraction record for the user and global pot.
+     *
+     * @param user      the user involved in the interaction
+     * @param globalPot the global pot involved in the interaction
+     * @return the created GlobalPotInteraction object
+     */
+    private GlobalPotInteraction getInteraction(
+            final User user,
+            final GlobalPot globalPot){
+
+        return GlobalPotInteraction.builder()
+                .uuid(user)
+                .globalPot(globalPot)
+                .caseCategory(globalPot.getCaseCategory())
+                .visitCount(0)
+                .messageCount(0)
+                .lastInteractedAt(LocalDateTime.now())
+                .contributionCount(0)
+                .totalContributedAmount(0d)
+                .totalTimeSpentInSeconds(0)
+                .build();
     }
 }

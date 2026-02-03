@@ -128,4 +128,12 @@ public interface GlobalPotValidations {
                                  GlobalPot globalPot,
                                  UserRoles roles);
 
+
+    /**
+     * Ensures that the Global Pot has been verified.
+     *
+     * @param globalPotId the Global Pot to check
+     */
+    void ensureGlobalPotIsVerified(String globalPotId);
+
 }

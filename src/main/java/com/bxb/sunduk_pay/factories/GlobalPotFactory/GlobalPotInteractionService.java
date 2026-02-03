@@ -77,6 +77,9 @@ public class GlobalPotInteractionService implements GlobalPotOperation {
                         .globalPot(globalPot)
                         .caseCategory(globalPot.getCaseCategory())
                         .visitCount(0)
+                        .contributionCount(0)
+                        .messageCount(0)
+                        .totalContributedAmount(0d)
                         .totalTimeSpentInSeconds(0)
                         .lastVisitedAt(LocalDateTime.now())
                         .build());

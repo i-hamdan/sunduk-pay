@@ -75,10 +75,18 @@ public class GlobalPotFetchService implements GlobalPotOperation {
 
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request) {
-        log.info("Fetching global pots with request: {}"
+        log.info("started fetch global pot operation: {}"
                 , System.currentTimeMillis());
+        log.info(
+ "Fetching GlobalPot feed | userId={} page={} size={} category={}",
+                request.getUuid(),
+                request.getPageNumber(),
+                request.getPageSize(),
+                request.getCaseCategory());
 
         User user = validations.getUserInfo(request.getUuid());
+        log.debug("Resolved user for feed | uuid={}", user.getUuid());
+
 
         Pageable pageable = PageRequest.of(
                 request.getPageNumber(),
@@ -91,16 +99,20 @@ public class GlobalPotFetchService implements GlobalPotOperation {
                 , System.currentTimeMillis());
         if (request.getCaseCategory() == null
                 || request.getCaseCategory() == CaseCategory.ALL) {
-
-            log.debug("Fetching all PUBLIC global pots");
-            pots = globalPotRepository
+            log.info(
+       "Fetching behavior-sorted feed for ALL categories | scope={}",
+                    PotScope.PUBLIC
+            );            pots = globalPotRepository
                     .findFeedSortedByBehavior(user.getUuid(),
                             PotScope.PUBLIC, pageable);
 
 
         } else {
-            log.debug("Fetching PUBLIC global pots for category: {}",
-                    request.getCaseCategory());
+            log.info(
+      "Fetching behavior-sorted feed for category={} | scope={}",
+                    request.getCaseCategory(),
+                    PotScope.PUBLIC
+            );
 
             pots = globalPotRepository
                     .findCategoryFeedSortedByBehavior(
@@ -110,14 +122,19 @@ public class GlobalPotFetchService implements GlobalPotOperation {
                             pageable
                     );
         }
-        log.info("Global pots fetched from repository: {}"
-                , System.currentTimeMillis());
+        log.info(
+    "Feed fetch done | totalElements={} pageElements={}",
+                pots.getTotalElements(),
+                pots.getNumberOfElements()
+        );
 
         List<GlobalPotTileDto> tileDtos =
                 globalPotMapper.toTileDtos(pots.getContent());
 
-        log.info("Returning {} global pots",
-                tileDtos.size());
+        log.debug(
+                "Mapped GlobalPot entities to Tile DTOs | count={}",
+                tileDtos.size()
+        );
         log.info("Fetch global pot operation completed: {}"
                 , System.currentTimeMillis());
         return GlobalPotResponse.builder()

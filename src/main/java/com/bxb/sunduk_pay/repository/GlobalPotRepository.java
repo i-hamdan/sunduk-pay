@@ -95,6 +95,16 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
           + COALESCE(gpi.messageCount, 0) * 2
           + COALESCE(gpi.visitCount, 0)
         ) DESC,
+        CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM GlobalPotInteraction g2
+                WHERE g2.uuid.id = :userId
+                  AND g2.caseCategory = gp.caseCategory
+            )
+            THEN 1
+            ELSE 0
+        END DESC,
         gpi.lastInteractedAt DESC
     """,
             countQuery = """
