@@ -15,5 +15,10 @@ public enum UserRequestType {
     /**
      * Represents a request to verify the user's MPIN.
      */
-    VERIFY_MPIN
+    VERIFY_MPIN,
+    /**
+     * fetches the profile photo of the user.
+     */
+    FETCH_PROFILE_PHOTO
+
 }

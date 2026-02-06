@@ -8,4 +8,5 @@ public enum PhotoRequestType {
     PROFILE_PHOTO,
     /** Document photo type. */
     DOCUMENT_PHOTO
+
 }
