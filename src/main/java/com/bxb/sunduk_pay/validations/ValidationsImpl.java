@@ -464,8 +464,8 @@ private static final int WALLET_SIZE = 20;
 /** {@inheritDoc} */
     @Override
     public User getUserByPhoneNumber(final String phoneNumber) {
-//        String phoneHash = hashUtil.sha256(phoneNumber);
-        return userRepository.findByPhoneNumber(phoneNumber)
+        String phoneHash = hashUtil.sha256(phoneNumber);
+        return userRepository.findByPhoneNumberHash(phoneHash)
                 .orElseThrow(() -> new UserNotFoundException(
                         "User not found with phone number: "
                         + phoneNumber));
