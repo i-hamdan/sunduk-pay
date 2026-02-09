@@ -41,6 +41,12 @@ public class EmailListener {
     public void consumeEmailEvent(final UserKafkaEvent userKafkaEvent) {
         log.info("Received email event for user: {}",
                 userKafkaEvent.getEmail());
-        emailService.processEmailEvent(userKafkaEvent);
+        try {
+            emailService.processEmailEvent(userKafkaEvent);
+        } catch (Exception ex) {
+            log.error(
+ "Error occurred while processing email event for user: {}",
+                    userKafkaEvent.getEmail(), ex);
     }
+}
 }
