@@ -19,6 +19,9 @@ public enum UserRequestType {
     /**
      * fetches the profile photo of the user.
      */
-    FETCH_PROFILE_PHOTO
-
+    FETCH_PROFILE_PHOTO,
+    /**
+     * Represents a request to change the user's landing page.
+     */
+    CHANGE_LANDING_PAGE;
 }

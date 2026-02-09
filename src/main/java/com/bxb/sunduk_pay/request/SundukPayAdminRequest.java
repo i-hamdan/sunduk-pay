@@ -166,4 +166,9 @@ public class SundukPayAdminRequest {
      */
     private String targetUserToRemove;
 
+    /**
+     * landing page URL for the pot
+     */
+    private String landingPageUrl;
+
 }

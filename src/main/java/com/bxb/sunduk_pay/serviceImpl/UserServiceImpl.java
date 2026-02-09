@@ -1,14 +1,13 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
+import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
+import com.bxb.sunduk_pay.model.GlobalLandingPage;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.MasterWalletRepository;
-import com.bxb.sunduk_pay.repository.MpinRepository;
-import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.UserService;
@@ -33,6 +32,9 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private static final String LANDING_PAGE_KEY = "DEFAULT_LANDING_PAGE";
+
     /**
      * Factory for creating user operations.
      */
@@ -62,24 +64,30 @@ public class UserServiceImpl implements UserService {
      */
     private final MpinRepository mpinRepository;
 
+    /**
+     * Repository for global landing page data access.
+     */
+    private final GlobalLandingPageRepository globalLandingPageRepository;
+
 
     /**
      * Handles OAuth login for a user.
      * If the user does not exist in the database,
      * a new user is created along with main and master wallets.
+     *
      * @param response The user login response containing user details.
      * @return The User object after login or creation.
      */
     @Override
     public User userLogin(final UserResponse response) {
         Optional<User> userOptional
-            = userRepository.findByEmailAndIsDeletedFalse(
-            response.getEmail());
+                = userRepository.findByEmailAndIsDeletedFalse(
+                response.getEmail());
         User user;
         if (userOptional.isEmpty()) {
             log.info(
-             "User not found in DB. Creating new user for email: {}",
-             response.getEmail());
+                    "User not found in DB. Creating new user for email: {}",
+                    response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setPhoneNumber(response.getPhoneNumber());
@@ -122,11 +130,11 @@ public class UserServiceImpl implements UserService {
         } else {
             user = userOptional.get();
             if (user.getPhoneNumber() == null) {
-             log.error("User found but phone number is null for email: {}",
-                     user.getEmail());
+                log.error("User found but phone number is null for email: {}",
+                        user.getEmail());
             }
             UserKafkaEvent userEvent = userMapper
-                    .toKafkaEvent(user,  "LOGIN");
+                    .toKafkaEvent(user, "LOGIN");
             log.info("Sending user login event to Kafka for email: {}",
                     user.getEmail());
 
@@ -138,11 +146,34 @@ public class UserServiceImpl implements UserService {
         boolean present = mpinRepository
                 .findByUserUuid(user.getUuid()).isPresent();
         user.setIsMpinCreated(present);
+
+
+        if(user.getPreferredLandingPage()!=null) {
+            log.info("User has preferred landing page: {}",
+                    user.getPreferredLandingPage());
+        } else{
+            log.info("User does not have preferred landing page."
+                    + " Fetching default landing page.");
+            user.setPreferredLandingPage(getDefaultLandingPage());
+        }
         return user;
+    }
+
+    private String getDefaultLandingPage() {
+
+        GlobalLandingPage globalLandingPage =
+                globalLandingPageRepository
+                        .findByKey(LANDING_PAGE_KEY)
+                        .orElse(null);
+
+        return globalLandingPage != null
+                ? globalLandingPage.getValue()
+                : null;
     }
 
     /**
      * Performs user operations based on the request type.
+     *
      * @param request The user request containing operation details.
      * @return The user response after performing the operation.
      */
@@ -150,7 +181,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse userOperations(final UserRequest request) {
         UserOperation userOperations =
                 userOperation.getUserOperations(request.getUserRequestType());
-    return userOperations.perform(request);
+        return userOperations.perform(request);
     }
 
 }

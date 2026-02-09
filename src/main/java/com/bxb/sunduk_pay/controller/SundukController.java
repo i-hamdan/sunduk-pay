@@ -72,6 +72,7 @@ public class SundukController {
 
         boolean isMpinCreated = dbUser.getIsMpinCreated();
         String phoneNumber = dbUser.getPhoneNumber();
+        String landingPage = dbUser.getPreferredLandingPage();
 
         authenticationSessionService.saveSession(session.getId(), dbUser);
         String deepLink = "islamicbank://login-success?sessionId="
@@ -84,6 +85,8 @@ public class SundukController {
                 "UTF-8")
                 + "&phoneNumber=" + URLEncoder.encode(
                 (phoneNumber != null) ? phoneNumber : "", "UTF-8")
+                +"&defaultLandingPage" + URLEncoder.encode(
+                (landingPage != null) ? landingPage : "", "UTF-8")
                 + "&isMpinCreated=" + isMpinCreated;
 
 

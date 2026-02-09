@@ -45,4 +45,9 @@ public class UserRequest {
      * Type of user request (e.g., CREATE, UPDATE).
      */
     private UserRequestType userRequestType;
+
+    /**
+     * Landing page URL for the user.
+     */
+    private String landingPage;
 }

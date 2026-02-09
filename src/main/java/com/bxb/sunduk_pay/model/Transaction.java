@@ -74,7 +74,6 @@ public class Transaction {
     /**
      * Status of the transaction.
      */
-
     private String status;
     /**
      * Id of Stripe payment intent associated

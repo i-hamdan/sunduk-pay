@@ -13,6 +13,10 @@ public enum AdminRequestType {
     VERIFY_DOCUMENT,
 
     /**
+     * Changes the landing page of the application.
+     */
+    CHANGE_LANDING_PAGE,
+    /**
      * Creates a new global pot.
      */
     CREATE_POT;

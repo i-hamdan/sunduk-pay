@@ -139,6 +139,10 @@ public class User {
             orphanRemoval = true)
     private List<GlobalPotMembers> globalPotMemberships;
 
+    /**
+     * Preferred landing page for the user.
+     */
+    private String preferredLandingPage;
 
 }
 
