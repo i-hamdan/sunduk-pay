@@ -127,8 +127,8 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             final Double previousTargetWalletBalance,
             final String mpin) {
         try {
-            log.info("Internal transfer DB & validation started at {}",
-                    System.currentTimeMillis());
+            long startTime = System.currentTimeMillis();
+            log.info("Internal transfer DB & validation started at : 0ms");
             log.info(
                "Starting internal transfer of amount {} from {} to {}",
                     amount, sourceWallet.getId(), targetWallet.getId());
@@ -141,9 +141,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                             + ", transferAmount=" + amount);
             
             validations.validateBalance(sourceWallet.getBalance(), amount);
-            
+            long endTime = System.currentTimeMillis();
             log.info("Balance validation successful {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
 
             log.info(
                     "Deducting {} from source wallet {}",
@@ -152,10 +152,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             Double newSourceWalletBalance = sourceWallet.getBalance();
             log.info("Updated source wallet balance: {}",
                     newSourceWalletBalance);
-            
+            endTime = System.currentTimeMillis();
             log.info("Source wallet balance updated successfully"
                             +" for wallet {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
             
             if (sourceWallet.isInvested()) {
                 log.info("Source wallet is an investment pot. "
@@ -163,8 +163,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 Investment investment = investmentValidation
                         .getInvestmentBySubWalletId(sourceWallet.getId());
                 
+                 endTime = System.currentTimeMillis();
                 log.info("Fetched investment for source wallet: {}",
-                        System.currentTimeMillis());
+                        endTime - startTime+"ms");
                 
                 if (!investment.isActive()) {
                     log.error("Attempted to debit money from an inactive "
@@ -175,15 +176,17 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 PortfolioModel portfolioModel = investmentValidation
                       .getPortfolioModelById(investment.getPortfolioModelId());
                 
+                endTime = System.currentTimeMillis();
                 log.info("Investment check for Unite Purchase Date {}"
-                        , System.currentTimeMillis());
+                        , endTime - startTime+"ms");
                 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,
                                 investment.getUnitPurchaseDate().toLocalDate());
                 
+                endTime = System.currentTimeMillis();
                 log.info("Investment check for next unit {}",
-                        System.currentTimeMillis());
+                        endTime - startTime+"ms");
                 
                 log.info(
                        "Fetched unit for investment update: {}", unit);
@@ -196,8 +199,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                         + investment.getInvestmentId());
 
             }
+            endTime = System.currentTimeMillis();
             log.info("Internal transfer DB & validation finished at {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
 
             log.info("Creating debit transaction for sourceWallet={}",
                     sourceWallet.getId());
@@ -225,8 +229,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Adding {} to target wallet {}",
                     amount, targetWallet.getId());
             
+            endTime = System.currentTimeMillis();
             log.info("Target wallet balance before update : {} "
-            ,System.currentTimeMillis());
+            , endTime - startTime+"ms");
 
             targetWallet.setBalance(targetWallet.getBalance() + amount);
             Double newTargetWalletBalance = targetWallet.getBalance();
@@ -239,8 +244,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 Investment investment = investmentValidation
                         .getInvestmentBySubWalletId(targetWallet.getId());
                 
+                endTime = System.currentTimeMillis();
                 log.info("Fetched investment for target wallet: {}",
-                        System.currentTimeMillis());
+                        endTime - startTime+"ms");
 
                 if (!investment.isActive()) {
                     log.error(
@@ -253,8 +259,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                         .getPortfolioModelById(investment
                                 .getPortfolioModelId());
                 
+                endTime = System.currentTimeMillis();
                 log.info("Investment check for Unite Purchase Date {}"
-                        , System.currentTimeMillis());
+                        , endTime - startTime+"ms");
 
                 Units unit = investmentValidation
                         .findNextUnit(portfolioModel,
@@ -262,8 +269,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 log.info(
                        "Fetched unit for investment update: {}", unit);
                 
+                endTime = System.currentTimeMillis();
                 log.info("Updating investment with credited amount {}",
-                        System.currentTimeMillis());
+                        endTime - startTime+"ms");
 
                 Investment updatedInvestment = investmentUtil.
                         updateInvestmentOnCredit(
@@ -274,8 +282,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
                 log.info("Investment details updated successfully: {}",
                         investment.getInvestmentId());
                 
+                endTime = System.currentTimeMillis();
                 log.info("Investment update on credit completed at {}",
-                        System.currentTimeMillis());
+                        endTime - startTime+"ms");
 
             }
 
@@ -302,24 +311,27 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info("Credit transaction created: {}",
                     creditTransaction.getTransactionId());
             
+            endTime = System.currentTimeMillis();
             log.info("Saving Transactions to database {} "
-            ,System.currentTimeMillis());
+            , endTime - startTime+"ms");
 
             log.debug("Saving transactions into repository, count={}",
                     transactions.size());
             transactionRepository.saveAll(transactions);
             log.info("Transactions saved successfully");
             
+            endTime = System.currentTimeMillis();
             log.info("Updating main wallet with new transactions {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
 
             log.debug("Updating main wallet with new transactions");
             user.getTransactionHistory().addAll(transactions);
             mainWalletRepository.save(mainWallet);
             log.info("Main wallet updated successfully");
             
+            endTime = System.currentTimeMillis();
             log.info("Main wallet updated with new transactions {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
 
             log.info("Publishing transaction event to Kafka topic "
                             + "'transaction-topic'");
@@ -327,8 +339,9 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             TransactionEvent transactionEvent = transactionMapper
                     .toTransactionEvent(creditTransaction);
             
+            endTime = System.currentTimeMillis();
             log.info("After TransactionEvent mapping : {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
 
             kafkaTemplate.send("transaction-topic", transactionEvent);
             log.info("Transaction event published to Kafka successfully");
@@ -337,8 +350,10 @@ public class InternalTransferServiceImpl implements InternalTransferService {
             log.info(
              "Internal transfer completed successfully for user {}",
                     user.getUuid());
+            
+            endTime = System.currentTimeMillis();
             log.info("Internal transfer process completed at {}",
-                    System.currentTimeMillis());
+                    endTime - startTime+"ms");
             return MainWalletResponse.builder()
                     .status("SUCCESS")
                     .sourceTransactionId(transactions.get(0).getTransactionId())

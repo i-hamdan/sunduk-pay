@@ -77,9 +77,9 @@ public class  TransferService implements WalletOperation {
     @Override
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
+        long startTime = System.currentTimeMillis();
         
-        log.info("Initiating transfer operation for {}"
-                ,System.currentTimeMillis());
+        log.info("Initiating transfer operation for : 0ms ");
         try {
             if (mainWalletRequest.getPaymentMethod() != null && "UPI"
                     .equalsIgnoreCase(mainWalletRequest.getPaymentMethod()
@@ -114,16 +114,18 @@ public class  TransferService implements WalletOperation {
             User user = validations.getUserInfo(mainWalletRequest.getUuid());
             log.debug("Fetched user: {}", user);
             
+            long endTime = System.currentTimeMillis();
             log.info("User validation successful for UUID: {}"
-                    , System.currentTimeMillis());
+                    , endTime - startTime+"ms");
 
             MainWallet mainWallet = validations.getMainWalletInfo(
                     user.getUuid());
             log.debug("Fetched main wallet: {}",
                     mainWallet.getMainWalletId());
             
+            endTime = System.currentTimeMillis();
             log.info("Main wallet validation successful for UUID: {}"
-                    , System.currentTimeMillis());
+                    , endTime - startTime+"ms");
 
 
             WalletWrapper sourceWallet = getWallet(mainWallet,
@@ -143,9 +145,9 @@ public class  TransferService implements WalletOperation {
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
 
-            
+            endTime = System.currentTimeMillis();
             log.info("Source wallet exists: {}"
-                    , System.currentTimeMillis());
+                    , endTime - startTime+"ms");
             
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");
