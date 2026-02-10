@@ -77,6 +77,9 @@ public class  TransferService implements WalletOperation {
     @Override
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
+        
+        log.info("Initiating transfer operation for {}"
+                ,System.currentTimeMillis());
         try {
             if (mainWalletRequest.getPaymentMethod() != null && "UPI"
                     .equalsIgnoreCase(mainWalletRequest.getPaymentMethod()
@@ -110,11 +113,17 @@ public class  TransferService implements WalletOperation {
 
             User user = validations.getUserInfo(mainWalletRequest.getUuid());
             log.debug("Fetched user: {}", user);
+            
+            log.info("User validation successful for UUID: {}"
+                    , System.currentTimeMillis());
 
             MainWallet mainWallet = validations.getMainWalletInfo(
                     user.getUuid());
             log.debug("Fetched main wallet: {}",
                     mainWallet.getMainWalletId());
+            
+            log.info("Main wallet validation successful for UUID: {}"
+                    , System.currentTimeMillis());
 
 
             WalletWrapper sourceWallet = getWallet(mainWallet,
@@ -134,8 +143,10 @@ public class  TransferService implements WalletOperation {
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
 
-
-
+            
+            log.info("Source wallet exists: {}"
+                    , System.currentTimeMillis());
+            
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");
 
