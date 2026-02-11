@@ -162,6 +162,10 @@ public class  TransferService implements WalletOperation {
                         mainWalletRequest.getMpin());
             } else if (sourceExists && !targetExists) {
                 log.info("Processing external outgoing transfer");
+                
+                endTime = System.currentTimeMillis();
+                log.info("After Mpin Validation : {}",
+                        endTime-startTime+"ms");
 
                 return handleExternalOutGoingTransfer(sourceWallet,
                         targetWallet,
