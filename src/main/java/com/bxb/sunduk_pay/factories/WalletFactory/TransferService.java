@@ -274,7 +274,7 @@ public class  TransferService implements WalletOperation {
         log.info("before Mpin Validation : 0ms");
         mpinValidations.validateMpin(user.getUuid(), mpin);
         long endTime = System.currentTimeMillis();
-        log.info("before Mpin Validation : {} ",
+        log.info("after Mpin Validation : {} ",
                 endTime - startTime+"ms");
         return internalTransferService
                 .doInternalTransfer(user,
