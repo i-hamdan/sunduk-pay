@@ -152,9 +152,6 @@ public class  TransferService implements WalletOperation {
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");
                 
-                endTime = System.currentTimeMillis();
-                log.info("After Mpin Validation : {}",
-                        endTime-startTime+"ms");
                 return handleInternalTransfer(user,
                         mainWallet,
                         mainWalletRequest.getAmount(),
@@ -273,8 +270,12 @@ public class  TransferService implements WalletOperation {
             final Double previousSourceWalletBalance,
             final Double previousTargetWalletBalance,
             final String mpin) {
-
+        long startTime = System.currentTimeMillis();
+        log.info("before Mpin Validation : 0ms");
         mpinValidations.validateMpin(user.getUuid(), mpin);
+        long endTime = System.currentTimeMillis();
+        log.info("before Mpin Validation : {} ",
+                endTime - startTime+"ms");
         return internalTransferService
                 .doInternalTransfer(user,
                         mainWallet,
