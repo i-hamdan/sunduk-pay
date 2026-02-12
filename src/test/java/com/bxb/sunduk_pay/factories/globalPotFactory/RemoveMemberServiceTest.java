@@ -6,10 +6,12 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,80 +37,110 @@ class RemoveMemberServiceTest {
     @Mock
     private GlobalPotMembersRepository globalPotMembersRepository;
 
+    @Mock
+    private GlobalPotRepository globalPotRepository;
+
     @InjectMocks
     private RemoveMemberService removeMemberService;
+
+    private GlobalPotRequest request;
+    private User admin;
+    private GlobalPot globalPot;
+    private GlobalPotMembers member;
+
+    @BeforeEach
+    void setUp() {
+        request = new GlobalPotRequest();
+        request.setAdminUuid("admin-uuid");
+        request.setGlobalPotId("pot-1");
+        request.setTargetUsersToRemove(List.of("user-uuid"));
+
+        admin = new User();
+        admin.setUuid("admin-uuid");
+
+        globalPot = new GlobalPot();
+        globalPot.setGlobalPotId("pot-1");
+
+        member = new GlobalPotMembers();
+    }
 
     @Test
     void testRemoveMemberSuccessfully() throws IOException {
 
-        GlobalPotRequest request = new GlobalPotRequest();
-        request.setAdminUuid("admin-123");
-        request.setGlobalPotId("pot-123");
-        request.setTargetUserToRemove("user-123");
+        when(validations.getUserInfo("admin-uuid"))
+                .thenReturn(admin);
 
-        User admin = new User();
-        admin.setUuid("admin-123");
+        when(globalPotValidations.getGlobalPot("pot-1"))
+                .thenReturn(globalPot);
 
-        User targetUser = new User();
-        targetUser.setUuid("user-123");
+        doNothing().when(globalPotValidations)
+                .validateAdmin(admin, globalPot);
 
-        GlobalPot globalPot = new GlobalPot();
-        globalPot.setGlobalPotId("pot-123");
-
-        GlobalPotMembers member = new GlobalPotMembers();
-
-        when(validations.getUserInfo("admin-123")).thenReturn(admin);
-        when(validations.getUserInfo("user-123")).thenReturn(targetUser);
-        when(globalPotValidations.getGlobalPot("pot-123")).thenReturn(globalPot);
         when(globalPotMembersRepository
-                .findByUserAndGlobalPot(targetUser, globalPot))
+                .findByUserUuidAndGlobalPotGlobalPotId("user-uuid",
+                        "pot-1"))
                 .thenReturn(Optional.of(member));
 
-        GlobalPotResponse response = removeMemberService.perform(request);
+        GlobalPotResponse response =
+                removeMemberService.perform(request);
 
         assertNotNull(response);
         assertEquals("SUCCESS", response.getStatus());
-        assertEquals(
-                "User removed from Global Pot successfully",
-                response.getMessage()
-        );
+        assertEquals("User removed from Global Pot successfully",
+                response.getMessage());
 
-        verify(globalPotValidations).validateAdmin(admin,globalPot);
-        verify(globalPotMembersRepository).delete(member);
+        verify(globalPotMembersRepository, times(1))
+                .deleteAll(anyList());
     }
 
     @Test
-    void perform_shouldThrowResourceNotFoundException_whenMembershipNotFound()
-            throws IOException {
+    void testThrowExceptionWhenMembershipNotFound() throws IOException {
 
-        GlobalPotRequest request = new GlobalPotRequest();
-        request.setAdminUuid("admin-123");
-        request.setGlobalPotId("pot-123");
-        request.setTargetUserToRemove("user-123");
+        when(validations.getUserInfo("admin-uuid"))
+                .thenReturn(admin);
 
-        User admin = new User();
-        admin.setUuid("admin-123");
+        when(globalPotValidations.getGlobalPot("pot-1"))
+                .thenReturn(globalPot);
 
-        User targetUser = new User();
-        targetUser.setUuid("user-123");
+        doNothing().when(globalPotValidations)
+                .validateAdmin(admin, globalPot);
 
-        GlobalPot globalPot = new GlobalPot();
-        globalPot.setGlobalPotId("pot-123");
-
-        when(validations.getUserInfo("admin-123")).thenReturn(admin);
-        when(validations.getUserInfo("user-123")).thenReturn(targetUser);
-        when(globalPotValidations.getGlobalPot("pot-123")).thenReturn(globalPot);
         when(globalPotMembersRepository
-                .findByUserAndGlobalPot(targetUser, globalPot))
+                .findByUserUuidAndGlobalPotGlobalPotId
+                        ("user-uuid", "pot-1"))
                 .thenReturn(Optional.empty());
 
-        ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> removeMemberService.perform(request)
-        );
+        assertThrows(ResourceNotFoundException.class,
+                () -> removeMemberService.perform(request));
 
-        assertEquals("Membership record not found", exception.getMessage());
+        verify(globalPotMembersRepository, never())
+                .deleteAll(anyList());
+    }
 
-        verify(globalPotMembersRepository, never()).delete(any());
+    @Test
+    void testThrowExceptionWhenAdminNotFound() throws IOException {
+
+        when(validations.getUserInfo("admin-uuid"))
+                .thenThrow(new RuntimeException("User not found"));
+
+        assertThrows(RuntimeException.class,
+                () -> removeMemberService.perform(request));
+
+        verifyNoInteractions(globalPotMembersRepository);
+    }
+
+    @Test
+    void testThrowExceptionWhenGlobalPotNotFound() throws IOException {
+
+        when(validations.getUserInfo("admin-uuid"))
+                .thenReturn(admin);
+
+        when(globalPotValidations.getGlobalPot("pot-1"))
+                .thenThrow(new RuntimeException("Pot not found"));
+
+        assertThrows(RuntimeException.class,
+                () -> removeMemberService.perform(request));
+
+        verifyNoInteractions(globalPotMembersRepository);
     }
 }
