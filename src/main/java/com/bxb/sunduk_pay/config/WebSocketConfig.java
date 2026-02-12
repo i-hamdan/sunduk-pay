@@ -34,11 +34,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //        registration.interceptors(chatMessageInterceptor);
 //    }
 
-
     /**
      * Registers STOMP endpoints for WebSocket connections.
      *
-     * @param registry
+     * @param registry the STOMP endpoint registry
      */
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
@@ -49,7 +48,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     /**
      * Configures the message broker for handling messages.
      *
-     * @param registry
+     * @param registry the message broker registry
      */
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry registry) {
@@ -57,5 +56,5 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
     }
 
-
 }
+

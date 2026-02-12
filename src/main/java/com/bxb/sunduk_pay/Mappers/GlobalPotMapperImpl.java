@@ -290,6 +290,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
                 .globalPotId(request.getGlobalPotId())
                 .content(request.getContent())
                 .isAnonymous(request.getIsAnonymous())
+                .imagePath(request.getImagePath())
+                .isImage(request.getIsImage())
                 .build();
     }
     /**
@@ -303,12 +305,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
             final GroupChatMessage groupChatMessage) {
         GroupChatMessageResponse response = new GroupChatMessageResponse();
         response.setMessageId(groupChatMessage.getMessageId());
-//        if (groupChatMessage.isAnonymous()) {
-//            response.setSender(anonymousSender());
-//        } else {
         response.setSender(userMapper
                 .toUserResponse(groupChatMessage.getSender()));
-//        }
         response.setGlobalPotId(
                 groupChatMessage.getGlobalPot().getGlobalPotId());
         response.setContent(groupChatMessage.getContent());
@@ -316,6 +314,8 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         response.setIsAnonymous(groupChatMessage.isAnonymous());
         response.setAnonymousId(groupChatMessage.getAnonymousId());
         response.setAnonymousColor(groupChatMessage.getAnonymousColor());
+        response.setIsImage(groupChatMessage.getIsImage());
+        response.setImagePath(groupChatMessage.getImagePath());
 
         return response;
     }

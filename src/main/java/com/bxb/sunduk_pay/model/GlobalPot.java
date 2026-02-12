@@ -198,10 +198,10 @@ public class GlobalPot {
     /** Name of the person who created the pot. */
     private String createdBy;
 
-    /** Designation of the pot's creator */
+    /** Designation of the pot's creator. */
     private String designation;
 
-    /** Geographical location associated with the pot's creator */
+    /** Geographical location associated with the pot's creator. */
     private String location;
 
     /** Automatic timestamp of when the pot record was first created. */

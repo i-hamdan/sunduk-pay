@@ -146,6 +146,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                     .isAnonymous(isAnonymous)
                     .anonymousId(anonymousId)
                     .anonymousColor(anonymousColor)
+                    .isImage(event.getIsImage())
+                    .imagePath(event.getImagePath())
                     .build();
 
             // Persist FIRST
@@ -219,7 +221,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
                 if (!groupMessagesFromDb.isEmpty()) {
                     log.info(
 
-              "Found {} group chat messages in DB for pot {}. Caching in Redis...",
+    "Found {} group chat messages in DB for pot {}. Caching in Redis...",
                             groupMessagesFromDb.size(),
                             message.getGlobalPot().getGlobalPotId());
                     // Map DB messages to response DTOs

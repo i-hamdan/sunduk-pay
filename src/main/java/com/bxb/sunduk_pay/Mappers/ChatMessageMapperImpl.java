@@ -38,6 +38,8 @@ public class ChatMessageMapperImpl implements ChatMessageMapper {
         event.setReceiverId(request.getReceiverId());
         event.setContent(request.getContent());
         event.setIsBlocked(request.getIsBlocked());
+        event.setImagePath(request.getImagePath());
+        event.setIsImage(request.getIsImage());
         return event;
     }
 
@@ -48,15 +50,16 @@ public class ChatMessageMapperImpl implements ChatMessageMapper {
      * @return the corresponding chat message model
      */
     @Override
-    public ChatMessage toChatMessage(
-            final ChatMessageEvent event) {
-        return ChatMessage.builder()
+    public ChatMessage toChatMessage(final ChatMessageEvent event) {
+        ChatMessage.ChatMessageBuilder builder = ChatMessage.builder()
                 .senderId(event.getSenderId())
                 .receiverId(event.getReceiverId())
                 .status("SUCCESS")
                 .content(event.getContent())
                 .isBlocked(event.getIsBlocked())
-                .build();
+                .imagePath(event.getImagePath())
+                .isImage(event.getIsImage());
+        return builder.build();
     }
 
     /**
@@ -97,7 +100,6 @@ public class ChatMessageMapperImpl implements ChatMessageMapper {
         } catch (Exception e) {
             formattedTime = timePart; // fallback if parsing fails
         }
-
         return ChatMessageResponse.builder()
                 .messageId(chatMessage.getMessageId())
                 .senderId(chatMessage.getSenderId())
@@ -109,9 +111,10 @@ public class ChatMessageMapperImpl implements ChatMessageMapper {
                 .date(formattedDate)
                 .time(formattedTime)
                 .status(chatMessage.getStatus())
+                .imagePath(chatMessage.getImagePath())
+                .isImage(chatMessage.getIsImage())
                 .build();
 
     }
-
 
 }

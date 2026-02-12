@@ -22,4 +22,8 @@ public class ChatMessageEvent {
     private String content;
     /** Flag indicating if the sender is blocked. */
     private Boolean isBlocked;
+    /** The path of the image attached to the chat message, if any. */
+    private String imagePath;
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
 }

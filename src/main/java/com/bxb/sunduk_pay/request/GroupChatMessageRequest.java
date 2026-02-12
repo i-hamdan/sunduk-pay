@@ -26,4 +26,11 @@ public class GroupChatMessageRequest {
     /** Indicates if the message is sent anonymously. */
     @NonNull
     private Boolean isAnonymous;
+
+    /** The path of the image attached to the group chat message, if any. */
+    private String imagePath;
+
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
+
 }

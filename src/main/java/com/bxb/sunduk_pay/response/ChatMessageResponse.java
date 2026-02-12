@@ -31,7 +31,11 @@ public class ChatMessageResponse {
     private String date;
     /** Time when the message was sent. */
     private String time;
-
     /** Indicates if the sender is blocked by the receiver. */
     private Boolean isBlocked;
+    /** The path of the image attached to the chat message, if any. */
+    private Boolean isImage;
+    /** The path of the image attached to the chat message, if any. */
+    private String imagePath;
+
 }

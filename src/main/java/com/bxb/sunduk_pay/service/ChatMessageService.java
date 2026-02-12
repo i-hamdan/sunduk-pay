@@ -41,7 +41,7 @@ public interface ChatMessageService {
 
     /***
      * Fetches the details of the receiver user based on the receiver ID.
-     * @param receiverId
+     * @param receiverId the ID of the receiver user whose details are to be fetched
      * @return User.
      */
     User getReceiverUserDetails(String receiverId);

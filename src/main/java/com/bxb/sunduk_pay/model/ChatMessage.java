@@ -52,5 +52,9 @@ public class ChatMessage {
      * Indicates if the sender is blocked by the receiver.
      */
     private boolean isBlocked;
+    /** The path of the image attached to the chat message, if any. */
+    private String imagePath;
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
 
 }

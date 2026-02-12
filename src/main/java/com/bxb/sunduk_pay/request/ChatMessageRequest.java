@@ -21,8 +21,12 @@ import lombok.Setter;
     private String receiverId;
     /** The content of the chat message. */
     private String content;
-
     /** Indicates if the sender is blocked by the receiver. */
     private Boolean isBlocked;
+    /** The path of the image attached to the chat message, if any. */
+    private String imagePath;
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
+
     }
 

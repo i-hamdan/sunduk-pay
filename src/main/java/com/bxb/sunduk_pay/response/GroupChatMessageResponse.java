@@ -41,4 +41,10 @@ public class GroupChatMessageResponse {
 
     /** Color associated with the anonymous sender. */
     private String anonymousColor;
+
+    /** The path of the image attached to the group chat message, if any. */
+    private String imagePath;
+
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
 }

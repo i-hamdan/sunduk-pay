@@ -27,4 +27,10 @@ public class GroupChatEvent {
 
     /** Indicates if the message was sent anonymously. */
     private boolean isAnonymous;
+
+    /** The path of the image attached to the group chat message, if any. */
+    private String imagePath;
+
+    /** Flag indicating if the message contains an image. */
+    private Boolean isImage;
 }
