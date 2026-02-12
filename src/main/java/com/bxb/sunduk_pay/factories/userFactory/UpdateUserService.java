@@ -53,6 +53,7 @@ public class UpdateUserService implements UserOperation {
 
         User user = validations.getUserInfo(userRequest.getUuid());
 
+        log.info("Fetched User info of user  " + user.getFullName());
 
         //mpinvalidations.validateMpin(user.getUuid(), userRequest.getMpin());
 
@@ -60,6 +61,8 @@ public class UpdateUserService implements UserOperation {
 
         log.info("updated User info of user  " + user.getFullName());
         userRepository.save(update);
+
+        log.info("saved updated User info of user  " + user.getFullName());
 
         return UserResponse.builder()
                 .message("saved new info Successfully")

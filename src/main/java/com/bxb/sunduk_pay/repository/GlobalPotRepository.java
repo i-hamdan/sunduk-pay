@@ -75,87 +75,154 @@ public interface GlobalPotRepository extends JpaRepository<GlobalPot,
 
 
 
-    /**     * Finds all GlobalPots sorted by user interest metrics such as
-     * visit count, total time spent, and last visited time.
+  /***   * Finds GlobalPots sorted by user behavior metrics such as contribution count,
+     * message count, and visit count, with pagination.
+     *
      * @param userId the ID of the user
-     * @param potScope the scope of the pot
+     * @param isAdmin flag indicating if the user is an admin
      * @param pageable pagination information
-     * @return a page of GlobalPots sorted by user interest
+     * @return a page of GlobalPots sorted by user behavior metrics
      */
     @Query(
             value = """
-        SELECT gp
-        FROM GlobalPot gp
-        LEFT JOIN gp.interactions gpi
-               ON gpi.uuid.id = :userId
-        WHERE gp.potScope = :potScope
-        ORDER BY
+    SELECT gp
+    FROM GlobalPot gp
+    LEFT JOIN gp.interactions gpi
+           ON gpi.uuid.id = :userId
+    WHERE
         (
-            COALESCE(gpi.contributionCount, 0) * 3
-          + COALESCE(gpi.messageCount, 0) * 2
-          + COALESCE(gpi.visitCount, 0)
-        ) DESC,
-        CASE
-            WHEN EXISTS (
-                SELECT 1
-                FROM GlobalPotInteraction g2
-                WHERE g2.uuid.id = :userId
-                  AND g2.caseCategory = gp.caseCategory
+            gp.potScope = com.bxb.sunduk_pay.util.PotScope.PUBLIC
+            OR
+            (
+                gp.potScope = com.bxb.sunduk_pay.util.PotScope.PRIVATE
+                AND
+                (
+                    :isAdmin = true
+                    OR EXISTS (
+                        SELECT 1
+                        FROM GlobalPotMembers m
+                        WHERE m.globalPot = gp
+                        AND m.user.uuid = :userId
+                        AND m.isBlocked = false
+                    )
+                )
             )
-            THEN 1
-            ELSE 0
-        END DESC,
-        gpi.lastInteractedAt DESC
-    """,
+        )
+    ORDER BY
+    (
+        COALESCE(gpi.contributionCount, 0) * 3
+      + COALESCE(gpi.messageCount, 0) * 2
+      + COALESCE(gpi.visitCount, 0)
+    ) DESC,
+    gpi.lastInteractedAt DESC
+""",
             countQuery = """
-        SELECT COUNT(gp)
-        FROM GlobalPot gp
-        WHERE gp.potScope = :potScope
-    """
+    SELECT COUNT(gp)
+    FROM GlobalPot gp
+    WHERE
+        (
+            gp.potScope = com.bxb.sunduk_pay.util.PotScope.PUBLIC
+            OR
+            (
+                gp.potScope = com.bxb.sunduk_pay.util.PotScope.PRIVATE
+                AND
+                (
+                    :isAdmin = true
+                    OR EXISTS (
+                        SELECT 1
+                        FROM GlobalPotMembers m
+                        WHERE m.globalPot = gp
+                        AND m.user.uuid = :userId
+                        AND m.isBlocked = false
+                    )
+                )
+            )
+        )
+"""
     )
     Page<GlobalPot> findFeedSortedByBehavior(
             @Param("userId") String userId,
-            @Param("potScope") PotScope potScope,
+            @Param("isAdmin") boolean isAdmin,
             Pageable pageable
     );
 
 
-    /**     * Finds GlobalPots by CaseCategory sorted by user interest metrics
-     * such as visit count, total time spent, and last visited time.
+/***     * Finds GlobalPots by their CaseCategory and sorts them based on user
+     * interest metrics such as visit count, total time spent, and last
+     * visited time.
+     *
      * @param userId the ID of the user
      * @param caseCategory the category of the case
-     * @param potScope the scope of the pot
+     * @param isAdmin flag indicating if the user is an admin
      * @param pageable pagination information
-     * @return a page of GlobalPots matching the specified CaseCategory
-     * and sorted by user interest
+     * @return a page of GlobalPots matching the specified CaseCategory and
+     * sorted by user interest
      */
     @Query(
             value = """
-        SELECT gp
-        FROM GlobalPot gp
-        LEFT JOIN gp.interactions gpi
-               ON gpi.uuid.id = :userId
-        WHERE gp.potScope = :potScope
-          AND gp.caseCategory = :caseCategory
-        ORDER BY
+    SELECT gp
+    FROM GlobalPot gp
+    LEFT JOIN gp.interactions gpi
+           ON gpi.uuid.id = :userId
+    WHERE
+        gp.caseCategory = :caseCategory
+        AND
         (
-            COALESCE(gpi.contributionCount, 0) * 3
-          + COALESCE(gpi.messageCount, 0) * 2
-          + COALESCE(gpi.visitCount, 0)
-        ) DESC,
-        gpi.lastInteractedAt DESC
-    """,
+            gp.potScope = com.bxb.sunduk_pay.util.PotScope.PUBLIC
+            OR
+            (
+                gp.potScope = com.bxb.sunduk_pay.util.PotScope.PRIVATE
+                AND
+                (
+                    :isAdmin = true
+                    OR EXISTS (
+                        SELECT 1
+                        FROM GlobalPotMembers m
+                        WHERE m.globalPot = gp
+                        AND m.user.uuid = :userId
+                        AND m.isBlocked = false
+                    )
+                )
+            )
+        )
+    ORDER BY
+    (
+        COALESCE(gpi.contributionCount, 0) * 3
+      + COALESCE(gpi.messageCount, 0) * 2
+      + COALESCE(gpi.visitCount, 0)
+    ) DESC,
+    gpi.lastInteractedAt DESC
+""",
             countQuery = """
-        SELECT COUNT(gp)
-        FROM GlobalPot gp
-        WHERE gp.potScope = :potScope
-          AND gp.caseCategory = :caseCategory
-    """
+    SELECT COUNT(gp)
+    FROM GlobalPot gp
+    WHERE
+        gp.caseCategory = :caseCategory
+        AND
+        (
+            gp.potScope = com.bxb.sunduk_pay.util.PotScope.PUBLIC
+            OR
+            (
+                gp.potScope = com.bxb.sunduk_pay.util.PotScope.PRIVATE
+                AND
+                (
+                    :isAdmin = true
+                    OR EXISTS (
+                        SELECT 1
+                        FROM GlobalPotMembers m
+                        WHERE m.globalPot = gp
+                        AND m.user.uuid = :userId
+                        AND m.isBlocked = false
+                    )
+                )
+            )
+        )
+"""
     )
     Page<GlobalPot> findCategoryFeedSortedByBehavior(
             @Param("userId") String userId,
             @Param("caseCategory") CaseCategory caseCategory,
-            @Param("potScope") PotScope potScope,
+            @Param("isAdmin") boolean isAdmin,
             Pageable pageable
     );
 

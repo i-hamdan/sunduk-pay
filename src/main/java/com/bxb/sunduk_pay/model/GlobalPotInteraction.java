@@ -72,13 +72,15 @@ public class GlobalPotInteraction {
     private LocalDateTime updatedAt;
 
     /** Number of contributions made by the user to this pot */
-    private long contributionCount;
+    @Builder.Default
+    private long contributionCount = 0;
 
     /** Timestamp of the last contribution made by the user to this pot */
     private LocalDateTime lastContributionAt;
 
     /** Total amount contributed by the user to this pot */
-    private Double totalContributedAmount;
+    @Builder.Default
+    private Double totalContributedAmount = 0.0;
 
     /** Number of messages posted by the user in this pot */
     private long messageCount;
@@ -86,6 +88,6 @@ public class GlobalPotInteraction {
     /** Timestamp of the last message posted by the user in this pot */
     private LocalDateTime lastMessageAt;
 
-    /** Number of interactions (likes, shares) by the user in this pot */
+    /** Timestamp of the last interaction (visit, contribution, message) */
     private LocalDateTime lastInteractedAt;
 }

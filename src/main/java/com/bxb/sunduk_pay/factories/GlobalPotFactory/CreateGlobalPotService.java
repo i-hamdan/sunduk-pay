@@ -11,6 +11,7 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.DocumentStatus;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.util.PotScope;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

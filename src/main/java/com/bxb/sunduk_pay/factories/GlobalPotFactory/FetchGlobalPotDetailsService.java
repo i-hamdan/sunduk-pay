@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotDocumentResponse;
@@ -10,6 +11,7 @@ import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GenerateKeyUtil;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -34,6 +36,11 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      * Mapper for global pot entities and requests/responses.
      */
     private final GlobalPotMapper globalPotMapper;
+
+    /**
+     * General validations utility.
+     */
+    private final Validations validations;
 
     /**
      * Redis template for caching global pot responses.
@@ -68,9 +75,21 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      */
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request) {
+
         log.info("Performing fetch global pot details operation : {} ",
                 System.currentTimeMillis());
+
         try {
+
+            log.info("Validating user with UUID: {}",
+                    request.getUuid());
+
+            User user = validations.getUserInfo(request.getUuid());
+
+            log.info("User validated successfully: {}",
+                    user.getFullName());
+
+
             log.info("Fetching details for Global Pot ID: {}",
                     request.getGlobalPotId());
 
@@ -88,28 +107,47 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
 //                        redisKey);
 //                return redisGlobalPotResponse;
 //            } else {
+
                 log.info(
 "Global Pot details not found in Redis. Fetching from database for ID: {}",
                         request.getGlobalPotId());
                 log.info("Validating Global Pot ID: {}",
                         System.currentTimeMillis());
+
+
                 GlobalPot globalPot = globalPotValidations
                         .getGlobalPot(request.getGlobalPotId());
+
                 log.info("Global Pot validated successfully. ID: {}"
                         ,System.currentTimeMillis());
+
+                globalPotValidations.validatePotAccess(user, globalPot);
+
+
                 int contributorsCount = globalPotValidations.
                         getContributorsCount(
                         globalPot.getGlobalPotId());
+
                 log.info("Contributors count fetched: {}"
                         ,System.currentTimeMillis());
+
+
                 int followersCount = globalPotValidations.getFollowersCount(
                         globalPot.getGlobalPotId());
+
+
                 log.info("Followers count fetched: {}"
                 ,System.currentTimeMillis());
+
+
                 GlobalPotResponse globalPotResponse = globalPotMapper
                         .toGlobalPotResponse(globalPot);
+
+
                 log.info("Mapped Global Pot entity to response: {}"
                 ,System.currentTimeMillis());
+
+
                 globalPotResponse.setContributorCount(contributorsCount);
                 globalPotResponse.setFollowerCount(followersCount);
 

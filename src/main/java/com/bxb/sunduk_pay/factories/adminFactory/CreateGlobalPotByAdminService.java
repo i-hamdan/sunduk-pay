@@ -50,13 +50,16 @@ public class CreateGlobalPotByAdminService implements SundukPayAdminOperation{
     public SundukPayAdminResponse perform(SundukPayAdminRequest request) {
         log.info("Starting Global Pot creation process");
 
+        PotScope scop = request.getPotScope() != null ? request.getPotScope()
+                : PotScope.PUBLIC;
+
         GlobalPot pot = GlobalPot.builder()
                 .caseTitle(request.getCaseTitle())
                 .caseCategory(request.getCaseCategory())
                 .caseRequirementType(request.getCaseRequirementType())
                 .description(request.getDescription())
                 .potStatus(request.getPotStatus())
-                .potScope(PotScope.PUBLIC)
+                .potScope(scop)
                 .goalDate(request.getGoalDate())
                 .goalAmount(request.getGoalAmount())
                 .city(request.getCity())
@@ -74,6 +77,8 @@ public class CreateGlobalPotByAdminService implements SundukPayAdminOperation{
                 .contributedBalance(0.0)
                 .administrators(request.getAdministrators())
                 .build();
+
+        log.info( "Global Pot entity created from request: {}", pot);
 
         // Handle Testimonials
         if (request.getTestimonials() != null) {

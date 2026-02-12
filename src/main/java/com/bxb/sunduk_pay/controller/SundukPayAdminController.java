@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.service.SundukPayAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,8 +34,8 @@ public class SundukPayAdminController {
      * @return response containing the result of the admin operation
      */
     @PostMapping("/sunduk-admin")
-    public ResponseEntity<SundukPayAdminResponse> adminApi(
-            @RequestBody final SundukPayAdminRequest request) {
+    public ResponseEntity<SundukPayAdminResponse> adminApi(@ModelAttribute
+            final SundukPayAdminRequest request) {
 
         log.info("Received admin API request");
 

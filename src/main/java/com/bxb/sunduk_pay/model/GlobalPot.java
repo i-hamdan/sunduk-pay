@@ -129,6 +129,9 @@ public class GlobalPot {
     /** City where the case or beneficiary is located. */
     private String city;
 
+    /** State where the case or beneficiary is located. */
+    private String state;
+
     /** Country where the case or beneficiary is located. */
     private String country;
 

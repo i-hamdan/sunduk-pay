@@ -78,6 +78,19 @@ public class User {
      */
     private String permanentAddress;
     /**
+     * country of User.
+     */
+    private String country;
+
+    /**
+     * state of User.
+     */
+    private String state;
+    /**
+     * city of User.
+     */
+    private String city;
+    /**
     * One-to-one relationship with MasterWallet.
     */
     @OneToOne(mappedBy = "user")

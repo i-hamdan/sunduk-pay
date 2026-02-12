@@ -7,6 +7,7 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.util.PotScope;
 import com.bxb.sunduk_pay.util.UserRoles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -279,6 +280,51 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                     globalPotId);
         }
     }
+
+    /**
+     * Validates if a user has access to a specific Global Pot.
+     *
+     * @param user the user whose access is being validated
+     * @param globalPot the Global Pot for which access is being validated
+     * @throws AccessDeniedException if the user does not have access to the Global Pot
+     */
+    @Override
+    public void validatePotAccess(final User user,
+                                  final GlobalPot globalPot) {
+
+        if (globalPot.getPotScope() == PotScope.PUBLIC) {
+            return;
+        }
+
+        if (user.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN) {
+            return;
+        }
+
+        boolean isPotAdmin =
+                globalPotMembersRepository
+                        .existsByUserUuidAndGlobalPotGlobalPotIdAndUserRoles(
+                                user.getUuid(),
+                                globalPot.getGlobalPotId(),
+                                UserRoles.GLOBALPOT_ADMIN
+                        );
+
+        if (isPotAdmin) {
+            return;
+        }
+
+        boolean isMember =
+                globalPotMembersRepository
+                        .existsByUserAndGlobalPot(user, globalPot);
+
+        if (isMember) {
+            return;
+        }
+
+        throw new AccessDeniedException(
+                "You do not have access to view this pot."
+        );
+    }
+
 
     /**
      * Fetches the GlobalPotDocument by document ID.

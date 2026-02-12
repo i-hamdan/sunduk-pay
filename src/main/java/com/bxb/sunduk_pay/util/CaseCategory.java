@@ -45,5 +45,8 @@ public enum CaseCategory {
     /**
      * Cases related to food assistance and hunger relief.
      */
-    FOOD_AND_HUNGER
+    FOOD_AND_HUNGER,
+
+    /*** Cases related to charitable causes and philanthropy. */
+    CHARITY
 }

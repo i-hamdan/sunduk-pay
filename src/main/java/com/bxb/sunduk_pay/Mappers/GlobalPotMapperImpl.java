@@ -16,6 +16,7 @@ import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.response.GroupChatMessageResponse;
 import com.bxb.sunduk_pay.response.UserResponse;
+import com.bxb.sunduk_pay.util.PotScope;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -71,7 +72,13 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
         // --- 1. Core Information ---
         pot.setCaseTitle(request.getCaseTitle());
         pot.setCaseCategory(request.getCaseCategory());
-        pot.setPotScope(request.getPotScope());
+
+        pot.setPotScope(
+                request.getPotScope() != null
+                        ? request.getPotScope()
+                        : PotScope.PUBLIC
+        );
+
         pot.setCaseRequirementType(request.getCaseRequirementType());
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());

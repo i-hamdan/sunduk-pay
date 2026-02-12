@@ -30,6 +30,13 @@ public interface GlobalPotMembersRepository
     Optional<GlobalPotMembers> findByUserAndGlobalPot(
             User userId, GlobalPot globalPotId);
 
+    /**     * Find GlobalPotMembers by User UUID and GlobalPot ID.
+     * @param userId
+     * @param globalPotId
+     * @return Optional of GlobalPotMembers.
+     */
+    Optional<GlobalPotMembers> findByUserUuidAndGlobalPotGlobalPotId(
+            String userId, String globalPotId);
 
 
     /**     * Find GlobalPotMembers by GlobalPot ID.

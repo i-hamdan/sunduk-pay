@@ -11,8 +11,7 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.Column;
 import jakarta.persistence.Basic;
 import jakarta.persistence.FetchType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -30,6 +29,9 @@ import java.time.LocalDateTime;
 @Table(name = "contributers")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Contributor {
 
     /**

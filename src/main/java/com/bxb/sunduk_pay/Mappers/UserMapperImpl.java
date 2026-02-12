@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.util.EmailCategory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import java.util.Base64;
  */
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class UserMapperImpl implements UserMapper {
 
     /**
@@ -95,6 +97,9 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public User toUpdate(final UserRequest request, final User user) {
 
+        log.info("Mapping UserRequest to User entity for update | userUuid={}",
+                user.getUuid());
+
         if (request.getFullName() != null) {
             user.setFullName(request.getFullName());
         }
@@ -146,22 +151,26 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public UserResponse getDetails(final User user) {
 
-        String phone = user.getPhoneNumber() == null
+        String phone = user.getPhoneNumber() == null || user.getPhoneNumber()
+                .isEmpty()
                 ?
                 ""
                 : userEncryption.decrypt(user.getPhoneNumber());
 
-        String dob = user.getDateOfBirth() == null
+        String dob = user.getDateOfBirth() == null || user.getDateOfBirth().
+                isEmpty()
                 ?
                 ""
                 : userEncryption.decrypt(user.getDateOfBirth());
 
-        String permanentAddress = user.getPermanentAddress() == null
+        String permanentAddress = user.getPermanentAddress() == null || user.
+                getPermanentAddress().isEmpty()
                 ?
                 ""
                 : userEncryption.decrypt(user.getPermanentAddress());
 
-        String presentAddress = user.getPresentAddress() == null
+        String presentAddress = user.getPresentAddress() == null || user.
+                getPresentAddress().isEmpty()
                 ?
                 ""
                 : userEncryption.decrypt(user.getPresentAddress());

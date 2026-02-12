@@ -163,7 +163,7 @@ public class GlobalPotRequest {
     /**
      * target user to remove from admin list.
      */
-    private String targetUserToRemove;
+    private List<String> targetUsersToRemove;
 
     /**
      * Document ID for global pot.

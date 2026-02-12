@@ -52,90 +52,51 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AddContributorService implements GlobalPotOperation {
 
-    /**
-     * Constant for five minutes duration.
-     */
+    /** Constant for five minutes duration. */
     private static final int FIVE = 5;
 
-    /**
-     * Repository for contributor data access.
-     **/
+    /** Repository for contributor data access. **/
     private final ContributerRepository contributerRepository;
-    /**
-     * Validations specific to GlobalPot operations.
-     **/
+    /** Validations specific to GlobalPot operations. **/
     private final GlobalPotValidations globalPotValidations;
-    /**
-     * Mapper for GlobalPot related entities.
-     **/
+    /** Mapper for GlobalPot related entities. **/
     private final GlobalPotMapper globalPotMapper;
-    /**
-     * Validations utility for input validation and data retrieval.
-     **/
+    /** Validations utility for input validation and data retrieval. **/
     private final Validations validations;
-    /**
-     * Repository for MainWallet data access.
-     **/
+    /** Repository for MainWallet data access. **/
     private final MainWalletRepository mainWalletRepository;
-    /**
-     * Repository for MasterWallet data access.
-     **/
+    /** Repository for MasterWallet data access. **/
     private final MasterWalletRepository masterWalletRepository;
-    /**
-     * Repository for GlobalWallet data access.
-     **/
+    /** Repository for GlobalWallet data access. **/
     private final GlobalWalletRepository globalWalletRepository;
-    /**
-     * Repository for transaction data access.
-     **/
+    /** Repository for transaction data access. **/
     private final TransactionRepository transactionRepository;
-    /**
-     * Repository for SubWallet data access.
-     **/
+    /** Repository for SubWallet data access. **/
     private final SubWalletRepository subWalletRepository;
-    /**
-     * Repository for GlobalPot data access.
-     **/
+    /** Repository for GlobalPot data access. **/
     private final GlobalPotRepository globalPotRepository;
-    /**
-     * Redis template for caching and messaging.
-     **/
+    /** Redis template for caching and messaging. **/
     private final RedisTemplate<String, TransactionResponse> redisTemplate;
-    /**
-     * Utility for generating unique keys.
-     **/
+    /** Utility for generating unique keys. **/
     private final GenerateKeyUtil generateKeyUtil;
-    /**
-     * Mapper for transaction entities to response DTOs.
-     **/
+    /** Mapper for transaction entities to response DTOs. **/
     private final TransactionMapper transactionMapper;
-    /**
-     * Service for handling anonymous user identities.
-     **/
+    /** Service for handling anonymous user identities. **/
     private final AnonymousUserService anonymousUserService;
-    /**
-     * Messaging template for WebSocket communication.
-     **/
+    /** Messaging template for WebSocket communication. **/
     private final SimpMessagingTemplate messagingTemplate;
-    /**
-     * Repository for GlobalPotMembers data access.
-     **/
+/** Repository for GlobalPotMembers data access. **/
     private final GlobalPotMembersRepository membersRepository;
     /**
      * Repository for follower data access.
      **/
     private final FollowerRepository followerRepository;
 
-    /**
-     * Repository for GlobalPotInteraction data access.
-     **/
-    private final GlobalPotInteractionRepository globalPotInteractionRepository;
+/** Repository for GlobalPotInteraction data access. **/
+private final GlobalPotInteractionRepository globalPotInteractionRepository;
 
-    /**
-     * Repository for GlobalPotTransaction data access.
-     **/
-    private final GlobalPotTransactionRepository globalPotTransactionRepository;
-
+/** Repository for GlobalPotTransaction data access. **/
+private final GlobalPotTransactionRepository globalPotTransactionRepository;
     /**
      * Returns the {@link GlobalPotRequestType} handled by this service.
      *
@@ -156,308 +117,311 @@ public class AddContributorService implements GlobalPotOperation {
      * @param request {@link GlobalPotRequest} containing contributor details,
      *                wallet information, and contribution amount
      * @return {@link GlobalPotResponse} with success message
-     * @throws IOException if any I/O related issue occurs
+     * @throws IOException                  if any I/O related issue occurs
      */
-    @Override
-    @Transactional
-    public GlobalPotResponse perform(
-            final GlobalPotRequest request) throws IOException {
+        @Override
+        @Transactional
+        public GlobalPotResponse perform(
+                final GlobalPotRequest request) throws IOException {
 
-        log.info(
-                "AddContributor started | userId={} globalPotId={} amount={}",
-                request.getUserContributorId(),
-                request.getGlobalPotId(),
-                request.getAmountContributed());
+            log.info(
+           "AddContributor started | userId={} globalPotId={} amount={}",
+                    request.getUserContributorId(),
+                    request.getGlobalPotId(),
+                    request.getAmountContributed());
 
-        User user = validations.getUserInfo(request.getUserContributorId());
-        log.info(
-                "User fetched successfully | userId={}", user.getUuid());
+            User user = validations.getUserInfo(request.getUserContributorId());
+            log.info(
+          "User fetched successfully | userId={}", user.getUuid());
 
-        MainWallet mainWallet =
-                validations.getMainWalletInfo(request.getUserContributorId());
+            MainWallet mainWallet =
+                    validations.getMainWalletInfo(request.getUserContributorId());
 
-        MasterWallet masterWallet = validations.getMasterWalletInfo(
-                request.getUserContributorId());
+            MasterWallet masterWallet = validations.getMasterWalletInfo(
+                    request.getUserContributorId());
 
-        SubWallet subWallet =
-                validations.findSubWalletIfExists(
-                        mainWallet.getMainWalletId(),
-                        request.getSourceWalletId()
+            SubWallet subWallet =
+                    validations.findSubWalletIfExists(
+                            mainWallet.getMainWalletId(),
+                            request.getSourceWalletId()
+                    );
+
+
+            GlobalPot globalPot =
+                    globalPotValidations.getGlobalPot(request.getGlobalPotId());
+            log.info("GlobalPot fetched | globalPotId={}",
+                    globalPot.getGlobalPotId());
+
+            GlobalWallet globalWallet =
+                    globalWalletRepository.findById(
+                            globalPot.getGlobalWallet().getGlobalWalletId()
+                    ).orElseThrow(() -> new WalletNotFoundException(
+                            "GlobalWallet not found"));
+            createFollowerRecord(user,globalPot);
+            createMemberRecord(user,globalPot);
+
+            String groupTransactionRedisKey = generateKeyUtil
+                    .getGroupTransactionKey(request.getGlobalPotId());
+            log.info("Generated Redis key for group transactions: {}",
+                    groupTransactionRedisKey);
+
+            Boolean isAnonymous = request.getIsAnonymous() != null
+                    ? request.getIsAnonymous() : null;
+
+            AnonymousIdentityDTO identity = null;
+
+            if (Boolean.TRUE.equals(isAnonymous)) {
+                log.info("Anonymous boolean flag found as true,"
+                        + " masking transaction as anonymous.");
+                identity = anonymousUserService
+                        .getOrCreateAnonymousColor(user, globalPot);
+            }
+
+
+            log.info("MasterWallet balance before deduction={}",
+                    masterWallet.getBalance());
+
+            validations.validateBalance(
+                    masterWallet.getBalance(),
+                    request.getAmountContributed()
+            );
+
+            masterWallet.setBalance(
+                    masterWallet.getBalance() - request.getAmountContributed()
+            );
+
+            log.info("MasterWallet balance after deduction={}",
+                    masterWallet.getBalance());
+
+            List<Transaction> transactions = new ArrayList<>();
+
+            //user master wallet transaction
+            Transaction masterWalletTxn = Transaction.builder()
+                    .transactionId(UUID.randomUUID().toString())
+                    .isMaster(true)
+                    .isInvestment(false)
+                    .transactionLevel(TransactionLevel.CONTRIBUTOR)
+                    .amount(request.getAmountContributed())
+                    .transactionType(TransactionType.DEBIT)
+                    .status("SUCCESS")
+                    .description("Deducted from master wallet")
+                    .dateTime(LocalDateTime.now())
+                    .user(user)
+                    .fromWallet("Master Wallet")
+                    .fromWalletId(masterWallet.getMasterWalletId())
+                    .toGlobalPotId(globalPot.getGlobalPotId())
+                    .isAnonymous(isAnonymous)
+                    .paymentTag(request.getPaymentTag())
+                    .anonymousId(
+                            identity != null ? identity.getAnonymousId() : null)
+                    .anonymousColor(
+                            identity != null ? identity.getAnonymousColor() : null)
+                    .build();
+
+            transactions.add(masterWalletTxn);
+
+            if (subWallet != null) {
+
+                log.info("SubWallet found | subWalletId={}",
+                        subWallet.getSubWalletId());
+
+                log.info("SubWallet balance before deduction={}",
+                        subWallet.getBalance());
+
+                validations.validateBalance(
+                        subWallet.getBalance(),
+                        request.getAmountContributed()
                 );
 
+                subWallet.setBalance(
+                        subWallet.getBalance() - request.getAmountContributed()
+                );
 
-        GlobalPot globalPot =
-                globalPotValidations.getGlobalPot(request.getGlobalPotId());
-        log.info("GlobalPot fetched | globalPotId={}",
-                globalPot.getGlobalPotId());
+                log.info("SubWallet balance after deduction={}",
+                        subWallet.getBalance());
 
-        log.info("Ensuring GlobalPot is verified | globalPotId={}",
-                globalPot.getGlobalPotId());
-        globalPotValidations.ensureGlobalPotIsVerified(
-                globalPot.getGlobalPotId());
+                //user sub wallet transaction
+                Transaction subWalletTxn = Transaction.builder()
+                        .transactionId(UUID.randomUUID().toString())
+                        .isMaster(false)
+                        .isInvestment(false)
+                        .transactionLevel(TransactionLevel.CONTRIBUTOR)
+                        .amount(request.getAmountContributed())
+                        .transactionType(TransactionType.DEBIT)
+                        .status("SUCCESS")
+                        .description("Deducted from sub wallet")
+                        .paymentTag(request.getPaymentTag())
+                        .dateTime(LocalDateTime.now())
+                        .user(user)
+                        .fromWallet(subWallet.getSubWalletName())
+                        .fromWalletId(request.getSourceWalletId())
+                        .toGlobalPotId(globalPot.getGlobalPotId())
+                        .isAnonymous(isAnonymous)
+                        .anonymousId(
+                                identity != null
+                                        ? identity.getAnonymousId() : null)
+                        .anonymousColor(
+                                identity != null
+                                        ? identity.getAnonymousColor() : null)
+                        .build();
 
-        GlobalWallet globalWallet =
-                globalWalletRepository.findById(
-                        globalPot.getGlobalWallet().getGlobalWalletId()
-                ).orElseThrow(() -> new WalletNotFoundException(
-                        "GlobalWallet not found"));
-        createFollowerRecord(user, globalPot);
-        createMemberRecord(user, globalPot);
+                GlobalPotTransaction globalPotTransaction =
+                        createGlobalPotTransaction(globalPot, globalWallet,
+                        request.getAmountContributed(), user, subWalletTxn
+                                .getTransactionId());
+                // Create TransactionResponse for Redis and WebSocket forwarding
+                TransactionResponse transactionResponse = transactionMapper
+                        .toTransactionResponse(subWalletTxn);
+                // Push to Redis list for group transactions
+                redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
+                        transactionResponse);
+                transactions.add(subWalletTxn);
+                globalPotTransactionRepository.save(globalPotTransaction);
+                subWalletRepository.save(subWallet);
 
-        String groupTransactionRedisKey = generateKeyUtil
-                .getGroupTransactionKey(request.getGlobalPotId());
-        log.info("Generated Redis key for group transactions: {}",
-                groupTransactionRedisKey);
+                // Forward the transaction message to WebSocket clients
+                forwardMessageToWebSocket(globalPot.getGlobalPotId(),
+                        transactionResponse);
 
-        Boolean isAnonymous = request.getIsAnonymous() != null
-                ? request.getIsAnonymous() : null;
+            } else {
 
-        AnonymousIdentityDTO identity = null;
+        log.info("No SubWallet found, using MainWallet | mainWalletId={}",
+                        mainWallet.getMainWalletId());
 
-        if (Boolean.TRUE.equals(isAnonymous)) {
-            log.info("Anonymous boolean flag found as true,"
-                    + " masking transaction as anonymous.");
-            identity = anonymousUserService
-                    .getOrCreateAnonymousColor(user, globalPot);
-        }
+                log.info("MainWallet balance before deduction={}",
+                        mainWallet.getBalance());
 
+                validations.validateBalance(
+                        mainWallet.getBalance(),
+                        request.getAmountContributed()
+                );
 
-        log.info("MasterWallet balance before deduction={}",
-                masterWallet.getBalance());
+                mainWallet.setBalance(
+                        mainWallet.getBalance() - request.getAmountContributed()
+                );
 
-        validations.validateBalance(
-                masterWallet.getBalance(),
-                request.getAmountContributed()
-        );
+                log.info("MainWallet balance after deduction={}",
+                        mainWallet.getBalance());
 
-        masterWallet.setBalance(
-                masterWallet.getBalance() - request.getAmountContributed()
-        );
+                //user main wallet transaction
+                Transaction mainWalletTxn = Transaction.builder()
+                        .transactionId(UUID.randomUUID().toString())
+                        .isMaster(false)
+                        .isInvestment(false)
+                        .transactionLevel(TransactionLevel.CONTRIBUTOR)
+                        .amount(request.getAmountContributed())
+                        .transactionType(TransactionType.DEBIT)
+                        .status("SUCCESS")
+                        .description("Deducted from main wallet")
+                        .paymentTag(request.getPaymentTag())
+                        .dateTime(LocalDateTime.now())
+                        .user(user)
+                        .fromWallet("Main Wallet")
+                        .fromWalletId(request.getSourceWalletId())
+                        .toGlobalPotId(globalPot.getGlobalPotId())
+                        .isAnonymous(isAnonymous)
+                        .anonymousId(
+                                identity != null
+                                        ? identity.getAnonymousId() : null)
+                        .anonymousColor(
+                                identity != null
+                                        ? identity.getAnonymousColor() : null)
+                        .build();
 
-        log.info("MasterWallet balance after deduction={}",
-                masterWallet.getBalance());
+                GlobalPotTransaction globalPotTransaction =
+                        createGlobalPotTransaction(globalPot, globalWallet,
+                                request.getAmountContributed(), user, mainWalletTxn
+                                        .getTransactionId());
 
-        List<Transaction> transactions = new ArrayList<>();
+                // Create TransactionResponse for Redis and WebSocket forwarding
+                TransactionResponse transactionResponse = transactionMapper
+                        .toTransactionResponse(mainWalletTxn);
+                // Push to Redis list for group transactions
+                redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
+                        transactionResponse);
+                transactions.add(mainWalletTxn);
+                globalPotTransactionRepository.save(globalPotTransaction);
+                mainWalletRepository.save(mainWallet);
+                // Forward the transaction message to WebSocket clients
+                forwardMessageToWebSocket(globalPot.getGlobalPotId(),
+                        transactionResponse);
+            }
 
-        //user master wallet transaction
-        Transaction masterWalletTxn = Transaction.builder()
-                .transactionId(UUID.randomUUID().toString())
-                .isMaster(true)
-                .isInvestment(false)
-                .transactionLevel(TransactionLevel.CONTRIBUTOR)
-                .amount(request.getAmountContributed())
-                .transactionType(TransactionType.DEBIT)
-                .status("SUCCESS")
-                .description("Deducted from master wallet")
-                .dateTime(LocalDateTime.now())
-                .user(user)
-                .fromWallet("Master Wallet")
-                .fromWalletId(masterWallet.getMasterWalletId())
-                .toGlobalPotId(globalPot.getGlobalPotId())
-                .isAnonymous(isAnonymous)
-                .paymentTag(request.getPaymentTag())
-                .anonymousId(
-                        identity != null ? identity.getAnonymousId() : null)
-                .anonymousColor(
-                        identity != null ? identity.getAnonymousColor() : null)
-                .build();
+            log.info("GlobalWallet balance before credit={}",
+                    globalWallet.getBalance());
 
-        transactions.add(masterWalletTxn);
-
-        if (subWallet != null) {
-
-            log.info("SubWallet found | subWalletId={}",
-                    subWallet.getSubWalletId());
-
-            log.info("SubWallet balance before deduction={}",
-                    subWallet.getBalance());
-
-            validations.validateBalance(
-                    subWallet.getBalance(),
-                    request.getAmountContributed()
+            globalWallet.setBalance(
+                    globalWallet.getBalance() + request.getAmountContributed()
             );
 
-            subWallet.setBalance(
-                    subWallet.getBalance() - request.getAmountContributed()
+            log.info("GlobalWallet balance after credit={}",
+                    globalWallet.getBalance());
+
+            log.info("GlobalPot currentBalance before update={}",
+                    globalPot.getCurrentBalance());
+            globalPot.setCurrentBalance(globalPot.getCurrentBalance()
+                    + request.getAmountContributed());
+            log.info("GlobalPot currentBalance after update={}",
+                    globalPot.getCurrentBalance());
+
+            log.info("GlobalPot contributedBalance before update={}",
+                    globalPot.getContributedBalance());
+
+            globalPot.setContributedBalance(
+                    globalPot.getContributedBalance()
+                            + request.getAmountContributed()
             );
 
-            log.info("SubWallet balance after deduction={}",
-                    subWallet.getBalance());
+            log.info("GlobalPot contributedBalance after update={}",
+                    globalPot.getContributedBalance());
 
-            //user sub wallet transaction
-            Transaction subWalletTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .isMaster(false)
-                    .isInvestment(false)
-                    .transactionLevel(TransactionLevel.CONTRIBUTOR)
-                    .amount(request.getAmountContributed())
-                    .transactionType(TransactionType.DEBIT)
-                    .status("SUCCESS")
-                    .description("Deducted from sub wallet")
-                    .paymentTag(request.getPaymentTag())
-                    .dateTime(LocalDateTime.now())
-                    .user(user)
-                    .fromWallet(subWallet.getSubWalletName())
-                    .fromWalletId(request.getSourceWalletId())
-                    .toGlobalPotId(globalPot.getGlobalPotId())
-                    .isAnonymous(isAnonymous)
-                    .anonymousId(
-                            identity != null
-                                    ? identity.getAnonymousId() : null)
-                    .anonymousColor(
-                            identity != null
-                                    ? identity.getAnonymousColor() : null)
+            Contributor contributor =
+                    globalPotMapper.toContributerEntity(request, globalPot);
+
+            GlobalPotInteraction globalPotInteraction =
+                    globalPotInteractionRepository.findByUuidAndGlobalPot(
+                            user, globalPot)
+                    .orElseGet(() -> GlobalPotInteraction.builder()
+                            .uuid(user)
+                            .globalPot(globalPot)
+                            .caseCategory(globalPot.getCaseCategory())
+                            .visitCount(0)
+                            .totalTimeSpentInSeconds(0)
+                            .contributionCount(0)
+                            .totalContributedAmount(0d)
+                            .lastContributionAt(LocalDateTime.now())
+                            .build());
+
+            globalPotInteraction.setContributionCount(
+                    globalPotInteraction.getContributionCount() + 1);
+
+            globalPotInteraction.setLastContributionAt(
+                    LocalDateTime.now());
+            globalPotInteraction.setLastInteractedAt(
+                    LocalDateTime.now());
+            globalPotInteraction.setTotalContributedAmount(
+                    globalPotInteraction.getTotalContributedAmount()
+                            + request.getAmountContributed());
+
+
+            redisTemplate.expire(groupTransactionRedisKey,
+                    Duration.ofMinutes(FIVE));
+            globalPotInteractionRepository.save(globalPotInteraction);
+            masterWalletRepository.save(masterWallet);
+            transactionRepository.saveAll(transactions);
+            globalWalletRepository.save(globalWallet);
+            globalPotRepository.save(globalPot);
+            contributerRepository.save(contributor);
+            log.info(
+    "Contributor added successfully | userId={} globalPotId={} amount={}",
+                    request.getUserContributorId(),
+                    request.getGlobalPotId(),
+                    request.getAmountContributed());
+
+            return GlobalPotResponse.builder()
+                    .message("Contributor added successfully")
                     .build();
-
-            GlobalPotTransaction globalPotTransaction =
-                    createGlobalPotTransaction(globalPot, globalWallet,
-                            request.getAmountContributed(), user, subWalletTxn
-                                    .getTransactionId());
-            // Create TransactionResponse for Redis and WebSocket forwarding
-            TransactionResponse transactionResponse = transactionMapper
-                    .toTransactionResponse(subWalletTxn);
-            // Push to Redis list for group transactions
-            redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
-                    transactionResponse);
-            transactions.add(subWalletTxn);
-            globalPotTransactionRepository.save(globalPotTransaction);
-            subWalletRepository.save(subWallet);
-
-            // Forward the transaction message to WebSocket clients
-            forwardMessageToWebSocket(globalPot.getGlobalPotId(),
-                    transactionResponse);
-
-        } else {
-
-            log.info("No SubWallet found, using MainWallet | mainWalletId={}",
-                    mainWallet.getMainWalletId());
-
-            log.info("MainWallet balance before deduction={}",
-                    mainWallet.getBalance());
-
-            validations.validateBalance(
-                    mainWallet.getBalance(),
-                    request.getAmountContributed()
-            );
-
-            mainWallet.setBalance(
-                    mainWallet.getBalance() - request.getAmountContributed()
-            );
-
-            log.info("MainWallet balance after deduction={}",
-                    mainWallet.getBalance());
-
-            //user main wallet transaction
-            Transaction mainWalletTxn = Transaction.builder()
-                    .transactionId(UUID.randomUUID().toString())
-                    .isMaster(false)
-                    .isInvestment(false)
-                    .transactionLevel(TransactionLevel.CONTRIBUTOR)
-                    .amount(request.getAmountContributed())
-                    .transactionType(TransactionType.DEBIT)
-                    .status("SUCCESS")
-                    .description("Deducted from main wallet")
-                    .paymentTag(request.getPaymentTag())
-                    .dateTime(LocalDateTime.now())
-                    .user(user)
-                    .fromWallet("Main Wallet")
-                    .fromWalletId(request.getSourceWalletId())
-                    .toGlobalPotId(globalPot.getGlobalPotId())
-                    .isAnonymous(isAnonymous)
-                    .anonymousId(
-                            identity != null
-                                    ? identity.getAnonymousId() : null)
-                    .anonymousColor(
-                            identity != null
-                                    ? identity.getAnonymousColor() : null)
-                    .build();
-
-            GlobalPotTransaction globalPotTransaction =
-                    createGlobalPotTransaction(globalPot, globalWallet,
-                            request.getAmountContributed(), user, mainWalletTxn
-                                    .getTransactionId());
-
-            // Create TransactionResponse for Redis and WebSocket forwarding
-            TransactionResponse transactionResponse = transactionMapper
-                    .toTransactionResponse(mainWalletTxn);
-            // Push to Redis list for group transactions
-            redisTemplate.opsForList().rightPush(groupTransactionRedisKey,
-                    transactionResponse);
-            transactions.add(mainWalletTxn);
-            globalPotTransactionRepository.save(globalPotTransaction);
-            mainWalletRepository.save(mainWallet);
-            // Forward the transaction message to WebSocket clients
-            forwardMessageToWebSocket(globalPot.getGlobalPotId(),
-                    transactionResponse);
         }
-
-        log.info("GlobalWallet balance before credit={}",
-                globalWallet.getBalance());
-
-        globalWallet.setBalance(
-                globalWallet.getBalance() + request.getAmountContributed()
-        );
-
-        log.info("GlobalWallet balance after credit={}",
-                globalWallet.getBalance());
-
-        log.info("GlobalPot currentBalance before update={}",
-                globalPot.getCurrentBalance());
-        globalPot.setCurrentBalance(globalPot.getCurrentBalance()
-                + request.getAmountContributed());
-        log.info("GlobalPot currentBalance after update={}",
-                globalPot.getCurrentBalance());
-
-        log.info("GlobalPot contributedBalance before update={}",
-                globalPot.getContributedBalance());
-
-        globalPot.setContributedBalance(
-                globalPot.getContributedBalance()
-                        + request.getAmountContributed()
-        );
-
-        log.info("GlobalPot contributedBalance after update={}",
-                globalPot.getContributedBalance());
-
-        Contributor contributor =
-                globalPotMapper.toContributerEntity(request, globalPot);
-
-        GlobalPotInteraction globalPotInteraction =
-                globalPotInteractionRepository.findByUuidAndGlobalPot(
-                                user, globalPot)
-                        .orElseGet(() -> getInteraction(
-                                user,globalPot));
-
-        globalPotInteraction.setContributionCount(
-                globalPotInteraction.getContributionCount() + 1);
-
-        globalPotInteraction.setLastContributionAt(
-                LocalDateTime.now());
-        globalPotInteraction.setLastInteractedAt(
-                LocalDateTime.now());
-        globalPotInteraction.setTotalContributedAmount(
-                globalPotInteraction.getTotalContributedAmount()
-                        + request.getAmountContributed());
-
-
-        redisTemplate.expire(groupTransactionRedisKey,
-                Duration.ofMinutes(FIVE));
-        globalPotInteractionRepository.save(globalPotInteraction);
-        masterWalletRepository.save(masterWallet);
-        transactionRepository.saveAll(transactions);
-        globalWalletRepository.save(globalWallet);
-        globalPotRepository.save(globalPot);
-        contributerRepository.save(contributor);
-        log.info(
-                "Contributor added successfully | userId={} globalPotId={} amount={}",
-                request.getUserContributorId(),
-                request.getGlobalPotId(),
-                request.getAmountContributed());
-
-        return GlobalPotResponse.builder()
-                .message("Contributor added successfully")
-                .build();
-    }
 
     /**
      * Forwards the transaction message to WebSocket clients
@@ -481,12 +445,11 @@ public class AddContributorService implements GlobalPotOperation {
                         + "to WebSocket for group {}",
                 globalPotId);
         log.info(
-                "=========== Finished processing group chat message ===========");
+        "=========== Finished processing group chat message ===========");
     }
 
     /**
      * Converts GroupChatMessageResponse to GroupChatUnifiedDTO.
-     *
      * @param response the group chat message response
      * @return the unified DTO representation
      */
@@ -514,7 +477,7 @@ public class AddContributorService implements GlobalPotOperation {
         if (followerRepository.existsByFollowerUserAndGlobalPot(
                 user, globalPot)) {
             log.info(
-                    "User {} is already a follower of pot {}. No action taken.",
+     "User {} is already a follower of pot {}. No action taken.",
                     user.getUuid(), globalPot.getGlobalPotId());
             return;
         } else {
@@ -546,13 +509,14 @@ public class AddContributorService implements GlobalPotOperation {
         if (dbMember.isPresent() && Boolean.TRUE
                 .equals(dbMember.get().getIsContributor())) {
             log.info(
-                    "User {} is already a contributor of pot {}. No action taken.",
+     "User {} is already a contributor of pot {}. No action taken.",
                     user.getUuid(), globalPot.getGlobalPotId());
             return;
-        } else if (dbMember.isPresent() && Boolean.FALSE
+        }
+        else if (dbMember.isPresent() && Boolean.FALSE
                 .equals(dbMember.get().getIsContributor())) {
             log.info(
-                    "User {} is already a member of pot {}. No action taken.",
+"User {} is already a member of pot {}. No action taken.",
                     user.getUuid(), globalPot.getGlobalPotId());
             dbMember.get().setIsContributor(true);
             membersRepository.saveAndFlush(dbMember.get());
@@ -579,7 +543,7 @@ public class AddContributorService implements GlobalPotOperation {
             final Double amount,
             final User admin,
             final String sourceTransactionId
-    ) {
+    ){
         return GlobalPotTransaction.builder()
                 .globalPot(globalPot)
                 .globalWallet(globalWallet)
@@ -590,30 +554,5 @@ public class AddContributorService implements GlobalPotOperation {
                 .user(admin)
                 .sourceUserTransactionId(sourceTransactionId)
                 .dateTime(LocalDateTime.now()).build();
-    }
-
-    /**
-     * Creates a new GlobalPotInteraction record for the user and global pot.
-     *
-     * @param user      the user involved in the interaction
-     * @param globalPot the global pot involved in the interaction
-     * @return the created GlobalPotInteraction object
-     */
-    private GlobalPotInteraction getInteraction(
-            final User user,
-            final GlobalPot globalPot){
-
-        return GlobalPotInteraction.builder()
-                .uuid(user)
-                .globalPot(globalPot)
-                .caseCategory(globalPot.getCaseCategory())
-                .visitCount(0)
-                .messageCount(0)
-                .contributionCount(0)
-                .lastContributionAt(LocalDateTime.now())
-                .totalTimeSpentInSeconds(0)
-                .totalContributedAmount(0d)
-                .lastInteractedAt(LocalDateTime.now())
-                .build();
     }
 }

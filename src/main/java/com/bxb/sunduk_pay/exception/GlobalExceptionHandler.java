@@ -649,4 +649,21 @@ public class GlobalExceptionHandler {
 
     }
 
+    /**
+     * Handles {@link AccessDeniedException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ErrorResponse handleAccessDeniedException(
+            final AccessDeniedException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
 }

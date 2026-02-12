@@ -136,4 +136,13 @@ public interface GlobalPotValidations {
      */
     void ensureGlobalPotIsVerified(String globalPotId);
 
+    /**
+     * Validates that a user has access to a specific Global Pot.
+     *
+     * @param user the user whose access is being validated
+     * @param globalPot the Global Pot for which access is being validated
+     * @throws RuntimeException if the user does not have access to the Global Pot
+     */
+    void validatePotAccess(User user, GlobalPot globalPot);
+
 }

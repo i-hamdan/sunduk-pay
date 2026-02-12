@@ -1,9 +1,6 @@
 package com.bxb.sunduk_pay.factories.InvestmentFactory;
 
-import com.bxb.sunduk_pay.model.Investment;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.postgress.model.PortfolioModel;
 import com.bxb.sunduk_pay.postgress.model.Units;
 import com.bxb.sunduk_pay.repository.InvestmentRepository;

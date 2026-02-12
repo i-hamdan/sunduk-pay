@@ -6,6 +6,7 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
@@ -16,6 +17,8 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * RemoveMemberService allows a Global Pot admin
@@ -45,6 +48,11 @@ public class RemoveMemberService implements GlobalPotOperation {
      */
     private final GlobalPotMembersRepository globalPotMembersRepository;
 
+
+    private final GlobalPotRepository globalPotRepository;
+
+
+
     /**
      * Returns the Global Pot request type handled by this service.
      *
@@ -66,11 +74,10 @@ public class RemoveMemberService implements GlobalPotOperation {
     public GlobalPotResponse perform(
             final GlobalPotRequest request) throws IOException {
 
-        log.info("RemoveMember started | "
-                        + "adminUuid={} globalPotId={} targetUserUuid={}",
-                request.getAdminUuid(),
-                request.getGlobalPotId(),
-                request.getTargetUserToRemove());
+        log.info("Initiating member removal from Global Pot |" +
+                        " adminUuid={} globalPotId={} targetUserUuids={}",
+                request.getAdminUuid(), request.getGlobalPotId(),
+                request.getTargetUsersToRemove());
 
         User admin = validations.getUserInfo(request.getAdminUuid());
         log.info("Admin fetched successfully | adminUuid={}",
@@ -83,33 +90,20 @@ public class RemoveMemberService implements GlobalPotOperation {
                 globalPot.getGlobalPotId());
         globalPotValidations.validateAdmin(admin,globalPot);
 
+List<GlobalPotMembers> membersToRemove = new ArrayList<>();
 
-        User targetMember =
-                validations.getUserInfo(request.getTargetUserToRemove());
-        log.info("Target user fetched successfully | userUuid={}",
-                targetMember.getUuid());
+request.getTargetUsersToRemove().forEach(uuid ->{
+   membersToRemove.add(globalPotMembersRepository.findByUserUuidAndGlobalPotGlobalPotId(
+            uuid, globalPot.getGlobalPotId()).orElseThrow(
+                    () -> new ResourceNotFoundException(
+                            "Membership record not found for userUuid: " + uuid
+                            + " and globalPotId: " + globalPot.getGlobalPotId())));
+});
 
-        GlobalPotMembers member =
-                globalPotMembersRepository.findByUserAndGlobalPot(
-                        targetMember, globalPot).orElseThrow(
-                                () -> new ResourceNotFoundException(
-                                        "Membership record not found"));
-
-        if (member == null) {
-            log.warn("RemoveMember failed | user not a member |"
-                            + " userUuid={} globalPotId={}",
-                    targetMember.getUuid(),
-                    globalPot.getGlobalPotId());
-            throw new UserNotFoundException(
-                    "User with userId:" + targetMember.getUuid()
-                            + " is not a member of the Global Pot:"
-                            + globalPot.getGlobalPotId());
-        }
-
-        globalPotMembersRepository.delete(member);
-        log.info("User removed from Global Pot | userUuid={} globalPotId={}",
-                targetMember.getUuid(),
-                globalPot.getGlobalPotId());
+        globalPotMembersRepository.deleteAll(membersToRemove);
+        log.info(
+    "User removed from Global Pot successfully | userUuid={} globalPotId={}",
+                request.getTargetUsersToRemove(), globalPot.getGlobalPotId());
 
         return GlobalPotResponse.builder()
                 .message("User removed from Global Pot successfully")

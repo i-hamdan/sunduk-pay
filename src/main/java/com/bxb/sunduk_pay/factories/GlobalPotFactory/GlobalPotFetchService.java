@@ -3,13 +3,14 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.GlobalPotInteractionRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.CaseCategory;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.util.PotScope;
+import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -51,6 +52,11 @@ public class GlobalPotFetchService implements GlobalPotOperation {
      * Validations utility.
      */
     private final Validations validations;
+
+    /**
+     * Repository to manage Global Pot members.
+     */
+    private final GlobalPotMembersRepository globalPotMembersRepository;
 
     /**
      * Returns the request type supported by this service.
@@ -102,9 +108,13 @@ public class GlobalPotFetchService implements GlobalPotOperation {
             log.info(
        "Fetching behavior-sorted feed for ALL categories | scope={}",
                     PotScope.PUBLIC
-            );            pots = globalPotRepository
+            );
+
+            boolean isSundukPayAdmin = user.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN;
+
+            pots = globalPotRepository
                     .findFeedSortedByBehavior(user.getUuid(),
-                            PotScope.PUBLIC, pageable);
+                            isSundukPayAdmin, pageable);
 
 
         } else {
@@ -114,11 +124,13 @@ public class GlobalPotFetchService implements GlobalPotOperation {
                     PotScope.PUBLIC
             );
 
+            boolean isPotAdmin = user.getUserRole()== UserRoles.GLOBALPOT_ADMIN;
+
             pots = globalPotRepository
                     .findCategoryFeedSortedByBehavior(
                             user.getUuid(),
                             request.getCaseCategory(),
-                            PotScope.PUBLIC,
+                            isPotAdmin,
                             pageable
                     );
         }
