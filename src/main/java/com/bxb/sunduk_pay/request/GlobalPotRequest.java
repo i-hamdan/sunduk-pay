@@ -159,7 +159,7 @@ public class GlobalPotRequest {
     /**
      * target user to add to admin list.
      */
-    private String targetUserToAdd;
+    private List<String> targetUsersToAdd;
     /**
      * target user to remove from admin list.
      */

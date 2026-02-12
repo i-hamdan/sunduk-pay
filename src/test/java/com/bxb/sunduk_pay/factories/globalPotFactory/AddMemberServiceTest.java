@@ -3,7 +3,7 @@ package com.bxb.sunduk_pay.factories.globalPotFactory;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.AddMemberService;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,16 +29,17 @@ class AddMemberServiceTest {
     private GlobalPotValidations globalPotValidations;
 
     @Mock
-    private GlobalPotMembersRepository globalPotMembersRepository;
+    private UserRepository userRepository;
 
     @InjectMocks
     private AddMemberService addMemberService;
 
     @Test
-    void testAddMemberSuccessfully() throws Exception {
+    void testAddMembersSuccessfully() throws Exception {
 
         User admin = User.builder().uuid("admin-1").build();
-        User targetUser = User.builder().uuid("user-1").build();
+        User user1 = User.builder().uuid("user-1").build();
+        User user2 = User.builder().uuid("user-2").build();
 
         GlobalPot pot = GlobalPot.builder()
                 .globalPotId("pot-1")
@@ -45,16 +48,16 @@ class AddMemberServiceTest {
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-1")
                 .globalPotId("pot-1")
-                .targetUserToAdd("user-1")
+                .targetUsersToAdd(List.of("user-1", "user-2"))
                 .build();
 
         when(validations.getUserInfo("admin-1")).thenReturn(admin);
-        when(validations.getUserInfo("user-1")).thenReturn(targetUser);
         when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
+        when(userRepository.findAllById(List.of("user-1", "user-2")))
+                .thenReturn(List.of(user1, user2));
 
-        doNothing().when(globalPotValidations).validateAdmin(admin,pot);
-        doNothing().when(globalPotValidations)
-                .ensureUserIsMemberByAdmin(targetUser, pot);
+        doNothing().when(globalPotValidations).validateAdmin(admin, pot);
+        doNothing().when(globalPotValidations).ensureUserIsMember(any(), eq(pot));
 
         GlobalPotResponse response = addMemberService.perform(request);
 
@@ -63,9 +66,9 @@ class AddMemberServiceTest {
                 response.getMessage());
 
         verify(validations).getUserInfo("admin-1");
-        verify(validations).getUserInfo("user-1");
-        verify(globalPotValidations).validateAdmin(admin,pot);
-        verify(globalPotValidations).ensureUserIsMemberByAdmin(targetUser, pot);
+        verify(globalPotValidations).validateAdmin(admin, pot);
+        verify(globalPotValidations, times(2))
+                .ensureUserIsMember(any(), eq(pot));
     }
 
     @Test
@@ -79,6 +82,7 @@ class AddMemberServiceTest {
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("user-1")
                 .globalPotId("pot-1")
+                .targetUsersToAdd(List.of("user-2"))
                 .build();
 
         when(validations.getUserInfo("user-1")).thenReturn(user);
@@ -93,6 +97,7 @@ class AddMemberServiceTest {
         );
 
         verify(globalPotValidations).validateAdmin(user, pot);
+        verify(userRepository, never()).findAllById(any());
     }
 
     @Test
@@ -103,6 +108,7 @@ class AddMemberServiceTest {
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-1")
                 .globalPotId("invalid-pot")
+                .targetUsersToAdd(List.of("user-1"))
                 .build();
 
         when(validations.getUserInfo("admin-1")).thenReturn(admin);
@@ -117,31 +123,34 @@ class AddMemberServiceTest {
         );
 
         verify(globalPotValidations).getGlobalPot("invalid-pot");
-        verify(globalPotValidations, never()).validateAdmin(any(), any());
+        verify(userRepository, never()).findAllById(any());
     }
 
     @Test
     void testUserAlreadyMemberException() {
 
         User admin = User.builder().uuid("admin-1").build();
-        User targetUser = User.builder().uuid("user-1").build();
+        User user1 = User.builder().uuid("user-1").build();
 
-        GlobalPot pot = GlobalPot.builder().build();
+        GlobalPot pot = GlobalPot.builder()
+                .globalPotId("pot-1")
+                .build();
 
         GlobalPotRequest request = GlobalPotRequest.builder()
                 .adminUuid("admin-1")
                 .globalPotId("pot-1")
-                .targetUserToAdd("user-1")
+                .targetUsersToAdd(List.of("user-1"))
                 .build();
 
         when(validations.getUserInfo("admin-1")).thenReturn(admin);
-        when(validations.getUserInfo("user-1")).thenReturn(targetUser);
         when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
+        when(userRepository.findAllById(List.of("user-1")))
+                .thenReturn(List.of(user1));
 
-        doNothing().when(globalPotValidations).validateAdmin(admin,pot);
+        doNothing().when(globalPotValidations).validateAdmin(admin, pot);
         doThrow(new RuntimeException("User already member"))
                 .when(globalPotValidations)
-                .ensureUserIsMemberByAdmin(targetUser, pot);
+                .ensureUserIsMember(user1, pot);
 
         assertThrows(
                 RuntimeException.class,
@@ -149,6 +158,6 @@ class AddMemberServiceTest {
         );
 
         verify(globalPotValidations)
-                .ensureUserIsMemberByAdmin(targetUser, pot);
+                .ensureUserIsMember(user1, pot);
     }
 }

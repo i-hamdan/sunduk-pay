@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
@@ -13,6 +14,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * AddMemberService is responsible for allowing a Global Pot admin
@@ -37,11 +39,8 @@ public class AddMemberService implements GlobalPotOperation {
      */
     private final GlobalPotValidations globalPotValidations;
 
-    /**
-     * Repository for managing Global Pot members.
-     */
-    private final GlobalPotMembersRepository globalPotMembersRepository;
-
+    /** Repository for managing user data. */
+    private final UserRepository userRepository;
     /**
      * Returns the Global Pot request type handled by this service.
      *
@@ -63,12 +62,9 @@ public class AddMemberService implements GlobalPotOperation {
     public GlobalPotResponse perform(
             final GlobalPotRequest request) throws IOException {
 
-        log.info("AddMember started | "
-                        + "adminUuid={} globalPotId={} targetUserUuid={}",
-                request.getAdminUuid(),
-                request.getGlobalPotId(),
-                request.getTargetUserToAdd());
-
+        log.info(
+ "Adding members to Global Pot | targetUserCount={}",
+                request.getTargetUsersToAdd().size());
         User admin = validations.getUserInfo(request.getAdminUuid());
         log.info("Admin fetched successfully | adminUuid={}",
                 admin.getUuid());
@@ -81,18 +77,19 @@ public class AddMemberService implements GlobalPotOperation {
         globalPotValidations.validateAdmin(admin,globalPot);
 
 
-        User targetUser =
-                validations.getUserInfo(request.getTargetUserToAdd());
-        log.info("Target user fetched successfully | userUuid={}",
-                targetUser.getUuid());
+        List<User> targetUsers = userRepository.findAllById(
+                request.getTargetUsersToAdd());
+        log.info("Target users fetched successfully | count={} ",
+                targetUsers.size());
 
-
-            globalPotValidations.ensureUserIsMemberByAdmin(
-                    targetUser, globalPot);
-            log.info("User added as member | userUuid={} globalPotId={}",
-                    targetUser.getUuid(),
+        targetUsers.forEach(user -> {
+            globalPotValidations.ensureUserIsMember(
+                user, globalPot);
+            log.info(
+   "Adding user as member to Global Pot | userUuid={} globalPotId={}",
+                    user.getUuid(),
                     globalPot.getGlobalPotId());
-
+        });
 
         return GlobalPotResponse.builder()
                 .message("User added to Global Pot successfully")
