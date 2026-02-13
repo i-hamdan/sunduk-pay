@@ -1,11 +1,12 @@
 package com.bxb.sunduk_pay.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "mpin")
+@Table(name = "mpin",
+        indexes = {
+        @Index(name = "idx_mpin_user_uuid",
+        columnList = "user_uuid")
+        })
 public class Mpin {
     /**
      * Unique identifier for the MPIN.
