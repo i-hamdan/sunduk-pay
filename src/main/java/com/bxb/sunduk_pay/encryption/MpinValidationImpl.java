@@ -58,10 +58,17 @@ public final class MpinValidationImpl implements MpinValidations {
     public void validateMpin(final String uuid, final String inputMpin) {
         log.info("Validating MPIN for user: {}", uuid);
 
+        long startTime = System.currentTimeMillis();
+        log.info("Before Validation MPIN for user : 0ms");
+        
         Mpin mpin = mpinRepository.findByUserUuid(uuid)
                 .orElseThrow(() ->
                         new UserNotFoundException("MPIN not found for user: "
                                 + uuid));
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After Validation MPIN for user : {}",
+                endTime - startTime + "ms");
 
         // Check if locked
         if (mpin.isLocked()) {
@@ -92,9 +99,16 @@ public final class MpinValidationImpl implements MpinValidations {
             }
         }
 
+        startTime = System.currentTimeMillis();
+         log.info("Before MPIN verification for user : 0ms");
+         
         // Verify MPIN
         String storedMpin = mpin.getMpin();
         boolean isValid = encryption.verifyMpin(inputMpin, storedMpin);
+        
+            endTime = System.currentTimeMillis();
+            log.info("After MPIN verification for user : {}",
+                    endTime - startTime + "ms");
 
         if (!isValid) {
             int failedAttempts = mpin.getFailedAttempts() + 1;
