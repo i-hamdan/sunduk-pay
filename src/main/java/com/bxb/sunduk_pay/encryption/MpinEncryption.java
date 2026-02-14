@@ -52,12 +52,12 @@ public class MpinEncryption {
             throw new ResourceNotFoundException("MPIN cannot be null");
         }
         long startTime = System.currentTimeMillis();
-        log.info("Before Validation MPIN for user : 0ms");
+        log.info("Before Compare MPIN for user : 0ms");
         
         boolean checkpw = BCrypt.checkpw(inputMpin, hashedMpin);
         
         long endTime = System.currentTimeMillis();
-        log.info("After Validation MPIN for user : {}ms",
+        log.info("After Compare MPIN for user : {}ms",
                 endTime - startTime);
         return checkpw;
     }
