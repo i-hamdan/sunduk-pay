@@ -1,12 +1,14 @@
 package com.bxb.sunduk_pay.encryption;
 
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
 /**
  * Utility class for encrypting and verifying MPINs using BCrypt hashing.
  */
+@Log4j2
 @Component
 public class MpinEncryption {
     /**
@@ -24,8 +26,16 @@ public class MpinEncryption {
         if (mpin == null) {
             throw new ResourceNotFoundException("MPIN cannot be null");
         }
-
-        return BCrypt.hashpw(mpin, BCrypt.gensalt(COST_FACTOR));
+        long startTime = System.currentTimeMillis();
+        log.info("Before Encryption MPIN for user : 0ms");
+        
+        String hashpw = BCrypt.hashpw(mpin, BCrypt.gensalt(COST_FACTOR));
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After Encryption MPIN for user : {}ms"
+                , (endTime - startTime));
+        
+        return hashpw;
     }
 
 /**
@@ -41,7 +51,15 @@ public class MpinEncryption {
         if (inputMpin == null) {
             throw new ResourceNotFoundException("MPIN cannot be null");
         }
-        return BCrypt.checkpw(inputMpin, hashedMpin);
+        long startTime = System.currentTimeMillis();
+        log.info("Before Validation MPIN for user : 0ms");
+        
+        boolean checkpw = BCrypt.checkpw(inputMpin, hashedMpin);
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After Validation MPIN for user : {}ms",
+                endTime - startTime);
+        return checkpw;
     }
 
 }
