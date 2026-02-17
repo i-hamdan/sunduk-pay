@@ -178,6 +178,11 @@ public class GlobalPotResponse {
      */
     private String status;
 
+    /** Invitation link for users to join or contribute to the private global pot.
+     * This field is essential for providing access to the global pot
+     * for potential contributors or followers.
+     */
+    private String invitationLink;
     /**
      * List of global pot tile DTOs associated with the global pot.
      * These tiles provide summarized information about the pot.

@@ -65,12 +65,16 @@ public class AddMemberService implements GlobalPotOperation {
         log.info(
  "Adding members to Global Pot | targetUserCount={}",
                 request.getTargetUsersToAdd().size());
+
         User admin = validations.getUserInfo(request.getAdminUuid());
+
+
         log.info("Admin fetched successfully | adminUuid={}",
                 admin.getUuid());
 
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
+
         log.info("GlobalPot fetched successfully | globalPotId={}",
                 globalPot.getGlobalPotId());
 
@@ -79,6 +83,7 @@ public class AddMemberService implements GlobalPotOperation {
 
         List<User> targetUsers = userRepository.findAllById(
                 request.getTargetUsersToAdd());
+
         log.info("Target users fetched successfully | count={} ",
                 targetUsers.size());
 

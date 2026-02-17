@@ -66,17 +66,21 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         log.info("Starting Global Pot creation process");
         log.info("Before mapping GlobalPot entity from request : {}",
                 System.currentTimeMillis());
+
         GlobalPot pot = mapper.toEntity(request);
+
         log.debug("Mapped GlobalPot entity from request");
         log.info("After mapping GlobalPot entity from request : {}",
                 System.currentTimeMillis());
 
         // Handle Media Files
         List<DocumentWrapper> mediaFiles = request.getDocumentFiles();
+
         log.info("Saving media files for GlobalPot ID: {}",
                 pot.getGlobalPotId());
         log.info("Request Get Document Files : {} ",
                 System.currentTimeMillis());
+
         mediaFiles.forEach((wrapper) -> {
             GlobalPotDocument globalPotDocument;
             if (wrapper != null && wrapper.getDocumentFile() != null
@@ -122,14 +126,25 @@ public class CreateGlobalPotService implements GlobalPotOperation {
         });
         log.info("All administrators found, assigning to "
                         + "GlobalPot : {}", System.currentTimeMillis());
+
         pot.setAdministrators(admins);
+
         log.info("Assigned {} administrators to GlobalPot ID: {}",
                 admins.size(), pot.getGlobalPotId());
+
        repository.save(pot);
         log.info("GlobalPot saved successfully with ID: {}",
                 pot.getGlobalPotId());
         log.info("After saving GlobalPot entity : {}",
                 System.currentTimeMillis());
+
+        pot.setInvitationLink(pot.getInvitationLink()+"/"+pot.getGlobalPotId());
+
+        log.info("Generated invitation link {}",
+                pot.getInvitationLink());
+
+        repository.save(pot);
+
 
         // ALSO add admins as members with ADMIN role
         admins.forEach(user -> {

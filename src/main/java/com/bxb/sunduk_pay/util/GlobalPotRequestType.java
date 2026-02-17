@@ -153,6 +153,23 @@ public enum GlobalPotRequestType {
      */
     FETCH_TRANSACTIONS,
 
+    /***
+     * Leave a global pot.
+     * This request type allows a user to leave a global pot
+     * they are currently a member of.
+     * */
+    LEAVE_GLOBAL_POT,
+
+    /**
+     * Accept an invitation to join a private global pot.
+     * This request type allows a user to accept an invitation
+     * to become a member of a global pot.
+     */
+    ACCEPT_INVITATION,
+
+    /**
+     * Interact with a global pot.
+     */
     POT_INTERACTION
     ;
 

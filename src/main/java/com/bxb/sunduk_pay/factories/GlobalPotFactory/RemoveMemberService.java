@@ -1,12 +1,10 @@
 package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
-import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
@@ -47,10 +45,6 @@ public class RemoveMemberService implements GlobalPotOperation {
      * Repository used to manage Global Pot members.
      */
     private final GlobalPotMembersRepository globalPotMembersRepository;
-
-
-    private final GlobalPotRepository globalPotRepository;
-
 
 
     /**
