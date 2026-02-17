@@ -14,7 +14,7 @@ public class MpinEncryption {
     /**
      * Cost factor for BCrypt hashing.
      */
-    private static final int COST_FACTOR = 12;
+    private static final int COST_FACTOR = 6;
 
     /**
      * Encrypts the given MPIN using BCrypt hashing.
