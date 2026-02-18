@@ -69,16 +69,18 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
         GlobalPot pot = new GlobalPot();
 
+        PotScope scope = request.getPotScope() != null
+                ? request.getPotScope()
+                : PotScope.PUBLIC;
+
+
         // --- 1. Core Information ---
         pot.setCaseTitle(request.getCaseTitle());
         pot.setCaseCategory(request.getCaseCategory());
 
-        pot.setPotScope(
-                request.getPotScope() != null
-                        ? request.getPotScope()
-                        : PotScope.PUBLIC
-        );
+        pot.setPotScope(scope);
 
+        pot.setInvitationLink(request.getInvitationLink());
         pot.setCaseRequirementType(request.getCaseRequirementType());
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
@@ -180,6 +182,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
                 .beneficiaryName(pot.getBeneficiaryName())
                 .relationToBeneficiary(pot.getRelationToBeneficiary())
+                .invitationLink(pot.getInvitationLink())
 
                 .isVerified(false)
 

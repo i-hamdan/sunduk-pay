@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Entity representing a Global Pot fundraising campaign.
@@ -206,6 +207,9 @@ public class GlobalPot {
 
     /** Geographical location associated with the pot's creator. */
     private String location;
+
+    /** Invitation link for users to join or contribute to the private pot. */
+    private String invitationLink;
 
     /** Automatic timestamp of when the pot record was first created. */
     @CreationTimestamp

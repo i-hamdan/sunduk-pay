@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Request DTO for all operations in Global Pot.
@@ -181,6 +182,9 @@ public class GlobalPotRequest {
 
     /** timestamp in seconds for filtering transactions. */
     private long timeStampInSeconds;
+
+        /** invitation link for private pots. */
+    private String invitationLink;
 
     /** Page number for pagination. */
     private int page = DEFAULT_PAGE;

@@ -143,7 +143,6 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 GlobalPotResponse globalPotResponse = globalPotMapper
                         .toGlobalPotResponse(globalPot);
 
-
                 log.info("Mapped Global Pot entity to response: {}"
                 ,System.currentTimeMillis());
 
