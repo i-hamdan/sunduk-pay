@@ -76,15 +76,25 @@ public class UpdateRiskLevelService implements InvestmentOperation {
     public InvestmentResponse perform(
             final InvestmentRequest investmentRequest) {
 
+        long startTime = System.currentTimeMillis();
+        log.info("Before User Validation : 0ms");
         User user = validations.getUserInfo(investmentRequest.getUuid());
         log.info("User validation successful for UUID: {}",
                 investmentRequest.getUuid());
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After User Validation : {}ms",
+                endTime - startTime);
 
         SubWallet subWallet = validations.findSubWalletIfExists(
                 user.getMainWallet().getMainWalletId(),
                 investmentRequest.getSubWalletId());
         log.info("SubWallet validation successful for ID: {}",
                 investmentRequest.getSubWalletId());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After SubWallet Validation : {}ms",
+                endTime - startTime);
 
 
         Investment investment = investmentValidation.
@@ -92,6 +102,10 @@ public class UpdateRiskLevelService implements InvestmentOperation {
 
         log.info("Investment retrieval successful for SubWallet ID: {}",
                 investmentRequest.getSubWalletId());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Investment Validation : {}ms",
+                endTime - startTime);
 
         if (!subWallet.getIsInvested()
                 || !investment.isActive()) {
@@ -107,6 +121,10 @@ public class UpdateRiskLevelService implements InvestmentOperation {
 
 
         subWallet.setRiskLevel(riskLevel);
+        
+        endTime = System.currentTimeMillis();
+        log.info("Risk level validation successful : {}ms",
+                endTime - startTime);
 
         log.info("Risk level validation successful. Changing from {} to {}",
                 investment.getRiskLevel().toString(),
@@ -116,11 +134,18 @@ public class UpdateRiskLevelService implements InvestmentOperation {
                 .getPortfolioModelByRiskLevel(riskLevel.toString());
         log.info("Portfolio model retrieval successful for risk level: {}",
                 riskLevel.toString());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Portfolio Model Retrieval : {}ms",
+                endTime - startTime);
 
 
         InvestmentDailyHistory lastSnapshot = dailyHistory
                 .findTopByInvestmentOrderBySnapshotDateDesc(investment);
 
+        endTime = System.currentTimeMillis();
+        log.info("After Fetching Investment Daily History : {}ms",
+                endTime - startTime);
 
         LocalDate snapshotDate;
 
@@ -141,8 +166,10 @@ public class UpdateRiskLevelService implements InvestmentOperation {
 
         Units newModelUnit = investmentValidation
                 .getUnitsForDate(portfolioModel, snapshotDate);
-
-
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Fetching Units for Portfolio Model : {}ms",
+                 endTime - startTime);
 
 
         double newUnitValue = newModelUnit.getCombinedValue().doubleValue();
@@ -160,6 +187,10 @@ public class UpdateRiskLevelService implements InvestmentOperation {
 
         investmentRepository.save(investment);
         subWalletRepository.save(subWallet);
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Saving Updated Investment and SubWallet : {}ms",
+        endTime - startTime);
         return InvestmentResponse.builder()
                 .message("Risk level updated successfully to "
                         + investmentRequest.getRiskLevel()
