@@ -157,5 +157,11 @@ public class User {
      */
     private String preferredLandingPage;
 
+    /**
+     * Threshold amount for auto payments.
+     */
+    @Column(name = "auto_pay_threshold_amount")
+    private Double autoPayThresholdAmount;
+
 }
 

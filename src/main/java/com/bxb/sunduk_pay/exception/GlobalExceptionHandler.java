@@ -666,4 +666,24 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+
+    /**
+     * Handles {@link ResourceExpiredException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
+    @ExceptionHandler(value = ResourceExpiredException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleResourceExpiredException(
+            final ResourceExpiredException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.FORBIDDEN.value(),
+                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+
 }

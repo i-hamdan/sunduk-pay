@@ -3,6 +3,8 @@ package com.bxb.sunduk_pay.scheduler;
 import com.bxb.sunduk_pay.model.Reminder;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.ReminderRepository;
+import com.bxb.sunduk_pay.service.AutoPayConfirmationService;
+import com.bxb.sunduk_pay.service.AutoPaymentService;
 import com.bxb.sunduk_pay.service.PushNotificationService;
 import com.bxb.sunduk_pay.util.Duration;
 import com.bxb.sunduk_pay.validations.Validations;
@@ -97,6 +99,11 @@ public class ReminderScheduler {
      * during which a reminder can still be triggered.
      */
     private static final int MONTHLY_AFTER_DAYS_REMINDER = 3;
+
+    /**
+     * Threshold amount above which auto-payment requires confirmation.
+     */
+    private static final int MINIMUM_AMOUNT_FOR_CONFIRMATION = 10000;
     /**
      *  Repository for accessing reminders.
      */
@@ -108,27 +115,25 @@ public class ReminderScheduler {
      * * Service for sending push notifications.
      */
     private final PushNotificationService pushNotificationService;
-    /**
-     * Represents the current system date used for
-     * reminder and scheduling calculations.
-     */
-    private final LocalDate today = LocalDate.now();
-    /**
-     * Represents the current system date and time used
-     * for tracking updates and notifications.
-     */
-    private final LocalDateTime currentDateTime = LocalDateTime.now();
+
+    /** List to collect reminders that are eligible for auto-payment. */
+    private final AutoPaymentService autoPaymentService;
+
+    private final AutoPayConfirmationService autoPayConfirmationService;
     /**
     * List to collect reminders that need to be sent.
      */
     private List<Reminder> remindersToSend = new ArrayList<>();
+
+
     /**
      * Scheduled method to send reminder notifications based on their duration.
      */
-    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
-//    @Scheduled(cron = "0 * * * * *") // runs every 1 min
+//    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
+    @Scheduled(cron = "0 * * * * *") // runs every 1 min
 //      @Scheduled(cron = "*/30 * * * * *") // runs every 30 seconds
     public void sendReminderNotifications() {
+        remindersToSend.clear();
         dailyReminder();
         weeklyReminder();
         monthlyReminder();
@@ -153,6 +158,9 @@ public class ReminderScheduler {
      * </p>
      */
         public void dailyReminder() {
+            LocalDate today = LocalDate.now();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
             // Fetch all DAILY reminders
             List<Reminder> dailyReminders = reminderRepository
                     .findByDuration(Duration.DAILY);
@@ -168,8 +176,7 @@ public class ReminderScheduler {
                 if (reminder.getDate().isEqual(today)
                         && !reminder.getIsPaid()) {
                     reminder.setLocalDateTime(currentDateTime);
-                    // Collect reminder to send notification
-                    remindersToSend.add(reminder);
+                    handleDueReminder(reminder);
                     log.debug("Updated unpaid reminder"
                                     + " for today. Reminder ID: {}",
                             reminder.getReminderId());
@@ -204,6 +211,9 @@ public class ReminderScheduler {
                             .date(today)
                             .isPaid(false)
                             .isAvailable(false)
+                            .autoPayEnabled(reminder.getAutoPayEnabled())
+                            .requiresConfirmation(
+                                    reminder.getRequiresConfirmation())
                             .localDateTime(currentDateTime)
                             .build();
                     reminderRepository.save(reminder1);
@@ -256,6 +266,11 @@ public class ReminderScheduler {
      * </p>
      */
         public void weeklyReminder() {
+
+            LocalDate today = LocalDate.now();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+
             // Fetch all weekly reminders
             List<Reminder> weeklyReminders = reminderRepository
                     .findByDuration(Duration.WEEKLY);
@@ -283,8 +298,8 @@ public class ReminderScheduler {
                         && !reminder.getIsPaid()) {
                     reminder.setLocalDateTime(currentDateTime);
                     reminder.setDate(today);
-                    // Collect reminder to send notification
-                    remindersToSend.add(reminder);
+
+                    handleDueReminder(reminder);
                     log.info("Reminder ID {} updated to today",
                             reminder.getReminderId());
                 } else if (plusDays1.getDayOfWeek().equals(dayOfWeek)
@@ -337,6 +352,11 @@ public class ReminderScheduler {
      * </p>
      */
         public void monthlyReminder() {
+
+            LocalDate today = LocalDate.now();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+
             // --- MONTHLY ---
             List<Reminder> monthlyReminders = reminderRepository
                     .findByDuration(Duration.MONTHLY);
@@ -380,7 +400,7 @@ public class ReminderScheduler {
                     LocalDate checkDate = today.plusDays(i);
                     // Collect reminders to send notification
                     if (checkDate.isEqual(today)) {
-                        remindersToSend.add(reminder);
+                        handleDueReminder(reminder);
                         log.debug("Reminder scheduled for sending."
                                         + " Reminder ID: {}, Date: {}",
                                 reminder.getReminderId(), today);
@@ -439,6 +459,11 @@ public class ReminderScheduler {
      * </p>
      */
         public void yearlyReminder() {
+
+            LocalDate today = LocalDate.now();
+            LocalDateTime currentDateTime = LocalDateTime.now();
+
+
             // --- YEARLY ---
             List<Reminder> yearlyReminders = reminderRepository
                     .findByDuration(Duration.YEARLY);
@@ -474,7 +499,7 @@ public class ReminderScheduler {
                      i <= YEARLY_AFTER_DAYS_REMINDER; i++) {
                     LocalDate checkDate = today.plusDays(i);
                     if (checkDate.isEqual(today)) {
-                        remindersToSend.add(reminder);
+                        handleDueReminder(reminder);
                         // Collect reminders to send notification
                     }
                     if (checkDate.isEqual(dueDate)) {
@@ -558,4 +583,59 @@ public class ReminderScheduler {
                 remindersToSend.size());
 
     }
+
+    /**
+     * Handles due reminders that are eligible for auto-payment.
+     *
+     * <p>
+     * This method processes reminders that have auto-pay enabled and
+     * routes them for auto-payment processing. Reminders that are not
+     * eligible for auto-payment are routed for notification instead.
+     * </p>
+     *
+     * @param reminder the reminder to be processed for auto-payment
+     */
+    private void handleDueReminder(Reminder reminder) {
+
+        if (!Boolean.TRUE.equals(reminder.getAutoPayEnabled())) {
+            log.info("Reminder {} routed to normal notification",
+                    reminder.getReminderId());
+            remindersToSend.add(reminder);
+            return;
+        }
+
+        Double amount = reminder.getAmount();
+        Double threshold = reminder.getUser().getAutoPayThresholdAmount();
+
+        log.info("Processing AUTOPAY decision for reminder {} amount {}",
+                reminder.getReminderId(), amount);
+
+        // ===== CASE 1: DIRECT AUTOPAY =====
+        if (amount <= MINIMUM_AMOUNT_FOR_CONFIRMATION) {
+
+            log.info("Amount <= 10k → Direct AUTOPAY");
+
+            autoPaymentService.processAutoPayment(reminder);
+            return;
+        }
+
+        // ===== CASE 2: REQUIRE CONFIRMATION =====
+        if (amount > MINIMUM_AMOUNT_FOR_CONFIRMATION && amount <= threshold) {
+
+            log.info("Amount between 10k and threshold → Creating confirmation");
+
+            autoPayConfirmationService.createConfirmation(reminder);
+            return;
+        }
+
+        // ===== CASE 3: EXCEEDS THRESHOLD =====
+        if (amount > threshold) {
+
+            log.warn("Amount exceeds threshold → AUTOPAY REJECTED");
+
+            remindersToSend.add(reminder);
+        }
+    }
+
+
 }

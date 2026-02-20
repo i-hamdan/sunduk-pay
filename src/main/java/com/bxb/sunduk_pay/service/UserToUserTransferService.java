@@ -22,6 +22,7 @@ public interface UserToUserTransferService {
              Double amount,
              String paymentTag,
              String senderWalletId,
-             String reminderId
+             String reminderId,
+             Boolean isAutoPayment
             );
 }

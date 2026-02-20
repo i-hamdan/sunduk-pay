@@ -1,15 +1,7 @@
 package com.bxb.sunduk_pay.model;
 
 import com.bxb.sunduk_pay.util.Duration;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -53,10 +45,12 @@ public class Reminder {
      * Additional remarks for the reminder.
      */
     private String remark;
+
     /**
      * Contact number associated with the reminder.
      */
     private String contactNumber;
+
     /** Contact name associated with reminder. */
     private String contactName;
 
@@ -76,6 +70,21 @@ public class Reminder {
      * isAvailable associated with the reminder.
      */
     private Boolean isAvailable;
+
+    /**
+     * Indicates whether auto payment is enabled for this reminder.
+     */
+    private Boolean autoPayEnabled;
+
+    /**
+     * Indicates whether auto payment requires user confirmation.
+     */
+    private Boolean requiresConfirmation;
+
+    /** Indicates whether an auto payment is currently
+     *  in progress for this reminder. */
+    @Column(name = "auto_pay_in_progress")
+    private Boolean autoPayInProgress;
 
     /**
      * User associated with the reminder.

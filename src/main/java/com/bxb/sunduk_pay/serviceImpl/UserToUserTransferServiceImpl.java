@@ -2,7 +2,6 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
 import com.bxb.sunduk_pay.exception.InvestmentException;
-import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.MainWallet;
 import com.bxb.sunduk_pay.model.MasterWallet;
 import com.bxb.sunduk_pay.model.SubWallet;
@@ -25,11 +24,11 @@ import com.bxb.sunduk_pay.util.TransactionLevel;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.validations.InvestmentValidation;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.bxb.sunduk_pay.wrapper.WalletWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,6 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service implementation for handling user-to-user fund transfers.
+ * This service manages the entire transfer process, including balance validation,
+ * transaction recording, and updating wallet balances for both sender and receiver.
+ */
 @Service
 @Log4j2
 @RequiredArgsConstructor
@@ -99,6 +103,7 @@ public class UserToUserTransferServiceImpl
      * @param senderWalletId the ID of the sender's wallet
      * @return MainWalletResponse containing transfer details
      */
+    @Transactional
     @Override
     public MainWalletResponse transferBetweenUsers(
             final String senderId,
@@ -106,75 +111,141 @@ public class UserToUserTransferServiceImpl
             final Double amount,
             final String paymentTag,
             final String senderWalletId,
-            final String reminderId) {
+            final String reminderId,
+            Boolean isAutoPayment
+    ) {
 
         User user = validations.getUserInfo(senderId);
-        MainWallet senderMainWallet = validations
-                .getMainWalletInfo(senderId);
+log.info(
+"Initiating transfer of amount "+amount+" from user "+senderId
+        + " to receiver with phone number "+receiverId
+                );
+
+        MainWallet senderMainWallet = validations.getMainWalletInfo(senderId);
+        log.info("Fetched sender's main wallet for user "+senderId);
 
         MasterWallet senderMasterWallet = validations
                 .getMasterWalletInfo(senderId);
+log.info("Fetched sender's master wallet for user "+senderId);
 
-        WalletWrapper senderWallet = getWallet(
-                senderMainWallet, senderWalletId);
+        SubWallet subWallet = validations.findSubWalletIfExists(
+                senderMainWallet.getMainWalletId(),
+                senderWalletId
+        );
+        log.info("Fetched sender's sub wallet if exists "
+                + "for wallet ID "+senderWalletId);
 
         User userByPhoneNumber = validations.getUserByPhoneNumber(receiverId);
-        MasterWallet receiverMasterWallet = validations
-                .getMasterWalletInfo(userByPhoneNumber.getUuid());
-        MainWallet receiverMainWallet = validations
-                .getMainWalletInfo(userByPhoneNumber.getUuid());
+log.info("Fetched receiver user by phone number "+receiverId);
 
-        String key = generateKeyUtil.generateTransactionKey(user.getUuid(),
-                userByPhoneNumber.getUuid());
+        MasterWallet receiverMasterWallet =
+                validations.getMasterWalletInfo(userByPhoneNumber.getUuid());
+log.info("Fetched receiver's master wallet for user "
+        +userByPhoneNumber.getUuid());
+
+        MainWallet receiverMainWallet =
+                validations.getMainWalletInfo(userByPhoneNumber.getUuid());
+        log.info("Fetched receiver's main wallet for user "
+                +userByPhoneNumber.getUuid());
+
+        String key = generateKeyUtil.generateTransactionKey(
+                user.getUuid(),
+                userByPhoneNumber.getUuid()
+        );
+        log.info("Generated Redis key for transaction: "+key);
 
         List<Transaction> transactions = new ArrayList<>();
 
+        // ===== DETERMINE SOURCE WALLET DETAILS =====
+        String sourceWalletId;
+        String sourceWalletName;
+        Double sourceBalance;
 
-        log.info("Validating sufficient balance in source wallet.");
-        validations.validateBalance(senderWallet.getBalance(), amount);
-        log.info("Sufficient balance validated. Proceeding with transfer.");
+        if (subWallet != null) {
+            sourceWalletId = subWallet.getSubWalletId();
+            sourceWalletName = subWallet.getSubWalletName();
+            sourceBalance = subWallet.getBalance();
+        } else {
+            sourceWalletId = senderMainWallet.getMainWalletId();
+            sourceWalletName = "Main Wallet";
+            sourceBalance = senderMainWallet.getBalance();
+        }
 
-        log.info("deducting amount from source wallet");
-        senderMasterWallet.setBalance(senderMasterWallet.getBalance() - amount);
-        senderWallet.setBalance(senderWallet.getBalance() - amount);
+        // ===== VALIDATE BALANCE =====
+        validations.validateBalance(sourceBalance, amount);
+        log.info("Balance validation successful for user "+senderId
+                + " with source wallet "+sourceWalletName
+                + " and amount "+amount);
 
+        // ===== DEBIT MASTER WALLET =====
+        senderMasterWallet.setBalance(
+                senderMasterWallet.getBalance() - amount);
+        log.info("Debited sender's master wallet for user " + senderId
+                + " by amount " + amount);
+
+        // ===== DEBIT SOURCE WALLET =====
+        if (subWallet != null) {
+log.info("Debiting sender's sub wallet for user " + senderId
+        + " by amount " + amount);
+
+            subWallet.setBalance(subWallet.getBalance() - amount);
+log.info("Debited sender's sub wallet for user " + senderId
+        + " by amount " + amount);
+
+            if (Boolean.TRUE.equals(subWallet.getIsInvested())) {
+log.info("Sub wallet is invested. Processing"
+        + " investment debit for user " + senderId);
+
+                Investment investment = investmentValidation
+                        .getInvestmentBySubWalletId(subWallet.getSubWalletId());
+
+                if (!investment.isActive()) {
+                    throw new InvestmentException(
+                            "Cannot process payment from an inactive investment.");
+                }
+
+                PortfolioModel portfolioModel =
+                        investmentValidation.getPortfolioModelById(
+                                investment.getPortfolioModelId());
+
+                Units unit = investmentValidation.findNextUnit(
+                        portfolioModel,
+                        investment.getUnitPurchaseDate().toLocalDate());
+
+                Investment updatedInvestment =
+                        investmentUtil.updateInvestmentOnDebit(
+                                investment, unit, amount);
+
+                investmentRepository.save(updatedInvestment);
+            }
+
+        } else {
+            log.info("Debiting sender's main wallet for user " + senderId
+                    + " by amount " + amount);
+            senderMainWallet.setBalance(senderMainWallet.getBalance() - amount);
+        }
+
+        // ===== MARK REMINDER PAID =====
         if (reminderId != null) {
+            log.info("Marking reminder as paid for reminder ID " + reminderId
+                    + " for user " + senderId);
             Reminder reminder = validations.getReminderById(reminderId);
             reminder.setIsPaid(true);
             reminder.setLocalDateTime(null);
             reminderRepository.save(reminder);
         }
 
-        if (senderWallet.isInvested()) {
-            log.info("Updating investment details for invested sub-wallet.");
-            Investment investment = investmentValidation
-                    .getInvestmentBySubWalletId(senderWalletId);
+        String descriptionPrefix = Boolean.TRUE.equals(isAutoPayment)
+                ? "Auto Payment to "
+                : "Sent to ";
+        log.info("Set transaction description prefix: " + descriptionPrefix);
 
-            if (!investment.isActive()) {
-                log.error("Attempted to add money to an inactive investment.");
-                throw new InvestmentException(
-                        "Cannot process payment from an inactive investment.");
-            }
+        String receivedPrefix = Boolean.TRUE.equals(isAutoPayment)
+                ? "Auto Payment received from "
+                : "Received from ";
+log.info("Set transaction description prefix for receiver: " + receivedPrefix);
 
-            PortfolioModel portfolioModel = investmentValidation
-                    .getPortfolioModelById(investment.getPortfolioModelId());
-
-            Units unit = investmentValidation
-                    .findNextUnit(portfolioModel,
-                            investment.getUnitPurchaseDate().toLocalDate());
-
-            Investment updatedInvestment =
-                    investmentUtil.updateInvestmentOnDebit(
-                            investment, unit, amount);
-
-            investmentRepository.save(updatedInvestment);
-
-            log.info("Investment details updated successfully.");
-        }
-
-        log.info(
-                "Creating debit transaction for sourceMasterWallet={}",
-                senderMasterWallet.getMasterWalletId());
+        // ===== MASTER WALLET DEBIT TRANSACTION =====
         Transaction sourceMasterDebitTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(user)
@@ -185,7 +256,8 @@ public class UserToUserTransferServiceImpl
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .paymentMethod(PaymentMethod.PHONE_NUMBER)
-                .description("Sent to " + userByPhoneNumber.getFullName())
+                .description(
+                        descriptionPrefix + userByPhoneNumber.getFullName())
                 .dateTime(LocalDateTime.now())
                 .paymentTag(paymentTag)
                 .fromWallet("Master Wallet")
@@ -193,11 +265,12 @@ public class UserToUserTransferServiceImpl
                 .fromPhoneNumber(user.getPhoneNumber())
                 .toWallet(userByPhoneNumber.getFullName())
                 .toWalletId(receiverMainWallet.getMainWalletId())
-                .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
+                .toPhoneNumber(userByPhoneNumber.getPhoneNumber())
+                .build();
+
         transactions.add(sourceMasterDebitTxn);
 
-        log.info("Creating debit transaction for sourceWallet={}",
-                senderWallet.getId());
+        // ===== SOURCE WALLET DEBIT TRANSACTION =====
         Transaction sourceDebitTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(user)
@@ -208,30 +281,33 @@ public class UserToUserTransferServiceImpl
                 .transactionType(TransactionType.DEBIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .paymentMethod(PaymentMethod.PHONE_NUMBER)
-                .description("Sent to " + userByPhoneNumber.getFullName())
+                .description(
+                        descriptionPrefix + userByPhoneNumber.getFullName())
                 .dateTime(LocalDateTime.now())
                 .paymentTag(paymentTag)
-                .fromWallet(senderWallet.getName())
-                .fromWalletId(senderWallet.getId())
+                .fromWallet(sourceWalletName)
+                .fromWalletId(sourceWalletId)
                 .fromPhoneNumber(user.getPhoneNumber())
                 .toWallet(userByPhoneNumber.getFullName())
                 .toWalletId(receiverMainWallet.getMainWalletId())
-                .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
+                .toPhoneNumber(userByPhoneNumber.getPhoneNumber())
+                .build();
+
         transactions.add(sourceDebitTxn);
 
-        redisTemplate.opsForList().rightPush(key,
-                transactionMapper.toTransactionResponse(sourceDebitTxn));
+        redisTemplate.opsForList().rightPush(
+                key,
+                transactionMapper.toTransactionResponse(sourceDebitTxn)
+        );
 
-
-        log.info("adding amount to target wallet");
+        // ===== CREDIT RECEIVER =====
         receiverMasterWallet.setBalance(
                 receiverMasterWallet.getBalance() + amount);
+
         receiverMainWallet.setBalance(
                 receiverMainWallet.getBalance() + amount);
 
-        log.info(
-                "Creating credit transaction for targetMasterWallet={}",
-                receiverMasterWallet.getMasterWalletId());
+        // ===== RECEIVER MASTER CREDIT TXN =====
         Transaction targetMasterCreditTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(userByPhoneNumber)
@@ -242,19 +318,20 @@ public class UserToUserTransferServiceImpl
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .paymentMethod(PaymentMethod.PHONE_NUMBER)
-                .description("received from" + user.getFullName())
+                .description(receivedPrefix + user.getFullName())
                 .dateTime(LocalDateTime.now())
                 .paymentTag(paymentTag)
                 .fromWallet(user.getFullName())
-                .fromWalletId(senderWallet.getId())
+                .fromWalletId(sourceWalletId)
                 .fromPhoneNumber(user.getPhoneNumber())
                 .toWallet("Master Wallet")
                 .toWalletId(receiverMasterWallet.getMasterWalletId())
-                .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
+                .toPhoneNumber(userByPhoneNumber.getPhoneNumber())
+                .build();
+
         transactions.add(targetMasterCreditTxn);
 
-        log.info("Creating credit transaction for targetWallet={}",
-                receiverMainWallet.getMainWalletId());
+        // ===== RECEIVER MAIN CREDIT TXN =====
         Transaction targetCreditTxn = Transaction.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .user(userByPhoneNumber)
@@ -265,75 +342,32 @@ public class UserToUserTransferServiceImpl
                 .transactionType(TransactionType.CREDIT)
                 .transactionLevel(TransactionLevel.EXTERNAL)
                 .paymentMethod(PaymentMethod.PHONE_NUMBER)
-                .description("Received from " + user.getFullName())
+                .description(receivedPrefix + user.getFullName())
                 .dateTime(LocalDateTime.now())
                 .paymentTag(paymentTag)
                 .fromWallet(user.getFullName())
-                .fromWalletId(senderWallet.getId())
+                .fromWalletId(sourceWalletId)
                 .fromPhoneNumber(user.getPhoneNumber())
                 .toWallet("Main wallet")
                 .toWalletId(receiverMainWallet.getMainWalletId())
-                .toPhoneNumber(userByPhoneNumber.getPhoneNumber()).build();
-        redisTemplate.opsForList().rightPush(key,
+                .toPhoneNumber(userByPhoneNumber.getPhoneNumber())
+                .build();
+
+        redisTemplate.opsForList().rightPush(
+                key,
                 transactionMapper.toTransactionResponse(targetCreditTxn));
+
         transactions.add(targetCreditTxn);
 
-        log.info("Saving all transactions to the database.");
         transactionRepository.saveAll(transactions);
 
         redisTemplate.expire(key, Duration.ofHours(TRANSACTION_EXPIRY_HOURS));
-        log.info("All transactions saved successfully. Transfer complete.");
 
         return MainWalletResponse.builder()
                 .message("Transfer Successful")
-                .transactionHistory(transactionMapper.toTransactionsResponse(
-                        List.of(sourceDebitTxn))).build();
+                .transactionHistory(transactionMapper
+                        .toTransactionsResponse(List.of(sourceDebitTxn)))
+                .build();
     }
 
-    /**
-     * Get WalletWrapper for mainWallet or subWallet based on walletId.
-     *
-     * @param mainWallet the main wallet containing sub-wallets,
-     * @param walletId   the ID of the wallet to retrieve
-     * @return WalletWrapper for the specified walletId,
-     * or null if not found
-     */
-    private WalletWrapper getWallet(
-            final MainWallet mainWallet,
-            final String walletId) {
-
-        if (walletId == null) {
-            log.warn("walletId is null, returning null");
-            return null;
-        }
-
-        if (walletId.equals(mainWallet.getMainWalletId())) {
-            log.debug("Returning main wallet wrapper for wallet ID {}",
-                    walletId);
-            return new WalletWrapper(mainWallet);
-        }
-        log.debug("Requested wallet ID {} does not match MainWallet. "
-                        + "Validating sub wallet.",
-                walletId);
-
-
-        SubWallet subWallet = validations.findSubWalletIfExists(
-                mainWallet.getMainWalletId(),
-                walletId);
-        log.debug("Returning sub wallet wrapper for wallet ID {}",
-                walletId);
-        if (subWallet != null) {
-            log.debug("SubWallet found for wallet ID {}."
-                            + " Returning SubWallet wrapper.",
-                    walletId);
-            return new WalletWrapper(subWallet);
-        } else {
-            log.error(
-            "No Wallet found for wallet ID {} in MainWalletId {}.",
-                    walletId, mainWallet.getMainWalletId());
-            throw new WalletNotFoundException("Wallet with id " + walletId + " "
-                    + "does not belong to to user : " + mainWallet.
-                    getUser().getFullName());
-        }
-    }
 }

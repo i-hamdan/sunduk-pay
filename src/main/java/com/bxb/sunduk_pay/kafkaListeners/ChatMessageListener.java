@@ -59,15 +59,6 @@ public class ChatMessageListener {
                 processAsync(messageEvent);
     }
 
-//    /**
-//     * Handles normal chat messages by processing them asynchronously.
-//     *
-//     * @param messageEvent the chat message event to be processed
-//     */
-//    private void handleNormalMessage(ChatMessageEvent messageEvent) {
-//        processAsync(messageEvent);
-//    }
-
     /**
      * Processes the chat message event asynchronously.
      *

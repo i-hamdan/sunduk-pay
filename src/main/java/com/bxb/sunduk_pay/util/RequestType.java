@@ -25,5 +25,9 @@ public enum RequestType {
     /** Request to update FCM token. */
     UPDATE_FCM_TOKEN,
     /** Request to delete a reminder. */
-    DELETE_REMINDER;
+    DELETE_REMINDER,
+    /** Request to confirm an autopay setup. */
+    AUTOPAY_CONFIRMATION,
+    ;
+
 }

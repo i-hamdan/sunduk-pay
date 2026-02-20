@@ -14,18 +14,8 @@ import com.bxb.sunduk_pay.exception.InvestmentException;
 import com.bxb.sunduk_pay.exception.InvalidPayloadException;
 import com.bxb.sunduk_pay.exception.UserNotFoundException;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.Transaction;
-import com.bxb.sunduk_pay.model.User;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.SubWallet;
-import com.bxb.sunduk_pay.model.Reminder;
-import com.bxb.sunduk_pay.repository.MainWalletRepository;
-import com.bxb.sunduk_pay.repository.ReminderRepository;
-import com.bxb.sunduk_pay.repository.TransactionRepository;
-import com.bxb.sunduk_pay.repository.UserRepository;
-import com.bxb.sunduk_pay.repository.MasterWalletRepository;
-import com.bxb.sunduk_pay.repository.SubWalletRepository;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -62,6 +52,8 @@ public class ValidationsImpl implements Validations {
     private final MasterWalletRepository masterWalletRepository;
     /** Repository for accessing sub-wallet data. */
     private final SubWalletRepository subWalletRepository;
+    /** Repository for accessing auto-pay confirmation data. */
+    private final AutoPayConfirmationRepository autoPayConfirmationRepository;
     /** Maximum allowed number of sub-wallets. */
 private static final int WALLET_SIZE = 20;
 
@@ -513,6 +505,14 @@ private static final int WALLET_SIZE = 20;
     public Reminder getReminderById(final String reminderId) {
             return reminderRepository.findById(reminderId).orElseThrow(() ->
                     new RuntimeException("cannot find Reminder "));
+    }
+
+    @Override
+    public AutoPayConfirmation getConfirmationById(String confirmationId) {
+        return autoPayConfirmationRepository.findById(confirmationId)
+                .orElseThrow(()->new ResourceNotFoundException(
+                        "Cannot find AutoPayConfirmation with ID: "
+                                + confirmationId));
     }
 
 }

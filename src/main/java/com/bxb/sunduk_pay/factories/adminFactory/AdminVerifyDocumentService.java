@@ -65,6 +65,7 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
         }
 
         return SundukPayAdminResponse.builder()
-                .message(message).build();
+                .message(message)
+                .status("SUCCESS").build();
     }
 }

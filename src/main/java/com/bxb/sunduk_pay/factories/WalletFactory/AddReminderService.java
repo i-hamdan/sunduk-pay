@@ -58,6 +58,9 @@ public class AddReminderService implements WalletOperation {
                 .contactName(mainWalletRequest.getContactName())
                 .user(user)
                 .date(mainWalletRequest.getStartDate())
+                .autoPayEnabled(Boolean.TRUE
+                        .equals(mainWalletRequest.getAutoPayEnabled()))
+                .requiresConfirmation(false)
                 .isAvailable(true)
                 .isPaid(false)
                 .build();

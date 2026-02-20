@@ -94,9 +94,22 @@ private static final int DEFAULT_SIZE = 10;
     private String sortDirection = "DESC";
     /** FCM token for push notifications. */
     private String fcmToken;
+    /**
+     * Indicates whether auto payment is enabled for this reminder.
+     */
+    private Boolean autoPayEnabled;
+    /**
+     * Indicates whether auto payment requires user confirmation.
+     */
+    private Boolean requiresConfirmation;
     /** Contact number associated with the reminder. */
     private String contactNumber;
     /** Contact name associated with reminder. */
     private String contactName;
+/** The id of the confirmation associated with the auto payment,
+ *  if applicable. */
+    private String confirmationId;
+    /** Indicates whether the user confirms the auto payment. */
+    private Boolean confirm;
 }
 

@@ -1,6 +1,6 @@
 package com.bxb.sunduk_pay.response;
 
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -9,6 +9,10 @@ import java.time.LocalDateTime;
  * Response class representing a reminder.
  */
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ReminderResponse {
 
     /** Unique identifier for the reminder. */

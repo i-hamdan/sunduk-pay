@@ -120,7 +120,6 @@ public class CreateGlobalPotService implements GlobalPotOperation {
                             .orElseThrow(() -> new UserNotFoundException(
                                     "User not found with UUID: "
                                             + admin.getUuid()));
-
                 admins.add(user);
 
         });
