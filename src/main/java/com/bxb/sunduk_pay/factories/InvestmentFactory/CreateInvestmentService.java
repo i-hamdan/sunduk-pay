@@ -69,10 +69,6 @@ public class CreateInvestmentService implements InvestmentOperation {
         log.info("Starting investment creation process for request: 0ms");
         // 1) User fetch
         User user = validations.getUserInfo(request.getUuid());
-        
-        long endTime = System.currentTimeMillis();
-        log.info("After Validation for User : {}ms"
-                ,endTime-startTime);
 
         // 2) SubWallet fetch + validate ownership
         SubWallet subWallet =
@@ -82,24 +78,13 @@ public class CreateInvestmentService implements InvestmentOperation {
                 );
 
         log.info("Verifying sub-wallet: {}", subWallet);
-        
-        endTime = System.currentTimeMillis();
-        log.info("Verifying sub-wallet : {} ms"
-                ,endTime-startTime);
 
         // 3) Balance validation
         investmentValidations.validateBalanceForInvestment(
                 subWallet.getBalance());
-        
-        endTime = System.currentTimeMillis();
-        log.info("Balance Validation : {} ms",endTime-startTime);
 
         // 4) Ensure subwallet is not already invested
         validations.validateSubWalletForInvestment(subWallet);
-        
-            endTime = System.currentTimeMillis();
-            log.info("Sub-Wallet Investment Validation : {} ms",
-                    endTime-startTime);
 
 
         // 5) Fetch portfolio model by risk level
@@ -108,10 +93,6 @@ public class CreateInvestmentService implements InvestmentOperation {
                         request.getRiskLevel().name());
 
         log.info("Fetched Portfolio Model: {}", portfolioModel.getName());
-        
-        endTime = System.currentTimeMillis();
-        log.info("Portfolio Model Validation : {} ms"
-                ,endTime-startTime);
 
         // Total money user is investing
         double potAmount = subWallet.getBalance();
@@ -124,10 +105,6 @@ public class CreateInvestmentService implements InvestmentOperation {
         Units unitRecord =
                investmentValidations.getUnitsForDate(
                        portfolioModel, unitPurchaseDate);
-        
-        endTime = System.currentTimeMillis();
-        log.info("Unite Value Validation : {} ms"
-                ,endTime-startTime);
 
 
         double unitValue = unitRecord.getCombinedValue().doubleValue();
@@ -161,10 +138,6 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .build();
 
         investmentRepository.save(investment);
-        
-        endTime = System.currentTimeMillis();
-        log.info("Investment Creation and Save : {} ms"
-        ,endTime-startTime);
 
         // 9) Mark wallet as invested
         subWallet.setIsInvested(true);
@@ -173,9 +146,6 @@ public class CreateInvestmentService implements InvestmentOperation {
 
 
         subWalletRepository.save(subWallet);
-        
-        endTime = System.currentTimeMillis();
-        log.info("Sub-Wallet Update : {} ms",endTime-startTime);
 
         // 10) Create transaction history
         Transaction transaction = Transaction.builder()
@@ -197,10 +167,6 @@ public class CreateInvestmentService implements InvestmentOperation {
                 .build();
 
         transactionRepository.save(transaction);
-        
-        endTime = System.currentTimeMillis();
-        log.info("After Transaction Creation : {} ms"
-                ,endTime-startTime);
 
         return InvestmentResponse.builder()
                 .message(

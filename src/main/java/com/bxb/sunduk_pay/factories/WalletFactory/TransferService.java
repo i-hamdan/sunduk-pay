@@ -77,9 +77,6 @@ public class  TransferService implements WalletOperation {
     @Override
     public MainWalletResponse perform(
             final MainWalletRequest mainWalletRequest) {
-        long startTime = System.currentTimeMillis();
-        
-        log.info("Initiating transfer operation for : 0ms ");
         try {
             if (mainWalletRequest.getPaymentMethod() != null && "UPI"
                     .equalsIgnoreCase(mainWalletRequest.getPaymentMethod()
@@ -114,19 +111,11 @@ public class  TransferService implements WalletOperation {
 
             User user = validations.getUserInfo(mainWalletRequest.getUuid());
             log.debug("Fetched user: {}", user);
-            
-            long endTime = System.currentTimeMillis();
-            log.info("User validation successful for UUID: {}"
-                    , endTime - startTime+"ms");
 
             MainWallet mainWallet = validations.getMainWalletInfo(
                     user.getUuid());
             log.debug("Fetched main wallet: {}",
                     mainWallet.getMainWalletId());
-            
-            endTime = System.currentTimeMillis();
-            log.info("Main wallet validation successful for UUID: {}"
-                    , endTime - startTime+"ms");
 
 
             WalletWrapper sourceWallet = getWallet(mainWallet,
@@ -146,13 +135,11 @@ public class  TransferService implements WalletOperation {
             boolean sourceExists = (sourceWallet != null);
             boolean targetExists = (targetWallet != null);
 
-            endTime = System.currentTimeMillis();
-            log.info("Source wallet exists: {}"
-                    , endTime - startTime+"ms");
-            
+
+
             if (sourceExists && targetExists) {
                 log.info("Processing internal transfer");
-                
+
                 return handleInternalTransfer(user,
                         mainWallet,
                         mainWalletRequest.getAmount(),
@@ -271,12 +258,8 @@ public class  TransferService implements WalletOperation {
             final Double previousSourceWalletBalance,
             final Double previousTargetWalletBalance,
             final String mpin) {
-        long startTime = System.currentTimeMillis();
-        log.info("before Mpin Validation : 0ms");
+
         mpinValidations.validateMpin(user.getUuid(), mpin);
-        long endTime = System.currentTimeMillis();
-        log.info("after Mpin Validation : {} ",
-                endTime - startTime+"ms");
         return internalTransferService
                 .doInternalTransfer(user,
                         mainWallet,
