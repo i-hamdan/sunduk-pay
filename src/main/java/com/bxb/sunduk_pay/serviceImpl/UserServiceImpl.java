@@ -35,6 +35,8 @@ public class UserServiceImpl implements UserService {
 
     private static final String LANDING_PAGE_KEY = "DEFAULT_LANDING_PAGE";
 
+    private static final Double DEFAULT_AUTO_PAY_THRESHOLD = 50000d;
+
     /**
      * Factory for creating user operations.
      */
@@ -86,12 +88,13 @@ public class UserServiceImpl implements UserService {
         User user;
         if (userOptional.isEmpty()) {
             log.info(
-                    "User not found in DB. Creating new user for email: {}",
+       "User not found in DB. Creating new user for email: {}",
                     response.getEmail());
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setPhoneNumber(response.getPhoneNumber());
             user.setIsDeleted(false);
+            user.setAutoPayThresholdAmount(DEFAULT_AUTO_PAY_THRESHOLD);
             user.setUserRole(UserRoles.NORMAL_USER);
 
             user = userRepository.save(user);
@@ -151,7 +154,7 @@ public class UserServiceImpl implements UserService {
         if(user.getPreferredLandingPage()!=null) {
             log.info("User has preferred landing page: {}",
                     user.getPreferredLandingPage());
-        } else{
+        } else {
             log.info("User does not have preferred landing page."
                     + " Fetching default landing page.");
             user.setPreferredLandingPage(getDefaultLandingPage());
