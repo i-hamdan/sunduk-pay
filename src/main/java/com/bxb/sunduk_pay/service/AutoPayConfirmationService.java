@@ -1,6 +1,7 @@
 package com.bxb.sunduk_pay.service;
 
 import com.bxb.sunduk_pay.model.Reminder;
+import com.google.firebase.messaging.FirebaseMessagingException;
 
 /**
  * Service interface for handling auto-pay confirmation processes.
@@ -12,7 +13,7 @@ public interface AutoPayConfirmationService {
      *
      * @param reminder the reminder requiring confirmation
      */
-    void createConfirmation(Reminder reminder);
+    void createConfirmation(Reminder reminder) throws FirebaseMessagingException;
 
     /**
      * Confirms an auto-pay request and triggers payment.

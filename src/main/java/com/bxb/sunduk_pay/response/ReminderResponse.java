@@ -31,6 +31,8 @@ public class ReminderResponse {
     private String contactName;
     /** LocalDateTime associated with reminder. */
     private LocalDateTime dateTime;
+    /** Contact number associated with the reminder. */
+    private Boolean isAutoPayEnabled;
     /**
      * isAvailable associated with the reminder.
      */

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Model representing a reminder entity.
@@ -92,5 +93,13 @@ public class Reminder {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    /**
+     * One-to-many relationship with AutoPayConfirmation.
+     */
+    @OneToMany(mappedBy = "reminder",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<AutoPayConfirmation> confirmations;
 
 }

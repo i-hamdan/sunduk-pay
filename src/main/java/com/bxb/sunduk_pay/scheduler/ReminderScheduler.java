@@ -8,6 +8,7 @@ import com.bxb.sunduk_pay.service.AutoPaymentService;
 import com.bxb.sunduk_pay.service.PushNotificationService;
 import com.bxb.sunduk_pay.util.Duration;
 import com.bxb.sunduk_pay.validations.Validations;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -132,7 +133,7 @@ public class ReminderScheduler {
 //    @Scheduled(cron = "0 0 0 * * *") // runs every 24h
     @Scheduled(cron = "0 * * * * *") // runs every 1 min
 //      @Scheduled(cron = "*/30 * * * * *") // runs every 30 seconds
-    public void sendReminderNotifications() {
+    public void sendReminderNotifications() throws FirebaseMessagingException {
         remindersToSend.clear();
         dailyReminder();
         weeklyReminder();
@@ -157,7 +158,7 @@ public class ReminderScheduler {
      * </ul>
      * </p>
      */
-        public void dailyReminder() {
+        public void dailyReminder() throws FirebaseMessagingException {
             LocalDate today = LocalDate.now();
             LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -265,7 +266,7 @@ public class ReminderScheduler {
      * </ul>
      * </p>
      */
-        public void weeklyReminder() {
+        public void weeklyReminder() throws FirebaseMessagingException {
 
             LocalDate today = LocalDate.now();
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -351,7 +352,7 @@ public class ReminderScheduler {
      * </ul>
      * </p>
      */
-        public void monthlyReminder() {
+        public void monthlyReminder() throws FirebaseMessagingException {
 
             LocalDate today = LocalDate.now();
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -458,7 +459,7 @@ public class ReminderScheduler {
      * </ul>
      * </p>
      */
-        public void yearlyReminder() {
+        public void yearlyReminder() throws FirebaseMessagingException {
 
             LocalDate today = LocalDate.now();
             LocalDateTime currentDateTime = LocalDateTime.now();
@@ -595,7 +596,7 @@ public class ReminderScheduler {
      *
      * @param reminder the reminder to be processed for auto-payment
      */
-    private void handleDueReminder(Reminder reminder) {
+    private void handleDueReminder(Reminder reminder) throws FirebaseMessagingException {
 
         if (!Boolean.TRUE.equals(reminder.getAutoPayEnabled())) {
             log.info("Reminder {} routed to normal notification",

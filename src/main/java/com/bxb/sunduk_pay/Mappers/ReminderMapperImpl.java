@@ -25,6 +25,7 @@ public class ReminderMapperImpl implements ReminderMapper {
                 .contactName(reminder.getContactName())
                 .dateTime(reminder.getLocalDateTime())
                 .isAvailable(reminder.getIsAvailable())
+                .isAutoPayEnabled(reminder.getAutoPayEnabled())
                 .build();
         return reminderResponse;
     }

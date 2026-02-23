@@ -10,10 +10,14 @@ import com.bxb.sunduk_pay.service.AutoPaymentService;
 import com.bxb.sunduk_pay.service.PushNotificationService;
 import com.bxb.sunduk_pay.util.ConfirmationStatus;
 import com.bxb.sunduk_pay.validations.Validations;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Notification;
 
 import java.time.LocalDateTime;
 
@@ -44,7 +48,8 @@ public class AutoPayConfirmationServiceImpl
      * Creates confirmation request for high-value auto-pay.
      */
     @Override
-    public void createConfirmation(Reminder reminder) {
+    public void createConfirmation(final Reminder reminder)
+            throws FirebaseMessagingException {
 
         log.info("Creating confirmation for reminder {}",
                 reminder.getReminderId());
@@ -78,7 +83,8 @@ public class AutoPayConfirmationServiceImpl
 
         log.info("Sending confirmation notification for reminder {}",
                 reminder.getReminderId());
-        sendConfirmationNotification(reminder);
+        sendConfirmationNotification(reminder,
+                confirmation.getAutoPayConfirmationId());
     }
 
     /**
@@ -134,18 +140,25 @@ public class AutoPayConfirmationServiceImpl
     /**
      * Sends push notification to user.
      */
-    private void sendConfirmationNotification(Reminder reminder) {
+    private void sendConfirmationNotification(
+            final Reminder reminder,
+            final String confirmationId)
+            throws FirebaseMessagingException {
+
+        log.info("Preparing autopay confirm notif for reminderId={}",
+                reminder.getReminderId());
 
         String fcmToken = reminder.getUser().getFcmToken();
-        log.info("Retrieved FCM token for user {}: {}",
-                reminder.getUser().getUuid(), fcmToken);
-        if (fcmToken == null) {
-            log.warn("FCM token missing for user {}",
+
+        if (fcmToken == null || fcmToken.isBlank()) {
+            log.error("FCM token missing for userId={}",
                     reminder.getUser().getUuid());
             throw new ResourceNotFoundException(
-                    "User device not registered for notifications." +
-                            "Fcm token missing.");
+                    "User device not registered.");
         }
+
+        log.debug("FCM token found for userId={}",
+                reminder.getUser().getUuid());
 
         String title = "AutoPay Confirmation Required";
 
@@ -154,14 +167,38 @@ public class AutoPayConfirmationServiceImpl
                 reminder.getAmount(),
                 reminder.getContactName()
         );
-        log.info("Sending notification to user {}: {} - {}",
-                reminder.getUser().getUuid(), title, message);
 
-        pushNotificationService.sendNotification(
-                fcmToken, title, message);
+        log.debug("Notification payload created for confirmationId={}",
+                confirmationId);
 
-        log.info("Confirmation notification sent for reminder {}",
-                reminder.getReminderId());
+        Notification notification = Notification.builder()
+                .setTitle(title)
+                .setBody(message)
+                .build();
+
+        Message msg = Message.builder()
+                .setToken(fcmToken)
+                .setNotification(notification)
+                .putData("type", "AUTO_PAY_CONFIRMATION")
+                .putData("confirmationId", confirmationId)
+                .build();
+
+        log.info("Sending FCM notification for confirmationId={}",
+                confirmationId);
+
+        try {
+            String response = FirebaseMessaging
+                    .getInstance()
+                    .send(msg);
+
+            log.info("FCM notif sent successfully. responseId={}",
+                    response);
+
+        } catch (FirebaseMessagingException ex) {
+            log.error("FCM notif failed for confirmationId={}",
+                    confirmationId, ex);
+            throw ex;
+        }
     }
 
     private void validateOwnership(
