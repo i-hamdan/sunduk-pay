@@ -5,6 +5,8 @@ import com.bxb.sunduk_pay.util.ConfirmationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /** * Repository interface for managing AutoPayConfirmation entities.
@@ -38,4 +40,17 @@ public interface AutoPayConfirmationRepository
     boolean existsByReminderReminderIdAndStatus(
             String reminderId,
             ConfirmationStatus status);
+
+    /**
+     * Finds all AutoPayConfirmations with a specific status that have expired
+     * before a given time.
+     *
+     * @param status the confirmation status to filter by
+     * @param time   the cutoff time for expiration
+     * @return a list of AutoPayConfirmations matching the criteria
+     */
+    List<AutoPayConfirmation> findAllByStatusAndExpiresAtBefore(
+            ConfirmationStatus status,
+            LocalDateTime time
+    );
 }

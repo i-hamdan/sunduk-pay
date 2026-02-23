@@ -28,6 +28,8 @@ public enum RequestType {
     DELETE_REMINDER,
     /** Request to confirm an autopay setup. */
     AUTOPAY_CONFIRMATION,
+    /** Request to update an existing reminder. */
+    UPDATE_REMINDER
     ;
 
 }

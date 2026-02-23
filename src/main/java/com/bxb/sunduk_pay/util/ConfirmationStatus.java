@@ -4,5 +4,5 @@ public enum ConfirmationStatus {
     PENDING,
     CONFIRMED,
     REJECTED,
-    EXPIRED
+    EXPIRED_AND_PAID
 }
