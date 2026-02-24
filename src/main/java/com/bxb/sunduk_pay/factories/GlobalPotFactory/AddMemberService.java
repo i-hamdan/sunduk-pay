@@ -78,7 +78,9 @@ public class AddMemberService implements GlobalPotOperation {
         log.info("GlobalPot fetched successfully | globalPotId={}",
                 globalPot.getGlobalPotId());
 
-        globalPotValidations.validateAdmin(admin,globalPot);
+        globalPotValidations.validateSundukPayAndGlobalPotAdmin
+                (admin, globalPot);
+
 
 
         List<User> targetUsers = userRepository.findAllById(

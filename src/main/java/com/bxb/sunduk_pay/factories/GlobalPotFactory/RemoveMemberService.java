@@ -73,7 +73,13 @@ public class RemoveMemberService implements GlobalPotOperation {
                 request.getAdminUuid(), request.getGlobalPotId(),
                 request.getTargetUsersToRemove());
 
+        if (request.getTargetUsersToRemove() == null ||
+                request.getTargetUsersToRemove().isEmpty()) {
+            throw new IllegalArgumentException("No users provided for removal");
+        }
+
         User admin = validations.getUserInfo(request.getAdminUuid());
+
         log.info("Admin fetched successfully | adminUuid={}",
                 admin.getUuid());
 
@@ -82,16 +88,19 @@ public class RemoveMemberService implements GlobalPotOperation {
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
         log.info("GlobalPot fetched successfully | globalPotId={}",
                 globalPot.getGlobalPotId());
-        globalPotValidations.validateAdmin(admin,globalPot);
+        globalPotValidations.validateSundukPayAndGlobalPotAdmin
+                (admin,globalPot);
 
 List<GlobalPotMembers> membersToRemove = new ArrayList<>();
 
 request.getTargetUsersToRemove().forEach(uuid ->{
-   membersToRemove.add(globalPotMembersRepository.findByUserUuidAndGlobalPotGlobalPotId(
+   membersToRemove.add(globalPotMembersRepository
+           .findByUserUuidAndGlobalPotGlobalPotId(
             uuid, globalPot.getGlobalPotId()).orElseThrow(
                     () -> new ResourceNotFoundException(
                             "Membership record not found for userUuid: " + uuid
-                            + " and globalPotId: " + globalPot.getGlobalPotId())));
+                            + " and globalPotId: " +
+                                    globalPot.getGlobalPotId())));
 });
 
         globalPotMembersRepository.deleteAll(membersToRemove);

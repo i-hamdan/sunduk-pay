@@ -56,7 +56,7 @@ class AddMemberServiceTest {
         when(userRepository.findAllById(List.of("user-1", "user-2")))
                 .thenReturn(List.of(user1, user2));
 
-        doNothing().when(globalPotValidations).validateAdmin(admin, pot);
+        doNothing().when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, pot);
         doNothing().when(globalPotValidations).ensureUserIsMember(any(), eq(pot));
 
         GlobalPotResponse response = addMemberService.perform(request);
@@ -66,7 +66,7 @@ class AddMemberServiceTest {
                 response.getMessage());
 
         verify(validations).getUserInfo("admin-1");
-        verify(globalPotValidations).validateAdmin(admin, pot);
+        verify(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, pot);
         verify(globalPotValidations, times(2))
                 .ensureUserIsMember(any(), eq(pot));
     }
@@ -89,14 +89,14 @@ class AddMemberServiceTest {
         when(globalPotValidations.getGlobalPot("pot-1")).thenReturn(pot);
 
         doThrow(new RuntimeException("Not admin"))
-                .when(globalPotValidations).validateAdmin(user, pot);
+                .when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(user, pot);
 
         assertThrows(
                 RuntimeException.class,
                 () -> addMemberService.perform(request)
         );
 
-        verify(globalPotValidations).validateAdmin(user, pot);
+        verify(globalPotValidations).validateSundukPayAndGlobalPotAdmin(user, pot);
         verify(userRepository, never()).findAllById(any());
     }
 
@@ -147,7 +147,7 @@ class AddMemberServiceTest {
         when(userRepository.findAllById(List.of("user-1")))
                 .thenReturn(List.of(user1));
 
-        doNothing().when(globalPotValidations).validateAdmin(admin, pot);
+        doNothing().when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, pot);
         doThrow(new RuntimeException("User already member"))
                 .when(globalPotValidations)
                 .ensureUserIsMember(user1, pot);

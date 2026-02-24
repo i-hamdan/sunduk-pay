@@ -15,6 +15,7 @@ import com.bxb.sunduk_pay.util.UserRoles;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.util.UUID;
 /**
  * Service to handle debiting funds from a global pot wallet.
  */
+@Slf4j
 @Service
 @AllArgsConstructor
 public class DebitGlobalPotWalletService implements GlobalPotOperation {
@@ -69,27 +71,69 @@ public class DebitGlobalPotWalletService implements GlobalPotOperation {
     public GlobalPotResponse perform(
             final GlobalPotRequest request) throws IOException {
 
+        log.info( "Initiating debit operation for Global Pot Wallet." +
+                " Admin UUID: {}, Global Pot ID: {}, Amount: {}",
+                request.getAdminUuid(), request.getGlobalPotId(),
+                request.getTargetAmount());
+
+
         User admin = validations.getUserInfo(request.getAdminUuid());
+
+        log.info( "Admin fetched successfully. Admin UUID: {}",
+                admin.getUuid());
+        log.info( "Admin fetched successfully. Admin UUID: {}",
+                admin.getUuid());
 
         GlobalPot globalPot = globalPotValidations.getGlobalPot(
                 request.getGlobalPotId());
 
+        log.info( "Global Pot fetched successfully. Global Pot ID: {}",
+                globalPot.getGlobalPotId());
+        log.info( "Global Pot fetched successfully. Global Pot ID: {}",
+                globalPot.getGlobalPotId());
+
+
         globalPotValidations.validateAdmin(admin,globalPot);
 
+        log.info( "Admin validated successfully for Global Pot." +
+                " Admin UUID: {}, Global Pot ID: {}",
+                admin.getUuid(), globalPot.getGlobalPotId());
+
+
         GlobalWallet globalWallet = globalPot.getGlobalWallet();
+
+        log.info( "Global Wallet fetched successfully." +
+                        " Global Wallet ID: {}",
+                globalWallet.getGlobalWalletId());
 
         if (!globalWallet.getIsActive()) {
             throw new InactiveGlobalWalletException(
                     "Global wallet is inactive");
         }
 
+        log.info( "Global Wallet is active. Proceeding with debit operation." +
+                " Global Wallet ID: {}",
+                globalWallet.getGlobalWalletId());
+
+
         Double amount = request.getTargetAmount();
+
+        log.info( "Validating sufficient balance in Global Wallet." +
+                " Global Wallet ID: {}, Current Balance: {}, Debit Amount: {}",
+                globalWallet.getGlobalWalletId(),
+                globalWallet.getBalance(),
+                amount);
+
 
 validations.validateBalance(globalWallet.getBalance(), amount);
 
         globalWallet.setBalance(globalWallet.getBalance() - amount);
 
         globalPot.setCurrentBalance(globalPot.getCurrentBalance() - amount);
+
+        log.info("Balance updated successfully after debit operation." +
+                " Global Wallet ID: {}, New Balance: {}",
+                globalWallet.getGlobalWalletId(), globalWallet.getBalance());
 
         GlobalPotTransaction globalPotTransaction = GlobalPotTransaction
                 .builder()
@@ -102,10 +146,19 @@ validations.validateBalance(globalWallet.getBalance(), amount);
                 .user(admin)
                 .dateTime(LocalDateTime.now()).build();
 
+        log.info(" Global Pot Transaction created successfully." +
+                " Global Pot ID: {}, Global Wallet ID: {}, Amount: {}",
+                globalPot.getGlobalPotId(), globalWallet.getGlobalWalletId(),
+                amount);
+
         globalPotTransactionRepository.save(globalPotTransaction);
         globalPotRepository.save(globalPot);
         globalWalletRepository.save(globalWallet);
 
+        log.info("Global Pot and Global Wallet updated successfully " +
+                        "after debit operation. Global Pot ID: {}, " +
+                        "Global Wallet ID: {}",
+                globalPot.getGlobalPotId(), globalWallet.getGlobalWalletId());
 
         return GlobalPotResponse.builder()
                 .message("Amount-" + amount + " debited from "

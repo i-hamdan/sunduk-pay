@@ -65,7 +65,7 @@ class BlockMemberServiceTest {
 
         when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
         when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
-        doNothing().when(globalPotValidations).validateAdmin(admin, globalPot);
+        doNothing().when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, globalPot);
 
         when(validations.getUserInfo("target-uuid")).thenReturn(targetUser);
         when(globalPotValidations.getMemberByUuidAndGlobalPotId(targetUser, globalPot))
@@ -108,7 +108,7 @@ class BlockMemberServiceTest {
 
         when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
         when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
-        doNothing().when(globalPotValidations).validateAdmin(admin, globalPot);
+        doNothing().when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, globalPot);
 
         when(validations.getUserInfo("target-uuid")).thenReturn(targetUser);
         when(globalPotValidations.getMemberByUuidAndGlobalPotId(targetUser, globalPot))
@@ -144,7 +144,7 @@ class BlockMemberServiceTest {
         when(globalPotValidations.getGlobalPot("pot-uuid")).thenReturn(globalPot);
 
         doThrow(new RuntimeException("Only admin can perform this action"))
-                .when(globalPotValidations).validateAdmin(admin, globalPot);
+                .when(globalPotValidations).validateSundukPayAndGlobalPotAdmin(admin, globalPot);
 
         // Act + Assert
         RuntimeException ex = assertThrows(

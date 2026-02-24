@@ -145,4 +145,6 @@ public interface GlobalPotValidations {
      */
     void validatePotAccess(User user, GlobalPot globalPot);
 
+    void validateSundukPayAndGlobalPotAdmin(User admin, GlobalPot globalPot);
+
 }

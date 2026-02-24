@@ -80,7 +80,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
         pot.setPotScope(scope);
 
-        pot.setInvitationLink(request.getInvitationLink());
+//        pot.setInvitationLink(request.getInvitationLink());
         pot.setCaseRequirementType(request.getCaseRequirementType());
         pot.setPotStatus(request.getPotStatus());
         pot.setDescription(request.getDescription());
@@ -182,7 +182,7 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
 
                 .beneficiaryName(pot.getBeneficiaryName())
                 .relationToBeneficiary(pot.getRelationToBeneficiary())
-                .invitationLink(pot.getInvitationLink())
+//                .invitationLink(pot.getInvitationLink())
 
                 .isVerified(false)
 

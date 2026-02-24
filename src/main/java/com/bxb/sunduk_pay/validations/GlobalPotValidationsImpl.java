@@ -135,6 +135,33 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
     }
 
+    @Override
+    public void validateSundukPayAndGlobalPotAdmin(final User admin,
+                                                   final GlobalPot globalPot){
+
+        if (admin == null) {
+            throw new UserNotFoundException(
+                    "Admin user not found for the Global Pot"
+            );
+        }
+
+        if (admin.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN) {
+            return;
+        }
+
+        Boolean isAdmin = globalPotMembersRepository
+                .existsByUserUuidAndGlobalPotGlobalPotIdAndUserRoles
+                        (admin.getUuid(), globalPot.getGlobalPotId(),
+                                UserRoles.GLOBALPOT_ADMIN);
+
+        if(!isAdmin){
+            throw new UserNotFoundException
+                    ("User is not authorized as Global Pot Admin or " +
+                            " Pay Admin");
+        }
+    }
+
+
     /**
      * Retrieves group chat messages for a given Global Pot from the database.
      *
@@ -319,6 +346,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         if (isMember) {
             return;
         }
+
+
 
         throw new AccessDeniedException(
                 "You do not have access to view this pot."

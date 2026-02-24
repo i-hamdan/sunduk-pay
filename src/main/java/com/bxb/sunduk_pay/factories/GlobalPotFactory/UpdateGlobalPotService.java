@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.DocumentWrapper;
@@ -10,7 +11,9 @@ import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import com.bxb.sunduk_pay.validations.Validations;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,14 @@ import java.util.List;
  */
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Log4j2
 public class UpdateGlobalPotService implements GlobalPotOperation {
+
+    /***
+     * validations class for subWallet.
+     */
+
+    private final Validations validations;
     /**
      * Repository for Global Pot persistence operations.
      */
@@ -76,24 +85,51 @@ public class UpdateGlobalPotService implements GlobalPotOperation {
     @Override
     public GlobalPotResponse perform(final GlobalPotRequest request)
             throws IOException {
+
+      log.info("Validating admin user for Global Pot update. " +
+                      "Admin UUID: {}", request.getUuid());
+
+        User admin = validations.getUserInfo(request.getUuid());
+
+        log.info("Admin user validated successfully. Admin UUID: {}",
+                admin.getUuid());
+
         log.info("Starting Global Pot update. GlobalPot ID: {}",
                 request.getGlobalPotId());
         // Fetch Global Pot by ID
+
         GlobalPot globalPot = globalPotValidations.getGlobalPot(
                 request.getGlobalPotId());
+
+        log.info( "Global Pot fetched successfully. ID: {}",
+                globalPot.getGlobalPotId());
+
+        log.info("Validating admins privileges for Global Pot update. "
+                        + "Admin UUID: {}, GlobalPot ID: {}",
+                request.getUuid(), request.getGlobalPotId());
+
+        globalPotValidations.validateSundukPayAndGlobalPotAdmin
+                (admin,globalPot);
+
         log.debug("Global Pot fetched successfully. ID: {}",
                 globalPot.getGlobalPotId());
         // Update Global Pot details
+
         GlobalPot updateGlobalPot = globalPotMapper.toUpdateEntity(
                 request, globalPot);
+
         log.info("Global Pot basic details updated. GlobalPot ID: {}",
                 globalPot.getGlobalPotId());
+
+
         // Update Global Pot Documents
             List<GlobalPotDocument> documentList = new ArrayList<>();
         List<DocumentWrapper> globalPotDocumentList =
                 request.getDocumentFiles();
         globalPotDocumentList.forEach(documentWrapper -> {
             String globalPotDocumentId = documentWrapper.getDocumentId();
+
+
             log.debug("Processing Global Pot document. Document ID: {}",
                     globalPotDocumentId);
             // Fetch and validate the Global Pot Document using

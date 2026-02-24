@@ -121,7 +121,7 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 log.info("Global Pot validated successfully. ID: {}"
                         ,System.currentTimeMillis());
 
-                globalPotValidations.validatePotAccess(user, globalPot);
+//                globalPotValidations.validatePotAccess(user, globalPot);
 
 
                 int contributorsCount = globalPotValidations.

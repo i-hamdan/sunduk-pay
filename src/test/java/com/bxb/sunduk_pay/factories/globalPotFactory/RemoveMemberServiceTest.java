@@ -74,7 +74,7 @@ class RemoveMemberServiceTest {
                 .thenReturn(globalPot);
 
         doNothing().when(globalPotValidations)
-                .validateAdmin(admin, globalPot);
+                .validateSundukPayAndGlobalPotAdmin(admin, globalPot);
 
         when(globalPotMembersRepository
                 .findByUserUuidAndGlobalPotGlobalPotId("user-uuid",
@@ -103,7 +103,7 @@ class RemoveMemberServiceTest {
                 .thenReturn(globalPot);
 
         doNothing().when(globalPotValidations)
-                .validateAdmin(admin, globalPot);
+                .validateSundukPayAndGlobalPotAdmin(admin, globalPot);
 
         when(globalPotMembersRepository
                 .findByUserUuidAndGlobalPotGlobalPotId

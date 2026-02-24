@@ -64,7 +64,8 @@ log.info("Block member request | admin={} pot={} targetUser={}",
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
 
-        globalPotValidations.validateAdmin(admin,globalPot);
+        globalPotValidations.validateSundukPayAndGlobalPotAdmin
+                (admin,globalPot);
 
         User targetUser =
                 validations.getUserInfo(request.getTargetUserUuid());

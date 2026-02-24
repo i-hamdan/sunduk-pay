@@ -208,8 +208,11 @@ public class GlobalPot {
     /** Geographical location associated with the pot's creator. */
     private String location;
 
-    /** Invitation link for users to join or contribute to the private pot. */
-    private String invitationLink;
+//    /** Invitation link for users to join or contribute to the private pot. */
+//    private String invitationLink;
+//
+//    /** Unique token used for inviting users to the pot. */
+//    private String inviteToken;
 
     /** Automatic timestamp of when the pot record was first created. */
     @CreationTimestamp
