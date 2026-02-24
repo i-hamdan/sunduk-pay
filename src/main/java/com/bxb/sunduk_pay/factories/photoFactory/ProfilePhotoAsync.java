@@ -8,9 +8,14 @@ import com.bxb.sunduk_pay.validations.Validations;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * ProfilePhotoAsync handles the asynchronous uploading of profile photos.
@@ -28,13 +33,7 @@ public class ProfilePhotoAsync {
 
     /**     * Executor for handling asynchronous photo upload tasks. */
     private final ExecutorService photoExecutor =
-            new ThreadPoolExecutor(
-                    8,
-                    16,
-                    60,
-                    TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(1000)
-            );
+            Executors.newFixedThreadPool(10);
 
 
     /**     * Uploads the profile photo in the background.
