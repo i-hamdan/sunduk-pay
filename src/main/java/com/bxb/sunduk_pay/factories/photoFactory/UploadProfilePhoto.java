@@ -18,60 +18,32 @@ import org.springframework.stereotype.Service;
 @Log4j2
 @RequiredArgsConstructor
 public class UploadProfilePhoto implements PhotoOperation {
-    /**
-     * Validations instance for user validation.
-     */
-    private final Validations validations;
-    /**
-     * UserRepository for database operations.
-     */
-    private final UserRepository userRepository;
 
-    /**
-     * Returns the type of photo request this operation handles.
-     *
-     * @return PhotoRequestType
+/** * Validations instance for validating photo requests. */
+    private final ProfilePhotoAsync profilePhotoAsync;
+
+/**     * Returns the type of photo request this operation handles.
+     * @return PhotoRequestType.PROFILE_PHOTO
      */
     @Override
     public PhotoRequestType getPhotoRequestType() {
         return PhotoRequestType.PROFILE_PHOTO;
     }
 
-    /**
-     * Performs the photo upload operation based on the provided request.
-     *
-     * @param photoRequest
-     * @return PhotoResponse
+    /**     * Performs the profile photo upload operation.
+     * @param photoRequest the request containing photo data and user information
+     * @return PhotoResponse indicating the result of the operation
      */
     @Override
     public PhotoResponse perform(final PhotoRequest photoRequest) {
-        log.info("Uploading profile photo for user: "
+        log.info("Async profile photo upload started for user: "
                 + photoRequest.getUuid());
 
-        log.info(photoRequest.getMultipartFile().getContentType());
+        profilePhotoAsync.uploadInBackground(photoRequest);
 
-        try {
-
-            validations.validatePorfilePhoto(photoRequest.getMultipartFile());
-            byte[] imageBytes = photoRequest.getMultipartFile().getBytes();
-
-
-            log.info("Photo file size: " + imageBytes.length + " bytes");
-
-            User user = validations.getUserInfo(photoRequest.getUuid());
-
-            user.setProfilePhoto(imageBytes);
-
-            userRepository.save(user);
-
-            return PhotoResponse.builder()
-                    .message("Profile photo saved successfully for user: "
-                            + user.getUuid())
-                    .build();
-
-        } catch (Exception e) {
-            throw new InvalidPhotoException(e.getMessage());
-        }
+        return PhotoResponse.builder()
+                .message("Profile photo upload initiated successfully.")
+                .build();
     }
 
 }
