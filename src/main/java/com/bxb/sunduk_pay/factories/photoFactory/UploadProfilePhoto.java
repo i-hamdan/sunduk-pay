@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 /**
  * UploadProfilePhoto handles the uploading of profile photos.
  */
@@ -21,6 +24,9 @@ public class UploadProfilePhoto implements PhotoOperation {
 
 /** * Validations instance for validating photo requests. */
     private final ProfilePhotoAsync profilePhotoAsync;
+
+/**     * Validations instance for validating photo requests. */
+    private final Validations validations;
 
 /**     * Returns the type of photo request this operation handles.
      * @return PhotoRequestType.PROFILE_PHOTO
@@ -34,16 +40,27 @@ public class UploadProfilePhoto implements PhotoOperation {
      * @param photoRequest the request containing photo data and user information
      * @return PhotoResponse indicating the result of the operation
      */
+
     @Override
     public PhotoResponse perform(final PhotoRequest photoRequest) {
-        log.info("Async profile photo upload started for user: "
-                + photoRequest.getUuid());
 
-        profilePhotoAsync.uploadInBackground(photoRequest);
+        try {
 
-        return PhotoResponse.builder()
-                .message("Profile photo upload initiated successfully.")
-                .build();
+
+            validations.validatePorfilePhoto(photoRequest.getMultipartFile());
+            Path temp = Files.createTempFile("pfp-", ".jpeg");
+
+            photoRequest.getMultipartFile().transferTo(temp);
+
+            profilePhotoAsync.uploadFromPath(temp, photoRequest.getUuid());
+
+            return PhotoResponse.builder()
+                    .message("Profile photo upload initiated successfully.")
+                    .build();
+
+        } catch (Exception e) {
+            throw new InvalidPhotoException(e.getMessage());
+        }
     }
 
 }
