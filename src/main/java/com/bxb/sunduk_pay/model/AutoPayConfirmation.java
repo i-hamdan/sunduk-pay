@@ -27,7 +27,7 @@ public class AutoPayConfirmation {
     /**
      * Foreign key reference to Reminder.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reminder_id", nullable = false)
     private Reminder reminder;
 

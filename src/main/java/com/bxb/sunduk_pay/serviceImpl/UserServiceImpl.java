@@ -3,10 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-import com.bxb.sunduk_pay.model.GlobalLandingPage;
-import com.bxb.sunduk_pay.model.MainWallet;
-import com.bxb.sunduk_pay.model.MasterWallet;
-import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
@@ -18,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -71,6 +69,9 @@ public class UserServiceImpl implements UserService {
      */
     private final GlobalLandingPageRepository globalLandingPageRepository;
 
+    /** Repository for notification preference data access. */
+    private final NotificationPreferenceRepository preferenceRepository;
+
 
     /**
      * Handles OAuth login for a user.
@@ -81,6 +82,7 @@ public class UserServiceImpl implements UserService {
      * @return The User object after login or creation.
      */
     @Override
+    @Transactional
     public User userLogin(final UserResponse response) {
         Optional<User> userOptional
                 = userRepository.findByEmailAndIsDeletedFalse(
@@ -115,6 +117,9 @@ public class UserServiceImpl implements UserService {
                     .createdAt(LocalDateTime.now())
                     .build();
             masterWallet = masterWalletRepository.save(masterWallet);
+
+            // Create and save notification preferences for the new user
+            buildPreference(user);
 
             user.setMasterWallet(masterWallet);
             user.setMainWallet(mainWallet);
@@ -162,6 +167,29 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * Builds and saves the notification preference for a user.
+     *
+     * @param user The user for whom the notification preference is being built.
+     */
+    private void buildPreference(User user) {
+        if (preferenceRepository.existsByUser(user)) {
+            return;
+        }
+
+        NotificationPreference preference =
+                NotificationPreference.builder()
+                        .user(user)
+                        .build();
+
+        preferenceRepository.save(preference);
+    }
+
+    /**
+     * Retrieves the default landing page URL from the database.
+     *
+     * @return The default landing page URL, or null if not found.
+     */
     private String getDefaultLandingPage() {
 
         GlobalLandingPage globalLandingPage =

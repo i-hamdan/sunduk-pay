@@ -530,7 +530,7 @@ public class GlobalExceptionHandler {
                         .InvalidFormatException) {
             // Wrong enum or wrong type
         message = "Invalid value provided for "
-                + "one of the fields (e.g., ActionType).";
+                + "one of the fields.";
         }
 
         return new ErrorResponse(
@@ -685,5 +685,33 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    /**
+     * Handles {@link NotificationPreferenceException}.
+     *
+     * @param e       the exception
+     * @param request the HTTP request
+     * @return structured error response
+     */
+    @ExceptionHandler(value = NotificationPreferenceException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleNotificationPreferenceException(
+            final NotificationPreferenceException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(value =NotificationPreferenceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotificationPreferenceNotFoundException(
+            final NotificationPreferenceNotFoundException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
 
 }

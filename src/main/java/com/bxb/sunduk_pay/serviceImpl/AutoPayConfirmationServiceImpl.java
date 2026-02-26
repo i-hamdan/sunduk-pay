@@ -10,14 +10,11 @@ import com.bxb.sunduk_pay.service.AutoPaymentService;
 import com.bxb.sunduk_pay.service.PushNotificationService;
 import com.bxb.sunduk_pay.util.ConfirmationStatus;
 import com.bxb.sunduk_pay.validations.Validations;
-import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Notification;
 
 import java.time.LocalDateTime;
 
@@ -168,20 +165,20 @@ public class AutoPayConfirmationServiceImpl
                 reminder.getContactName()
         );
 
-        log.debug("Notification payload created for confirmationId={}",
-                confirmationId);
-
-        Notification notification = Notification.builder()
-                .setTitle(title)
-                .setBody(message)
-                .build();
-
         Message msg = Message.builder()
                 .setToken(fcmToken)
-                .setNotification(notification)
                 .putData("type", "AUTO_PAY_CONFIRMATION")
                 .putData("confirmationId", confirmationId)
+                .putData("reminderId", reminder.getReminderId())
+                .putData("amount", reminder.getAmount().toString())
+                .putData("title", title)
+                .putData("body", message)
+                .putData("confirmationId", confirmationId)
+                .setAndroidConfig(AndroidConfig.builder()
+                        .setPriority(AndroidConfig.Priority.HIGH)
+                        .build())
                 .build();
+
 
         log.info("Sending FCM notification for confirmationId={}",
                 confirmationId);
