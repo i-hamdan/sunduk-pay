@@ -7,12 +7,14 @@ import com.bxb.sunduk_pay.request.PhotoRequest;
 import com.bxb.sunduk_pay.response.PhotoResponse;
 import com.bxb.sunduk_pay.util.PhotoRequestType;
 import com.bxb.sunduk_pay.validations.Validations;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * UploadProfilePhoto handles the uploading of profile photos.
@@ -22,13 +24,18 @@ import java.nio.file.Path;
 @RequiredArgsConstructor
 public class UploadProfilePhoto implements PhotoOperation {
 
-/** * Validations instance for validating photo requests. */
-    private final ProfilePhotoAsync profilePhotoAsync;
-
-/**     * Validations instance for validating photo requests. */
+    /** * Validations instance for validating photo requests. */
     private final Validations validations;
 
-/**     * Returns the type of photo request this operation handles.
+    /**     * UserRepository for accessing user data. */
+    private  final UserRepository userRepository;
+
+    /**     * Executor for handling asynchronous photo upload tasks. */
+    private final ExecutorService photoExecutor =
+            Executors.newFixedThreadPool(8);
+
+
+    /**     * Returns the type of photo request this operation handles.
      * @return PhotoRequestType.PROFILE_PHOTO
      */
     @Override
@@ -40,27 +47,43 @@ public class UploadProfilePhoto implements PhotoOperation {
      * @param photoRequest the request containing photo data and user information
      * @return PhotoResponse indicating the result of the operation
      */
-
     @Override
     public PhotoResponse perform(final PhotoRequest photoRequest) {
+        log.info("Async profile photo upload started for user: "
+                + photoRequest.getUuid());
 
-        try {
+        validations.validatePorfilePhoto(photoRequest.getMultipartFile());
 
+        CompletableFuture.runAsync(()->{
+            try {
+                byte[] imageBytes= photoRequest.getMultipartFile().getBytes();
 
-            validations.validatePorfilePhoto(photoRequest.getMultipartFile());
-            Path temp = Files.createTempFile("pfp-", ".jpeg");
+                log.info("Image bytes size  : " + imageBytes.length + "bytes");
 
-            photoRequest.getMultipartFile().transferTo(temp);
+                User user = validations.getUserInfo(photoRequest.getUuid());
 
-            profilePhotoAsync.uploadFromPath(temp, photoRequest.getUuid());
+                user.setProfilePhoto(imageBytes);
 
-            return PhotoResponse.builder()
-                    .message("Profile photo upload initiated successfully.")
-                    .build();
+                userRepository.save(user);
 
-        } catch (Exception e) {
-            throw new InvalidPhotoException(e.getMessage());
-        }
+                log.info("Async profile photo upload completed for user: "
+                        + photoRequest.getUuid());
+
+            } catch (Exception e) {
+                log.error("Profile photo upload failed for user: "
+                        + photoRequest.getUuid(), e);
+                throw new InvalidPhotoException(e.getMessage());
+            }}, photoExecutor
+        );
+        return PhotoResponse.builder()
+                .message("Profile photo upload initiated successfully.")
+                .build();
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        log.info("Shutting down photoExecutor thread pool...");
+        photoExecutor.shutdown();
     }
 
 }
