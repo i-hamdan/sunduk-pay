@@ -42,10 +42,12 @@ public class AcceptInvitationService implements GlobalPotOperation{
 
     /***
      * This method handles the acceptance of an invitation to join a Global Pot.
-     * It performs several validations to ensure the user and Global Pot are valid,
-     * and that the user is a member of the Global Pot before accepting the invitation.
+     * It performs several validations to ensure the user and Global Pot are
+     * valid and that the user is a member of the Global Pot before accepting
+     * the invitation.
      *
-     * @param request the GlobalPotRequest containing the details of the invitation acceptance
+     * @param request the GlobalPotRequest containing the details of the
+     * invitation acceptance
      * @return a GlobalPotResponse indicating the result of the operation
      * @throws IOException if an error occurs during processing
      */
@@ -81,9 +83,10 @@ public class AcceptInvitationService implements GlobalPotOperation{
                 request.getUuid(), request.getGlobalPotId());
 
         return GlobalPotResponse.builder()
+                .status("SUCCESS")
                 .message("Invitation accepted successfully. " +
                         "User can now participate in the Global Pot: "
-                        + request.getCaseTitle())
+                        + globalPot.getCaseTitle())
                 .build();
     }
 }

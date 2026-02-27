@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.validations;
 
+import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.exception.*;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
@@ -7,8 +8,10 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.PotScope;
 import com.bxb.sunduk_pay.util.UserRoles;
+import com.google.api.gax.rpc.AlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -51,6 +54,8 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
 /**     * Repository for accessing Global Wallet data.
      */
     private final GlobalWalletRepository globalWalletRepository;
+
+    private final GlobalPotMapper globalPotMapper;
 
     /**
      * Validates the existence of a Global Pot by its ID.
@@ -210,7 +215,11 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                                 globalPotId);
 
         if (isAlreadyMember) {
-            return;
+            throw new UserAlreadyExist("User [" +
+                    userId.getFullName()
+                    + "] is already a member of Global Pot ["
+                    + globalPotId.getCaseTitle()
+                    + "]");
         }
         GlobalPotMembers member = GlobalPotMembers.builder()
                 .user(userId)
@@ -308,52 +317,67 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
         }
     }
 
-    /**
-     * Validates if a user has access to a specific Global Pot.
-     *
-     * @param user the user whose access is being validated
-     * @param globalPot the Global Pot for which access is being validated
-     * @throws AccessDeniedException if the user does not have access to the Global Pot
-     */
-    @Override
-    public void validatePotAccess(final User user,
-                                  final GlobalPot globalPot) {
-
-        if (globalPot.getPotScope() == PotScope.PUBLIC) {
-            return;
-        }
-
-        if (user.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN) {
-            return;
-        }
-
-        boolean isPotAdmin =
-                globalPotMembersRepository
-                        .existsByUserUuidAndGlobalPotGlobalPotIdAndUserRoles(
-                                user.getUuid(),
-                                globalPot.getGlobalPotId(),
-                                UserRoles.GLOBALPOT_ADMIN
-                        );
-
-        if (isPotAdmin) {
-            return;
-        }
-
-        boolean isMember =
-                globalPotMembersRepository
-                        .existsByUserAndGlobalPot(user, globalPot);
-
-        if (isMember) {
-            return;
-        }
-
-
-
-        throw new AccessDeniedException(
-                "You do not have access to view this pot."
-        );
-    }
-
+//    /**
+//     * Validates if a user has access to a specific Global Pot.
+//     *
+//     * @param user the user whose access is being validated
+//     * @param globalPot the Global Pot for which access is being validated
+//     * @throws AccessDeniedException if the user does not have access to the Global Pot
+//     */
+//    @Override
+//    public void validatePotAccess(final User user,
+//                                  final GlobalPot globalPot) {
+//
+//        if (globalPot.getPotScope() == PotScope.PUBLIC) {
+//            return;
+//        }
+//
+//        if (user.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN) {
+//            return;
+//        }
+//
+//        boolean isPotAdmin =
+//                globalPotMembersRepository
+//                        .existsByUserUuidAndGlobalPotGlobalPotIdAndUserRoles(
+//                                user.getUuid(),
+//                                globalPot.getGlobalPotId(),
+//                                UserRoles.GLOBALPOT_ADMIN
+//                        );
+//
+//        if (isPotAdmin) {
+//            return;
+//        }
+//
+//        boolean isMember =
+//                globalPotMembersRepository
+//                        .existsByUserAndGlobalPot(user, globalPot);
+//
+//        if (isMember) {
+//            return;
+//        }
+//        throw new AccessDeniedException(
+//                "User does not have access to this Global Pot"
+//        );
+//
+//    }
+//
+//    @Override
+//    public GlobalPotResponse validateNonMemberAccess(User user,
+//                                                     GlobalPot globalPot) {
+//
+//        boolean isMember =
+//                globalPotMembersRepository
+//                        .existsByUserAndGlobalPot(user, globalPot);
+//
+//        if (!isMember) {
+//            return GlobalPotResponse.builder()
+//                    .description(globalPot.getDescription())
+//                    .beneficiaryName(globalPot.getBeneficiaryName())
+//                    .goalAmount(globalPot.getGoalAmount())
+//                    .build();
+//        }
+//        return null;
+//    }
 
     /**
      * Fetches the GlobalPotDocument by document ID.
@@ -375,6 +399,32 @@ public class GlobalPotValidationsImpl implements GlobalPotValidations {
                 new GlobalPotDocumentNotFoundException("Document not "
                         + "found with Document Id : " + documentId));
     }
+
+    /**
+     * Validates if a user has full access to a Global Pot based on its scope
+     * and the user's role.
+     *
+     * @param user the user whose access is being validated
+     * @param pot the Global Pot for which access is being validated
+     * @return true if the user has full access, false otherwise
+     */
+
+    @Override
+    public boolean hasFullAccess(User user, GlobalPot pot) {
+
+
+        if (pot.getPotScope() == PotScope.PUBLIC) {
+            return true;
+        }
+
+        if (user.getUserRole() == UserRoles.SUNDUK_PAY_ADMIN) {
+            return true;
+        }
+
+        return globalPotMembersRepository
+                .existsByUserAndGlobalPot(user, pot);
+    }
+
 
 }
 

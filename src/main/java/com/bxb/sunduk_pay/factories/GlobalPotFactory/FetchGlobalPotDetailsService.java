@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
 import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotDocumentResponse;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +60,10 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      */
     private final GlobalPotDocumentRepository globalPotDocumentRepository;
 
+
+    /** Response object to hold the fetched global pot details. */
+    private GlobalPotResponse globalPotResponse;
+
     /**
      * Specifies the type of request this service handles.
      *
@@ -74,8 +81,13 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
      * @return A response containing the fetched pot details.
      */
     @Override
-    public GlobalPotResponse perform(final GlobalPotRequest request) {
-        
+    public GlobalPotResponse perform(final GlobalPotRequest request)
+             throws IOException {
+
+        log.info("Performing fetch global pot details operation : {} ",
+                System.currentTimeMillis());
+
+
         long startTime = System.currentTimeMillis();
         log.info("Starting FetchGlobalPotDeatilsService : 0 ms");
 
@@ -88,7 +100,7 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
 
             log.info("User validated successfully: {}",
                     user.getFullName());
-            
+
             long endTime = System.currentTimeMillis();
             log.info("User validation completed in {} ms",
                     endTime - startTime);
@@ -115,21 +127,37 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 log.info(
 "Global Pot details not found in Redis. Fetching from database for ID: {}",
                         request.getGlobalPotId());
-                
+
                 GlobalPot globalPot = globalPotValidations
                         .getGlobalPot(request.getGlobalPotId());
-                
-                endTime = System.currentTimeMillis();
-                log.info("Global Pot validated successfully. ID: {} ms"
+
+            log.info("Validating Global Pot ID: {}",
+                    System.currentTimeMillis());
+
+            endTime = System.currentTimeMillis();
+            log.info("Global Pot validated successfully. ID: {} ms"
                         ,endTime - startTime);
 
-//                globalPotValidations.validatePotAccess(user, globalPot);
 
+            boolean hasFullAccess =
+                    globalPotValidations.hasFullAccess(user, globalPot);
+
+            log.info( "User access level determined for " +
+                            "Global Pot ID: {}. Has full access: {}"
+                    , request.getGlobalPotId(), hasFullAccess);
+
+
+            if (hasFullAccess) {
+
+                log.info( "User has full access to" +
+                                " Global Pot ID: {}. " +
+                                "Fetching contributors and followers count."
+                        , request.getGlobalPotId());
 
                 int contributorsCount = globalPotValidations.
                         getContributorsCount(
                         globalPot.getGlobalPotId());
-                
+
                 endTime = System.currentTimeMillis();
                 log.info("Contributors count fetched: {} ms"
                         ,endTime - startTime);
@@ -137,14 +165,15 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
 
                 int followersCount = globalPotValidations.getFollowersCount(
                         globalPot.getGlobalPotId());
-                
+
                 endTime = System.currentTimeMillis();
                 log.info("Followers count fetched: {} ms"
                 ,endTime - startTime);
 
 
-                GlobalPotResponse globalPotResponse = globalPotMapper
-                        .toGlobalPotResponse(globalPot);
+
+                globalPotResponse = globalPotMapper
+                            .toGlobalPotResponse(globalPot);
 
                 endTime = System.currentTimeMillis();
                 log.info("Mapped Global Pot entity to response: {} ms"
@@ -157,13 +186,13 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 List<GlobalPotDocument> globalPotDocuments =
                         globalPotDocumentRepository.findByGlobalPotGlobalPotId(
                                 request.getGlobalPotId());
-                
+
                 endTime = System.currentTimeMillis();
                 log.info("Fetched documents for Global Pot ID: {} ms"
                         ,endTime - startTime);
 
-         List<GlobalPotDocumentResponse>
-                 globalPotDocumentList = new ArrayList<>();
+                List<GlobalPotDocumentResponse>
+                        globalPotDocumentList = new ArrayList<>();
 
 
                 globalPotDocuments.forEach(document -> {
@@ -174,8 +203,8 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                             document.getDocumentHeading());
                     documentResponse.setDocumentTitle(
                             document.getDocumentTitle());
-                     documentResponse.setDocument(globalPotMapper.toBase64(
-                             document.getDocument()));
+                    documentResponse.setDocument(globalPotMapper.toBase64(
+                            document.getDocument()));
                     documentResponse.setDocumentStatus(
                             document.getDocumentStatus().name());
                     globalPotDocumentList.add(documentResponse);
@@ -183,9 +212,9 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
                 });
                 globalPotResponse.setGlobalPotDocumentResponses(
                         globalPotDocumentList);
-                
+
                 endTime = System.currentTimeMillis();
-                log.info("Mapped Global Pot documents to response DTOs: {} ms"
+    log.info("Mapped Global Pot documents to response DTOs: {} ms"
                 ,endTime - startTime);
 
 //
@@ -195,11 +224,75 @@ public class FetchGlobalPotDetailsService implements GlobalPotOperation {
 //"Cached Global Pot details in Redis with key: {}", redisKey);
 
                 return globalPotResponse;
-//            }
-        } catch (Exception e) {
+            }
+        } catch (Exception exception) {
             log.error("Error fetching global pot details: {}",
-                    e.getMessage());
-            throw e;
+                    exception.getMessage());
+            throw exception;
         }
+
+        log.info( "User does not have access to Global Pot ID: {}." +
+                        "Fetching basic details without contributors " +
+                        "and followers count."
+                , request.getGlobalPotId());
+
+        GlobalPot globalPot = globalPotValidations
+                .getGlobalPot(request.getGlobalPotId());
+        globalPotResponse = globalPotMapper.toGlobalPotResponse(globalPot);
+
+        log.info( "Mapped Global Pot entity to response: {}"
+                , System.currentTimeMillis());
+
+        int followersCount = globalPotValidations.getFollowersCount(
+                globalPot.getGlobalPotId());
+
+        log.info( "Followers count fetched: {}"
+                , System.currentTimeMillis());
+
+        int contributorsCount = globalPotValidations.
+                getContributorsCount(
+                        globalPot.getGlobalPotId());
+
+        log.info( "Contributors count fetched: {}"
+                , System.currentTimeMillis());
+
+        globalPotResponse.setContributorCount(contributorsCount);
+        globalPotResponse.setFollowerCount(followersCount);
+
+        log.info( "Fetching documents for Global Pot ID: {}"
+                , request.getGlobalPotId());
+
+        List<GlobalPotDocument>
+                globalPotDocuments = globalPotDocumentRepository
+                .findByGlobalPotGlobalPotId(request.getGlobalPotId());
+
+        log.info( "Fetched documents for Global Pot ID: {}"
+                , System.currentTimeMillis());
+
+            List<GlobalPotDocumentResponse> globalPotDocumentList =
+                    new ArrayList<>();
+
+            globalPotDocuments.forEach(document -> {
+                GlobalPotDocumentResponse documentResponse =
+                        new GlobalPotDocumentResponse();
+
+                documentResponse.setDocumentHeading(
+                        document.getDocumentHeading());
+                documentResponse.setDocumentTitle(
+                        document.getDocumentTitle());
+                documentResponse.setDocument(globalPotMapper.toBase64(
+                        document.getDocument()));
+                documentResponse.setDocumentStatus(
+                        document.getDocumentStatus().name());
+                globalPotDocumentList.add(documentResponse);
+            });
+
+            log.info( "Mapped Global Pot documents to response DTOs: {}"
+                    , System.currentTimeMillis());
+
+            globalPotResponse.setGlobalPotDocumentResponses
+                    (globalPotDocumentList);
+
+        return globalPotResponse;
     }
 }

@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.model.GroupChatMessage;
 import com.bxb.sunduk_pay.model.GlobalPotMembers;
 import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.UserRoles;
 
 import java.util.List;
@@ -136,15 +137,37 @@ public interface GlobalPotValidations {
      */
     void ensureGlobalPotIsVerified(String globalPotId);
 
+//    /**
+//     * Validates that a user has access to a specific Global Pot.
+//     *
+//     * @param user the user whose access is being validated
+//     * @param globalPot the Global Pot for which access is being validated
+//     * @throws RuntimeException if the user does not have access to the Global Pot
+//     */
+//    void validatePotAccess(User user, GlobalPot globalPot);
+
     /**
-     * Validates that a user has access to a specific Global Pot.
+     * Validates that the user is both a member of the Global Pot and has admin privileges.
+     *
+     * @param admin the user to validate
+     * @param globalPot the Global Pot to check against
+     * @throws RuntimeException if the user is not a member or does not have admin privileges
+     */
+    void validateSundukPayAndGlobalPotAdmin(User admin, GlobalPot globalPot);
+
+//    GlobalPotResponse validateNonMemberAccess(User user, GlobalPot globalPot);
+
+    /**
+     * Validates that a user has full access to a specific Global Pot.
      *
      * @param user the user whose access is being validated
-     * @param globalPot the Global Pot for which access is being validated
-     * @throws RuntimeException if the user does not have access to the Global Pot
+     * @param pot the Global Pot for which access is being validated
+     * @return true if the user has full access, false otherwise
      */
-    void validatePotAccess(User user, GlobalPot globalPot);
+    boolean hasFullAccess(User user, GlobalPot pot);
 
-    void validateSundukPayAndGlobalPotAdmin(User admin, GlobalPot globalPot);
+
+
+
 
 }

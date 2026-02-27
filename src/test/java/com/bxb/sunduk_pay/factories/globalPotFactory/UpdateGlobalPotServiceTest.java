@@ -1,160 +1,172 @@
 package com.bxb.sunduk_pay.factories.globalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
-import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
 import com.bxb.sunduk_pay.factories.GlobalPotFactory.UpdateGlobalPotService;
-import com.bxb.sunduk_pay.model.GlobalPot;
-import com.bxb.sunduk_pay.model.GlobalPotDocument;
+import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.repository.GlobalPotDocumentRepository;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
-import com.bxb.sunduk_pay.request.Creator;
 import com.bxb.sunduk_pay.request.DocumentWrapper;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
-import com.bxb.sunduk_pay.util.*;
+import com.bxb.sunduk_pay.util.GlobalPotRequestType;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import com.bxb.sunduk_pay.validations.Validations;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UpdateGlobalPotServiceTest {
-    
+class UpdateGlobalPotServiceTest {
+
+    @Mock
+    private Validations validations;
+
     @Mock
     private GlobalPotRepository globalPotRepository;
-    
+
     @Mock
-    private GlobalPotMapper globalPotMapper;
-    
+    private GlobalPotDocumentRepository globalPotDocumentRepository;
+
     @Mock
     private GlobalPotValidations globalPotValidations;
-    
+
+    @Mock
+    private GlobalPotMapper globalPotMapper;
+
     @InjectMocks
     private UpdateGlobalPotService updateGlobalPotService;
-    
-    @Test
-    public void requestTypeTest() {
-        // Test implementation goes here
-        GlobalPotRequestType globalPotRequestType = updateGlobalPotService
-                .getGlobalPotRequestType();
-        assertNotNull(globalPotRequestType);
-        assertEquals(GlobalPotRequestType.Update_Global_Pot,
-                globalPotRequestType);
-    }
-    
-    @Test
-    public void shouldUpdateGlobalPotSuccessfully() throws IOException {
-        // Test implementation goes here
-        String globalPotId = "4eded979-4ce9-4e0f-9587-65af0ac91543";
-        String documentId = "dced979-4ce9-4e0f-9587-65af0ac91543";
-        
-        GlobalPotRequest request = new GlobalPotRequest();
-        request.setGlobalPotId(globalPotId);
-        request.setCaseTitle("Medical Help");
-        request.setCaseCategory(CaseCategory.ALL);
-        request.setPotStatus(PotStatus.ON_HOLD);
-        request.setCaseRequirementType(CaseRequirementType.CRITICAL);
-        request.setPotScope(PotScope.PRIVATE);
-        request.setDescription("This is test description");
-        request.setBeneficiaryName("John Doe");
-        request.setRelationToBeneficiary("Friend");
-        request.setAddress("123 Main St");
-        request.setCity("Delhi");
-        request.setCountry("Freedonia");
-        request.setGoalDate(LocalDate.now());
-        request.setGoalAmount(250000.0);
-        
-       Creator creator = new Creator();
-       creator.setCreatedBy("User123");
-       creator.setDesignation("Testing");
-       request.setCreator(creator);
-       
-        
-        DocumentWrapper documentWrapper = new DocumentWrapper();
-        documentWrapper.setDocumentId(documentId);
-        documentWrapper.setDocumentTitle("Aadhar");
-        documentWrapper.setDocumentHeading("Identity Proof");
-        
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "test-document.pdf",
-                "application/pdf",
-                "Dummy PDF content".getBytes()
-        );
-        documentWrapper.setDocumentFile(file);
-        
-        request.setDocumentFiles(List.of(documentWrapper));
-        
-        GlobalPot pot = new GlobalPot();
-        pot.setGlobalPotId(globalPotId);
-        
-        GlobalPotDocument document = new GlobalPotDocument();
-        document.setGlobalPotDocumentId(documentId);
-        
-        when(globalPotValidations.getGlobalPot(globalPotId)).thenReturn(pot);
-        
-        when(globalPotMapper.toUpdateEntity(request, pot)).thenReturn(pot);
-        
-        when(globalPotValidations.getGlobalPotDocumentId(documentId))
-                .thenReturn(document);
-        
-        //when
-        GlobalPotResponse response = updateGlobalPotService.perform(request);
-        
-        //then
-        assertNotNull(response);
-        assertEquals(globalPotId, response.getGlobalPotId());
-        assertEquals("Global Pot Update Successfully",
-                response.getMessage());
-        
-        assertEquals("Medical Help", request.getCaseTitle());
-        assertEquals("Delhi", request.getCity());
-        assertEquals(CaseCategory.ALL, request.getCaseCategory());
-        assertEquals(PotStatus.ON_HOLD, request.getPotStatus());
-        assertEquals(CaseRequirementType.CRITICAL,
-                request.getCaseRequirementType());
-        assertEquals(PotScope.PRIVATE,request.getPotScope());
-        assertEquals("This is test description"
-                ,request.getDescription());
-        assertEquals("John Doe",request.getBeneficiaryName());
-        assertEquals("Friend",request.getRelationToBeneficiary());
-        assertEquals("123 Main St",request.getAddress());
-        assertEquals("Freedonia",request.getCountry());
-        
-        assertEquals("Aadhar", document.getDocumentTitle());
-        assertEquals("Identity Proof", document.getDocumentHeading());
-        assertNotNull(document.getGlobalPotDocumentId());
-        
-        verify(globalPotRepository, times(1)).save(pot);
-        
-    }
-    
-    @Test
-    public void shouldReturnFailureWhenExceptionOccurs() throws IOException {
-        
-        //given
-        GlobalPotRequest request = new GlobalPotRequest();
-        request.setGlobalPotId("4eded979-4ce9-4e0f-9587-65af0ac91543");
-        
-        //mocking
-        when(globalPotValidations.getGlobalPot(request.getGlobalPotId()))
-                .thenThrow(new GlobalPotNotFoundException("Id not Found"));
 
-        //when + then
-        assertThrows(GlobalPotNotFoundException.class,
-                () -> updateGlobalPotService.perform(request));
-        
-        //then
-        verify(globalPotRepository, never()).save(any());
-        
+    private GlobalPotRequest request;
+    private User admin;
+    private GlobalPot globalPot;
+
+    @BeforeEach
+    void setUp() {
+        request = new GlobalPotRequest();
+        request.setUuid("admin-uuid");
+        request.setGlobalPotId("pot-id");
+        request.setGlobalPotRequestType(GlobalPotRequestType.Update_Global_Pot);
+
+        admin = new User();
+        admin.setUuid("admin-uuid");
+
+        globalPot = new GlobalPot();
+        globalPot.setGlobalPotId("pot-id");
+    }
+
+    @Test
+    void testGetGlobalPotRequestType() {
+        assertEquals(GlobalPotRequestType.Update_Global_Pot,
+                updateGlobalPotService.getGlobalPotRequestType());
+    }
+
+    @Test
+    void testPerform_Success() throws IOException {
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-id")).thenReturn(globalPot);
+        when(globalPotMapper.toUpdateEntity(request, globalPot))
+                .thenReturn(globalPot);
+
+        request.setDocumentFiles(List.of());
+
+        GlobalPotResponse response = updateGlobalPotService.perform(request);
+
+        assertNotNull(response);
+        assertEquals("pot-id", response.getGlobalPotId());
+        assertEquals("Global Pot Update Successfully", response.getMessage());
+
+        verify(globalPotRepository, times(1)).save(globalPot);
+    }
+
+    @Test
+    void testPerform_AdminNotFound() {
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () ->
+                updateGlobalPotService.perform(request));
+    }
+
+    @Test
+    void testPerform_UnauthorizedAdmin() {
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-id"))
+                .thenReturn(globalPot);
+
+        doThrow(new RuntimeException("Unauthorized"))
+                .when(globalPotValidations)
+                .validateSundukPayAndGlobalPotAdmin(admin, globalPot);
+
+        assertThrows(RuntimeException.class, () ->
+                updateGlobalPotService.perform(request));
+    }
+
+    @Test
+    void testPerform_WithDocumentUpdate() throws IOException {
+
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenReturn("test".getBytes());
+
+        DocumentWrapper wrapper = new DocumentWrapper();
+        wrapper.setDocumentId("doc-id");
+        wrapper.setDocumentTitle("New Title");
+        wrapper.setDocumentHeading("New Heading");
+        wrapper.setDocumentFile(multipartFile);
+
+        request.setDocumentFiles(List.of(wrapper));
+
+        GlobalPotDocument document = new GlobalPotDocument();
+        document.setGlobalPotDocumentId("doc-id");
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-id")).thenReturn(globalPot);
+        when(globalPotMapper.toUpdateEntity(request, globalPot))
+                .thenReturn(globalPot);
+        when(globalPotValidations.getGlobalPotDocumentId("doc-id"))
+                .thenReturn(document);
+
+        GlobalPotResponse response = updateGlobalPotService.perform(request);
+
+        assertEquals("New Title", document.getDocumentTitle());
+        assertEquals("New Heading", document.getDocumentHeading());
+        assertArrayEquals("test".getBytes(), document.getDocument());
+
+        verify(globalPotRepository).save(globalPot);
+    }
+
+    @Test
+    void testPerform_FileIOException() throws IOException {
+
+        MultipartFile multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getBytes()).thenThrow(new IOException());
+
+        DocumentWrapper wrapper = new DocumentWrapper();
+        wrapper.setDocumentId("doc-id");
+        wrapper.setDocumentFile(multipartFile);
+
+        request.setDocumentFiles(List.of(wrapper));
+
+        GlobalPotDocument document = new GlobalPotDocument();
+
+        when(validations.getUserInfo("admin-uuid")).thenReturn(admin);
+        when(globalPotValidations.getGlobalPot("pot-id")).thenReturn(globalPot);
+        when(globalPotMapper.toUpdateEntity(request, globalPot))
+                .thenReturn(globalPot);
+        when(globalPotValidations.getGlobalPotDocumentId("doc-id"))
+                .thenReturn(document);
+
+        assertThrows(RuntimeException.class, () ->
+                updateGlobalPotService.perform(request));
     }
 }

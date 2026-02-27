@@ -81,6 +81,8 @@ public class SundukController {
                 "UTF-8")
                 + "&fullName=" + URLEncoder.encode(user.getFullName(),
                 "UTF-8")
+                + "&userRole=" +URLEncoder.encode
+                (dbUser.getUserRole().toString(),"UTF-8")
                 + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
                 "UTF-8")
                 + "&phoneNumber=" + URLEncoder.encode(
