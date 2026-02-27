@@ -22,7 +22,7 @@ public class AsyncConfig {
      */
     @Bean("photoExecutor")
     public Executor photoExecutor() {
-        return Executors.newFixedThreadPool(8);
+        return Executors.newFixedThreadPool(32);
     }
 }
 

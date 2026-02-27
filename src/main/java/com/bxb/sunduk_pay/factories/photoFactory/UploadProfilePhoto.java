@@ -57,22 +57,9 @@ public class UploadProfilePhoto implements PhotoOperation {
             throw new InvalidPhotoException("Failed to read image file.");
         }
 
-        final String uuid = photoRequest.getUuid();
-
-        CompletableFuture.runAsync(() -> {
-            try {
- log.info("Async profile photo upload started for user: {}", uuid);
-
-                User user = validations.getUserInfo(uuid);
-                user.setProfilePhoto(imageBytes);
-                userRepository.save(user);
-
-log.info("Async profile photo upload completed for user: {}", uuid);
-
-            } catch (Exception e) {
- log.error("Async profile photo upload failed for user: {}", uuid, e);
-            }
-        }, photoExecutor);
+        User user = validations.getUserInfo(photoRequest.getUuid());
+        user.setProfilePhoto(imageBytes);
+        userRepository.save(user);
 
         return PhotoResponse.builder()
                 .message("PFP uploaded")
