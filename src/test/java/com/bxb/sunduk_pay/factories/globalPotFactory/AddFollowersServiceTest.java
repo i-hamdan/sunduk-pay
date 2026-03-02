@@ -9,6 +9,7 @@ import com.bxb.sunduk_pay.repository.GlobalPotRepository;
 import com.bxb.sunduk_pay.request.GlobalPotRequest;
 import com.bxb.sunduk_pay.response.GlobalPotResponse;
 import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import com.bxb.sunduk_pay.validations.Validations;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class AddFollowersServiceTest {
 
     @Mock
     private FollowerRepository followerRepository;
+
+    @Mock
+    private GlobalPotValidations globalPotValidations;
 
     @InjectMocks
     private AddFollowersService addFollowersService;
