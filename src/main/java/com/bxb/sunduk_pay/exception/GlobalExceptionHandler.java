@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -638,17 +639,20 @@ public class GlobalExceptionHandler {
      * @return structured error response
      */
     @ExceptionHandler(UserAlreadyExist.class)
-    public ErrorResponse handleUserAlreadyExist(
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExist(
             final UserAlreadyExist e,
             final HttpServletRequest request) {
-
-        return new ErrorResponse(LocalDateTime.now(),
+        
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
                 HttpStatus.CONFLICT.getReasonPhrase(),
-                e.getMessage(), request.getRequestURI());
-
+                e.getMessage(),
+                request.getRequestURI()
+        );
+        
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
-
     /**
      * Handles {@link AccessDeniedException}.
      *
