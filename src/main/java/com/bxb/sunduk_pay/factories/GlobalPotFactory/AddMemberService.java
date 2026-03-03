@@ -61,12 +61,19 @@ public class AddMemberService implements GlobalPotOperation {
     @Override
     public GlobalPotResponse perform(
             final GlobalPotRequest request) throws IOException {
+        
+        long startTime = System.currentTimeMillis();
+        log.info("Starting AddMemberService : 0 ms");
 
         log.info(
  "Adding members to Global Pot | targetUserCount={}",
                 request.getTargetUsersToAdd().size());
 
         User admin = validations.getUserInfo(request.getAdminUuid());
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After User Validation : {} ms"
+                , endTime - startTime);
 
 
         log.info("Admin fetched successfully | adminUuid={}",
@@ -74,17 +81,29 @@ public class AddMemberService implements GlobalPotOperation {
 
         GlobalPot globalPot =
                 globalPotValidations.getGlobalPot(request.getGlobalPotId());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Global Pot Validation : {} ms"
+                , endTime - startTime);
 
         log.info("GlobalPot fetched successfully | globalPotId={}",
                 globalPot.getGlobalPotId());
 
         globalPotValidations.validateSundukPayAndGlobalPotAdmin
                 (admin, globalPot);
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Admin Validation : {} ms",
+                endTime - startTime);
 
 
 
         List<User> targetUsers = userRepository.findAllById(
                 request.getTargetUsersToAdd());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Target Users Fetch : {} ms"
+        , endTime - startTime);
 
         log.info("Target users fetched successfully | count={} ",
                 targetUsers.size());
@@ -97,6 +116,10 @@ public class AddMemberService implements GlobalPotOperation {
                     user.getUuid(),
                     globalPot.getGlobalPotId());
         });
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Adding Members : {} ms"
+        ,endTime - startTime);
 
         return GlobalPotResponse.builder()
                 .message("User added to Global Pot successfully")

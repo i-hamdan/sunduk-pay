@@ -71,7 +71,9 @@ public class VerifyGlobalPot implements SundukPayAdminOperation {
         // 3. Return the specialized Wallet Response
         return SundukPayAdminResponse.builder().message(
                         "Global Wallet verified/created successfully")
-                .status("SUCCESS").build();
+                .status("SUCCESS")
+                .globalPotId(request.getGlobalPotId())
+                .build();
     }
 
 }
