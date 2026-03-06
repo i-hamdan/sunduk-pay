@@ -41,17 +41,11 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
         log.info("Processing admin request of type: {}",
                 request.getAdminRequestType());
 
-        long startTime = System.currentTimeMillis();
-        log.info("Admin request processing started at: 0 ms");
-        
         try {
             SundukPayAdminOperation adminOperation =
                     sundukPayAdminOperationFactory
                             .getSundukPayAdminOperation(
                                     request.getAdminRequestType());
-            long endTime = System.currentTimeMillis();
-            log.info("Resolved admin operation for request type: {} ms"
-                    ,endTime - startTime);
 
             if (adminOperation == null) {
                 log.error(
@@ -67,10 +61,6 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
             log.info(
                     "Admin request processed successfully for type: {}",
                     request.getAdminRequestType());
-            
-             endTime = System.currentTimeMillis();
-            log.info("Admin request processed successfully for type: {} ms"
-                    ,endTime - startTime);
 
             return response;
 
