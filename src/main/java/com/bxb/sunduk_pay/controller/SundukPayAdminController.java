@@ -36,12 +36,20 @@ public class SundukPayAdminController {
     @PostMapping("/sunduk-admin")
     public ResponseEntity<SundukPayAdminResponse> adminApi(@ModelAttribute
             final SundukPayAdminRequest request) {
+        
+        long startTime = System.currentTimeMillis();
+        log.info("Received admin API request: 0 ms");
 
         log.info("Received admin API request");
 
         try {
             SundukPayAdminResponse response = service.adminApi(request);
             log.info("Admin API request processed successfully");
+            
+                long endTime = System.currentTimeMillis();
+                log.info("Admin API request processing time: {} ms"
+                        , endTime - startTime);
+                
             return ResponseEntity.ok(response);
         } catch (Exception ex) {
             log.error(

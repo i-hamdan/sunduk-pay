@@ -40,12 +40,19 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
      */
     @Override
     public SundukPayAdminResponse perform(final SundukPayAdminRequest request) {
-
+        
+        log.info("Strating document verification for document ID : 0 ms ");
+        long startTime = System.currentTimeMillis();
+        
         GlobalPotDocument globalPotDocument = globalPotDocumentRepository
                 .findById(request.getGlobalPotDocumentId())
                 .orElseThrow(() ->
                         new GlobalPotDocumentNotFoundException(
                                 "Global Pot Document Not Found"));
+        
+        long endTime = System.currentTimeMillis();
+        log.info("Fetched document for verification: {} ms",
+                endTime - startTime);
 
         String message;
         if (globalPotDocument.getDocumentStatus().equals(
@@ -63,6 +70,10 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
                             + "Document ID: {}",
                     globalPotDocument.getGlobalPotDocumentId());
         }
+        
+        endTime = System.currentTimeMillis();
+        log.info("Document verification process completed: {} ms",
+                endTime - startTime);
 
         return SundukPayAdminResponse.builder()
                 .message(message)
