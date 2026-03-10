@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.controller;
 import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.service.SundukPayAdminService;
+import com.bxb.sunduk_pay.util.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -37,18 +38,18 @@ public class SundukPayAdminController {
     public ResponseEntity<SundukPayAdminResponse> adminApi(@ModelAttribute
             final SundukPayAdminRequest request) {
         
-        long startTime = System.currentTimeMillis();
         log.info("Received admin API request: 0 ms");
-
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.start();
         log.info("Received admin API request");
 
         try {
             SundukPayAdminResponse response = service.adminApi(request);
             log.info("Admin API request processed successfully");
             
-                long endTime = System.currentTimeMillis();
+                stopwatch.stop();
                 log.info("Admin API request processing time: {} ms"
-                        , endTime - startTime);
+                        , stopwatch.getElapsedTime());
                 
             return ResponseEntity.ok(response);
         } catch (Exception ex) {

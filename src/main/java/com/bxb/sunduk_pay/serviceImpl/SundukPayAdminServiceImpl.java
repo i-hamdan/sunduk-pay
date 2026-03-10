@@ -5,6 +5,7 @@ import com.bxb.sunduk_pay.factories.adminFactory.SundukPayAdminOperationFactory;
 import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.service.SundukPayAdminService;
+import com.bxb.sunduk_pay.util.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,8 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
         log.info("Processing admin request of type: {}",
                 request.getAdminRequestType());
         
-        long startTime = System.currentTimeMillis();
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.start();
         log.info("Admin request processing started: 0 ms");
 
         try {
@@ -50,10 +52,11 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
                             .getSundukPayAdminOperation(
                                     request.getAdminRequestType());
             
-            long endTime = System.currentTimeMillis();
+            stopwatch.stop();
             log.info("Admin operation resolved: {} ms",
-                    endTime - startTime);
-
+                    stopwatch.getElapsedTime());
+            
+            stopwatch.start();
             if (adminOperation == null) {
                 log.error(
                         "No admin operation found for request type: {}",
@@ -69,8 +72,9 @@ public class SundukPayAdminServiceImpl implements SundukPayAdminService {
                     "Admin request processed successfully for type: {}",
                     request.getAdminRequestType());
             
+            stopwatch.stop();
             log.info("Admin request processing completed: {} ms",
-                    System.currentTimeMillis() - startTime);
+                    stopwatch.getElapsedTime());
 
             return response;
 
