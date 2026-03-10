@@ -717,5 +717,27 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 e.getMessage(), request.getRequestURI());
     }
+    
+    @ExceptionHandler(value = GlobalPotNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGlobalPotNotVerifiedException(
+            final GlobalPotNotVerifiedException e,
+            final HttpServletRequest request){
+        return  new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+    
+    @ExceptionHandler(value = GlobalPotDocumentNotVerifiedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGlobalPotDocumentNotVerifiedException(
+            final GlobalPotDocumentNotVerifiedException e,
+            final HttpServletRequest request){
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.bxb.sunduk_pay.factories.adminFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
+import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
+import com.bxb.sunduk_pay.exception.GlobalPotNotVerifiedException;
 import com.bxb.sunduk_pay.model.GlobalPot;
 import com.bxb.sunduk_pay.model.GlobalWallet;
 import com.bxb.sunduk_pay.repository.GlobalPotRepository;
@@ -8,6 +10,7 @@ import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
 import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
 import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
 import com.bxb.sunduk_pay.util.AdminRequestType;
+import com.bxb.sunduk_pay.util.PotStatus;
 import com.bxb.sunduk_pay.validations.GlobalPotValidations;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class VerifyGlobalPot implements SundukPayAdminOperation {
-
-
+    
     /** Repository for Global Wallet operations. */
     private final GlobalWalletRepository globalWalletRepository;
     /** Validations for Global Pot operations. */
@@ -56,16 +58,22 @@ public class VerifyGlobalPot implements SundukPayAdminOperation {
         if (globalPot.getGlobalWallet() == null) {
             // Transform request to Entity and set defaults
             globalWallet = globalPotMapper.toEntityWallet(request);
-
+            
             // Set Bidirectional Link (Wallet -> Pot)
             globalWallet.setGlobalPot(globalPot);
-
+            
             // Save Wallet first to generate ID
             globalWallet = globalWalletRepository.save(globalWallet);
-
+            
             // Update Pot state (Pot -> Wallet & Status)
-            globalPot.setGlobalWallet(globalWallet);
-            globalPotRepository.save(globalPot);
+            if (request.getPotStatus().equals(PotStatus.PENDING_VERIFICATION)) {
+                globalPot.setPotStatus(PotStatus.VERIFIED);
+                globalPot.setGlobalWallet(globalWallet);
+                globalPotRepository.save(globalPot);
+            } else {
+                throw new GlobalPotNotVerifiedException("Global Pot not " +
+                        "Verified yet");
+            }
         }
 
         // 3. Return the specialized Wallet Response
