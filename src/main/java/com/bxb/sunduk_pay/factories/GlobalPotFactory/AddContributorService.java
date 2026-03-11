@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.factories.GlobalPotFactory;
 
 import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
 import com.bxb.sunduk_pay.Mappers.TransactionMapper;
+import com.bxb.sunduk_pay.encryption.MpinValidations;
 import com.bxb.sunduk_pay.exception.WalletNotFoundException;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
@@ -91,6 +92,11 @@ public class AddContributorService implements GlobalPotOperation {
      * Repository for follower data access.
      **/
     private final FollowerRepository followerRepository;
+    /**
+     * Validation utility used to validate MPIN related requests
+     * before processing business logic.
+     */
+    private final MpinValidations mpinValidations;
 
 /** Repository for GlobalPotInteraction data access. **/
 private final GlobalPotInteractionRepository globalPotInteractionRepository;
@@ -129,6 +135,9 @@ private final GlobalPotTransactionRepository globalPotTransactionRepository;
                     request.getUserContributorId(),
                     request.getGlobalPotId(),
                     request.getAmountContributed());
+            
+            mpinValidations.validateMpin(request.getUserContributorId()
+            , request.getMpin());
 
             User user = validations.getUserInfo(request.getUserContributorId());
             log.info(

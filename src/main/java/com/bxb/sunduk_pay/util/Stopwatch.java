@@ -33,7 +33,6 @@ public class Stopwatch {
      */
     public void start() {
         startTime = System.currentTimeMillis();
-        log.debug("Stopwatch started at {}", startTime);
     }
     
     /**
@@ -41,7 +40,6 @@ public class Stopwatch {
      */
     public void stop() {
         stopTime = System.currentTimeMillis();
-        log.debug("Stopwatch stopped at {}", stopTime);
     }
     
     /**
@@ -50,8 +48,6 @@ public class Stopwatch {
      * @return elapsed time in milliseconds
      */
     public long getElapsedTime(){
-        long elapsedTime = stopTime - startTime;
-        log.debug("Elapsed time calculated: {} ms", elapsedTime);
-        return elapsedTime;
+        return stopTime - startTime;
     }
 }

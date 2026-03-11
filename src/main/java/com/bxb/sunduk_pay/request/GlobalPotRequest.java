@@ -194,4 +194,8 @@ public class GlobalPotRequest {
     private String sortBy = "dateTime";
     /** Sort direction: ASC or DESC. */
     private String sortDirection = "DESC";
+    /**
+     * User MPIN used for authentication.
+     */
+    private String mpin;
 }
