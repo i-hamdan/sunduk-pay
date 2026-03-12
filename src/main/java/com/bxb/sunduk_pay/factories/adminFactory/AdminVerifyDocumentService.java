@@ -42,7 +42,6 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
      * @return SundukPayAdminResponse with the result of the verification
      * @throws GlobalPotDocumentNotFoundException if the document is not found
      */
-    @Transactional
     @Override
     public SundukPayAdminResponse perform(final SundukPayAdminRequest request) {
         
@@ -64,7 +63,7 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
         if (globalPotDocument.getDocumentStatus().equals(
                 DocumentStatus.PENDING)) {
             globalPotDocument.setDocumentStatus(DocumentStatus.VERIFIED);
-            
+            globalPotDocumentRepository.save(globalPotDocument);
             log.info("Global Pot Document verified successfully. "
                             + "Document ID: {}",
                     globalPotDocument.getGlobalPotDocumentId());
@@ -73,6 +72,7 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
                     "Document already verified. Document ID: "
                     + request.getGlobalPotDocumentId());
         }
+        
         stopwatch.stop();
         log.info("Document verification process completed: {} ms",
                 stopwatch.getElapsedTime());

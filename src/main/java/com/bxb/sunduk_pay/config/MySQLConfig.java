@@ -33,9 +33,11 @@ public class MySQLConfig {
         dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/sundukpay");
         dataSource.setUsername("walletuser");
         dataSource.setPassword("walletpass123");
-        dataSource.setMaximumPoolSize(50);
-        dataSource.setMinimumIdle(20);
-        dataSource.setConnectionTimeout(30000);
+        dataSource.setMaximumPoolSize(30);
+        dataSource.setMinimumIdle(10);
+        dataSource.setConnectionTimeout(2000);
+        dataSource.setIdleTimeout(300000);
+        dataSource.setMaxLifetime(1800000);
         return dataSource;
     }
     
