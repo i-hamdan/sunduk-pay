@@ -81,7 +81,7 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
         return SundukPayAdminResponse.builder()
                 .message("Document Verified Successfully")
                 .status("VERIFIED")
-                .globalPotId(globalPotDocument.getGlobalPot().getGlobalPotId())
+                .globalPotId(request.getGlobalPotId())
                 .build();
     }
 }
