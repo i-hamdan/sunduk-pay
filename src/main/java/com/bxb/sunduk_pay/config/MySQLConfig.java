@@ -24,7 +24,7 @@ import com.zaxxer.hikari.HikariDataSource;
         transactionManagerRef = "mysqlTransactionManager"
 )
 public class MySQLConfig {
-
+    
     @Primary
     @Bean(name = "mysqlDataSource")
     public DataSource mysqlDataSource() {
@@ -33,20 +33,22 @@ public class MySQLConfig {
         dataSource.setJdbcUrl("jdbc:mysql://walletapp-mysql:3306/sundukpay");
         dataSource.setUsername("walletuser");
         dataSource.setPassword("walletpass123");
-        dataSource.setMaximumPoolSize(10);
+        dataSource.setMaximumPoolSize(50);
+        dataSource.setMinimumIdle(20);
+        dataSource.setConnectionTimeout(30000);
         return dataSource;
     }
-
+    
     @Primary
     @Bean(name = "mysqlEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean mysqlEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
             @Qualifier("mysqlDataSource") DataSource dataSource) {
-
+        
         HashMap<String, Object> props = new HashMap<>();
         props.put("hibernate.hbm2ddl.auto", "update");
         props.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-
+        
         return builder
                 .dataSource(dataSource)
                 .packages("com.bxb.sunduk_pay.model")
@@ -54,7 +56,7 @@ public class MySQLConfig {
                 .properties(props)
                 .build();
     }
-
+    
     @Primary
     @Bean(name = "mysqlTransactionManager")
     public PlatformTransactionManager mysqlTransactionManager(
