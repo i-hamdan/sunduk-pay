@@ -12,6 +12,8 @@ import com.bxb.sunduk_pay.util.Stopwatch;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Service for verifying global pot documents in the admin panel.
  */
@@ -40,6 +42,7 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
      * @return SundukPayAdminResponse with the result of the verification
      * @throws GlobalPotDocumentNotFoundException if the document is not found
      */
+    @Transactional
     @Override
     public SundukPayAdminResponse perform(final SundukPayAdminRequest request) {
         
@@ -61,15 +64,14 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
         if (globalPotDocument.getDocumentStatus().equals(
                 DocumentStatus.PENDING)) {
             globalPotDocument.setDocumentStatus(DocumentStatus.VERIFIED);
-            globalPotDocumentRepository.save(globalPotDocument);
+            
             log.info("Global Pot Document verified successfully. "
                             + "Document ID: {}",
                     globalPotDocument.getGlobalPotDocumentId());
         } else {
             throw new GlobalPotDocumentNotVerifiedException("Global Pot " +
-                    "Document"
-                    + " already verified. Document ID: "
-                    + globalPotDocument.getGlobalPotDocumentId());
+                    "Document already verified. Document ID: "
+                    + request.getGlobalPotDocumentId());
         }
         
         stopwatch.stop();
