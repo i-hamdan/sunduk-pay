@@ -73,7 +73,6 @@ public class AdminVerifyDocumentService implements SundukPayAdminOperation {
                     "Document already verified. Document ID: "
                     + request.getGlobalPotDocumentId());
         }
-        
         stopwatch.stop();
         log.info("Document verification process completed: {} ms",
                 stopwatch.getElapsedTime());
