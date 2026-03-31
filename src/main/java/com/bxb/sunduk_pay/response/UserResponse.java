@@ -27,14 +27,18 @@ public class UserResponse {
     private String phoneNumber;
     /** message regarding the user operation status. */
     private String message;
-    /** present address of user.*/
-    private String presentAddress;
-    /**permanent address of user.*/
-    private String permanentAddress;
-/** date of birth of user.*/
+    /** Address of user.*/
+    private String address;
+    /** date of birth of user.*/
     private String dob;
-/** profile photo of user.*/
+    /** profile photo of user.*/
     private String profilePhoto;
+    /** flag indicating if the user exists.*/
+    private boolean userExists;
+    /** flag indicating if the user is verified. */
+    private boolean isVerified;
+    /** flag indicating if the user is a Google user. */
+    private boolean isGoogleUser;
 }
 
 

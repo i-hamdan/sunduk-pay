@@ -1,21 +1,21 @@
 package com.bxb.sunduk_pay.validations;
 
 import com.bxb.sunduk_pay.encryption.HashUtil;
-import com.bxb.sunduk_pay.exception.MaxSubWalletsExceededException;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
-import com.bxb.sunduk_pay.exception.TransactionNotFoundException;
-import com.bxb.sunduk_pay.exception.InsufficientBalanceException;
-import com.bxb.sunduk_pay.exception.NullValueException;
-import com.bxb.sunduk_pay.exception.SubWalletAlreadyExistsException;
-import com.bxb.sunduk_pay.exception.NullAmountException;
-import com.bxb.sunduk_pay.exception.TransactionProcessingException;
-import com.bxb.sunduk_pay.exception.InvalidPhotoException;
-import com.bxb.sunduk_pay.exception.InvestmentException;
-import com.bxb.sunduk_pay.exception.InvalidPayloadException;
-import com.bxb.sunduk_pay.exception.UserNotFoundException;
-import com.bxb.sunduk_pay.exception.WalletNotFoundException;
-import com.bxb.sunduk_pay.model.*;
-import com.bxb.sunduk_pay.repository.*;
+import com.bxb.sunduk_pay.exception.*;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.Reminder;
+import com.bxb.sunduk_pay.model.AutoPayConfirmation;
+import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.repository.MainWalletRepository;
+import com.bxb.sunduk_pay.repository.MasterWalletRepository;
+import com.bxb.sunduk_pay.repository.SubWalletRepository;
+import com.bxb.sunduk_pay.repository.TransactionRepository;
+import com.bxb.sunduk_pay.repository.ReminderRepository;
+import com.bxb.sunduk_pay.repository.AutoPayConfirmationRepository;
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import lombok.RequiredArgsConstructor;
@@ -508,11 +508,24 @@ private static final int WALLET_SIZE = 20;
     }
 
     @Override
+    public Optional<User> getUserByPhoneNumberOrEmail(String phoneNumber,
+                                                      String email) {
+
+        if (email != null && !email.isBlank()) {
+            Optional<User> user = userRepository.findByEmailAndIsDeletedFalse(email);
+            if (user.isPresent()) return user;
+        }
+        if (phoneNumber != null && !phoneNumber.isBlank()) {
+            return userRepository.findByPhoneNumberHash(hashUtil.sha256(phoneNumber));
+        }
+        return Optional.empty();
+    }
+
+    @Override
     public AutoPayConfirmation getConfirmationById(String confirmationId) {
         return autoPayConfirmationRepository.findById(confirmationId)
                 .orElseThrow(()->new ResourceNotFoundException(
                         "Cannot find AutoPayConfirmation with ID: "
                                 + confirmationId));
     }
-
 }

@@ -4,9 +4,10 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 
+import java.io.IOException;
 /**
- * Service interface for user-related operations such as login and contact
- * management.
+ * Service interface for handling user-related operations such as login,
+ * signup, OTP verification, and other user management tasks.
  */
 public interface UserService {
 

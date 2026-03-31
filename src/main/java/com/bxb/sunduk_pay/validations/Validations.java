@@ -1,11 +1,20 @@
 package com.bxb.sunduk_pay.validations;
 
-import com.bxb.sunduk_pay.model.*;
+import com.bxb.sunduk_pay.model.SubWallet;
+import com.bxb.sunduk_pay.model.MainWallet;
+import com.bxb.sunduk_pay.model.MasterWallet;
+import com.bxb.sunduk_pay.model.Reminder;
+import com.bxb.sunduk_pay.model.Transaction;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.model.AutoPayConfirmation;
+
 import com.bxb.sunduk_pay.util.PaymentMethod;
 import com.bxb.sunduk_pay.util.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 /**
  * Defines validation operations for wallets, users, and transactions.
@@ -172,6 +181,8 @@ public interface Validations {
      * @return {@link Reminder}
      */
     Reminder getReminderById(String reminderId);
+
+    Optional<User> getUserByPhoneNumberOrEmail(String phoneNumber, String email);
 
     AutoPayConfirmation getConfirmationById(String confirmationId);
 }

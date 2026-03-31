@@ -2,9 +2,13 @@ package com.bxb.sunduk_pay.controller;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
 import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.service.AuthenticationSessionService;
+import com.bxb.sunduk_pay.service.OtpService;
 import com.bxb.sunduk_pay.service.UserService;
+import com.bxb.sunduk_pay.validations.Validations;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +24,9 @@ import java.io.IOException;
 import java.net.URLEncoder;
 
 /**
- * Controller for handling user login, logout.
+ * SundukController handles authentication and user-related API endpoints,
+ * including custom login/logout, user existence checks, signup initiation,
+ * OTP verification, and login operations.
  */
 
 @Log4j2
@@ -28,6 +34,11 @@ import java.net.URLEncoder;
 @RequiredArgsConstructor
 // this needs to remove once we moved to domain
 public class SundukController {
+
+    /**
+     * Service for OTP-related operations.
+     */
+    private final OtpService otpService;
     /**
      * Service for user-related operations.
      */
@@ -37,12 +48,18 @@ public class SundukController {
      * to application user model.
      */
     private final UserMapper userMapper;
-
     /**
      * Service for authorised session operation.
      */
     private final AuthenticationSessionService authenticationSessionService;
-
+    /**
+     * Repository for accessing user data.
+     */
+    private final UserRepository userRepository;
+    /**
+     * Validation utility for user-related checks.
+     */
+    private final Validations validations;
 
     /**
      * Handles custom login via OIDC.
@@ -58,14 +75,17 @@ public class SundukController {
     public ResponseEntity<UserResponse> login(
             final HttpSession session,
             @AuthenticationPrincipal final OidcUser user,
-            final HttpServletResponse httpServletResponse)
+            final HttpServletResponse httpServletResponse,
+            final UserRequest userRequest)
             throws IOException {
+
         UserResponse response = userMapper.getUser(user);
 
         log.info("Session Id : " + session.getId() + " By: "
                 + user.getFullName());
 
         User dbUser = service.userLogin(response);
+
 
         response.setUuid(dbUser.getUuid());
 
@@ -75,21 +95,40 @@ public class SundukController {
         String landingPage = dbUser.getPreferredLandingPage();
 
         authenticationSessionService.saveSession(session.getId(), dbUser);
-        String deepLink = "islamicbank://login-success?sessionId="
-                + session.getId()
-                + "&email=" + URLEncoder.encode(user.getEmail(),
-                "UTF-8")
-                + "&fullName=" + URLEncoder.encode(user.getFullName(),
-                "UTF-8")
-                + "&userRole=" +URLEncoder.encode
-                (dbUser.getUserRole().toString(),"UTF-8")
-                + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
-                "UTF-8")
-                + "&phoneNumber=" + URLEncoder.encode(
-                (phoneNumber != null) ? phoneNumber : "", "UTF-8")
-                +"&defaultLandingPage" + URLEncoder.encode(
-                (landingPage != null) ? landingPage : "", "UTF-8")
-                + "&isMpinCreated=" + isMpinCreated;
+
+        String deepLink;
+        if (phoneNumber == null){
+            deepLink= "islamicbank://signup-profile?sessionId="
+                    + session.getId()
+                    + "&email=" + URLEncoder.encode(user.getEmail(),
+                    "UTF-8")
+                    + "&fullName=" + URLEncoder.encode(user.getFullName(),
+                    "UTF-8")
+                    + "&uuid=" + URLEncoder.encode(dbUser.getUuid().toString(),
+                    "UTF-8")
+                    + "&phoneNumber=" + URLEncoder.encode(
+                    (phoneNumber != null) ? phoneNumber : "", "UTF-8")
+                    +"&defaultLandingPage" + URLEncoder.encode(
+                    (landingPage != null) ? landingPage : "", "UTF-8")
+                    + "&isMpinCreated=" + isMpinCreated;
+        }
+        else {
+            deepLink =
+                    "islamicbank://login-success?sessionId=" + session.getId() +
+                            "&email=" + URLEncoder.encode(user.getEmail(),
+                            "UTF-8") + "&fullName=" +
+                            URLEncoder.encode(dbUser.getFullName(),
+                                    "UTF-8") + "&uuid=" +
+                            URLEncoder.encode(dbUser.getUuid().toString(),
+                                    "UTF-8")
+                            + "&phoneNumber=" +
+                            URLEncoder.encode((phoneNumber != null) ?
+                                    phoneNumber : "", "UTF-8") +
+                            "&defaultLandingPage"
+                            + URLEncoder.encode((landingPage != null) ?
+                            landingPage : "", "UTF-8") + "&isMpinCreated="
+                            + isMpinCreated;
+        }
 
 
         log.info("Redirecting to deep link:{}", deepLink);
@@ -110,3 +149,4 @@ public class SundukController {
         return "You have been logged out";
     }
 }
+

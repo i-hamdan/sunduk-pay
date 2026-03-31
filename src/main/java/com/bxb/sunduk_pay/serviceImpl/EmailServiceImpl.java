@@ -52,7 +52,7 @@ public class EmailServiceImpl implements EmailService {
      */
     @Override
     public void processOtpEvent(final OtpEvent event) {
-        String subject = emailMessageUtil.buildSubjectForOtp(event);
+        String subject = emailMessageUtil.buildSubjectForOtp(event.getOtpPurpose());
         String body = emailMessageUtil.buildBodyForOtp(event);
         sendEmail(event.getEmail(),
                 "updates@sundukpay.com",

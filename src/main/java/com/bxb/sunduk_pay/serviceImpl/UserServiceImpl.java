@@ -1,30 +1,54 @@
 package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.Mappers.UserMapper;
-import com.bxb.sunduk_pay.exception.ResourceNotFoundException;
+import com.bxb.sunduk_pay.exception.InvalidCredentialsException;
+import com.bxb.sunduk_pay.exception.UserNotFoundException;
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.model.*;
 import com.bxb.sunduk_pay.repository.*;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
+import com.bxb.sunduk_pay.service.AuthenticationSessionService;
+import com.bxb.sunduk_pay.service.OtpService;
 import com.bxb.sunduk_pay.service.UserService;
 import com.bxb.sunduk_pay.factories.userFactory.UserOperation;
 import com.bxb.sunduk_pay.factories.userFactory.UserOperationFactory;
+import com.bxb.sunduk_pay.util.AuthProviderMethod;
+import com.bxb.sunduk_pay.util.OtpChannel;
 import com.bxb.sunduk_pay.util.UserRoles;
+import com.bxb.sunduk_pay.util.UserStatus;
+import com.bxb.sunduk_pay.validations.Validations;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
-
 /**
- * Service implementation for managing users.
- * Handles user login, registration, and contact upload.
+ * Service implementation for user-related operations, including login,
+ * signup, and user details retrieval. This class interacts with the
+ * database, handles authentication sessions, and communicates with Kafka
+ * for event-driven processing.
  */
 @Service
 @Log4j2
@@ -63,7 +87,26 @@ public class UserServiceImpl implements UserService {
      * Repository for MPIN data access.
      */
     private final MpinRepository mpinRepository;
-
+    /**
+     * Service for handling OTP operations.
+     */
+    private final OtpService otpService;
+    /**
+     * Kafka template for sending OTP events.
+     */
+    private final KafkaTemplate<String, OtpEvent> kafkaTemplate1;
+    /**
+     * Password encoder for hashing user passwords.
+     */
+    private final PasswordEncoder passwordEncoder;
+    /**
+     * Service for managing authenticated sessions.
+     */
+    private final AuthenticationSessionService sessionService;
+    /**
+     * HTTP response for setting cookies during signup/login.
+     */
+    private final HttpServletResponse httpServletResponse;
     /**
      * Repository for global landing page data access.
      */
@@ -72,33 +115,45 @@ public class UserServiceImpl implements UserService {
     /** Repository for notification preference data access. */
     private final NotificationPreferenceRepository preferenceRepository;
 
+    private final Validations validations;
+
 
     /**
-     * Handles OAuth login for a user.
-     * If the user does not exist in the database,
-     * a new user is created along with main and master wallets.
-     *
-     * @param response The user login response containing user details.
-     * @return The User object after login or creation.
+     * HTTP session for managing user sessions.
      */
+    private final HttpSession httpSession;
+
+    /** {@inheritDoc} */
     @Override
     @Transactional
     public User userLogin(final UserResponse response) {
+
         Optional<User> userOptional
                 = userRepository.findByEmailAndIsDeletedFalse(
                 response.getEmail());
+
         User user;
         if (userOptional.isEmpty()) {
             log.info(
-       "User not found in DB. Creating new user for email: {}",
+                    "User not found in DB. Creating " +
+                            "new user for email: {}",
                     response.getEmail());
+
+            AuthProvider authProvider = AuthProvider.builder()
+                    .authProviderMethod(AuthProviderMethod.GOOGLE)
+                    .build();
+            Set<AuthProvider> authProviders = Set.of(authProvider);
+
             user = userMapper.toUser(response);
             user.setUuid(UUID.randomUUID().toString());
             user.setPhoneNumber(response.getPhoneNumber());
             user.setIsDeleted(false);
             user.setAutoPayThresholdAmount(DEFAULT_AUTO_PAY_THRESHOLD);
             user.setUserRole(UserRoles.NORMAL_USER);
+            user.setUserStatus(UserStatus.ACTIVE);
+            user.setAuthProviders(authProviders);
 
+            authProvider.setUser(user);
             user = userRepository.save(user);
 
             MainWallet mainWallet = MainWallet.builder()
@@ -138,7 +193,8 @@ public class UserServiceImpl implements UserService {
         } else {
             user = userOptional.get();
             if (user.getPhoneNumber() == null) {
-                log.error("User found but phone number is null for email: {}",
+                log.error("User found but phone number is " +
+                                "null for email: {}",
                         user.getEmail());
             }
             UserKafkaEvent userEvent = userMapper
@@ -214,5 +270,5 @@ public class UserServiceImpl implements UserService {
                 userOperation.getUserOperations(request.getUserRequestType());
         return userOperations.perform(request);
     }
-
 }
+

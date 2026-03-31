@@ -7,6 +7,8 @@ import com.bxb.sunduk_pay.model.User;
 import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 import com.bxb.sunduk_pay.util.EmailCategory;
+import com.bxb.sunduk_pay.util.UserRoles;
+import com.bxb.sunduk_pay.util.UserStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -34,7 +36,6 @@ public class UserMapperImpl implements UserMapper {
     private final HashUtil hashUtil;
 
     /**
-     *
      * @param user the OidcUser object from OAuth2 authentication.
      * @return a UserLoginResponse containing user info.
      */
@@ -63,6 +64,22 @@ public class UserMapperImpl implements UserMapper {
         return user;
     }
 
+    @Override
+    public User toUser(UserRequest request) {
+        User user =
+                User.builder()
+                        .fullName(request.getFullName())
+                        .dateOfBirth(request.getDateOfBirth()
+                                .toString()).email(request.getEmail())
+                        .phoneNumber(request.getPhoneNumber())
+                        .address(request.getAddress())
+                        .city(request.getCity())
+                        .country(request.getCountry())
+                        .userRole(UserRoles.NORMAL_USER)
+                        .build();
+        return user;
+    }
+
     /**
      * Converts a User entity to a
      * UserKafkaEvent for event messaging.
@@ -72,8 +89,8 @@ public class UserMapperImpl implements UserMapper {
      *                  of event (e.g., "USER_CREATED", "USER_UPDATED")
      * @return the corresponding UserKafkaEvent
      */
-    public UserKafkaEvent toKafkaEvent(
-            final User user, final String eventType) {
+    public UserKafkaEvent toKafkaEvent(final User user,
+                                       final String eventType) {
         UserKafkaEvent kafkaEvent = new UserKafkaEvent();
         kafkaEvent.setEmail(user.getEmail());
         kafkaEvent.setUuid(user.getUuid());
@@ -105,12 +122,11 @@ public class UserMapperImpl implements UserMapper {
         }
 
         if (request.getPhoneNumber() != null) {
-            String phoneNumber = userEncryption
-                    .encrypt(request.getPhoneNumber());
+            String phoneNumber =
+                    userEncryption.encrypt(request.getPhoneNumber());
             user.setPhoneNumber(phoneNumber);
 
-            String hashPhoneNumber = hashUtil
-                    .sha256(request.getPhoneNumber());
+            String hashPhoneNumber = hashUtil.sha256(request.getPhoneNumber());
             user.setPhoneNumberHash(hashPhoneNumber);
         }
 
@@ -119,24 +135,18 @@ public class UserMapperImpl implements UserMapper {
             user.setEmail(request.getEmail());
         }
         if (request.getDateOfBirth() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter
-                    .ofPattern("dd MMM yyyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM" +
+                    " yyyy");
             String dobString = request.getDateOfBirth().format(formatter);
             String encryptedDob = userEncryption.encrypt(dobString);
             user.setDateOfBirth(encryptedDob);
         }
 
 
-        if (request.getPresentAddress() != null) {
-            String presentAddress = userEncryption
-                    .encrypt(request.getPresentAddress());
-            user.setPresentAddress(presentAddress);
-        }
-
-        if (request.getPermanentAddress() != null) {
-            String permanentAddress = userEncryption
-                    .encrypt(request.getPermanentAddress());
-            user.setPermanentAddress(permanentAddress);
+        if (request.getAddress() != null) {
+            String presentAddress =
+                    userEncryption.encrypt(request.getAddress());
+            user.setAddress(presentAddress);
         }
 
         return user;
@@ -151,45 +161,30 @@ public class UserMapperImpl implements UserMapper {
     @Override
     public UserResponse getDetails(final User user) {
 
-        String phone = user.getPhoneNumber() == null || user.getPhoneNumber()
-                .isEmpty()
-                ?
-                ""
-                : userEncryption.decrypt(user.getPhoneNumber());
+        String phone = user.getPhoneNumber() == null ? "" :
+                userEncryption.decrypt(user.getPhoneNumber());
 
-        String dob = user.getDateOfBirth() == null || user.getDateOfBirth().
-                isEmpty()
-                ?
-                ""
-                : userEncryption.decrypt(user.getDateOfBirth());
+        String dob = user.getDateOfBirth() == null ? "" :
+                userEncryption.decrypt(user.getDateOfBirth());
 
-        String permanentAddress = user.getPermanentAddress() == null || user.
-                getPermanentAddress().isEmpty()
-                ?
-                ""
-                : userEncryption.decrypt(user.getPermanentAddress());
+        String permanentAddress = user.getAddress() == null ? "" :
+                userEncryption.decrypt(user.getAddress());
 
-        String presentAddress = user.getPresentAddress() == null || user.
-                getPresentAddress().isEmpty()
-                ?
-                ""
-                : userEncryption.decrypt(user.getPresentAddress());
 
-        String photoBase64 = (user.getProfilePhoto() != null
-                && user.getProfilePhoto().length > 0)
+        String photoBase64 =
+                (user.getProfilePhoto() != null &&
+                        user.getProfilePhoto().length > 0)
 
 
                 ? "data:image/jpeg;base64," + Base64.getEncoder()
-                .encodeToString(user.getProfilePhoto())
-                : "";
+                        .encodeToString(user.getProfilePhoto()) : "";
 
         return UserResponse.builder()
                 .email(user.getEmail())
                 .fullName(user.getFullName())
                 .phoneNumber(phone)
-                .presentAddress(presentAddress)
+                .address(permanentAddress)
                 .dob(dob)
-                .permanentAddress(permanentAddress)
                 .profilePhoto(photoBase64)
                 .build();
     }
@@ -208,5 +203,59 @@ public class UserMapperImpl implements UserMapper {
                 .email(user.getEmail())
                 .build();
     }
+
+    @Override
+    public User toUserForm(User user, UserRequest request) {
+        if (request != null) {
+            if (request.getFullName() != null &&
+                    !request.getFullName().isBlank()) {
+                user.setFullName(request.getFullName());
+            }
+            if (request.getPhoneNumber() != null &&
+                    !request.getPhoneNumber().isBlank()) {
+                String encryptedPhoneNumber = userEncryption.encrypt(
+                        request.getPhoneNumber());
+                user.setPhoneNumber(encryptedPhoneNumber);
+                String phoneNumberHash = hashUtil.sha256(
+                        request.getPhoneNumber());
+                user.setPhoneNumberHash(phoneNumberHash);
+            }
+            if (request.getEmail() != null) {
+                user.setEmail(request.getEmail());
+            }
+            user.setUserRole(UserRoles.NORMAL_USER);
+
+            if (request.getDateOfBirth()!= null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+                        "dd MMM" + " yyyy");
+                String dobEncrypted = userEncryption.encrypt(
+                        request.getDateOfBirth().format(formatter));
+                user.setDateOfBirth(dobEncrypted);
+            }
+            if (request.getCity() !=null) {
+                user.setCity(request.getCity());
+            }
+            if (request.getCountry() != null) {
+                user.setCountry(request.getCountry());
+            }
+            if (request.getAddress() != null) {
+                String adddressEncrypted = userEncryption.encrypt(
+                        request.getAddress());
+                user.setAddress(adddressEncrypted);
+            }
+            if (user.getUserStatus() != UserStatus.ACTIVE) {
+                user.setUserStatus(UserStatus.ACTIVE);
+            }
+            if (user.getIsDeleted() == null) {
+            user.setIsDeleted(false);
+            }
+            if (user.getIsBlocked() == null) {
+                user.setIsBlocked(false);
+            }
+        }
+
+        return user;
+    }
 }
+
 

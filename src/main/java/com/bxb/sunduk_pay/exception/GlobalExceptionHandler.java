@@ -531,7 +531,7 @@ public class GlobalExceptionHandler {
                         .InvalidFormatException) {
             // Wrong enum or wrong type
         message = "Invalid value provided for "
-                + "one of the fields.";
+                + "one of the fields (e.g., ActionType).";
         }
 
         return new ErrorResponse(
@@ -642,7 +642,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUserAlreadyExist(
             final UserAlreadyExist e,
             final HttpServletRequest request) {
-        
+
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
                 HttpStatus.CONFLICT.value(),
@@ -650,7 +650,7 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI()
         );
-        
+
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
     /**
@@ -740,4 +740,71 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(AuthBenifitsException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleAuthBenefitsException(
+            final AuthBenifitsException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidCredentialsException(
+            final InvalidCredentialsException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                e.getMessage(),
+                request.getRequestURI());
+    }
+
+    @ExceptionHandler(InvalidLoginMethodException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidLoginMethodException(
+            final InvalidLoginMethodException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(InvalidOtpException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidOtpException(
+            final InvalidOtpException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.UNAUTHORIZED.value(),
+                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(OtpExpiredException.class)
+    @ResponseStatus(HttpStatus.GONE)
+    public ErrorResponse handleOtpExpiredException(
+            final OtpExpiredException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.GONE.value(),
+                HttpStatus.GONE.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(OtpAttemptsExceededException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public ErrorResponse handleOtpAttemptsExceededException(
+            final OtpAttemptsExceededException e,
+            final HttpServletRequest request) {
+        return new ErrorResponse(LocalDateTime.now(),
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
+                e.getMessage(), request.getRequestURI());
+    }
 }

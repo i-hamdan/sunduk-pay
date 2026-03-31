@@ -3,6 +3,7 @@ package com.bxb.sunduk_pay.serviceImpl;
 
 import com.bxb.sunduk_pay.config.TwilioConfig;
 import com.bxb.sunduk_pay.exception.SmsServiceException;
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.service.SmsService;
 import com.bxb.sunduk_pay.util.FallbackEmailUtil;
@@ -72,6 +73,15 @@ public class SmsServiceImpl implements SmsService {
                     e.getMessage());
             fallbackEmailUtil.sendFallbackTransactionEmail(event);
         }
+
+    }
+
+    @Override
+    public void processOtpEvent(OtpEvent otpEvent) {
+
+        String message = smsMessageUtil.buildOtpSms(otpEvent.getOtp());
+        sendSms(otpEvent.getPhoneNumber(), message);
+        log.info("OTP SMS sent to: {}", otpEvent.getPhoneNumber());
 
     }
 

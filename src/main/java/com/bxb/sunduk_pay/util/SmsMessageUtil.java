@@ -75,4 +75,16 @@ public class SmsMessageUtil {
 
         return message;
     }
+    /**
+     * Builds an SMS message for OTP verification.
+     *
+     * @param otp the one-time password
+     * @return formatted SMS message
+     */
+    public String buildOtpSms(final String otp) {
+        return String.format(
+                "Your SundukPay verification code is: %s. Valid for 60 seconds. Do not share this code with anyone.",
+                otp
+        );
+    }
 }

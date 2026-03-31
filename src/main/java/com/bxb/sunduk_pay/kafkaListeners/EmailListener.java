@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.kafkaListeners;
 
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.service.EmailService;
 import jakarta.annotation.PostConstruct;
@@ -17,7 +18,9 @@ import org.springframework.stereotype.Component;
 @Log4j2
 @RequiredArgsConstructor
 public class EmailListener {
-    /** Service for handling email operations. */
+    /**
+     * Service for handling email operations.
+     */
     private final EmailService emailService;
 
     /**
@@ -34,13 +37,23 @@ public class EmailListener {
      * for email notifications.
      *
      * @param userKafkaEvent the user Kafka
-     *event containing email details
+     *                       event containing email details
      */
-    @KafkaListener(topics = "user-topic",
-            groupId = "email-service-group")
+    @KafkaListener(topics = "user-topic", groupId = "email-service-group")
     public void consumeEmailEvent(final UserKafkaEvent userKafkaEvent) {
-        log.info("Received email event for user: {}",
-                userKafkaEvent.getEmail());
+        log.info("Received email event for user: {}", userKafkaEvent.getEmail());
+        try {
             emailService.processEmailEvent(userKafkaEvent);
-}
-}
+        } catch (Exception ex) {
+            log.error("Error occurred while processing email event for user: " + "{}", userKafkaEvent.getEmail(), ex);
+        }
+    }
+
+        @KafkaListener(topics = "otp-email-topic", groupId = "otp-service" +
+                "-group")
+        public void consumeOtpEvent (final OtpEvent otpEvent){
+            log.info("Received otp event for user: {}", otpEvent.getEmail());
+            emailService.processOtpEvent(otpEvent);
+        }
+    }
+

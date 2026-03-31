@@ -1,15 +1,14 @@
 package com.bxb.sunduk_pay.kafkaEvents;
 
 import com.bxb.sunduk_pay.util.EmailCategory;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.bxb.sunduk_pay.util.OtpPurpose;
+import lombok.*;
 
 /**
  * Event class representing an OTP (One-Time Password) event.
  */
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -29,12 +28,20 @@ public class OtpEvent {
 
     private String otp;
     /**
-     * The email of the user who achieved the milestone.
+     * The email of the user who will receive the OTP.
      */
     private String email;
-
+    /**
+     * The phone number of the user who will receive the OTP.
+     */
+    private String phoneNumber;
     /**
      * The category of the email to be sent.
      */
     private EmailCategory emailCategory;
+
+    /**
+     * The purpose of the OTP.
+     */
+    private OtpPurpose otpPurpose;
 }

@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.kafkaListeners;
 
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 import com.bxb.sunduk_pay.service.SmsService;
 import lombok.RequiredArgsConstructor;
@@ -35,17 +36,14 @@ public class SmsListener {
             concurrency = "3")
     public void consumeTransactionEvent(
             final TransactionEvent transactionEvent) {
-        try{
         smsService.processSmsEvent(transactionEvent);
-    } catch (Exception e) {
-        // Log the exception and continue processing other messages
-        // to prevent the listener from crashing due to a single failure.
-    log.error(
-"Error processing transaction event for transaction ID {}: {}",
-            transactionEvent.getTransactionId(), e.getMessage(), e);
-
     }
 
-}
+    @KafkaListener(topics = "otp-sms-topic",
+            groupId = "otp-group")
+    public void consumeOtpEvent(
+            final OtpEvent otpEvent) {
+        smsService.processOtpEvent(otpEvent);
+    }
 }
 

@@ -1,5 +1,6 @@
 package com.bxb.sunduk_pay.service;
 
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
 
 /**
@@ -23,4 +24,6 @@ public interface SmsService {
      *containing details for the SMS notification.
      */
     void processSmsEvent(TransactionEvent event);
+
+    void processOtpEvent(OtpEvent otpEvent);
 }

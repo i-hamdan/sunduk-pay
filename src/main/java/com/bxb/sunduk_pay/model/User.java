@@ -1,5 +1,7 @@
 package com.bxb.sunduk_pay.model;
+
 import com.bxb.sunduk_pay.util.UserRoles;
+import com.bxb.sunduk_pay.util.UserStatus;
 import jakarta.persistence.Id;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -22,6 +24,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -52,6 +55,7 @@ public class User {
     /**
      * Email address of the user.
      */
+    @Column(unique = true)
     private String email;
     /**
      * Phone number of the user.
@@ -70,26 +74,28 @@ public class User {
      */
     private String dateOfBirth;
     /**
-     * present adress of User.
+     * address of User.
       */
-    private String presentAddress;
+    private String address;
     /**
-     * permanent address of USer.
+     * city of User.
      */
-    private String permanentAddress;
+    private String city;
     /**
-     * country of User.
+     * Country of User.
      */
     private String country;
+    /**
+     * Status of the user account.
+     */
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
 
     /**
      * state of User.
      */
     private String state;
-    /**
-     * city of User.
-     */
-    private String city;
+
     /**
     * One-to-one relationship with MasterWallet.
     */
@@ -126,6 +132,7 @@ public class User {
     /**
      * Hashed phone number for queries.
      */
+    @Column(unique = true)
     private String phoneNumberHash;
 
     /**
@@ -156,6 +163,14 @@ public class User {
      * Preferred landing page for the user.
      */
     private String preferredLandingPage;
+
+    /**
+     * Authentication providers linked to the user (e.g., Google).
+     */
+     @OneToMany(mappedBy = "user",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true)
+     private Set<AuthProvider> authProviders;
 
     /**
      * Threshold amount for auto payments.

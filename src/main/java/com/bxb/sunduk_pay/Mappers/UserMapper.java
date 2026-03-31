@@ -7,6 +7,8 @@ import com.bxb.sunduk_pay.request.UserRequest;
 import com.bxb.sunduk_pay.response.UserResponse;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import java.util.Optional;
+
 /**
  * Mapper interface for converting User entities and external
  * authentication objects
@@ -29,6 +31,8 @@ public interface UserMapper {
      * @return a User entity.
      */
     User toUser(UserResponse response);
+
+    User toUser(UserRequest request);
 
 
 //    UserResponse toUserResponse(User user);
@@ -66,6 +70,8 @@ public interface UserMapper {
      * @return a UserResponse DTO.
      */
     UserResponse toUserResponse(User user);
+
+    User toUserForm(User user, UserRequest request);
 
 }
 

@@ -2,6 +2,7 @@ package com.bxb.sunduk_pay.repository;
 
 import com.bxb.sunduk_pay.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -39,4 +40,10 @@ public interface UserRepository extends JpaRepository<User, String> {
      */
     Optional<User> findByPhoneNumber(String phoneNumber);
 
+    @Query("SELECT u FROM User u WHERE " +
+            "(:email IS NOT NULL AND u.email = :email) OR " +
+            "(:phoneNumberHash IS NOT NULL AND u.phoneNumberHash = " +
+            ":phoneNumberHash)")
+    Optional<User> findByPhoneNumberHashOrEmail(String phoneNumberHash,
+                                                String email);
 }

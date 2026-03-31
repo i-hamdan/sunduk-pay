@@ -5,10 +5,10 @@ import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import com.bxb.sunduk_pay.util.EmailCategory;
 import com.bxb.sunduk_pay.util.EmailMessageUtil;
+import com.bxb.sunduk_pay.util.OtpPurpose;
 import jakarta.mail.internet.MimeMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -85,9 +85,9 @@ class EmailServiceImplTest {
                 .emailCategory(EmailCategory.SECURITY)
                 .build();
 
-        when(emailMessageUtil.buildSubjectForOtp(event))
+        when(emailMessageUtil.buildSubjectForOtp(OtpPurpose.SIGNUP))
                 .thenReturn("OTP Subject");
-        when(emailMessageUtil.buildBodyForOtp(event))
+        when(emailMessageUtil.buildMpinResetOtpBody(event))
                 .thenReturn("<html>OTP BODY</html>");
 
         MimeMessage mimeMessage = mock(MimeMessage.class);

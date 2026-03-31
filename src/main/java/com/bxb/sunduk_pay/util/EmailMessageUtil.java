@@ -4,6 +4,8 @@ import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
 import org.springframework.stereotype.Component;
 
+import static com.bxb.sunduk_pay.util.OtpPurpose.*;
+
 /**
  * Utility component for building email subjects and bodies
  * for different user and goal events.
@@ -85,20 +87,45 @@ public final class EmailMessageUtil {
     /**
      * Build the subject line for an OTP event.
      *
-     * @param event the OTP event
      * @return the subject line
      */
-    public String buildSubjectForOtp(final OtpEvent event) {
-        return "Hi " + event.getFullname() + ", Your Sunduk MPIN Reset OTP";
+    public String buildSubjectForOtp(final OtpPurpose otpPurpose) {
+        return switch (otpPurpose) {
+            case SIGNUP ->
+                    "Verify your email to complete Sunduk signup";
+            case LOGIN ->
+                    "Your Sunduk login verification code";
+            case PASSWORD_RESET ->
+                    "Reset your Sunduk account password";
+            case MPIN_RESET ->
+                    "Your Sunduk MPIN Reset OTP";
+        };
     }
 
     /**
      * Build the body content for an OTP event.
      *
+     * @return the body content
+     */
+    public String buildBodyForOtp(final OtpEvent otpEvent) {
+
+        return switch (otpEvent.getOtpPurpose()) {
+            case SIGNUP -> buildSignupOtpBody(otpEvent.getOtp());
+            case LOGIN -> buildSignupOtpBody(otpEvent.getOtp()); // reuse or customize
+            // later
+            case PASSWORD_RESET -> buildPasswordResetOtpBody(otpEvent.getOtp());
+            case MPIN_RESET -> buildMpinResetOtpBody(otpEvent);
+        };
+    }
+
+
+    /**
+     * Build the body content for an MPIN reset OTP event.
+     *
      * @param event the OTP event
      * @return the body content
      */
-    public String buildBodyForOtp(final OtpEvent event) {
+    public String buildMpinResetOtpBody(final OtpEvent event) {
         String html = """
                  <!DOCTYPE html>
                  <html lang="en">
@@ -221,5 +248,109 @@ public final class EmailMessageUtil {
                 </html>""";
         return String.format(html, event.getFullname(), event.getOtp());
     }
+
+    /**
+     * Build the body content for a signup OTP event.
+     *
+     * @return the body content
+     */
+    private String buildSignupOtpBody(final String otp) {
+
+        return """
+        <html>
+        <body style="font-family:Poppins,Arial,sans-serif;
+                     background-color:#f4f4f4;padding:20px;">
+          <div style="max-width:600px;margin:auto;
+                      background:#ffffff;
+                      padding:24px;border-radius:12px;">
+            <h2 style="color:#C19945;">Welcome to Sunduk</h2>
+
+            <p>
+              Thank you for signing up with <strong>Sunduk</strong>.
+              To complete your registration, please verify your email
+              using the OTP below:
+            </p>
+
+            <div style="font-size:28px;
+                        font-weight:700;
+                        color:#C19945;
+                        letter-spacing:6px;
+                        margin:20px 0;">
+              %s
+            </div>
+
+            <p>
+              This OTP is valid for <strong>60 seconds</strong>
+              and can be used only once.
+            </p>
+
+            <p>
+              If you didn’t request this signup, please ignore this email.
+            </p>
+
+            <p style="margin-top:30px;">
+              Regards,<br>
+              <strong>Sunduk Team</strong>
+            </p>
+          </div>
+        </body>
+        </html>
+        """.formatted(otp);
+    }
+
+    /**
+     * Build the body content for a password reset OTP event.
+     *
+     * @return the body content
+     */
+    private String buildPasswordResetOtpBody(final String otp) {
+
+        return """
+        <html>
+        <body style="font-family:Poppins,Arial,sans-serif;
+                     background-color:#f4f4f4;padding:20px;">
+          <div style="max-width:600px;margin:auto;
+                      background:#ffffff;
+                      padding:24px;border-radius:12px;">
+            <h2 style="color:#C19945;">Reset your Sunduk password</h2>
+
+            <p>Hi <strong>%s</strong>,</p>
+
+            <p>
+              We received a request to reset the password
+              for your Sunduk account.
+            </p>
+
+            <p>
+              Use the verification code below to proceed:
+            </p>
+
+            <div style="font-size:28px;
+                        font-weight:700;
+                        color:#C19945;
+                        letter-spacing:6px;
+                        margin:20px 0;">
+              %s
+            </div>
+
+            <p>
+              This code is valid for <strong>5 minutes</strong>
+              and can be used only once.
+            </p>
+
+            <p>
+              If you didn’t request this, please ignore this email.
+            </p>
+
+            <p style="margin-top:30px;">
+              Regards,<br>
+              <strong>Sunduk Team</strong>
+            </p>
+          </div>
+        </body>
+        </html>
+        """.formatted(otp);
+    }
+
 
 }
