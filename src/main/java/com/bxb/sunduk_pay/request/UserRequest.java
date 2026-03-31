@@ -84,5 +84,9 @@ public class UserRequest {
      * New password for password change operations.
      */
     private String newPassword;
+    /**
+     * Landing page preference for the user.
+     */
+    private String landingPage;
 
 }
