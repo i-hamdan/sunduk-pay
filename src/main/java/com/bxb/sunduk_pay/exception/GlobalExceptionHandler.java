@@ -740,18 +740,6 @@ public class GlobalExceptionHandler {
                 e.getMessage(), request.getRequestURI());
     }
 
-    @ExceptionHandler(AuthBenifitsException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleAuthBenefitsException(
-            final AuthBenifitsException e,
-            final HttpServletRequest request) {
-        return new ErrorResponse(LocalDateTime.now(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
-                e.getMessage(),
-                request.getRequestURI());
-    }
-
     @ExceptionHandler(InvalidCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleInvalidCredentialsException(
