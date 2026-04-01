@@ -49,12 +49,6 @@ public class GlobalPotMapperImpl implements GlobalPotMapper {
     private final UserMapper userMapper;
 
     /**
-     * Base URL for media resources.
-     */
-    @Value("${media.base-url}")
-    private String mediaBaseUrl;
-
-    /**
      * Converts the incoming request into a persistence-ready Entity.
      *
      * @param request the incoming request
