@@ -1,0 +1,87 @@
+package com.bxb.sunduk_pay.factories.adminFactory;
+
+import com.bxb.sunduk_pay.Mappers.GlobalPotMapper;
+import com.bxb.sunduk_pay.exception.GlobalPotNotFoundException;
+import com.bxb.sunduk_pay.exception.GlobalPotNotVerifiedException;
+import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.GlobalWallet;
+import com.bxb.sunduk_pay.repository.GlobalPotRepository;
+import com.bxb.sunduk_pay.repository.GlobalWalletRepository;
+import com.bxb.sunduk_pay.request.SundukPayAdminRequest;
+import com.bxb.sunduk_pay.response.SundukPayAdminResponse;
+import com.bxb.sunduk_pay.util.AdminRequestType;
+import com.bxb.sunduk_pay.util.PotStatus;
+import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+/**
+ * Service class responsible for verifying or creating
+ * a Global Wallet associated with a Global Pot.
+ */
+@RequiredArgsConstructor
+@Service
+public class VerifyGlobalPot implements SundukPayAdminOperation {
+    
+    /** Repository for Global Wallet operations. */
+    private final GlobalWalletRepository globalWalletRepository;
+    /** Validations for Global Pot operations. */
+    private final GlobalPotValidations globalPotValidations;
+    /** Mapper for Global Pot data transformations. */
+    private final GlobalPotMapper globalPotMapper;
+    /** Repository for Global Pot operations. */
+    private final GlobalPotRepository globalPotRepository;
+
+/**
+     * Returns the type of admin request this operation handles.
+     * @return AdminRequestType associated with this operation.
+     */
+    @Override
+    public AdminRequestType getAdminRequestType() {
+        return AdminRequestType.VERIFY_POT;
+    }
+    /**
+     * Performs the verification or creation of a Global Wallet
+     * associated with a Global Pot based on the provided request.
+     * @param request the request containing necessary data for the operation.
+     * @return SundukPayAdminResponse containing the result of the operation.
+     */
+    @Override
+    public SundukPayAdminResponse perform(final SundukPayAdminRequest request) {
+        // 1. Fetch and Validate the Pot existence
+        GlobalPot globalPot = globalPotValidations
+                .getGlobalPot(request.getGlobalPotId());
+
+        GlobalWallet globalWallet = new GlobalWallet();
+
+        // 2. Logic: Ensure a wallet is created or retrieved
+        if (globalPot.getGlobalWallet() == null) {
+            // Transform request to Entity and set defaults
+            globalWallet = globalPotMapper.toEntityWallet(request);
+            
+            // Set Bidirectional Link (Wallet -> Pot)
+            globalWallet.setGlobalPot(globalPot);
+            
+            // Save Wallet first to generate ID
+            globalWallet = globalWalletRepository.save(globalWallet);
+            
+            // Update Pot state (Pot -> Wallet & Status)
+            if (request.getPotStatus().equals(PotStatus.PENDING_VERIFICATION)) {
+                globalPot.setPotStatus(PotStatus.VERIFIED);
+                globalPot.setGlobalWallet(globalWallet);
+                globalPotRepository.save(globalPot);
+            } else {
+                throw new GlobalPotNotVerifiedException("Global Pot not " +
+                        "Verified yet");
+            }
+        }
+
+        // 3. Return the specialized Wallet Response
+        return SundukPayAdminResponse.builder().message(
+                        "Global Wallet verified/created successfully")
+                .status("SUCCESS")
+                .globalPotId(request.getGlobalPotId())
+                .build();
+    }
+
+}

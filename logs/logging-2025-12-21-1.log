@@ -1,0 +1,66 @@
+2025-12-21 21:15:15 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 9680ac2c-b48d-4767-87f6-4b341241a5e4
+2025-12-21 21:18:55 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: ec7f3bbd-fb10-4e32-b36c-50e81cb44411
+2025-12-21 21:21:35 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 3b0ebefb-226d-43dd-8618-f0a8b1d13631
+2025-12-21 21:21:35 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: null
+2025-12-21 21:21:35 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: null
+2025-12-21 21:22:44 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 6fd0aa4b-57f5-46ed-bb47-d04c7086f19f
+2025-12-21 21:35:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 810cba2f-cc5f-4851-b01a-3a9608a7adaf
+2025-12-21 21:35:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 810cba2f-cc5f-4851-b01a-3a9608a7adaf
+2025-12-21 21:35:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 810cba2f-cc5f-4851-b01a-3a9608a7adaf
+2025-12-21 21:37:44 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - User validation successful for UUID: 2660edf1-b983-4ec7-9fac-1ffff43ee4cd
+2025-12-21 21:37:44 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - SubWallet validation successful for ID: c4363067-60d2-46c7-a879-b46694b6a8b6
+2025-12-21 21:37:44 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Investment retrieval successful for SubWallet ID: c4363067-60d2-46c7-a879-b46694b6a8b6
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - User validation successful for UUID: e083ee31-fe78-4b34-bf69-07f9bee2fbf9
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - SubWallet validation successful for ID: 8739d0fd-b01f-4c62-8eac-1a6f77b49782
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Investment retrieval successful for SubWallet ID: 8739d0fd-b01f-4c62-8eac-1a6f77b49782
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Risk level validation successful. Changing from LOW to HIGH
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Portfolio model retrieval successful for risk level: HIGH
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Using snapshot date for NAV alignment: 2025-12-21
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - New model NAV on 2025-12-21 = 100.0
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - User validation successful for UUID: 56327320-f879-44aa-9ca9-e63df29370b0
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - SubWallet validation successful for ID: 696fe49f-e0ee-4d90-9292-323f290c201e
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Investment retrieval successful for SubWallet ID: 696fe49f-e0ee-4d90-9292-323f290c201e
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - User validation successful for UUID: 4c1f99a9-d4a2-4f36-b7a3-7a4ee0af30fd
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - SubWallet validation successful for ID: 656de4d1-5de1-445a-92e6-d12a92730585
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Investment retrieval successful for SubWallet ID: 656de4d1-5de1-445a-92e6-d12a92730585
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Risk level validation successful. Changing from LOW to HIGH
+2025-12-21 21:37:45 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.UpdateRiskLevelService - Portfolio model retrieval successful for risk level: HIGH
+2025-12-21 21:39:20 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 25c604c9-d7ff-4c08-83b8-9cd157be548e
+2025-12-21 21:39:20 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 25c604c9-d7ff-4c08-83b8-9cd157be548e
+2025-12-21 21:39:20 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 25c604c9-d7ff-4c08-83b8-9cd157be548e
+2025-12-21 21:43:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 515aa4b8-7d95-4002-aac2-bac02542f5dc
+2025-12-21 21:43:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 515aa4b8-7d95-4002-aac2-bac02542f5dc
+2025-12-21 21:43:37 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 515aa4b8-7d95-4002-aac2-bac02542f5dc
+2025-12-21 21:52:34 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 00651257-80e0-42d6-8c47-73a445d4d097
+2025-12-21 21:52:34 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 00651257-80e0-42d6-8c47-73a445d4d097
+2025-12-21 21:52:34 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 00651257-80e0-42d6-8c47-73a445d4d097
+2025-12-21 22:02:31 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: ed95b757-aa42-4b61-850f-e54cc9941644
+2025-12-21 22:02:31 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: ed95b757-aa42-4b61-850f-e54cc9941644
+2025-12-21 22:02:31 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: ed95b757-aa42-4b61-850f-e54cc9941644
+2025-12-21 22:04:41 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 03311226-b33c-4819-8656-6c695a5384a1
+2025-12-21 22:04:41 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 03311226-b33c-4819-8656-6c695a5384a1
+2025-12-21 22:04:41 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 03311226-b33c-4819-8656-6c695a5384a1
+2025-12-21 22:21:47 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: a722b2ba-8a00-49df-9d2e-667090099860
+2025-12-21 22:21:47 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: a722b2ba-8a00-49df-9d2e-667090099860
+2025-12-21 22:21:47 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: a722b2ba-8a00-49df-9d2e-667090099860
+2025-12-21 22:29:21 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: a8ab9c4f-c378-4dfc-b21d-3b1d70263186
+2025-12-21 22:29:21 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: a8ab9c4f-c378-4dfc-b21d-3b1d70263186
+2025-12-21 22:29:21 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: a8ab9c4f-c378-4dfc-b21d-3b1d70263186
+2025-12-21 22:30:36 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 4563a8cf-a102-4d99-9f27-6ad9f78a3135
+2025-12-21 22:30:36 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 4563a8cf-a102-4d99-9f27-6ad9f78a3135
+2025-12-21 22:30:36 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 4563a8cf-a102-4d99-9f27-6ad9f78a3135
+2025-12-21 22:31:22 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 5773810a-3f5c-4206-a337-11ab88c97952
+2025-12-21 22:31:22 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 5773810a-3f5c-4206-a337-11ab88c97952
+2025-12-21 22:31:22 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 5773810a-3f5c-4206-a337-11ab88c97952
+2025-12-21 22:34:42 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: 3aa178b7-5f76-432c-9ded-d999c82836ad
+2025-12-21 22:34:42 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: 3aa178b7-5f76-432c-9ded-d999c82836ad
+2025-12-21 22:34:42 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: 3aa178b7-5f76-432c-9ded-d999c82836ad
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching investment details for User UUID: user-123
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching pot investments for User UUID: user-123
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Main Wallet for User UUID: user-123
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Main Wallet fetched successfully
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Sub Wallet with ID: sub-1
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Sub Wallet fetched successfully
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Fetching Investment for Sub Wallet ID: sub-1
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Investment fetched successfully
+2025-12-21 22:38:09 [main] INFO  com.bxb.sunduk_pay.factories.InvestmentFactory.FetchInvestmentDetails - Pot investments fetched successfully for User UUID: user-123

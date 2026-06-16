@@ -1,14 +1,14 @@
-# Base image with Tomcat and JDK 21
-FROM tomcat:10.1-jdk21
+  # Base image with JDK/JRE 21
+  FROM eclipse-temurin:21-jre
 
-# Set working directory
-WORKDIR /usr/local/tomcat/webapps
+  # Set working directory inside the container
+  WORKDIR /app
 
-# Copy the WAR file into Tomcat
-COPY target/*.war ROOT.war
+  # Copy the built JAR into the container
+  COPY target/*.jar app.jar
 
-# Expose default Tomcat port
-EXPOSE 8080
+  # Expose the port your Spring Boot app listens on
+  EXPOSE 8080
 
-# Start Tomcat
-CMD ["catalina.sh", "run"]
+  # Run the application
+  ENTRYPOINT ["java", "-jar", "app.jar"]

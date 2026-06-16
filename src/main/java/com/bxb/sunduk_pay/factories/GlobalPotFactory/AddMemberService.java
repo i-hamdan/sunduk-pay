@@ -1,0 +1,129 @@
+package com.bxb.sunduk_pay.factories.GlobalPotFactory;
+
+import com.bxb.sunduk_pay.model.GlobalPot;
+import com.bxb.sunduk_pay.model.User;
+import com.bxb.sunduk_pay.repository.GlobalPotMembersRepository;
+import com.bxb.sunduk_pay.repository.UserRepository;
+import com.bxb.sunduk_pay.request.GlobalPotRequest;
+import com.bxb.sunduk_pay.response.GlobalPotResponse;
+import com.bxb.sunduk_pay.util.GlobalPotRequestType;
+import com.bxb.sunduk_pay.validations.GlobalPotValidations;
+import com.bxb.sunduk_pay.validations.Validations;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * AddMemberService is responsible for allowing a Global Pot admin
+ * to manually add a user as a member of a Global Pot.
+ *
+ * This service validates the admin privileges, verifies the
+ * existence of the Global Pot and target user, and ensures
+ * the user is added as a member.
+ */
+@Service
+@AllArgsConstructor
+@Log4j2
+public class AddMemberService implements GlobalPotOperation {
+
+    /**
+     * Validation component used to fetch and validate user details.
+     */
+    private final Validations validations;
+
+    /**
+     * Validation component for Global Pot related operations.
+     */
+    private final GlobalPotValidations globalPotValidations;
+
+    /** Repository for managing user data. */
+    private final UserRepository userRepository;
+    /**
+     * Returns the Global Pot request type handled by this service.
+     *
+     * @return ADD_MEMBER request type
+     */
+    @Override
+    public GlobalPotRequestType getGlobalPotRequestType() {
+        return GlobalPotRequestType.ADD_MEMBER;
+    }
+
+    /**
+     * Adds a user as a member of the specified Global Pot.
+     *
+     * @param request contains admin details, target user,
+     *                and Global Pot information
+     * @return response indicating success or failure
+     */
+    @Override
+    public GlobalPotResponse perform(
+            final GlobalPotRequest request) throws IOException {
+        
+        long startTime = System.currentTimeMillis();
+        log.info("Starting AddMemberService : 0 ms");
+
+        log.info(
+ "Adding members to Global Pot | targetUserCount={}",
+                request.getTargetUsersToAdd().size());
+
+        User admin = validations.getUserInfo(request.getAdminUuid());
+        
+        long endTime = System.currentTimeMillis();
+        log.info("After User Validation : {} ms"
+                , endTime - startTime);
+
+
+        log.info("Admin fetched successfully | adminUuid={}",
+                admin.getUuid());
+
+        GlobalPot globalPot =
+                globalPotValidations.getGlobalPot(request.getGlobalPotId());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Global Pot Validation : {} ms"
+                , endTime - startTime);
+
+        log.info("GlobalPot fetched successfully | globalPotId={}",
+                globalPot.getGlobalPotId());
+
+        globalPotValidations.validateSundukPayAndGlobalPotAdmin
+                (admin, globalPot);
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Admin Validation : {} ms",
+                endTime - startTime);
+
+
+
+        List<User> targetUsers = userRepository.findAllById(
+                request.getTargetUsersToAdd());
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Target Users Fetch : {} ms"
+        , endTime - startTime);
+
+        log.info("Target users fetched successfully | count={} ",
+                targetUsers.size());
+
+        targetUsers.forEach(user -> {
+            globalPotValidations.ensureUserIsMember(
+                user, globalPot);
+            log.info(
+   "Adding user as member to Global Pot | userUuid={} globalPotId={}",
+                    user.getUuid(),
+                    globalPot.getGlobalPotId());
+        });
+        
+        endTime = System.currentTimeMillis();
+        log.info("After Adding Members : {} ms"
+        ,endTime - startTime);
+
+        return GlobalPotResponse.builder()
+                .message("User added to Global Pot successfully")
+                .status("SUCCESS")
+                .build();
+    }
+}

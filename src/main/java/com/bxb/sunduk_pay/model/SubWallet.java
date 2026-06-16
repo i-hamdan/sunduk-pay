@@ -1,28 +1,90 @@
 package com.bxb.sunduk_pay.model;
 
-import com.bxb.sunduk_pay.util.SubWalletType;
-import jdk.jfr.Timestamp;
+import com.bxb.sunduk_pay.util.RiskLevel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.Builder;
-import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Data
+/**
+ * Represents a sub-wallet associated with a main wallet.
+ */
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@Entity
+@Table(name = "sub_wallets")
 public class SubWallet {
+  /**
+     * Unique identifier for the sub-wallet.
+     */
     @Id
     private String subWalletId;
+    /**
+     * Name of the sub-wallet.
+     */
     private String subWalletName;
+    /**
+     * Current balance of the sub-wallet.
+     */
     private Double balance;
+    /**
+     * Target balance for the sub-wallet.
+     */
     private Double targetBalance;
+   /**
+     * Target date to achieve the target balance.
+     */
     private LocalDate targetDate;
+  /**
+     * Icon representing the sub-wallet.
+     */
     private String icon;
-    //private Double availableBalance;
-    @Timestamp
+    /**
+     * Creation timestamp for the sub-wallet.
+     */
     private LocalDateTime createdAt;
-    @Timestamp
+   /**
+     * Last update timestamp for the sub-wallet.
+     */
     private LocalDateTime updatedAt;
+    /**
+     * Indicates if the sub-wallet is deleted.
+     */
     private Boolean isDeleted;
+
+    /**
+     * Indicates if the sub-wallet has active investments.
+     */
+    private Boolean isInvested;
+    /**
+     * Main wallet associated with the sub-wallet.
+     */
+    @ManyToOne
+    @JoinColumn(name = "main_wallet_id")
+    private MainWallet mainWallet;
+    /**
+     * Risk level associated with the sub-wallet.
+     */
+     private RiskLevel riskLevel;
+    /**
+     * Indicates if investment cancellation is requested
+     * If the subWallet is never invested then this field is null initially.
+     * If the subWallet is invested then this field is false initially.
+     * When user requests to cancel investment, this field is set to true.
+     */
+    @Column(nullable = true)
+     private Boolean isCancelInvestment = null;
 }

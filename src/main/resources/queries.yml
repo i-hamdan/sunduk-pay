@@ -1,0 +1,8 @@
+queries:
+  modules:
+    currency:
+      findSpecificRate: |
+        SELECT date, {column} AS rate
+        FROM currency_rates
+        WHERE date BETWEEN :start AND :end
+        ORDER BY date ASC

@@ -1,84 +1,356 @@
 package com.bxb.sunduk_pay.util;
 
-import com.bxb.sunduk_pay.kafkaEvents.GoalCompletionEvent;
-import com.bxb.sunduk_pay.kafkaEvents.TransactionEvent;
+import com.bxb.sunduk_pay.kafkaEvents.OtpEvent;
 import com.bxb.sunduk_pay.kafkaEvents.UserKafkaEvent;
-import com.bxb.sunduk_pay.service.EmailService;
 import org.springframework.stereotype.Component;
 
+import static com.bxb.sunduk_pay.util.OtpPurpose.*;
+
+/**
+ * Utility component for building email subjects and bodies
+ * for different user and goal events.
+ */
 @Component
-public class EmailMessageUtil {
+public final class EmailMessageUtil {
+    /**
+     * Milestone constants.
+     */
+    private static final int MILESTONE_50 = 50;
+    /**
+     * Milestone constants.
+     */
+    private static final int MILESTONE_75 = 75;
+    /**
+     * Milestone constants.
+     */
+    private static final int MILESTONE_100 = 100;
 
-
-    public String buildSubject(UserKafkaEvent event) {
+    /**
+     * Build the subject line for a user event.
+     *
+     * @param event the user Kafka event
+     * @return the subject line
+     */
+    public String buildSubject(final UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
-            return "Login Alert - Welcome back to Sunduk, " + event.getFullName() + "!";
+            return "Login Alert - Welcome back to Sunduk, "
+                    + event.getFullName() + "!";
         } else {
-            return "Welcome to Sunduk family " + event.getFullName() + "!";
+            return "Welcome to Sunduk family "
+                    + event.getFullName() + "!";
         }
     }
 
-    public String buildBody(UserKafkaEvent event) {
+    /**
+     * Build the body content for a user event.
+     *
+     * @param event the user Kafka event
+     * @return the body content
+     */
+    public String buildBody(final UserKafkaEvent event) {
         if ("LOGIN".equalsIgnoreCase(event.getEventType())) {
-            return "Assalamualaikum " + event.getFullName() + ",\n\n" +
-                    "We're happy to see you back on Sunduk!\n" +
-                    "You have successfully logged in to your account.\n\n" +
-                    "If this wasn't you, please secure your account immediately.\n\n" +
-                    "JazakAllah Khair,\nTeam Sunduk";
+            return "Hi " + event.getFullName() + ",\n\n"
+                    + "We're happy to see you back on Sunduk!\n"
+                    + "You have successfully logged in to your account.\n\n"
+                    + "If this wasn't you, please "
+                    + "secure your account immediately.\n\n"
+                    + "Team Sunduk";
         } else {
-            return "Assalamualaikum " + event.getFullName() + ",\n\n" +
-                    "Welcome to SundukPay! \n\n" +
-                    "Your account has been successfully created, and you’re now part of a secure and seamless way to manage your money.\n\n" +
-                    "Here’s what you can do with SundukPay:\n" +
-                    "• Add and manage funds with ease\n" +
-                    "• Create **Saving Pots** to set goals and track your progress\n" +
-                    "• Deposit or withdraw money from your pots anytime\n" +
-                    "• Transfer funds flexibly: pot ↔ wallet, and even pot ↔ pot\n" +
-                    "• Make safe payments and monitor all wallet activity in real-time\n\n" +
-                    "Start exploring today and take control of your finances like never before!\n\n" +
-                    "If you ever need assistance, our support team is always ready to help.\n\n" +
-                    "Thank you for choosing SundukPay – we’re excited to see you achieve your financial goals with us!\n\n" +
-                    "Warm regards,\n" +
-                    "SundukPay Team";
-
+            return "Hi " + event.getFullName() + ",\n\n"
+                    + "Welcome to SundukPay! \n\n"
+                    + "Your account has been successfully created, "
+                    + "and you’re now part of a secure and seamless way "
+                    + "to manage your money.\n\n"
+                    + "Here’s what you can do with SundukPay:\n"
+                    + "• Add and manage funds with ease\n"
+                    + "• Create Saving Pots to "
+                    + "set goals and track your progress\n"
+                    + "• Deposit or withdraw money from your pots anytime\n"
+                    + "• Transfer funds flexibly : "
+                    + "pot ↔ wallet, and even pot ↔ pot\n"
+                    + "• Make safe payments and monitor all wallet activity in "
+                    + "real-time\n\n"
+                    + "Start exploring today and "
+                    + "take control of your finances like "
+                    + "never before!\n\n"
+                    + "If you ever need assistance "
+                    + "our support team is always ready "
+                    + "to help.\n\n"
+                    + "Thank you for choosing SundukPay,\n "
+                    + "We’re excited to see you "
+                    + "achieve your financial goals with us!\n\n"
+                    + "Warm regards,\n"
+                    + "SundukPay Team";
         }
     }
 
-    public String buildGoalSubject(GoalCompletionEvent event) {
-        return switch (event.getMilestone()) {
-            case 50 -> "🎯 You’re halfway to your savings goal, " + event.getWalletName() + "!";
-            case 75 -> "💪 75% milestone reached in your savings goal!";
-            case 100 -> "🎉 Congratulations! You’ve achieved your savings goal!";
-            default -> "Update on your savings goal";
+    /**
+     * Build the subject line for an OTP event.
+     *
+     * @return the subject line
+     */
+    public String buildSubjectForOtp(final OtpPurpose otpPurpose) {
+        return switch (otpPurpose) {
+            case SIGNUP ->
+                    "Verify your email to complete Sunduk signup";
+            case LOGIN ->
+                    "Your Sunduk login verification code";
+            case PASSWORD_RESET ->
+                    "Reset your Sunduk account password";
+            case MPIN_RESET ->
+                    "Your Sunduk MPIN Reset OTP";
         };
     }
-    public String buildGoalBody(GoalCompletionEvent event) {
-        return switch (event.getMilestone()) {
-            case 50 -> "Hello,\n\n" +
-                    "Great progress! You’ve reached **50% of your savings goal** in *" + event.getWalletName() + "*.\n\n" +
-                    "You’re halfway there — stay consistent, and you’ll achieve your goal in no time.\n\n" +
-                    "Keep it up!\n\n" +
-                    "Best wishes,\nTeam Sunduk";
 
-            case 75 -> "Hello,\n\n" +
-                    "Amazing work! You’ve now reached **75% of your goal** in *" + event.getWalletName() + "*.\n\n" +
-                    "You’re so close — just a little more effort and you’ll get there.\n\n" +
-                    "Stay motivated!\n\n" +
-                    "Cheers,\nTeam Sunduk";
+    /**
+     * Build the body content for an OTP event.
+     *
+     * @return the body content
+     */
+    public String buildBodyForOtp(final OtpEvent otpEvent) {
 
-            case 100 -> "Hello,\n\n" +
-                    "🎉 Congratulations! You’ve successfully achieved **100% of your savings goal** in *" + event.getWalletName() + "*.\n\n" +
-                    "This is a fantastic accomplishment, and we’re proud to see your dedication paying off.\n\n" +
-                    "Here’s to even bigger goals ahead!\n\n" +
-                    "With warm regards,\nTeam Sunduk";
-
-            default -> "Hello,\n\n" +
-                    "Here’s an update on your savings journey in *" + event.getWalletName() + "*.\n\n" +
-                    "Every step counts — keep moving forward and you’ll reach your goal.\n\n" +
-                    "Best wishes,\nTeam Sunduk";
+        return switch (otpEvent.getOtpPurpose()) {
+            case SIGNUP -> buildSignupOtpBody(otpEvent.getOtp());
+            case LOGIN -> buildSignupOtpBody(otpEvent.getOtp()); // reuse or customize
+            // later
+            case PASSWORD_RESET -> buildPasswordResetOtpBody(otpEvent.getOtp());
+            case MPIN_RESET -> buildMpinResetOtpBody(otpEvent);
         };
+    }
+
+
+    /**
+     * Build the body content for an MPIN reset OTP event.
+     *
+     * @param event the OTP event
+     * @return the body content
+     */
+    public String buildMpinResetOtpBody(final OtpEvent event) {
+        String html = """
+                 <!DOCTYPE html>
+                 <html lang="en">
+                 <head>
+                 <meta charset="UTF-8" />
+                 <meta name="viewport"
+                  content="width=device-width, initial-scale=1.0" />
+                 <title>4 Digit PIN To Reset Sunduk MPIN</title>
+<link href=
+"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+                 rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;
+700&display=swap"\s
+                 rel="stylesheet" />
+                 <style>
+                 * {font-family: "Poppins", sans-serif !important;}
+                 body { background-color: #f4f4f4; margin: 0; padding: 0; }
+                 .card-custom { border-radius: 16px;
+                 box-shadow: 0 2px 6px rgba(0,0,0,0.05);}
+                 .logo-text { color: #C19945; font-weight: 700;
+                  font-size: 20px;}
+                 .title-bar {border-top: 1px solid #f0f0f0;
+                  border-bottom: 1px solid #f0f0f0; color: #666666;
+                 padding: 12px 0; font-weight: 500; text-align: center;
+                 font-size: 22px; white-space: nowrap;
+                 letter-spacing: 0.5px; }
+                 .pin-box { font-size: 22px;
+                 color: #C19945; font-weight: bold; letter-spacing: 4px;
+                 display: inline-block; padding: 8px 0;}
+                 .bracket {color: #585757f7 !important; font-weight: 500;}
+                 .security-list {list-style-type: none;
+                  padding-left: 0; margin: 0;}
+                 .security-list li {margin-bottom: 6px;
+                  line-height: 1.8; padding-left: 8px;}
+                 .security-list span {color: #C19945;
+                 font-weight: 600; margin-right: 6px;}
+                 .footer {font-size: 20px; color: #999999;
+                 margin-top: 20px; text-align: left;}
+                 .greeting {font-size: 20px;margin-bottom: 0.5rem;}
+                 .hi-text {color: #000000f7
+                 ;font-weight: 400;font-size: 25px; margin-right: 5px;}
+                 .name-text { color: #C19945;font-weight: 500;font-size: 20px;}
+                 </style>
+                 </head>
+                 <body>
+                 <div class="container my-5">
+                 <div class="card card-custom mx-auto"
+                  style="max-width: 600px;">
+                 <div class="card-body ">
+                 <!-- Logo Section -->
+                 <div
+                  class="d-flex align-items-center "
+                   style="display:flex !important;
+                 justify-items:center !important;gap:14px; ">
+                 <img src="cid:logoImage" alt="Sunduk Pay Logo"
+                 width="90" height="90" class="me-2" />
+                 <span class="logo-text"
+                 style="padding-top:30px !important">Sunduk Pay</span>
+                 </div>
+                 <!-- Title Bar -->
+                 <div class="title-bar mb-4">4 Digit PIN To Reset Sunduk MPIN
+                 </div>
+                <!-- Content -->
+                <p class="greeting mb-2">
+                <span class="hi-text">Hi</span>
+                <span class="name-text">%s</span>
+                </p>
+                <p class="text-muted">
+                We received a request to
+                <strong class="text-dark">reset
+                </strong> your PIN for your Sunduk Account.
+                </p>
+                <p class="text-muted mt-2">
+                To proceed, please use the
+                <strong class="text-dark">4-digit verification MPIN
+                </strong> below to reset your MPIN securely in the Sunduk app.
+                </p>
+                <h4 class="fw-semibold mt-4 mb-1 text-dark">
+                Your Verification PIN</h4>
+                <div class="pin-box">
+                <span class="pin"><span class="bracket">[</span>%s </span>
+                <span class="bracket">]</span>
+                </div>
+                <p class="text-muted mt-3">
+                This PIN is valid for
+                <strong class="text-dark">Today</strong>
+                 and can only be used once.<br>
+                Enter this code on the
+                <strong class="text-dark">“Verify OTP”</strong>
+                screen in your Sunduk app to set your new MPIN.
+                </p>
+                <p class="fw-semibold text-dark mt-3">
+                If you did not request this reset,
+                please ignore this message. Your account will remain secure.
+                </p>
+                <!-- Security Tips -->
+                <ul class="security-list text-muted">
+                <li><span>#</span>Never share this PIN or your MPIN with anyone,
+                including Sunduk representatives.</li>
+                <li><span>#</span>Sunduk will never ask for your PIN via call,
+                SMS, or email.</li>
+                <li>
+                <span>#</span>
+                Always use the official Sunduk app or website.
+                </li>
+                </ul>
+                <!-- Help -->
+                <h4 class="mt-4 text-dark fw-semibold">Need Help?</h4>
+                <p class="text-muted mb-0">
+                Contact our support team at
+                <a href="mailto:support@sunduk.com" class="text-decoration-none"
+                style="color:#C19945;">support@sunduk.com</a>
+                </p>
+                <!-- Footer -->
+                <p class="footer">© 2025 Sunduk Technologies Pvt. Ltd.</p>
+                </div>
+                </div>
+                </div>
+                </body>
+                </html>""";
+        return String.format(html, event.getFullname(), event.getOtp());
+    }
+
+    /**
+     * Build the body content for a signup OTP event.
+     *
+     * @return the body content
+     */
+    private String buildSignupOtpBody(final String otp) {
+
+        return """
+        <html>
+        <body style="font-family:Poppins,Arial,sans-serif;
+                     background-color:#f4f4f4;padding:20px;">
+          <div style="max-width:600px;margin:auto;
+                      background:#ffffff;
+                      padding:24px;border-radius:12px;">
+            <h2 style="color:#C19945;">Welcome to Sunduk</h2>
+
+            <p>
+              Thank you for signing up with <strong>Sunduk</strong>.
+              To complete your registration, please verify your email
+              using the OTP below:
+            </p>
+
+            <div style="font-size:28px;
+                        font-weight:700;
+                        color:#C19945;
+                        letter-spacing:6px;
+                        margin:20px 0;">
+              %s
+            </div>
+
+            <p>
+              This OTP is valid for <strong>60 seconds</strong>
+              and can be used only once.
+            </p>
+
+            <p>
+              If you didn’t request this signup, please ignore this email.
+            </p>
+
+            <p style="margin-top:30px;">
+              Regards,<br>
+              <strong>Sunduk Team</strong>
+            </p>
+          </div>
+        </body>
+        </html>
+        """.formatted(otp);
+    }
+
+    /**
+     * Build the body content for a password reset OTP event.
+     *
+     * @return the body content
+     */
+    private String buildPasswordResetOtpBody(final String otp) {
+
+        return """
+        <html>
+        <body style="font-family:Poppins,Arial,sans-serif;
+                     background-color:#f4f4f4;padding:20px;">
+          <div style="max-width:600px;margin:auto;
+                      background:#ffffff;
+                      padding:24px;border-radius:12px;">
+            <h2 style="color:#C19945;">Reset your Sunduk password</h2>
+
+            <p>Hi <strong>%s</strong>,</p>
+
+            <p>
+              We received a request to reset the password
+              for your Sunduk account.
+            </p>
+
+            <p>
+              Use the verification code below to proceed:
+            </p>
+
+            <div style="font-size:28px;
+                        font-weight:700;
+                        color:#C19945;
+                        letter-spacing:6px;
+                        margin:20px 0;">
+              %s
+            </div>
+
+            <p>
+              This code is valid for <strong>5 minutes</strong>
+              and can be used only once.
+            </p>
+
+            <p>
+              If you didn’t request this, please ignore this email.
+            </p>
+
+            <p style="margin-top:30px;">
+              Regards,<br>
+              <strong>Sunduk Team</strong>
+            </p>
+          </div>
+        </body>
+        </html>
+        """.formatted(otp);
     }
 
 
 }
-

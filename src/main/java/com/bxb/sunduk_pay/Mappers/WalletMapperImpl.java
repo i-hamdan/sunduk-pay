@@ -7,61 +7,79 @@ import com.bxb.sunduk_pay.response.MainWalletResponse;
 import com.bxb.sunduk_pay.response.SubWalletResponse;
 import org.springframework.stereotype.Component;
 
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Implementation of WalletMapper to convert MainWallet and SubWallet entities
+ * into corresponding response DTOs.
+ */
 @Component
-public class WalletMapperImpl implements WalletMapper{
+public class WalletMapperImpl implements WalletMapper {
 
-   public MainWalletResponse toWalletResponse(MainWallet wallet,List<SubWallet> subWallets){
-       MainWalletResponse mainWalletResponse = new MainWalletResponse();
-       mainWalletResponse.setMainWalletId(wallet.getMainWalletId());
-       mainWalletResponse.setBalance(wallet.getBalance());
-       mainWalletResponse.setUuid(wallet.getUser().getUuid());
-       mainWalletResponse.setSubWallets(toSubWalletResponseList(subWallets));
-       return mainWalletResponse;
-   }
+    /** Decimal formatter for formatting balance values. */
+    private static final DecimalFormat DECIMAL_FORMAT =
+            new DecimalFormat("#,##0.00");
 
-   private List<SubWalletResponse> toSubWalletResponseList(List<SubWallet> subWallet){
+    /**
+     * Converts a MainWallet entity and its associated SubWallets into
+     * a MainWalletResponse DTO.
+     * @param wallet     the main wallet entity
+     * @param subWallets the list of sub-wallets
+     * @return a MainWalletResponse containing main wallet and sub-wallets.
+     */
+    @Override
+    public MainWalletResponse toWalletResponse(
+            final MainWallet wallet,
+            final List<SubWalletResponse> subWallets) {
+        MainWalletResponse response = new MainWalletResponse();
+        response.setMainWalletId(wallet.getMainWalletId());
+        response.setBalance(wallet.getBalance());
+        response.setUuid(wallet.getUser().getUuid());
+        response.setSubWallets(subWallets);
+        return response;
+    }
+
+    /**
+     * Converts a list of SubWallet entities into
+     * a list of SubWalletResponse DTOs.
+     * @param subWallet the list of SubWallet entities
+     * @return list of SubWalletResponse DTOs
+     */
+    public List<SubWalletResponse> toSubWalletResponseList(
+            final List<SubWallet> subWallet) {
        List<SubWalletResponse> list = new ArrayList<>();
-       for (SubWallet subWallet1 : subWallet){
+       for (SubWallet subWallet1 : subWallet) {
            list.add(toSubWalletResponse(subWallet1));
        }
        return list;
    }
-
-   private SubWalletResponse toSubWalletResponse(SubWallet subWallet){
-       SubWalletResponse subWalletResponse=new SubWalletResponse();
-       subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
-       subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
-       subWalletResponse.setBalance(subWallet.getBalance());
-       subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
-       subWalletResponse.setIcon(subWallet.getIcon());
-       return subWalletResponse;
-   }
-
-//
-//    public List<TransactionResponse> toTransactionsResponse(List<Transaction> transactions){
-//       List<TransactionResponse> responses = new ArrayList<>(transactions.size());
-//       for(Transaction transaction : transactions){
-//           responses.add(toTransactionResponse(transaction));
-//       }
-//   return responses;
-//   }
-//
-//
-//
-//    private TransactionResponse toTransactionResponse(Transaction transaction){
-//       TransactionResponse transactionResponse = new TransactionResponse();
-//       transactionResponse.setUuid(transaction.getUser().getUuid());
-//       transactionResponse.setTransactionType(transaction.getTransactionType());
-//       transactionResponse.setAmount(transaction.getAmount());
-//       transactionResponse.setDescription(transaction.getDescription());
-//       transactionResponse.setDateTime(transaction.getDateTime());
-//       transactionResponse.setMainWalletId(transaction.getMasterWalletId().getMainWalletId());
-//       transactionResponse.setFullName(transaction.getMasterWalletId().getUser().getFullName());
-//       return transactionResponse;
-//    }
+    /**
+     * Converts a SubWallet entity into a SubWalletResponse DTO.
+     *
+     * @param subWallet the SubWallet entity
+     * @return a SubWalletResponse containing the mapped fields
+     */
+    @Override
+    public SubWalletResponse toSubWalletResponse(final SubWallet subWallet) {
+        DateTimeFormatter formatter = DateTimeFormatter
+                .ofPattern("dd MMM yyyy");
+        SubWalletResponse subWalletResponse = new SubWalletResponse();
+        subWalletResponse.setSubWalletId(subWallet.getSubWalletId());
+        subWalletResponse.setSubWalletName(subWallet.getSubWalletName());
+        subWalletResponse.setBalance(subWallet.getBalance());
+        subWalletResponse.setTargetBalance(subWallet.getTargetBalance());
+        subWalletResponse.setTargetDate(subWallet.getTargetDate()
+                .format(formatter));
+        subWalletResponse.setIcon(subWallet.getIcon());
+        subWalletResponse.setCreatedAt(subWallet.getCreatedAt()
+                .format(formatter));
+        subWalletResponse.setIsInvested(subWallet.getIsInvested());
+        subWalletResponse.setIsCancelInvestment(
+                subWallet.getIsCancelInvestment());
+        return subWalletResponse;
+    }
 
 }

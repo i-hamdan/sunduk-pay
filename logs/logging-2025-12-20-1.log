@@ -1,0 +1,1152 @@
+2025-12-20 21:19:04 [main] INFO  com.bxb.sunduk_pay.SundukPayApplication - Starting SundukPayApplication using Java 22.0.2 with PID 2136 (C:\Users\hp\OneDrive\Documents\GitHub\sunduk-pay\target\classes started by hp in C:\Users\hp\OneDrive\Documents\GitHub\sunduk-pay)
+2025-12-20 21:19:04 [main] DEBUG com.bxb.sunduk_pay.SundukPayApplication - Running with Spring Boot v3.1.9, Spring v6.0.17
+2025-12-20 21:19:04 [main] INFO  com.bxb.sunduk_pay.SundukPayApplication - No active profile set, falling back to 1 default profile: "default"
+2025-12-20 21:19:10 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-20 21:19:10 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-20 21:19:11 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 991 ms. Found 12 JPA repository interfaces.
+2025-12-20 21:19:11 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-20 21:19:11 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-20 21:19:11 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 50 ms. Found 5 JPA repository interfaces.
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.postgress.repository.AssetPriceRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.postgress.repository.AssetRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.postgress.repository.PortfolioAllocationRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.postgress.repository.PortfolioModelRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.postgress.repository.UnitsRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.ChatMessageRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.ContactRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.CurrencyRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.InvestmentDailyHistoryRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.InvestmentRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.MainWalletRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.MasterWalletRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.MpinRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.ReminderRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.SubWalletRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.TransactionRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationExtensionSupport - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.bxb.sunduk_pay.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-12-20 21:19:14 [main] INFO  org.springframework.data.repository.config.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 222 ms. Found 0 Redis repository interfaces.
+2025-12-20 21:19:16 [main] INFO  org.springframework.cloud.context.scope.GenericScope - BeanFactory id=d0879e86-94f8-3c4f-84cf-92a0d2e85cdd
+2025-12-20 21:19:19 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2025-12-20 21:19:19 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2025-12-20 21:19:19 [main] INFO  org.apache.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-20 21:19:19 [main] INFO  org.apache.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.19]
+2025-12-20 21:19:20 [main] INFO  org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[/api/sunduk-service] - Initializing Spring embedded WebApplicationContext
+2025-12-20 21:19:20 [main] INFO  org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 15152 ms
+2025-12-20 21:19:20 [main] INFO  com.bxb.sunduk_pay.config.AuthenticationFilter - AuthenticationFilter initialised
+2025-12-20 21:19:21 [main] INFO  com.bxb.sunduk_pay.config.RedisConfig - Creating RedisConnectionFactory with host=localhost and port=6379
+2025-12-20 21:19:22 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: mysql]
+2025-12-20 21:19:23 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.2.22.Final
+2025-12-20 21:19:23 [main] INFO  org.hibernate.cfg.Environment - HHH000406: Using bytecode reflection optimizer
+2025-12-20 21:19:25 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-20 21:19:25 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-20 21:19:27 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@16c3e494
+2025-12-20 21:19:27 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-20 21:19:27 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-20 21:19:32 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-20 21:19:33 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'mysql'
+2025-12-20 21:19:33 [main] INFO  org.hibernate.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: postgres]
+2025-12-20 21:19:35 [main] INFO  org.springframework.orm.jpa.persistenceunit.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-20 21:19:35 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-12-20 21:19:36 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@47e0e23f
+2025-12-20 21:19:36 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-12-20 21:19:36 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-20 21:19:37 [main] INFO  org.hibernate.engine.transaction.jta.platform.internal.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-20 21:19:38 [main] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'postgres'
+2025-12-20 21:19:44 [main] INFO  org.springframework.data.jpa.repository.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-12-20 21:19:50 [main] INFO  com.bxb.sunduk_pay.serviceImpl.StripeServiceImpl - Stripe API key initialized.
+2025-12-20 21:19:52 [main] INFO  com.bxb.sunduk_pay.kafkaListeners.EmailListener - Email KafkaListener bean initialized successfully
+2025-12-20 21:19:52 [main] INFO  com.bxb.sunduk_pay.serviceImpl.SmsServiceImpl - Twilio initialized successfully.
+2025-12-20 21:19:53 [main] WARN  org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-20 21:19:55 [main] INFO  org.springframework.security.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@289c1cd1, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@3d87b409, org.springframework.security.web.context.SecurityContextHolderFilter@4e01e070, org.springframework.security.web.header.HeaderWriterFilter@51af8389, org.springframework.web.filter.CorsFilter@573edb3b, org.springframework.security.web.authentication.logout.LogoutFilter@1dd134f, org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter@688a2f78, org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter@12e8828a, com.bxb.sunduk_pay.config.AuthenticationFilter@624d778e, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@496c3e49, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@70f5e10b, org.springframework.security.web.session.ConcurrentSessionFilter@74414a78, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@478dc67c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@77606cb8, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@38470150, org.springframework.security.web.session.SessionManagementFilter@588d8dff, org.springframework.security.web.access.ExceptionTranslationFilter@7b484a26, org.springframework.security.web.access.intercept.AuthorizationFilter@73960820]
+2025-12-20 21:19:59 [main] INFO  org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2025-12-20 21:19:59 [main] INFO  org.springframework.boot.web.embedded.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path '/api/sunduk-service'
+2025-12-20 21:20:00 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-otp-service-group-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = otp-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:00 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:00 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:00 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:00 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245800959
+2025-12-20 21:20:00 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Subscribed to topic(s): otp-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-sms-service-group-2
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = sms-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801066
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Subscribed to topic(s): transaction-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-sms-service-group-3
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = sms-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801129
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Subscribed to topic(s): transaction-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-sms-service-group-4
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = sms-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801194
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Subscribed to topic(s): transaction-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-chat-service-group-5
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = chat-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801249
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Subscribed to topic(s): chat-messages
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-email-service-group-6
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = email-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801339
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Subscribed to topic(s): user-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-email-service-group-7
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = email-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801384
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Subscribed to topic(s): user-topic
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.ConsumerConfig - ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-email-service-group-8
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = email-service-group
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 60000
+	retry.backoff.ms = 5000
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2025-12-20 21:20:01 [main] WARN  org.apache.kafka.clients.consumer.ConsumerConfig - These configurations '[spring.deserializer.value.delegate.class, spring.deserializer.key.delegate.class]' were supplied but are not used yet.
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka version: 3.4.1
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka commitId: 8a516edc2755df89
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.common.utils.AppInfoParser - Kafka startTimeMs: 1766245801531
+2025-12-20 21:20:01 [main] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Subscribed to topic(s): user-topic
+2025-12-20 21:20:01 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Starting...
+2025-12-20 21:20:01 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5aaac473]]
+2025-12-20 21:20:01 [main] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Started.
+2025-12-20 21:20:03 [main] ERROR com.bxb.sunduk_pay.config.RedisConfig -  Redis connection failed during initialization: Unable to connect to Redis
+org.springframework.data.redis.RedisConnectionFailureException: Unable to connect to Redis
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$ExceptionTranslatingConnectionProvider.translateException(LettuceConnectionFactory.java:1604) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$ExceptionTranslatingConnectionProvider.getConnection(LettuceConnectionFactory.java:1535) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$SharedConnection.getNativeConnection(LettuceConnectionFactory.java:1360) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$SharedConnection.getConnection(LettuceConnectionFactory.java:1343) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.getSharedConnection(LettuceConnectionFactory.java:1061) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.getConnection(LettuceConnectionFactory.java:400) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at com.bxb.sunduk_pay.config.RedisConfig.verifyRedisConnection(RedisConfig.java:58) [classes/:?]
+	at jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[?:?]
+	at java.lang.reflect.Method.invoke(Method.java:580) ~[?:?]
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.doInvoke(ApplicationListenerMethodAdapter.java:348) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.processEvent(ApplicationListenerMethodAdapter.java:233) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.event.ApplicationListenerMethodAdapter.onApplicationEvent(ApplicationListenerMethodAdapter.java:165) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.doInvokeListener(SimpleApplicationEventMulticaster.java:174) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.invokeListener(SimpleApplicationEventMulticaster.java:167) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(SimpleApplicationEventMulticaster.java:145) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:445) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.support.AbstractApplicationContext.publishEvent(AbstractApplicationContext.java:378) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.support.AbstractApplicationContext.finishRefresh(AbstractApplicationContext.java:968) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:618) [spring-context-6.0.17.jar:6.0.17]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) [spring-boot-3.1.9.jar:3.1.9]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:738) [spring-boot-3.1.9.jar:3.1.9]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:440) [spring-boot-3.1.9.jar:3.1.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:324) [spring-boot-3.1.9.jar:3.1.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1317) [spring-boot-3.1.9.jar:3.1.9]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) [spring-boot-3.1.9.jar:3.1.9]
+	at com.bxb.sunduk_pay.SundukPayApplication.main(SundukPayApplication.java:27) [classes/:?]
+Caused by: io.lettuce.core.RedisConnectionException: Unable to connect to localhost/<unresolved>:6379
+	at io.lettuce.core.RedisConnectionException.create(RedisConnectionException.java:78) ~[lettuce-core-6.2.7.RELEASE.jar:6.2.7.RELEASE]
+	at io.lettuce.core.RedisConnectionException.create(RedisConnectionException.java:56) ~[lettuce-core-6.2.7.RELEASE.jar:6.2.7.RELEASE]
+	at io.lettuce.core.AbstractRedisClient.getConnection(AbstractRedisClient.java:350) ~[lettuce-core-6.2.7.RELEASE.jar:6.2.7.RELEASE]
+	at io.lettuce.core.RedisClient.connect(RedisClient.java:216) ~[lettuce-core-6.2.7.RELEASE.jar:6.2.7.RELEASE]
+	at org.springframework.data.redis.connection.lettuce.StandaloneConnectionProvider.lambda$getConnection$1(StandaloneConnectionProvider.java:112) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at java.util.Optional.orElseGet(Optional.java:364) ~[?:?]
+	at org.springframework.data.redis.connection.lettuce.StandaloneConnectionProvider.getConnection(StandaloneConnectionProvider.java:112) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory$ExceptionTranslatingConnectionProvider.getConnection(LettuceConnectionFactory.java:1533) ~[spring-data-redis-3.1.9.jar:3.1.9]
+	... 24 more
+Caused by: io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: getsockopt: localhost/127.0.0.1:6379
+Caused by: java.net.ConnectException: Connection refused: getsockopt
+	at sun.nio.ch.Net.pollConnect(Native Method) ~[?:?]
+	at sun.nio.ch.Net.pollConnectNow(Net.java:682) ~[?:?]
+	at sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:1060) ~[?:?]
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:337) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:335) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:776) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.107.Final.jar:4.1.107.Final]
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.107.Final.jar:4.1.107.Final]
+	at java.lang.Thread.run(Thread.java:1570) ~[?:?]
+2025-12-20 21:20:03 [main] INFO  com.bxb.sunduk_pay.SundukPayApplication - Started SundukPayApplication in 60.63 seconds (process running for 70.346)
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Error while fetching metadata with correlation id 2 : {user-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Error while fetching metadata with correlation id 2 : {transaction-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Error while fetching metadata with correlation id 2 : {user-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Error while fetching metadata with correlation id 2 : {transaction-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:07 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Error while fetching metadata with correlation id 2 : {chat-messages=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Error while fetching metadata with correlation id 2 : {user-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Error while fetching metadata with correlation id 2 : {transaction-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Error while fetching metadata with correlation id 2 : {otp-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:09 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Cluster ID: B-MbgUxGQeW3fdXfnQLDBA
+2025-12-20 21:20:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Error while fetching metadata with correlation id 5 : {user-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:12 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Error while fetching metadata with correlation id 5 : {user-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Error while fetching metadata with correlation id 5 : {transaction-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:12 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Error while fetching metadata with correlation id 5 : {transaction-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:14 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Error while fetching metadata with correlation id 5 : {chat-messages=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:14 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Error while fetching metadata with correlation id 5 : {user-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:14 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Error while fetching metadata with correlation id 5 : {transaction-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:14 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Error while fetching metadata with correlation id 5 : {otp-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:17 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Error while fetching metadata with correlation id 8 : {user-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:17 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Error while fetching metadata with correlation id 8 : {user-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:17 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Error while fetching metadata with correlation id 8 : {transaction-topic=UNKNOWN_TOPIC_OR_PARTITION}
+2025-12-20 21:20:17 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Error while fetching metadata with correlation id 8 : {transaction-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:19 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Error while fetching metadata with correlation id 8 : {chat-messages=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:19 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Error while fetching metadata with correlation id 8 : {user-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:19 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Error while fetching metadata with correlation id 8 : {otp-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:19 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] WARN  org.apache.kafka.clients.NetworkClient - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Error while fetching metadata with correlation id 8 : {transaction-topic=LEADER_NOT_AVAILABLE}
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:21 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Discovered group coordinator 192.168.1.9:9092 (id: 2147483647 rack: null)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Request joining group due to: need to re-join with the given member-id: consumer-email-service-group-7-b8df19bb-df9d-4df6-a34a-a130ceb19d8e
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Request joining group due to: need to re-join with the given member-id: consumer-email-service-group-6-b51b7dc1-62a2-4cd0-b253-9ca07485b884
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Request joining group due to: need to re-join with the given member-id: consumer-chat-service-group-5-c3b4c2d0-567e-4b68-9a4b-7609c9328330
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Request joining group due to: need to re-join with the given member-id: consumer-sms-service-group-4-a5941ba3-b96d-441c-a113-32ee39e1e065
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Request joining group due to: need to re-join with the given member-id: consumer-sms-service-group-3-6949e0bb-e143-4083-9086-961207bb00ec
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Request joining group due to: need to re-join with the given member-id: consumer-sms-service-group-2-187f9e70-9342-4ccb-8aac-d55bd3741c7a
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Request joining group due to: need to re-join with the given member-id: consumer-email-service-group-8-1488ae0b-31c9-463a-8894-34304e520dad
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Request joining group due to: need to re-join with the given member-id: consumer-otp-service-group-1-ede2cf08-aafb-4c78-9528-5d0bc1337ffe
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Request joining group due to: rebalance failed due to 'The group member needs to have a valid member id before actually entering a consumer group.' (MemberIdRequiredException)
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] (Re-)joining group
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-chat-service-group-5-c3b4c2d0-567e-4b68-9a4b-7609c9328330', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-otp-service-group-1-ede2cf08-aafb-4c78-9528-5d0bc1337ffe', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-sms-service-group-3-6949e0bb-e143-4083-9086-961207bb00ec', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-sms-service-group-4-a5941ba3-b96d-441c-a113-32ee39e1e065', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-sms-service-group-2-187f9e70-9342-4ccb-8aac-d55bd3741c7a', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-email-service-group-6-b51b7dc1-62a2-4cd0-b253-9ca07485b884', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-email-service-group-8-1488ae0b-31c9-463a-8894-34304e520dad', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Successfully joined group with generation Generation{generationId=1, memberId='consumer-email-service-group-7-b8df19bb-df9d-4df6-a34a-a130ceb19d8e', protocol='range'}
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Resetting the last seen epoch of partition user-topic-0 to 0 since the associated topicId changed from null to Edo7zniYRLGL117KGwtZzg
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Resetting the last seen epoch of partition user-topic-0 to 0 since the associated topicId changed from null to Edo7zniYRLGL117KGwtZzg
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Resetting the last seen epoch of partition transaction-topic-0 to 0 since the associated topicId changed from null to 3N_oj-QSSwuWO8vxMM0UEQ
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Resetting the last seen epoch of partition transaction-topic-0 to 0 since the associated topicId changed from null to 3N_oj-QSSwuWO8vxMM0UEQ
+2025-12-20 21:20:22 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Finished assignment for group at generation 1: {consumer-sms-service-group-2-187f9e70-9342-4ccb-8aac-d55bd3741c7a=Assignment(partitions=[transaction-topic-0]), consumer-sms-service-group-3-6949e0bb-e143-4083-9086-961207bb00ec=Assignment(partitions=[]), consumer-sms-service-group-4-a5941ba3-b96d-441c-a113-32ee39e1e065=Assignment(partitions=[])}
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-sms-service-group-2-187f9e70-9342-4ccb-8aac-d55bd3741c7a', protocol='range'}
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Notifying assignor about the new Assignment(partitions=[transaction-topic-0])
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Adding newly assigned partitions: transaction-topic-0
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-sms-service-group-4-a5941ba3-b96d-441c-a113-32ee39e1e065', protocol='range'}
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Notifying assignor about the new Assignment(partitions=[])
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Adding newly assigned partitions: 
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: partitions assigned: []
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-sms-service-group-3-6949e0bb-e143-4083-9086-961207bb00ec', protocol='range'}
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Notifying assignor about the new Assignment(partitions=[])
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Adding newly assigned partitions: 
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: partitions assigned: []
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Found no committed offset for partition transaction-topic-0
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Resetting offset for partition transaction-topic-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.9:9092 (id: 0 rack: null)], epoch=0}}.
+2025-12-20 21:20:23 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: partitions assigned: [transaction-topic-0]
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Resetting the last seen epoch of partition chat-messages-0 to 0 since the associated topicId changed from null to wBMNqIvNQimkDZhlEyviEA
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Finished assignment for group at generation 1: {consumer-chat-service-group-5-c3b4c2d0-567e-4b68-9a4b-7609c9328330=Assignment(partitions=[chat-messages-0])}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-chat-service-group-5-c3b4c2d0-567e-4b68-9a4b-7609c9328330', protocol='range'}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Notifying assignor about the new Assignment(partitions=[chat-messages-0])
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Adding newly assigned partitions: chat-messages-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Found no committed offset for partition chat-messages-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Resetting offset for partition chat-messages-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.9:9092 (id: 0 rack: null)], epoch=0}}.
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - chat-service-group: partitions assigned: [chat-messages-0]
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Resetting the last seen epoch of partition user-topic-0 to 0 since the associated topicId changed from null to Edo7zniYRLGL117KGwtZzg
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Finished assignment for group at generation 1: {consumer-email-service-group-6-b51b7dc1-62a2-4cd0-b253-9ca07485b884=Assignment(partitions=[user-topic-0]), consumer-email-service-group-8-1488ae0b-31c9-463a-8894-34304e520dad=Assignment(partitions=[]), consumer-email-service-group-7-b8df19bb-df9d-4df6-a34a-a130ceb19d8e=Assignment(partitions=[])}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Resetting the last seen epoch of partition transaction-topic-0 to 0 since the associated topicId changed from null to 3N_oj-QSSwuWO8vxMM0UEQ
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.Metadata - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Resetting the last seen epoch of partition otp-topic-0 to 0 since the associated topicId changed from null to YvB7cMnUS16szNAqn99vwg
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Finished assignment for group at generation 1: {consumer-otp-service-group-1-ede2cf08-aafb-4c78-9528-5d0bc1337ffe=Assignment(partitions=[otp-topic-0])}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-email-service-group-8-1488ae0b-31c9-463a-8894-34304e520dad', protocol='range'}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-email-service-group-7-b8df19bb-df9d-4df6-a34a-a130ceb19d8e', protocol='range'}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Notifying assignor about the new Assignment(partitions=[])
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Notifying assignor about the new Assignment(partitions=[])
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Adding newly assigned partitions: 
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Adding newly assigned partitions: 
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: partitions assigned: []
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: partitions assigned: []
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-email-service-group-6-b51b7dc1-62a2-4cd0-b253-9ca07485b884', protocol='range'}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Notifying assignor about the new Assignment(partitions=[user-topic-0])
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Adding newly assigned partitions: user-topic-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Successfully synced group in generation Generation{generationId=1, memberId='consumer-otp-service-group-1-ede2cf08-aafb-4c78-9528-5d0bc1337ffe', protocol='range'}
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Notifying assignor about the new Assignment(partitions=[otp-topic-0])
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Adding newly assigned partitions: otp-topic-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Found no committed offset for partition user-topic-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Found no committed offset for partition otp-topic-0
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Resetting offset for partition user-topic-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.9:9092 (id: 0 rack: null)], epoch=0}}.
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.SubscriptionState - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Resetting offset for partition otp-topic-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[192.168.1.9:9092 (id: 0 rack: null)], epoch=0}}.
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: partitions assigned: [user-topic-0]
+2025-12-20 21:20:24 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - otp-service-group: partitions assigned: [otp-topic-0]
+2025-12-20 21:20:59 [MessageBroker-1] INFO  org.springframework.web.socket.config.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 2, active threads = 1, queued tasks = 1, completed tasks = 0]
+2025-12-20 21:22:35 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Stopping...
+2025-12-20 21:22:35 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@5aaac473]]
+2025-12-20 21:22:35 [SpringApplicationShutdownHook] INFO  org.springframework.messaging.simp.broker.SimpleBrokerMessageHandler - Stopped.
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Revoke previously assigned partitions otp-topic-0
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Member consumer-sms-service-group-3-6949e0bb-e143-4083-9086-961207bb00ec sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Revoke previously assigned partitions transaction-topic-0
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: partitions revoked: [transaction-topic-0]
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Member consumer-sms-service-group-4-a5941ba3-b96d-441c-a113-32ee39e1e065 sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Member consumer-sms-service-group-2-187f9e70-9342-4ccb-8aac-d55bd3741c7a sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - otp-service-group: partitions revoked: [otp-topic-0]
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Revoke previously assigned partitions chat-messages-0
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Revoke previously assigned partitions user-topic-0
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: partitions revoked: [user-topic-0]
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Member consumer-email-service-group-6-b51b7dc1-62a2-4cd0-b253-9ca07485b884 sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - chat-service-group: partitions revoked: [chat-messages-0]
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Member consumer-email-service-group-7-b8df19bb-df9d-4df6-a34a-a130ceb19d8e sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Member consumer-chat-service-group-5-c3b4c2d0-567e-4b68-9a4b-7609c9328330 sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Member consumer-otp-service-group-1-ede2cf08-aafb-4c78-9528-5d0bc1337ffe sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Member consumer-email-service-group-8-1488ae0b-31c9-463a-8894-34304e520dad sending LeaveGroup request to coordinator 192.168.1.9:9092 (id: 2147483647 rack: null) due to the consumer unsubscribed from all topics
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-3, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-4, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-sms-service-group-2, groupId=sms-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-7, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-6, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-email-service-group-8, groupId=email-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-otp-service-group-1, groupId=otp-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.KafkaConsumer - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Unsubscribed all topics or patterns and assigned partitions
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Resetting generation and member id due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.clients.consumer.internals.ConsumerCoordinator - [Consumer clientId=consumer-chat-service-group-5, groupId=chat-service-group] Request joining group due to: consumer pro-actively leaving the group
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-email-service-group-6 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-sms-service-group-4 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-2-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-chat-service-group-5 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#0-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - chat-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-email-service-group-7 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-1-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-otp-service-group-1 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#2-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - otp-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-sms-service-group-2 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-0-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics scheduler closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.common.metrics.Metrics - Metrics reporters closed
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-sms-service-group-3 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#3-1-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - sms-service-group: Consumer stopped
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.apache.kafka.common.utils.AppInfoParser - App info kafka.consumer for consumer-email-service-group-8 unregistered
+2025-12-20 21:22:35 [org.springframework.kafka.KafkaListenerEndpointContainer#1-2-C-1] INFO  org.springframework.kafka.listener.KafkaMessageListenerContainer - email-service-group: Consumer stopped
+2025-12-20 21:22:35 [SpringApplicationShutdownHook] INFO  com.bxb.sunduk_pay.config.AuthenticationFilter - AuthenticationFilter destroyed
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'postgres'
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'mysql'
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-20 21:22:36 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
